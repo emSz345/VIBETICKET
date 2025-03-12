@@ -1,10 +1,13 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import './App.css';
+import Cadastro from './Page/Cadastro';
+import Home from './Page/Home';
+import Login from './Page/Login';
 
 function App() {
-
+  //MONGODB
   const [mensagem, setMensagem] = useState('');
 
   useEffect(() => {
@@ -13,11 +16,15 @@ function App() {
       .catch((err) => console.error('Erro:', err));
   }, []);
 
-
+  //ROTAS
   return (
-    <div>
-     <p>B4Y PROJETO</p>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Cadastro" element={<Cadastro />} />
+      </Routes>
+    </Router>
   );
 }
 
