@@ -32,12 +32,25 @@
   width: 80%;
   max-width: 200px;
 }
-
+/* text-align: center; */
 /* Área do formulário */
 .form-section {
   width: 60%;
   padding: 20px;
+  
+}
+.form-section p,h2,Button{
   text-align: center;
+}
+.form-section label{
+  font-size: 15px;
+}
+input{
+  margin-bottom: 7px;
+  left: 20px;
+}
+.Termos{
+ color: black;
 }
 
 /* Título */
