@@ -1,0 +1,38 @@
+.cidades-container {
+    padding: 20px;
+    margin-top: -27%;
+    margin-bottom: 20px;
+}
+
+.cidades-grid {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.cidade-card {
+    width: 150px;
+    height: 180px;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.cidade-card:hover {
+    transform: scale(1.05);
+}
+
+.cidade-card img {
+    width: 100%;
+    height: 80%;
+    object-fit: cover;
+}
+
+.cidade-card span {
+    display: block;
+    padding: 5px;
+   
+    font-weight: bold;
+}

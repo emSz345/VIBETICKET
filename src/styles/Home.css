@@ -5,12 +5,17 @@
     font-family: Arial, Helvetica, sans-serif;
 
 }
+.container {
+    height: 100%;
 
+}
 .navbar {
     background-color: #333;
     color: white;
     padding: 10px 20px ;
     height: 150px;
+    position: relative;
+    z-index: 10;
     
 }
 
@@ -121,4 +126,12 @@
     border: none; 
     margin: 10px 30px;
    
+}
+
+
+
+.main {
+    margin-top: 20px;
+    margin-bottom: 20px;
+
 }
