@@ -1,11 +1,13 @@
 import React from "react";
 import "./Footer.css";
+import logo from '../../assets/img-logo.png'
 
 const Footer: React.FC = () => {
   return (
     <footer className="footer">
       <div className="container full-width">
-        <div className="logo">B<span className="blue">4</span>Y</div>
+        <img src={logo} alt="Logo B4Y" className="logo" />
+        <hr className="hr" />
         <div className="footer-sections">
           <div className="section">
             <h4>Encontre estilos</h4>
@@ -52,6 +54,9 @@ const Footer: React.FC = () => {
               <li>Carrinho</li>
             </ul>
           </div>
+        </div>
+        <div className="footer-sections2">
+          <p>₢ 2025 B4Y | Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

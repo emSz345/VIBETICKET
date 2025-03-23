@@ -1,5 +1,5 @@
 .event-container {
-    width: 60%;
+    width: 87%;
     margin: 20px auto;
   }
   
@@ -82,7 +82,8 @@
   }
   
   .event-image {
-    width: 35%;
-    object-fit: cover;
+    width: 450px;
+    height: 250px;
+    
   }
   

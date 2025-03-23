@@ -1,6 +1,6 @@
 import React from "react";
 import "./EventoCard.css";
-import EventImg from "../../assets/img-evento.png";
+import EventImg from "../../assets/img-show.png";
 
 const EventCard: React.FC = () => {
   return (
@@ -9,9 +9,9 @@ const EventCard: React.FC = () => {
       <div className="event-card">
         <div className="event-info">
           <p className="event-date">
-            <span className="event-day">Qui, 20 de fev • 19:00</span> • +100 mil vendidos
+            <span className="event-day">Qui, 20 de fev • 19:00</span> • +10 mil vendidos
           </p>
-          <h2 className="event-name">Nome do evento</h2>
+          <h2 className="event-name">Anitta music</h2>
           <p className="event-location">local do evento</p>
           <div className="event-buttons">
             <button className="btn btn-outline">Comprar ingressos</button>

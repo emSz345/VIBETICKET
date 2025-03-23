@@ -1,12 +1,13 @@
 import React from "react";
 import { Filter } from "lucide-react";
 import "./Banner.css";
+import help from '../../assets/help.png'
 
 const Banner: React.FC = () => {
   return (
     <div className="banner">
       <div className="banner-content">
-        <img src="/img/help.png" alt="Ajuda" className="banner-image" />
+        <img src={help} alt="Ajuda" className="banner-image" />
         <div>
           <p className="banner-title">Está perdido?</p>
           <p className="banner-subtitle">

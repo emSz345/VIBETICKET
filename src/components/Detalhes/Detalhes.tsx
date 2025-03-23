@@ -6,7 +6,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "./Detalhes.css";
-import logo from '../../assets/img1.png'
+import logo from '../../assets/img-detalhes.png'
 
 const Detalhes = () => {
     const navigate = useNavigate();
@@ -49,7 +49,7 @@ const Detalhes = () => {
     return (
         <div className="carousel-container">
             <Swiper
-                modules={[Navigation, Pagination]}
+                modules={[]}
                 navigation
                 pagination={{ clickable: true }}
                 spaceBetween={20}
@@ -63,8 +63,9 @@ const Detalhes = () => {
                                 <p className="evento-data">{evento.data}</p>
                                 <h3 className="evento-titulo">{evento.titulo}</h3>
                                 <p className="evento-local">{evento.local}</p>
-                                <p className="evento-vendidos">{evento.vendidos}</p>
+                                
                             </div>
+                            <p className="evento-vendidos">{evento.vendidos}</p>
                         </div>
                     </SwiperSlide>
                 ))}

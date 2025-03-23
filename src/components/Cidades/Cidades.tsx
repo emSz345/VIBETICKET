@@ -11,17 +11,19 @@ const Cidades = () => {
         { nome: "Bahia", img: sp },
         { nome: "Ribeirão Preto", img: rp },
         { nome: "Rio de Janeiro", img: rj },
-        // { nome: "Taquaritinga", img: '' }
+        { nome: "Taquaritinga", img: sp }
     ];
 
     return (
         <div className="cidades-container">
-            <h2>Busque por cidades</h2>
+            <h3 className='title'>Busque por cidades</h3>
             <div className="cidades-grid">
                 {cidades.map((cidade, index) => (
                     <div key={index} className="cidade-card">
-                        <img src={cidade.img} alt={cidade.nome} />
-                        <span>{cidade.nome}</span>
+                        <div className="imagem-container">
+                            <img src={cidade.img} alt={cidade.nome} />
+                            <h3 className="texto-sobre-imagem">{cidade.nome}</h3>
+                        </div>
                     </div>
                 ))}
             </div>

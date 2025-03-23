@@ -1,4 +1,4 @@
-.bubble-container {
+.stage-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -9,57 +9,61 @@
   z-index: -1;
 }
 
-.bubble {
+.stage {
   position: absolute;
   bottom: -50px;
-  width: 10px;
-  height: 10px;
-  background-color: #007bff;
-  border-radius: 50%;
-  opacity: 0.6;
-  animation: floatUp 5s infinite linear;
+  background-color: #f0f0f0; /* Cor de fundo clara */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  opacity: 0.8;
+  animation: floatUp linear infinite;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-/* Animação para fazer as bolinhas subirem */
+/* Animação para fazer os palcos subirem */
 @keyframes floatUp {
   0% {
-    transform: translateY(0);
-    opacity: 0.6;
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.8;
   }
   50% {
     opacity: 1;
+    transform: translateY(-50vh) rotate(180deg);
   }
   100% {
-    transform: translateY(-100vh);
+    transform: translateY(-100vh) rotate(360deg);
     opacity: 0;
   }
 }
 
-
-.bubble:nth-child(2) {
-  width: 25px;
-  height: 15px;
-  left: 20%;
-  animation-duration: 6s;
+/* Detalhes dos palcos */
+.stage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  ); /* Efeito de luz no topo */
 }
 
-.bubble:nth-child(3) {
-  width: 8px;
-  height: 8px;
-  left: 40%;
-  animation-duration: 4s;
-}
-
-.bubble:nth-child(4) {
-  width: 12px;
-  height: 12px;
-  left: 60%;
-  animation-duration: 7s;
-}
-
-.bubble:nth-child(5) {
-  width: 15px;
-  height: 15px;
-  left: 80%;
-  animation-duration: 5s;
+.stage::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 60%;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-50%);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Efeito de luz no chão */
 }
