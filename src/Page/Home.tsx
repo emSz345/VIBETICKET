@@ -8,6 +8,10 @@ import Bolinhas from '../components/Bolinhas/Bolinhas';
 import Carrossel from '../components/Carrossel/Carrossel';
 import Detalhes from '../components/Detalhes/Detalhes';
 import Cidades from '../components/Cidades/Cidades';
+import Banner from '../components/Banner/Banner';
+import EventCard from '../components/Evento/EventoCard';
+import Rodape from '../components/Rodape/Footer';
+import EventBanner from '../components/EventBanner/Footer';
 
 function Home() {
     return (
@@ -44,7 +48,18 @@ function Home() {
 
                 <Cidades />
 
+                <Banner/>
+
                 <Detalhes />
+
+                <Detalhes />
+                <br/><br/>
+
+                <EventCard/>
+
+                <EventBanner/>
+
+                <Rodape/>
 
                 <Bolinhas />
             </main>
