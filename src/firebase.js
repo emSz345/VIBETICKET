@@ -1,11 +1,8 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+
+// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyC32vVABbCQv8Xm_iA-lC1BBEuUh7AfujU",
   authDomain: "b4yint.firebaseapp.com",
@@ -17,9 +14,22 @@ const firebaseConfig = {
 };
 
 // Inicializa o Firebase
+
 const app = initializeApp(firebaseConfig);
-
-// Configura a autenticação
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-export { auth, createUserWithEmailAndPassword,signInWithEmailAndPassword };
+//  login com Google
+const signInWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log("Login com Google bem-sucedido!", user);
+    alert("Login com Google bem-sucedido!");
+  } catch (error) {
+    console.error("Erro ao realizar login com Google", error);
+    alert(`Erro ao realizar login com Google: ${error.message}`);
+  }
+};
+
+export { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithGoogle };

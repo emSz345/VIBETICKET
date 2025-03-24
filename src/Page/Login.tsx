@@ -10,6 +10,7 @@ import logo from "../assets/img-logo.png";
 import googleIcon from "../assets/logo-google.png";
 import appleIcon from "../assets/logo-apple.png";
 import facebookIcon from "../assets/logo-facebook.png";
+import { signInWithGoogle } from '../firebase';
 import "../styles/Login.css";
 
 const Login: React.FC = () => {
@@ -27,23 +28,25 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      alert("Login com Google bem-sucedido!");
+      navigate("/Home"); 
+    } catch (error) {
+      alert("Erro ao realizar login com Google.");
+      console.error(error);
+    }
+  };
+  
   
   const handleSubmit = async () => {
     try {
-      
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-      
-      // Autenticação bem-sucedida
       const user = userCredential.user;
       console.log("Login bem-sucedido!", user);
-
-     
-
       alert("Login bem-sucedido!");
-
-      
       navigate("/Home"); 
-
     } catch (error: any) {
       alert(`Erro ao realizar login. Código: ${error.code}, Mensagem: ${error.message}`);
     }
@@ -82,7 +85,7 @@ const Login: React.FC = () => {
 
           {/* Login social */}
           <div className="social-login">
-            <SocialButton icon={googleIcon} alt="Google" onClick={() => alert("Google")} />
+            <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} />
             <SocialButton icon={appleIcon} alt="Apple" onClick={() => alert("Apple")} />
             <SocialButton icon={facebookIcon} alt="Facebook" onClick={() => alert("Facebook")} />
           </div>

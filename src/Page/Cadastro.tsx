@@ -5,7 +5,7 @@ import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
 import SocialButton from "../components/SocialButton/SocialButton";
 import Header from "../components/Header/Header";
-
+import { signInWithGoogle } from "../firebase";
 import "../styles/Login.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +34,19 @@ const Cadastro: React.FC = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      alert("Login com Google bem-sucedido!");
+      navigate("/Home"); 
+    } catch (error) {
+      alert("Erro ao realizar login com Google.");
+      console.error(error);
+    }
+  };
+  
+
 
   const handleSubmit = async () => {
     if (formData.senha !== formData.confirmSenha) {
@@ -80,7 +93,7 @@ const Cadastro: React.FC = () => {
           <p className="ou">ou</p>
 
           <div className="social-login">
-            <SocialButton icon={googleIcon} alt="Google" onClick={() => alert("Google")} />
+            <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} />
             <SocialButton icon={appleIcon} alt="Apple" onClick={() => alert("Apple")} />
             <SocialButton icon={facebookIcon} alt="Facebook" onClick={() => alert("Facebook")} />
           </div>
