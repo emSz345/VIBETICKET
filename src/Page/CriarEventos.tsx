@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import '../styles/CriarEventos.css';
-import { Link } from 'react-router-dom';
-import logo from '../assets/img-logo.png';
-import { IoSearch, IoMenu, IoClose } from "react-icons/io5";
-import { FaCartShopping, FaMap } from "react-icons/fa6";
-import { FiChevronDown } from "react-icons/fi";
-import Rodape from '../components/Rodape/Footer';
+
+import Rodape from '../components/Footer/Footer';
+import NavBar from '../components/Home/NavBar/NavBar';
 
 function CriarEventos() {
     const [imagemSelecionada, setImagemSelecionada] = useState<File | null>(null);
@@ -32,32 +29,7 @@ function CriarEventos() {
 
     return (
         <div>
-            <nav className='criar-evento-navbar'>
-                <div className='criar-evento-nav-top'>
-                    <div className='criar-evento-location'>
-                        <FaMap className='criar-evento-iconMap' />
-                        <span className='criar-evento-location-text'>Escolha seu local</span>
-                        <FiChevronDown size={24} />
-                        <button className='criar-evento-location-btn'>Descubra o que fazer perto de você</button>
-                    </div>
-                    <div className='criar-evento-auth'>
-                        <Link to="/Login">Login</Link> | <Link to="/Cadastro">Cadastro</Link>
-                    </div>
-                </div>
-                <hr className='criar-evento-hr' />
-                <div className='criar-evento-nav-main'>
-                    <img src={logo} alt='B4Y Logo' className='criar-evento-logo' />
-                    <div className="criar-evento-search-container">
-                        <input type="text" placeholder="Pesquisar eventos, shows" className="criar-evento-search-input" />
-                        <IoSearch className="criar-evento-search-icon" />
-                    </div>
-                    <div className='criar-evento-menu-links'>
-                        <Link to="/Categorias">CATEGORIAS</Link>
-                        <Link to="/CriarEventos">CRIAR EVENTOS</Link>
-                    </div>
-                </div>
-            </nav>
-
+            <NavBar />
             <h3 className='criar-evento-title'>Críe seu evento</h3>
             <div className="criar-evento-conteudo">
                 <div className="campo">

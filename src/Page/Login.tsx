@@ -79,7 +79,10 @@ const Login: React.FC = () => {
           />
 
           {/* Botão de login */}
-          <Button text="Entrar" onClick={handleSubmit} />
+          <Button 
+            text="Entrar" 
+            onClick={handleSubmit} 
+          />
 
           <p className="ou">ou</p>
 
