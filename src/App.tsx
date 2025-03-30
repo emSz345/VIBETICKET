@@ -8,6 +8,7 @@ import Login from './Page/Login';
 import CriarEventos from './Page/CriarEventos';
 import Categorias from "./Page/Categorias";
 import Termos from './Page/Termos';
+import Detalhes from './Page/Detalhes'
 
 function App() {
   //MONGODB
@@ -30,6 +31,7 @@ function App() {
           <Route path="/Criareventos" element={<CriarEventos />} />
           <Route path="/Categorias" element={<Categorias />} />
           <Route path="/Termos" element={<Termos />} />
+          <Route path="/Detalhes/:id" element={<Detalhes />} />
         </Routes>
         </Router>  
   );

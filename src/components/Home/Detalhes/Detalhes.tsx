@@ -1,69 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { fetchEventos } from "../../../services/api";
+import { Evento } from "../../../types/event";
 import "./Detalhes.css";
-import logo from '../../../assets/img-detalhes.png'
 
-const Detalhes = () => {
+const Detalhes: React.FC = () => {
     const navigate = useNavigate();
+    const [eventos, setEventos] = useState<Evento[]>([]);
 
-    const eventos = [
-        {
-            id: 1,
-            imagem: logo,
-            titulo: "Nome do evento",
-            data: "Qui, 20 de fev - 19:00",
-            local: "local do evento",
-            vendidos: "+ 100 mil vendidos",
-        },
-        {
-            id: 2,
-            imagem: logo,
-            titulo: "Outro evento",
-            data: "Sex, 15 de mar - 21:00",
-            local: "outro local",
-            vendidos: "+ 80 mil vendidos",
-        },
-        {
-            id: 3,
-            imagem: logo,
-            titulo: "Outro evento",
-            data: "Sex, 15 de mar - 21:00",
-            local: "outro local",
-            vendidos: "+ 80 mil vendidos",
-        },
-        {
-            id: 4,
-            imagem: logo,
-            titulo: "Outro evento",
-            data: "Sex, 15 de mar - 21:00",
-            local: "outro local",
-            vendidos: "+ 80 mil vendidos",
-        },
-    ];
+    useEffect(() => {
+        const carregarEventos = async () => {
+            const dados = await fetchEventos();
+            setEventos(dados);
+        };
+
+        carregarEventos();
+    }, []);
 
     return (
         <div className="carousel-container">
-            <Swiper
-                modules={[]}
+            <Swiper modules={[]}
                 navigation
                 pagination={{ clickable: true }}
                 spaceBetween={20}
-                slidesPerView={3}
+                slidesPerView={4}
             >
                 {eventos.map((evento) => (
                     <SwiperSlide key={evento.id}>
-                        <div className="evento-card" onClick={() => navigate(`/Termos/${evento.id}`)}>
+                        <div className="evento-card" onClick={() => navigate(`/detalhes/${evento.id}`, { state: evento })}>
                             <img src={evento.imagem} alt={evento.titulo} className="evento-img" />
                             <div className="evento-info">
                                 <p className="evento-data">{evento.data}</p>
                                 <h3 className="evento-titulo">{evento.titulo}</h3>
                                 <p className="evento-local">{evento.local}</p>
-                                
                             </div>
                             <p className="evento-vendidos">{evento.vendidos}</p>
                         </div>

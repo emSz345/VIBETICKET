@@ -37,8 +37,6 @@ function Home() {
 
                 <Detalhes />
 
-                <Detalhes />
-
                 <br /> <br />
 
                 <EventCard />

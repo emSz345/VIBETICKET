@@ -4,7 +4,7 @@ import logo from '../../assets/img-logo.png'
 
 const Footer: React.FC = () => {
   return (
-    <footer className="footer">
+    <footer className="footer-container">
       <div className="container full-width">
         <img src={logo} alt="Logo B4Y" className="logo" />
         <hr className="hr" />
@@ -56,7 +56,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
         <div className="footer-sections2">
-          <p>₢ 2025 B4Y | Todos os direitos reservados.</p>
+          <p>© 2025 B4Y. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>
