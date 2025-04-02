@@ -1,6 +1,6 @@
 
 import React, { useState, ChangeEvent } from "react";
-import { auth, createUserWithEmailAndPassword } from "../firebase"; // Importe as funções do Firebase
+import { auth, createUserWithEmailAndPassword, signInWithApple } from "../firebase"; // Importe as funções do Firebase
 import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
 import SocialButton from "../components/SocialButton/SocialButton";
@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/img-logo.png";
 import googleIcon from "../assets/logo-google.png";
 import appleIcon from "../assets/logo-apple.png";
+import { signInWithFacebook } from "../firebase";
 import facebookIcon from "../assets/logo-facebook.png";
 
 interface FormData {
@@ -46,7 +47,26 @@ const Cadastro: React.FC = () => {
     }
   };
   
+  const handleAppleSignIn = async () => {
+    try {
+      await signInWithApple();
+      navigate("/Home"); 
+    } catch (error) {
+      alert("Erro ao realizar login com Apple.");
+      console.error(error);
+    }
+  };
 
+  const handleFacebookSignIn = async () => {
+    try {
+      await signInWithFacebook();
+      alert("Login com Facebook bem-sucedido!");
+      navigate("/Home"); 
+    } catch (error) {
+      alert("Erro ao realizar login com Facebook.");
+      console.error(error);
+    }
+  };
 
   const handleSubmit = async () => {
     if (formData.senha !== formData.confirmSenha) {
@@ -94,8 +114,8 @@ const Cadastro: React.FC = () => {
 
           <div className="social-login">
             <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} />
-            <SocialButton icon={appleIcon} alt="Apple" onClick={() => alert("Apple")} />
-            <SocialButton icon={facebookIcon} alt="Facebook" onClick={() => alert("Facebook")} />
+            <SocialButton icon={appleIcon} alt="Apple" onClick={handleAppleSignIn} />
+            <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookSignIn} />
           </div>
 
           <p>

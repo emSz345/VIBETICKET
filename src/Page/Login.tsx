@@ -11,6 +11,7 @@ import googleIcon from "../assets/logo-google.png";
 import appleIcon from "../assets/logo-apple.png";
 import facebookIcon from "../assets/logo-facebook.png";
 import { signInWithGoogle } from '../firebase';
+import { signInWithFacebook } from "../firebase";
 import "../styles/Login.css";
 
 const Login: React.FC = () => {
@@ -35,6 +36,17 @@ const Login: React.FC = () => {
       navigate("/Home"); 
     } catch (error) {
       alert("Erro ao realizar login com Google.");
+      console.error(error);
+    }
+  };
+
+  const handleFacebookSignIn = async () => {
+    try {
+      await signInWithFacebook();
+      alert("Login com Facebook bem-sucedido!");
+      navigate("/Home"); 
+    } catch (error) {
+      alert("Erro ao realizar login com Facebook.");
       console.error(error);
     }
   };
@@ -90,7 +102,7 @@ const Login: React.FC = () => {
           <div className="social-login">
             <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} />
             <SocialButton icon={appleIcon} alt="Apple" onClick={() => alert("Apple")} />
-            <SocialButton icon={facebookIcon} alt="Facebook" onClick={() => alert("Facebook")} />
+            <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookSignIn} />
           </div>
 
           <p>

@@ -35,8 +35,7 @@
   
   .event-name {
     font-size: 20px;
-    font-weight: bold;
-    translate: -5px -33px;
+    font-weight: bold; 
     margin: 40px 0;
     margin-right: 460px;
   }
@@ -45,6 +44,7 @@
     font-size: 14px;
     color: #666;
     translate: -5px -66px;
+    
     margin-bottom: 15px;
   }
   
