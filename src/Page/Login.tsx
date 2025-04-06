@@ -11,13 +11,13 @@ import googleIcon from "../assets/logo-google.png";
 import appleIcon from "../assets/logo-apple.png";
 import facebookIcon from "../assets/logo-facebook.png";
 import { signInWithGoogle } from '../firebase';
-import { signInWithFacebook } from "../firebase";
+import { signInWithFacebook, } from "../firebase";
 import "../styles/Login.css";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   // Função de manipulação de alteração dos inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,13 +33,13 @@ const Login: React.FC = () => {
     try {
       await signInWithGoogle();
       alert("Login com Google bem-sucedido!");
-      navigate("/Home"); 
+      navigate("/Home");
     } catch (error) {
       alert("Erro ao realizar login com Google.");
       console.error(error);
     }
   };
-
+  //DADOS NÃO ESTÃO REGISTRANDO
   const handleFacebookSignIn = async () => {
     try {
       await signInWithFacebook();
@@ -50,15 +50,14 @@ const Login: React.FC = () => {
       console.error(error);
     }
   };
-  
-  
+
   const handleSubmit = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
       console.log("Login bem-sucedido!", user);
       alert("Login bem-sucedido!");
-      navigate("/Home"); 
+      navigate("/Home");
     } catch (error: any) {
       alert(`Erro ao realizar login. Código: ${error.code}, Mensagem: ${error.message}`);
     }
@@ -91,9 +90,9 @@ const Login: React.FC = () => {
           />
 
           {/* Botão de login */}
-          <Button 
-            text="Entrar" 
-            onClick={handleSubmit} 
+          <Button
+            text="Entrar"
+            onClick={handleSubmit}
           />
 
           <p className="ou">ou</p>

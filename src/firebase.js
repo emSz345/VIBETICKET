@@ -1,6 +1,6 @@
 
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, OAuthProvider, GoogleAuthProvider,FacebookAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithPopup, OAuthProvider, GoogleAuthProvider,FacebookAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword,signInWithCredential } from "firebase/auth";
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -14,7 +14,7 @@ const firebaseConfig = {
 };
 
 // Inicializa o Firebase
-
+const FB = window.FB;
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
@@ -36,17 +36,55 @@ const signInWithGoogle = async () => {
 const facebookProvider = new FacebookAuthProvider();
 
 
-const signInWithFacebook = async () => {
-  try {
-    const auth = getAuth();
-    const result = await signInWithPopup(auth, facebookProvider);
-    console.log("Login com Facebook bem-sucedido!", result.user);
-    alert("Login com Facebook bem-sucedido!");
-  } catch (error) {
-    console.error("Erro ao realizar login com Facebook", error);
-    alert(`Erro ao realizar login com Facebook: ${error.message}`);
-  }
+//ERRO
+const signInWithFacebook = () => {
+  return new Promise((resolve, reject) => {
+    if (!window.FB) {
+      
+      const script = document.createElement("script");
+      script.src = "https://connect.facebook.net/pt_BR/sdk.js";
+      script.async = true;
+      script.onload = () => {
+        window.FB.init({
+          appId: "2369325230112335", // ✅ Coloque aqui seu App ID do Facebook
+          cookie: true,
+          xfbml: false,
+          version: "v18.0"
+        });
+
+        realizarLoginComFacebook(resolve, reject);
+      };
+      script.onerror = reject;
+      document.body.appendChild(script);
+    } else {
+      realizarLoginComFacebook(resolve, reject);
+    }
+  });
 };
+
+
+function realizarLoginComFacebook(resolve, reject) {
+  window.FB.login((response) => {
+    if (response.authResponse) {
+      const accessToken = response.authResponse.accessToken;
+      const credential = FacebookAuthProvider.credential(accessToken);
+
+      (async () => {
+        try {
+          await signInWithCredential(auth, credential);
+          console.log("Login com Facebook bem-sucedido!");
+          resolve();
+        } catch (error) {
+          console.error("Erro ao autenticar no Firebase:", error);
+          reject(error);
+        }
+      })();
+    } else {
+      reject(new Error("Login com Facebook cancelado."));
+    }
+  }, { scope: "email" });
+}
+
 
 const signInWithApple = async () => {
   try {
