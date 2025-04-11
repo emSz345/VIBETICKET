@@ -12,6 +12,8 @@ import appleIcon from "../assets/logo-apple.png";
 import facebookIcon from "../assets/logo-facebook.png";
 import { signInWithGoogle } from '../firebase';
 import { signInWithFacebook, } from "../firebase";
+import { getIdToken } from "firebase/auth";
+import axios from "axios";
 import "../styles/Login.css";
 
 const Login: React.FC = () => {
@@ -44,7 +46,7 @@ const Login: React.FC = () => {
     try {
       await signInWithFacebook();
       alert("Login com Facebook bem-sucedido!");
-      navigate("/Home"); 
+      navigate("/Home");
     } catch (error) {
       alert("Erro ao realizar login com Facebook.");
       console.error(error);
@@ -55,8 +57,27 @@ const Login: React.FC = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
+
+      const nome = user.displayName || 'Usuário';
+      const emailUser = user.email;
+      const provedor = 'local';
+
+
+      await axios.post('http://localhost:5000/api/users/register', {
+        nome,
+        email: emailUser,
+        senha,
+        provedor
+      });
+
+
       console.log("Login bem-sucedido!", user);
       alert("Login bem-sucedido!");
+
+      //salva o token no navegador 
+      const token = await user.getIdToken();
+      localStorage.setItem("firebaseToken", token);
+
       navigate("/Home");
     } catch (error: any) {
       alert(`Erro ao realizar login. Código: ${error.code}, Mensagem: ${error.message}`);

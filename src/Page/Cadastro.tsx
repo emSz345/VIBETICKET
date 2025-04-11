@@ -13,7 +13,9 @@ import logo from "../assets/img-logo.png";
 import googleIcon from "../assets/logo-google.png";
 import appleIcon from "../assets/logo-apple.png";
 import { signInWithFacebook } from "../firebase";
+
 import facebookIcon from "../assets/logo-facebook.png";
+import axios from "axios";
 
 interface FormData {
   nome: string;
@@ -21,6 +23,7 @@ interface FormData {
   senha: string;
   confirmSenha: string;
 }
+
 
 const Cadastro: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -73,15 +76,35 @@ const Cadastro: React.FC = () => {
       alert("As senhas não coincidem!");
       return;
     }
-
+  
     try {
-      // Firebase
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
-
-      alert("Conta criada com sucesso!");
       
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
+      const user = userCredential.user;
+  
+      
+      const nome = formData.nome || "Usuário"; 
+      const email = formData.email;
+      const senha = formData.senha; 
+      const provedor = 'local';
+  
+      
+      await axios.post('http://localhost:5000/api/users/register', {
+        nome,
+        email,
+        senha,
+        provedor
+      });
+  
+      alert("Conta criada com sucesso!");
+
+      //salva o token no navegador 
+      const token = await user.getIdToken();
+      localStorage.setItem("firebaseToken", token);
+    
+
       navigate("/Login");
-      console.log(userCredential.user);
+      console.log(user);
     } catch (error: any) {
       alert("Erro ao registrar. Verifique os dados e tente novamente.");
       console.error(error.message);

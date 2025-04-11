@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import NavBar from "../components/Home/NavBar/NavBar";
 
+
 const Detalhes: React.FC = () => {
     const { state } = useLocation();
 

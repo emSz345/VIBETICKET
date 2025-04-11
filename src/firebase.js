@@ -1,5 +1,6 @@
 
 import { initializeApp } from "firebase/app";
+import axios from "axios";
 import { getAuth, signInWithPopup, OAuthProvider, GoogleAuthProvider,FacebookAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword,signInWithCredential } from "firebase/auth";
 
 // Configuração do Firebase
@@ -25,7 +26,24 @@ const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
+
+    const nome = user.displayName;
+    const email = user.email;
+    const provedor = 'google';
+
+    await axios.post('http://localhost:5000/api/users/register', {
+      nome,
+      email,
+      senha: '', // vazio, pois é login social
+      provedor
+    });
+
     console.log("Login com Google bem-sucedido!", user);
+
+    //salva o token no navegador 
+    const token = await user.getIdToken();
+    localStorage.setItem("firebaseToken", token);
+
     alert("Login com Google bem-sucedido!");
   } catch (error) {
     console.error("Erro ao realizar login com Google", error);
@@ -71,9 +89,28 @@ function realizarLoginComFacebook(resolve, reject) {
 
       (async () => {
         try {
-          await signInWithCredential(auth, credential);
+          const result = await signInWithCredential(auth, credential);
+          const user = result.user;
+
+          const nome = user.displayName || "Usuário";
+          const email = user.email;
+          const provedor = "facebook";
+
+          // Envia os dados pro backend
+          await axios.post("http://localhost:5000/api/users/register", {
+            nome,
+            email,
+            senha: "PROTEGIDO", // senha em branco (login social)
+            provedor
+          });
+
           console.log("Login com Facebook bem-sucedido!");
-          resolve();
+
+          //salva o token no navegador 
+          const token = await user.getIdToken();
+          localStorage.setItem("firebaseToken", token);
+
+          resolve(user); 
         } catch (error) {
           console.error("Erro ao autenticar no Firebase:", error);
           reject(error);
@@ -84,6 +121,7 @@ function realizarLoginComFacebook(resolve, reject) {
     }
   }, { scope: "email" });
 }
+
 
 
 const signInWithApple = async () => {
