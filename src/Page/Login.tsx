@@ -56,28 +56,8 @@ const Login: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-      const user = userCredential.user;
-
-      const nome = user.displayName || 'Usuário';
-      const emailUser = user.email;
-      const provedor = 'local';
-
-
-      await axios.post('http://localhost:5000/api/users/register', {
-        nome,
-        email: emailUser,
-        senha,
-        provedor
-      });
-
-
-      console.log("Login bem-sucedido!", user);
+      console.log("Login bem-sucedido!");
       alert("Login bem-sucedido!");
-
-      //salva o token no navegador 
-      const token = await user.getIdToken();
-      localStorage.setItem("firebaseToken", token);
-
       navigate("/Home");
     } catch (error: any) {
       alert(`Erro ao realizar login. Código: ${error.code}, Mensagem: ${error.message}`);
