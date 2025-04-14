@@ -5,7 +5,7 @@ import logo from '../../assets/img-logo.png'
 const Footer: React.FC = () => {
   return (
     <footer className="footer-container">
-      <div className="container full-width">
+      <div className="foote-container">
         <img src={logo} alt="Logo B4Y" className="logo" />
         <hr className="hr" />
         <div className="footer-sections">

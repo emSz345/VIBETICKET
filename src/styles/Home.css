@@ -5,6 +5,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+
 .hr {
   height: 1px;
   background-color: rgba(194, 194, 194, 0.5);
@@ -35,12 +36,12 @@
 
 @media (min-width: 1024px) {
   .shows-container {
-      grid-template-columns: repeat(3, 1fr); /* Em telas grandes, 3 por linha */
+      grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (min-width: 1400px) {
   .shows-container {
-      grid-template-columns: repeat(6, 1fr); /* Em telas muito grandes, 6 por linha */
+      grid-template-columns: repeat(6, 1fr);
   }
 }

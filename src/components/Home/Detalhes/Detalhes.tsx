@@ -24,26 +24,40 @@ const Detalhes: React.FC = () => {
 
     return (
         <div className="carousel-container">
-            <Swiper modules={[]}
-                navigation
-                pagination={{ clickable: true }}
-                spaceBetween={20}
-                slidesPerView={4}
-            >
-                {eventos.map((evento) => (
-                    <SwiperSlide key={evento.id}>
-                        <div className="evento-card" onClick={() => navigate(`/detalhes/${evento.id}`, { state: evento })}>
-                            <img src={evento.imagem} alt={evento.titulo} className="evento-img" />
-                            <div className="evento-info">
-                                <p className="evento-data">{evento.data}</p>
-                                <h3 className="evento-titulo">{evento.titulo}</h3>
-                                <p className="evento-local">{evento.local}</p>
-                            </div>
-                            <p className="evento-vendidos">{evento.vendidos}</p>
-                        </div>
-                    </SwiperSlide>
-                ))}
-            </Swiper>
+            <Swiper
+  modules={[Navigation]}
+  navigation
+  pagination={{ clickable: true }}
+  spaceBetween={20}
+  breakpoints={{
+    320: {
+      slidesPerView: 1,
+    },
+    480: {
+      slidesPerView: 2,
+    },
+    768: {
+      slidesPerView: 3,
+    },
+    1024: {
+      slidesPerView: 4,
+    },
+  }}
+>
+  {eventos.map((evento) => (
+    <SwiperSlide key={evento.id}>
+      <div className="evento-card" onClick={() => navigate(`/detalhes/${evento.id}`, { state: evento })}>
+        <img src={evento.imagem} alt={evento.titulo} className="evento-img" />
+        <div className="evento-info">
+          <p className="evento-data">{evento.data}</p>
+          <h3 className="evento-titulo">{evento.titulo}</h3>
+          <p className="evento-local">{evento.local}</p>
+        </div>
+        <p className="evento-vendidos">{evento.vendidos}</p>
+      </div>
+    </SwiperSlide>
+  ))}
+</Swiper>
         </div>
     );
 };

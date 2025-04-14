@@ -1,69 +1,35 @@
-.stage-container {
+.bubble-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  pointer-events: none;
+  inset: 0;
   overflow: hidden;
   z-index: -1;
+  pointer-events: none;
 }
-
-.stage {
+.bubble {
   position: absolute;
-  bottom: -50px;
-  background-color: #f0f0f0; /* Cor de fundo clara */
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px;
-  opacity: 0.8;
-  animation: floatUp linear infinite;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  bottom: -60px;
+  background: #2196f3;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation-name: float-up;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+  filter: blur(2px);
 }
 
-/* Animação para fazer os palcos subirem */
-@keyframes floatUp {
+@keyframes float-up {
   0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.8;
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-50vh) rotate(180deg);
-  }
-  100% {
-    transform: translateY(-100vh) rotate(360deg);
+    transform: translateY(0) scale(0.8);
     opacity: 0;
   }
-}
-
-/* Detalhes dos palcos */
-.stage::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 30%;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.5),
-    transparent
-  ); /* Efeito de luz no topo */
-}
-
-.stage::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 60%;
-  height: 10px;
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: translateX(-50%);
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Efeito de luz no chão */
+  20% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-120vh) scale(1.1);
+    opacity: 0;
+  }
 }

@@ -68,3 +68,46 @@
     box-sizing: border-box;
 
 }
+
+/* Scrollbar */
+.cidades-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+.cidades-grid::-webkit-scrollbar-track {
+    background: #eee;
+    border-radius: 10px;
+}
+
+.cidades-grid::-webkit-scrollbar-thumb {
+    background: #2196f3;
+    border-radius: 10px;
+}
+
+.cidades-grid {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.cidades-grid::-webkit-scrollbar {
+    display: none;
+}
+
+
+
+/* RESPONSIVO*/
+@media (max-width: 768px) {
+    .cidades-container {
+        margin-top: 0;
+        padding: 10px;
+    }
+
+    .cidade-card {
+        width: 180px;
+        height: 260px;
+    }
+
+    .texto-sobre-imagem {
+        font-size: 14px;
+    }
+}
