@@ -1,18 +1,9 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios'; // certifique-se que está instalado
 import { Link } from 'react-router-dom';
-
-/* Icons */
 import {
-  FaMap,
-  FaBars,
-  FaHome,
-  FaStar,
-  FaTicketAlt,
-  FaCog,
-  FaStore,
-  FaHeadphones,
-  FaSignOutAlt,
-  FaShoppingCart
+  FaMap, FaBars, FaHome, FaStar, FaTicketAlt,
+  FaCog, FaStore, FaHeadphones, FaSignOutAlt, FaShoppingCart
 } from 'react-icons/fa';
 import { FiChevronDown } from 'react-icons/fi';
 import { IoSearch } from 'react-icons/io5';
@@ -23,19 +14,23 @@ import logo from '../../../assets/img-logo.png';
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [usuarioLogado, setUsuarioLogado] = useState<boolean>(false);
+  const [usuarioLogado, setUsuarioLogado] = useState(false);
+  const [nomeUsuario, setNomeUsuario] = useState<string>("");
 
-  // Verifica se há token salvo ao carregar o componente
   useEffect(() => {
     const token = localStorage.getItem("firebaseToken");
-    setUsuarioLogado(!!token);
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      setUsuarioLogado(true);
+      setNomeUsuario(payload.nome);
+    }
   }, []);
 
-  // Logout - remove o token e altera o estado
   const handleLogout = () => {
     localStorage.removeItem("firebaseToken");
     setUsuarioLogado(false);
     setDropdownOpen(false);
+    setNomeUsuario("");
   };
 
   return (
@@ -63,7 +58,7 @@ const NavBar = () => {
             <div className="usuario-menu">
               <div className="usuario-topo" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 <div className="avatar" />
-                <span>Nome do Usuário</span>
+                <span>{localStorage.getItem("userName") || "Usuário"}</span>
                 <FiChevronDown size={20} />
               </div>
               {dropdownOpen && (

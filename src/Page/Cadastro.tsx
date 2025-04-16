@@ -50,15 +50,7 @@ const Cadastro: React.FC = () => {
     }
   };
   
-  const handleAppleSignIn = async () => {
-    try {
-      await signInWithApple();
-      navigate("/Home"); 
-    } catch (error) {
-      alert("Erro ao realizar login com Apple.");
-      console.error(error);
-    }
-  };
+  
 
   const handleFacebookSignIn = async () => {
     try {
@@ -101,9 +93,9 @@ const Cadastro: React.FC = () => {
       //salva o token no navegador 
       const token = await user.getIdToken();
       localStorage.setItem("firebaseToken", token);
-    
+      localStorage.setItem("userName", nome);
 
-      navigate("/Login");
+      navigate("/Home");
       console.log(user);
     } catch (error: any) {
       alert("Erro ao registrar. Verifique os dados e tente novamente.");
@@ -137,7 +129,7 @@ const Cadastro: React.FC = () => {
 
           <div className="social-login">
             <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} />
-            <SocialButton icon={appleIcon} alt="Apple" onClick={handleAppleSignIn} />
+          
             <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookSignIn} />
           </div>
 

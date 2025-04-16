@@ -101,7 +101,6 @@ const Login: React.FC = () => {
           {/* Login social */}
           <div className="social-login">
             <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} />
-            <SocialButton icon={appleIcon} alt="Apple" onClick={() => alert("Apple")} />
             <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookSignIn} />
           </div>
 

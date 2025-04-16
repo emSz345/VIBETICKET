@@ -43,8 +43,9 @@ const signInWithGoogle = async () => {
     //salva o token no navegador 
     const token = await user.getIdToken();
     localStorage.setItem("firebaseToken", token);
+    localStorage.setItem("userName", nome);
 
-    alert("Login com Google bem-sucedido!");
+    
   } catch (error) {
     console.error("Erro ao realizar login com Google", error);
     alert(`Erro ao realizar login com Google: ${error.message}`);
@@ -109,6 +110,7 @@ function realizarLoginComFacebook(resolve, reject) {
           //salva o token no navegador 
           const token = await user.getIdToken();
           localStorage.setItem("firebaseToken", token);
+          localStorage.setItem("userName", nome);
 
           resolve(user); 
         } catch (error) {
