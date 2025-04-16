@@ -1,0 +1,17 @@
+.social-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin: 5px;
+}
+  
+.social-icon {
+    width: 56px;
+    height: 56px;
+    padding: 12px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 13px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    
+}
