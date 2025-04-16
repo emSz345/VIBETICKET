@@ -8,24 +8,39 @@ interface InputProps {
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isValid?: boolean;
+  hasError?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({ type, placeholder, name, value, onChange }) => {
+const Input: React.FC<InputProps> = ({
+  type,
+  placeholder,
+  name,
+  value,
+  onChange,
+  isValid = false,
+  hasError = false,
+}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
+  // Aplica classes dinâmicas
+  let inputClass = "custom-input";
+  if (isValid) inputClass += " input-valid";
+  if (hasError) inputClass += " input-error";
+
   return (
     <div className="input-container">
       <input
-        className="custom-input"
+        className={inputClass}
         type={type === "password" && !isPasswordVisible ? "password" : "text"}
         placeholder={placeholder}
-        name={name} // nome do campo no input
-        value={value} // valor do campo
-        onChange={onChange} // manipulador de mudanças
+        name={name}
+        value={value}
+        onChange={onChange}
       />
       {type === "password" && (
         <button
