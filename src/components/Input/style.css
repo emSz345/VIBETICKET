@@ -24,12 +24,3 @@
   font-size: 20px;
   color: #007bff;
 }
-
-.input-valid {
-  border: 2px solid #28a745 !important; /* verde */
-  background-color: #f3fff5; /* opcional: um verdinho bem claro de fundo */
-}
-
-.input-error {
-  border: 2px solid red !important;
-}

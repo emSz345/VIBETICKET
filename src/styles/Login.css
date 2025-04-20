@@ -1,28 +1,11 @@
-.header-logo {
-  height: 130px;
-
-}
-
-.header {
-  width: 100%;
-  padding: 1px;
-  background: #333;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-}
-
 .login-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   background-color: #f4f4f4;
   min-height: 100vh;
-  padding-top: 130px; /* espaço para não cobrir o conteúdo com o header fixo */
-  align-items: center;
-  justify-content: center;
+  
 }
-
 
 .login-content {
   display: flex;
@@ -62,46 +45,17 @@
 .form-section label{
   font-size: 15px;
 }
-
-.login-title{
-  font-size: 18px;
-  font-weight: 600;
-  margin-left: 4px;
-  margin-bottom: -10px;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  color: #222;
-  letter-spacing: 0.3px;
-}
-
 input{
-  margin-bottom: 2px;
+  margin-bottom: 7px;
   left: 20px;
 }
-
 .Termos{
  color: black;
 }
 
-.login-container-error {
-  width: 100%;
-  margin-bottom: 10px;
-  margin-top: -15px;
-  display: flex;
-}
-
-.error {
-  color: red;
-  font-size: 12px;
-  margin: 0;
-  padding-left: 2px;
-  justify-content: left;
-
-}
-
-
 /* Título */
 .title {
-  font-size: 35px;
+  font-size: 28px;
   margin-bottom: 15px;
 }
 

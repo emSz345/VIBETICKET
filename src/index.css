@@ -37,9 +37,3 @@ code {
   scrollbar-width: thin;
   scrollbar-color: #007bff #ffffff;
 }
-
-.custom-input:-webkit-autofill {
-  box-shadow: 0 0 0 1000px #fff inset;
-  -webkit-text-fill-color: #000;
-  transition: background-color 5000s ease-in-out 0s;
-}
