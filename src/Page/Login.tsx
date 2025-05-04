@@ -11,7 +11,7 @@ import Button from "../components/Button/Button";
 import SocialButton from "../components/SocialButton/SocialButton";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-
+import { useEffect } from "react";
 import logo from "../assets/img-logo.png";
 import googleIcon from "../assets/logo-google.png";
 import facebookIcon from "../assets/logo-facebook.png";
@@ -23,6 +23,26 @@ const Login: React.FC = () => {
   const [senha, setSenha] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [senhaError, setSenhaError] = useState<string>("");
+  const [tentativas, setTentativas] = useState<number>(() => {
+    const stored = localStorage.getItem("loginTentativas");
+    return stored ? parseInt(stored) : 0;
+  });
+  const [bloqueado, setBloqueado] = useState<boolean>(false);
+
+
+  useEffect(() => {
+    if (tentativas >= 5) {
+      setBloqueado(true);
+      alert("Muitas tentativas falhas. Tente novamente em 30 segundos.");
+      setTimeout(() => {
+        setTentativas(0);
+        localStorage.removeItem("loginTentativas");
+        setBloqueado(false);
+      }, 30000);
+    }
+  }, [tentativas]);
+  
+  
 
   const navigate = useNavigate();
 
@@ -55,6 +75,13 @@ const Login: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+
+    if (bloqueado) {
+      alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
+      return;
+    }
+
+
     setEmailError("");
     setSenhaError("");
 
@@ -103,6 +130,13 @@ const Login: React.FC = () => {
         console.error(error);
       }
     }
+
+    setTentativas(prev => {
+      const novoValor = prev + 1;
+      localStorage.setItem("loginTentativas", novoValor.toString());
+      return novoValor;
+    });
+
   };
 
   return (

@@ -29,12 +29,19 @@ const Cadastro: React.FC = () => {
     senha: "",
     confirmSenha: "",
   });
+  const [termosAceitos, setTermosAceitos] = useState(false);
+  const [termosPopupAberto, setTermosPopupAberto] = useState(false);
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const navigate = useNavigate();
 
   const validate = () => {
     const newErrors: Partial<FormData> = {};
+
+    if (!termosAceitos) {
+      alert("Você deve aceitar os termos e políticas para continuar.");
+      return false;
+    }
 
     if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(formData.nome)) {
       newErrors.nome = "Nome deve conter pelo menos 10 letras e nenhum número.";
@@ -59,6 +66,26 @@ const Cadastro: React.FC = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const handleTermosChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const isChecked = e.target.checked;
+    setTermosAceitos(isChecked);
+
+    if (isChecked) {
+      window.open("/Termos", "_blank", "width=600,height=600");
+      setTermosPopupAberto(true);
+    }
+  };
+
+  const abrirTermos = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    if (!termosPopupAberto) {
+      window.open("/Termos", "_blank", "width=600,height=600");
+      setTermosPopupAberto(true);
+    }
+  };
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -171,9 +198,13 @@ const Cadastro: React.FC = () => {
           </div>
 
           <div className="radio-container">
-            <input type="radio" id="termos" name="termos" required />
+            <input type="checkbox"
+              id="termos"
+              name="termos"
+              checked={termosAceitos}
+              onChange={handleTermosChange} />
             <label htmlFor="termos">
-              Eu concordo com os <Link to="/Termos" className="Termos">termos & políticas</Link>
+              Eu concordo com os <a href="/Termos" onClick={abrirTermos} className="Termos">termos & políticas</a>
             </label>
           </div>
 
