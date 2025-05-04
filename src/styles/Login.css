@@ -1,79 +1,114 @@
+/* ========================
+   CONTAINER GERAL
+======================== */
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; /* Centraliza verticalmente */
   background-color: #f4f4f4;
   min-height: 100vh;
-  
+  padding-top: 140px;
 }
 
+/* ========================
+   HEADER FIXO NO TOPO
+======================== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #333;
+  padding: 10px 0;
+  display: flex;
+  z-index: 1000;
+}
+
+.header-logo {
+  height: 130px;
+}
+
+
+/* ========================
+   CONTEÚDO CENTRALIZADO
+======================== */
 .login-content {
   display: flex;
-  flex-direction: row;
   width: 80%;
   max-width: 900px;
-  margin-top: 20px;
+  margin: 40px 0;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   background: white;
   border-radius: 10px;
   overflow: hidden;
 }
 
-/* Área da logo */
+/* ========================
+   ÁREA DA LOGO
+======================== */
 .logo-section {
   width: 40%;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #333;
+  height: auto;
 }
 
 .logo-image {
   width: 80%;
   max-width: 200px;
+  object-fit: contain;
 }
-/* text-align: center; */
-/* Área do formulário */
+
+/* ========================
+   ÁREA DO FORMULÁRIO
+======================== */
 .form-section {
   width: 60%;
   padding: 20px;
-  
 }
-.form-section p,h2,Button{
+
+.form-section p,
+.form-section h2,
+.form-section Button {
   text-align: center;
 }
-.form-section label{
+
+.form-section label {
   font-size: 15px;
 }
-input{
+
+input {
   margin-bottom: 7px;
   left: 20px;
 }
-.Termos{
- color: black;
-}
 
-/* Título */
-.title {
-  font-size: 28px;
-  margin-bottom: 15px;
-}
 
-/* Texto "ou" */
-.ou {
-  color: #757575;
-  margin-top: 10px;
-}
-
-/* Botões sociais */
-.social-login {
+/* ========================
+   estilo error
+======================== */
+.login-container-error {
   display: flex;
-  justify-content: center;
-  margin: 15px 0;
-  gap: 15px;
+  margin-top: -20px;
+  margin-left: 5px;
+  margin-bottom: 20px;
 }
 
-/* Link de criar conta */
+.login-container-error .error {
+  font-size: 13px;
+  color: red;
+}
+
+
+/* ========================
+   LINKS E TERMOS
+======================== */
+.Termos {
+  color: black;
+}
+
 .crie-conta {
   color: #007bff;
   font-weight: bold;
@@ -85,8 +120,33 @@ input{
   opacity: 0.6;
 }
 
+/* ========================
+   TÍTULOS E TEXTOS
+======================== */
+.login-bemvido {
+  font-size: 28px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: 25px;
+}
 
-/* = RESPONSIVIDADE = */
+.ou {
+  color: #757575;
+  margin-top: 10px;
+}
+
+/* ========================
+  LOGIN SOCIAL
+======================== */
+.social-login {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+  gap: 15px;
+}
+
+/* ========================
+   RESPONSIVIDADE
+======================== */
 @media (max-width: 768px) {
   .login-content {
     flex-direction: column;

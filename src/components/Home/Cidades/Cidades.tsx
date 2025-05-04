@@ -7,10 +7,11 @@ import rj from '../../../assets/img-rj.jpg';
 const Cidades = () => {
     const cidades = [
         { nome: "São Paulo", img: sp },
-        { nome: "Bahia", img: sp },
-        { nome: "Ribeirão Preto", img: rp },
-        { nome: "Rio de Janeiro", img: rj },
-        { nome: "Taquaritinga", img: sp },
+        { nome: "Rio de Janeiro", img: sp },
+        { nome: "Maranhão", img: rp },
+        { nome: "Minas Gerais", img: rj },
+        { nome: "Pará", img: sp },
+        { nome: "Paraná", img: sp },
     ];
 
     return (

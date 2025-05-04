@@ -5,6 +5,8 @@
   padding: 20px 40px;
   bottom: 0;
   left: 0;
+  position: relative;
+  z-index: 10;
 }
 
 

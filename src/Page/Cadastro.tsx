@@ -3,7 +3,6 @@ import { auth, createUserWithEmailAndPassword } from "../firebase";
 import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
 import SocialButton from "../components/SocialButton/SocialButton";
-import Header from "../components/Header/Header";
 
 import { signInWithGoogle, signInWithFacebook } from "../firebase";
 
@@ -98,14 +97,18 @@ const Cadastro: React.FC = () => {
 
   return (
     <div className="login-container">
-      <Header />
+      <header className="header">
+        <Link to="/Home">
+          <img src={logo} alt="Logo" className="header-logo" />
+        </Link>
+      </header>
       <div className="login-content">
         <div className="logo-section">
           <img src={logo} alt="Logo" className="logo-image" />
         </div>
 
         <div className="form-section">
-          <h2 className="title">Bem-vindo</h2>
+          <h2 className="login-bemvido">Seja bem-vindo</h2>
 
           <h3 className="login-title">Nome completo</h3>
           <Input

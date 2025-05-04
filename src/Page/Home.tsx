@@ -29,23 +29,21 @@ function Home() {
 
                 <Carrossel />
 
-                <Cidades />
+                <EventCard />
 
+                <Cidades />
+                
                 <Banner />
 
                 <h3 className='title-show'>Shows...</h3>
 
                 <Detalhes />
 
-                <br /> <br />
-
-                <EventCard />
-
                 <EventBanner />
 
-                <Rodape />
-
                 <Bolinhas />
+                
+                <Rodape />
             </main>
         </div>
     )

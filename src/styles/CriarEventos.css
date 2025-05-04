@@ -1,415 +1,279 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.criar-evento-conteudo {
-  max-width: 80%;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-}
-
-.criar-evento-title {
-  font-size: 16px;
-  color: #333;
-  font-weight: bold;
-  margin-top: 30px;
-  margin-bottom: 20px;
-  margin-left: 7%;
-}
-
-.campo {
-  margin-bottom: 20px;
-}
-
-.colunas {
+/* === INÍCIO HEADER === */
+.criar-evento-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
   display: flex;
-  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  border-bottom: 1px solid #ccc;
+  z-index: 1000;
 }
 
-.coluna {
-  flex: 1;
+.criar-header-botoes {
   display: flex;
-  flex-direction: column;
   gap: 15px;
 }
 
-.campo-item {
+.criar-titulo {
+  font-size: 25px;
+  font-family: Arial;
+}
+
+.criar-dubtitle {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.criar-btn-enviar {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.criar-btn-enviar:hover {
+  background-color: #45a049;
+}
+
+.btn-salvar-sair {
+  background-color: #f0ad4e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-salvar-sair:hover {
+  background-color: #ec971f;
+}
+/* === FIM HEADER === */
+
+/* === INÍCIO CONTEÚDO PRINCIPAL === */
+.criar-conteudo-principal {
+  padding: 40px 60px;
+}
+
+.criar-form {
+  width: 100%;
+  max-width: 80%;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+/* === FIM CONTEÚDO PRINCIPAL === */
+
+/* === INÍCIO BLOCO PADRÃO (SEÇÃO) === */
+.informacoes-basicas-container {
+  width: 100%;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+}
+
+.criar-Informaçao {
+  display: flex;
+}
+
+.informacoes-basicas-container h2,
+.criar-Informaçao h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #027bff;
+  font-weight: bold;
+}
+/* === FIM BLOCO PADRÃO (SEÇÃO) === */
+
+/* === INÍCIO CAMPOS GERAIS === */
+.campo {
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }
 
-.campo-item label {
-  margin-bottom: 5px;
+.campo label {
+  margin-bottom: 8px;
   font-weight: bold;
   color: #333;
 }
 
-.campo-item input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  font-size: 16px;
-}
-
-.campo-item input:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Estilo da seção Descrição */
-.criar-evento-descricao {
-  max-width: 80%;
-  margin: 30px auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-}
-
-.descricao {
-  margin-top: 30px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-.descricao-flex {
-  display: flex;
-}
-
-.descricao h2 {
-  margin-bottom: 10px;
-  color: #333;
-  font-size: 20px;
-}
-
-.descricao .subtitle {
-  margin-bottom: 15px;
-  color: #666;
-  font-size: 10px;
-  margin-top: 14px;
-  margin-left: 15px;
-  margin-right: 15px;
-}
-
-.gerar-descricao-ia {
-  padding: 10px 20px;
-  background: rgb(63, 94, 251);
-  background: radial-gradient(
-    circle,
-    rgba(63, 94, 251, 1) 0%,
-    rgba(252, 70, 107, 1) 100%
-  );
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-bottom: 15px;
-  margin-right: 20%;
-}
-
-.gerar-descricao-ia:hover {
-  background: rgb(252, 70, 107);
-  background: radial-gradient(
-    circle,
-    rgba(252, 70, 107, 1) 52%,
-    rgba(63, 94, 251, 1) 85%
-  );
-}
-
-.botoes-formatacao {
-  display: flex;
-  gap: 10px; /* Espaçamento entre os botões */
-  margin-bottom: 15px;
-}
-
-.botoes-formatacao button {
-  padding: 8px 12px;
-  background-color: #f1f1f1;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.botoes-formatacao button:hover {
-  background-color: #ddd;
-}
-
-.input-descricao {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  font-size: 14px;
-  resize: vertical; /* Permite redimensionar verticalmente */
-}
-
-.input-descricao:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Estilo da seção Ingresso */
-.criar-evento-ingresso {
-  max-width: 80%;
-  margin: 30px auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-}
-
-.adicionar-ingresso {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  text-align: center; /* Centraliza o conteúdo */
-}
-
-.adicionar-ingresso-title {
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 18px;
-}
-
-.adicionar-ingresso-btn {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.adicionar-ingresso-btn:hover {
-  background-color: #0056b3;
-}
-
-.criar-evento-imagem {
-  max-width: 80%;
-  margin: 30px auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-}
-
-.imagem-evento {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  text-align: center; /* Centraliza o conteúdo */
-}
-
-.imagem-evento-title {
-  margin-bottom: 10px;
-  color: #333;
-  font-size: 18px;
-}
-
-.imagem-evento-subtitle {
-  margin-bottom: 15px;
-  color: #666;
-  font-size: 14px;
-}
-
-.imagem-evento-btn {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.imagem-evento-btn:hover {
-  background-color: #0056b3;
-}
-
-.imagem-evento-preview {
-  margin-top: 15px;
-}
-
-.imagem-evento-preview-img {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-/* Estilo da seção Avançado */
-.criar-evento-avancado {
-  max-width: 80%;
-  margin: 30px auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-}
-
-.avancado {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
-
-.avancado1 {
-  display: flex;
-  gap: 10px;
-}
-
-.avancado-title {
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 18px;
-}
-
-.avancado-toggle {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.btn-premium {
-  padding: 10px 20px;
-  background: rgb(63, 94, 251);
-  background: radial-gradient(
-    circle,
-    rgba(63, 94, 251, 1) 0%,
-    rgba(252, 70, 107, 1) 100%
-  );
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-bottom: 15px;
-  margin-right: 20%;
-}
-
-.btn-premium:hover {
-  background: rgb(252, 70, 107);
-  background: radial-gradient(
-    circle,
-    rgba(252, 70, 107, 1) 52%,
-    rgba(63, 94, 251, 1) 85%
-  );
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #007bff;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.toggle-label {
-  font-size: 14px;
-  color: #333;
-}
-
-.input-avancado {
-  width: 100%;
+.campo input[type="text"],
+.campo input[type="url"],
+.campo input[type="number"],
+.campo select {
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.input-avancado:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.avancado-botao-testar {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
   border-radius: 5px;
-  font-size: 14px;
+  margin-top: 10px;
+  background-color: #f9f9f9;
+  font-size: 15px;
+  width: 100%;
+}
+
+.input-ingresso {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-size: 15px;
+}
+/* === FIM CAMPOS GERAIS === */
+
+/* === INÍCIO INPUT FILE/IMAGEM === */
+.upload-imagem {
+  border: 2px dashed #aaa;
+  padding: 30px;
+  text-align: center;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  position: relative;
 }
 
-.avancado-botao-testar:hover {
-  background-color: #0056b3;
+.input-file {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+/* === FIM INPUT FILE/IMAGEM === */
+
+/* === INÍCIO DESCRIÇÃO RICA === */
+.criar-descricao {
+  min-height: 200px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+}
+/* === FIM DESCRIÇÃO RICA === */
+
+/* === INÍCIO DATA E HORA === */
+.input-data,
+.input-hora {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+/* === FIM DATA E HORA === */
+
+/* === INÍCIO DOAÇÃO === */
+.doacao-container {
+  margin-top: 30px;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 }
 
-.avancado-subtitle {
+.doacao-container p {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #444;
+}
+
+.botoes-doacao {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.botoes-doacao button {
+  padding: 10px 20px;
+  border: 1px solid #4caf50;
+  background-color: white;
+  color: #4caf50;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.botoes-doacao button.ativo,
+.botoes-doacao button:hover {
+  background-color: #4caf50;
+  color: white;
+}
+
+.campo-doacao {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo-doacao input {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.criar-doacao-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #027bff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.criar-doacao-descricao {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+  background-color: #f9f9f9;
+  padding: 1rem 1.2rem;
+  border-left: 4px solid #4caf50;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+/* === FIM DOAÇÃO === */
+
+/* === INÍCIO INGRESSOS === */
+.ingresso-grid {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.ingresso-col {
+  flex: 1 1 48%;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.subtitulo {
+  font-size: 20px;
+  font-weight: 600;
   margin-bottom: 10px;
-  color: #666;
-  font-size: 14px;
+  color: #444;
 }
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 768px) {
+  .ingresso-col {
+    flex: 1 1 100%;
+  }
+}
+/* === FIM INGRESSOS === */

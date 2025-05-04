@@ -1,238 +1,251 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import '../styles/CriarEventos.css';
-
+import { NumericFormat } from 'react-number-format';
 import Rodape from '../components/Footer/Footer';
 import NavBar from '../components/Home/NavBar/NavBar';
+import { MdAddPhotoAlternate } from 'react-icons/md';
 
 function CriarEventos() {
-    const [imagemSelecionada, setImagemSelecionada] = useState<File | null>(null);
-    const [toggleAtivo, setToggleAtivo] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [descricao, setDescricao] = useState('');
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [dataInicio, setDataInicio] = useState('');
+  const [horaInicio, setHoraInicio] = useState('');
+  const [querDoar, setQuerDoar] = useState<boolean | null>(null);
+  const [valorDoacao, setValorDoacao] = useState('');
 
-    const handleFileInputClick = (id: string) => {
-        const fileInput = document.getElementById(id);
-        if (fileInput) {
-            fileInput.click();
-        }
-    };
+  const handleInput = () => {
+    if (editorRef.current) {
+      setDescricao(editorRef.current.innerHTML);
+    }
+  };
 
-    const handleToggle = () => {
-        setToggleAtivo(!toggleAtivo);
-    };
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            console.log("Arquivo selecionado:", file.name);
-            setImagemSelecionada(file);
-        }
-    };
-
-    return (
-        <div>
-            <NavBar />
-            <h3 className='criar-evento-title'>Críe seu evento</h3>
-            <div className="criar-evento-conteudo">
-                <div className="campo">
-                    <div className="colunas">
-                        {/* Coluna 1 */}
-                        <div className="coluna">
-                            <div className="campo-item">
-                                <label>Nome do evento</label>
-                                <input type="text" placeholder="Digite o nome do evento" />
-                            </div>
-
-                            <div className="campo-item">
-                                <label>Local do evento</label>
-                                <input type="text" placeholder="Digite o local do evento" />
-                            </div>
-
-                            <div className="campo-item">
-                                <label>Link do endereço Google</label>
-                                <input type="url" placeholder="Cole o link do Google Maps" />
-                            </div>
-                        </div>
-
-                        {/* Coluna 2 */}
-                        <div className="coluna">
-                            <div className="campo-item">
-                                <label>Data e hora de início</label>
-                                <input type="datetime-local" />
-                            </div>
-
-                            <div className="campo-item">
-                                <label>Data/hora de finalização</label>
-                                <input type="datetime-local" />
-                            </div>
-
-                            <div className="campo-item">
-                                <label>Categorias do evento</label>
-                                <input type="text" placeholder="Ex: Festa, Workshop, Palestra" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="criar-evento-descricao">
-                <div className="descricao">
-                    <div className='descricao-flex'>
-                        <h2>Descrição do evento</h2>
-                        <p className="subtitle">Máx 40 letras</p>
-
-                        {/* Botão para gerar descrição com IA */}
-                        <button className="gerar-descricao-ia">
-                            Gerar descrição com IA
-                        </button>
-
-                        {/* Botões de formatação */}
-                        <div className="botoes-formatacao">
-                            <button>F-</button>
-                            <button>F+</button>
-                            <button>S</button>
-                            <button>I</button>
-                            <button>N</button>
-                        </div>
-                    </div>
-
-                    <textarea
-                        className="input-descricao"
-                        placeholder="Digite a descrição do evento..."
-                        rows={6}
-                    />
-                </div>
-            </div>
-            <div className='criar-evento-ingresso'>
-                <div className="campo">
-                    <div className="colunas">
-                        {/* Coluna 1 */}
-                        <div className="coluna">
-                            <div className="campo-item">
-                                <label>Título do ingresso</label>
-                                <input type="text" placeholder="Digite o título do ingresso" />
-                            </div>
-
-                            <div className="campo-item">
-                                <label>Quantidade de ingressos disponíveis</label>
-                                <input type="number" placeholder="Digite a quantidade" min="0" />
-                            </div>
-                        </div>
-
-                        {/* Coluna 2 */}
-                        <div className="coluna">
-                            <div className="campo-item">
-                                <label>Valor do ingresso</label>
-                                <input type="number" placeholder="Digite o valor" min="0" step="0.01" />
-                            </div>
-
-                            <div className="campo-item">
-                                <label>Limite de data de venda</label>
-                                <input type="datetime-local" />
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div className='adicionar-ingresso'>
-                    <h3 className='adicionar-ingresso-title'>Adicionar Tipo de Ingresso</h3>
-                    <button
-                        className='adicionar-ingresso-btn'
-                        onClick={() => handleFileInputClick('file-input')}
-                    >
-                        Adicionar Tipo de Ingresso
-                    </button>
-                    <input
-                        type="file"
-                        id="file-input"
-                        style={{ display: 'none' }}
-                        onChange={handleFileChange}
-                    />
-                </div>
-
-            </div>
-            <div className='criar-evento-imagem'>
-                <div className='imagem-evento'>
-                    <h3 className='imagem-evento-title'>Imagem do Evento</h3>
-                    <p className='imagem-evento-subtitle'>Adicione uma logo ou imagem representativa do evento.</p>
-
-                    <button
-                        className='imagem-evento-btn'
-                        onClick={() => handleFileInputClick('file-input-imagem')}
-                    >
-                        Adicionar Imagem
-                    </button>
-                    <input
-                        type="file"
-                        id="file-input-imagem"
-                        accept=".jpg, .jpeg, .png"
-                        style={{ display: 'none' }}
-                        onChange={handleFileChange}
-                    />
-
-                    {/* Exibição da imagem selecionada */}
-                    <div className='imagem-evento-preview'>
-                        {imagemSelecionada && (
-                            <img
-                                src={URL.createObjectURL(imagemSelecionada)}
-                                alt="Preview da Imagem"
-                                className='imagem-evento-preview-img'
-                            />
-                        )}
-                    </div>
-                </div>
-            </div>
-            <div className='criar-evento-avancado'>
-                <div className='avancado'>
-                    <div className='avancado1'>
-                        <h3 className='avancado-title'>Avançado</h3>
-
-                        <div className='avancado-toggle'>
-                            <label className='toggle-switch'>
-                                <input
-                                    type="checkbox"
-                                    checked={toggleAtivo}
-                                    onChange={handleToggle}
-                                />
-                                <span className='slider'></span>
-                            </label>
-                            <span className='toggle-label'>{toggleAtivo ? 'ON' : 'OFF'}</span>
-                        </div>
-                        <button className='btn-premium'>Premium</button>
-                    </div>
-
-                    <div className="colunas">
-                        {/* Coluna 1 */}
-                        <div className="coluna">
-                            <div className="campo-item">
-                                <label>Exemplo para resposta da API</label>
-                                <p className='avancado-subtitle'>JSON</p>
-                                <textarea
-                                    className="input-avancado"
-                                    placeholder="Cole o JSON de exemplo aqui..."
-                                    rows={6}
-                                />
-                                <button className='avancado-botao-testar'>
-                                    Testar API
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Coluna 2 */}
-                        <div className="coluna">
-                            <div className="campo-item">
-                                <label>Link para resposta da API</label>
-                                <input
-                                    type="text"
-                                    placeholder="Cole o link da API aqui..."
-                                    className="input-avancado"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <Rodape />
+  return (
+    <div>
+      <NavBar />
+      <header className="criar-evento-header">
+        <h1 className="criar-titulo">
+          Crie <span className="criar-dubtitle">seu evento</span>
+        </h1>
+        <div className="criar-header-botoes">
+          <button className="btn-salvar-sair">Salvar / Sair</button>
+          <button className="criar-btn-enviar">Enviar para Análise</button>
         </div>
-    );
+      </header>
+
+      <div className="criar-form">
+        {/* 1. Informações Básicas */}
+        <div className="informacoes-basicas-container">
+          <div className="criar-Informaçao">
+            <h2>1. Informações básicas</h2>
+          </div>
+
+          <div className="campo">
+            <label htmlFor="nome-evento">Nome do evento</label>
+            <input type="text" id="nome-evento" placeholder="Digite o nome do evento" />
+          </div>
+
+          <div className="campo">
+            <label htmlFor="imagem-evento">Imagem do evento</label>
+            <div className="upload-imagem">
+              {image ? (
+                <p>{image.name}</p>
+              ) : (
+                <>
+                  <MdAddPhotoAlternate size={55} color="#333" />
+                  <p>Arraste ou clique para adicionar a imagem</p>
+                  <input type="file" id="imagem-evento" className="input-file" />
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="campo">
+            <label htmlFor="categoria-evento">Categoria do evento</label>
+            <select id="categoria-evento">
+              <option value="">Selecione uma categoria</option>
+              <option value="show">Funk</option>
+              <option value="festa">sertanejo</option>
+              <option value="palestra">Palestra</option>
+              <option value="esporte">Esporte</option>
+            </select>
+          </div>
+        </div>
+
+        {/* 2. Descrição */}
+        <div className="informacoes-basicas-container">
+          <div className="criar-Informaçao">
+            <h2>2. Descrição</h2>
+          </div>
+          <div className="campo">
+            <label htmlFor="descricao-evento">Descrição do evento</label>
+            <textarea
+              id="descricao-evento"
+              placeholder="Digite aqui a descrição do evento..."
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              className="criar-descricao"
+            />
+          </div>
+        </div>
+
+        {/* 3. Local */}
+        <div className="informacoes-basicas-container">
+          <div className="criar-Informaçao">
+            <h2>3. Local do seu evento</h2>
+          </div>
+
+          <div className="campo">
+            <label htmlFor="rua-evento">Rua</label>
+            <input type="text" id="rua-evento" placeholder="Digite o nome da rua" />
+          </div>
+
+          <div className="campo">
+            <label htmlFor="cidade-evento">Cidade</label>
+            <input type="text" id="cidade-evento" placeholder="Digite a cidade" />
+          </div>
+
+          <div className="campo">
+            <label htmlFor="estado-evento">Estado</label>
+            <input type="text" id="estado-evento" placeholder="Digite o estado" />
+          </div>
+
+          <div className="campo">
+            <label htmlFor="link-maps">Link do Local no Google Maps</label>
+            <input type="url" id="link-maps" placeholder="Cole o link do local no Google Maps" />
+          </div>
+        </div>
+
+        {/* 4. Data e Hora */}
+        <div className="informacoes-basicas-container">
+          <div className="criar-Informaçao">
+            <h2>4. Data e Hora de Início</h2>
+          </div>
+
+          <div className="campo">
+            <label htmlFor="data-inicio">Data de Início do Evento</label>
+            <input
+              type="date"
+              id="data-inicio"
+              value={dataInicio}
+              className="input-data"
+            />
+          </div>
+
+          <div className="campo">
+            <label htmlFor="hora-inicio">Hora de Início do Evento</label>
+            <input
+              type="time"
+              id="hora-inicio"
+              value={horaInicio}
+              className="input-hora"
+            />
+          </div>
+        </div>
+
+        {/* 5. Ingressos */}
+        <div className="informacoes-basicas-container">
+          <div className="criar-Informaçao">
+            <h2>5. Ingressos</h2>
+          </div>
+
+          <div className="ingresso-grid">
+            <div className="ingresso-col">
+              <h3 className="subtitulo">Tipos de ingresso:</h3>
+              <div className="campo">
+                <label htmlFor="preco-inteira">Inteira (R$)</label>
+                <NumericFormat
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  prefix="R$ "
+                  decimalScale={2}
+                  fixedDecimalScale
+                  allowNegative={false}
+                  placeholder="Valor"
+                  className="input-ingresso"
+                />
+              </div>
+
+              <div className="campo">
+                <label htmlFor="preco-meia">Meia (R$)</label>
+                <NumericFormat
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  prefix="R$ "
+                  decimalScale={2}
+                  fixedDecimalScale
+                  allowNegative={false}
+                  placeholder="Valor"
+                  className="input-ingresso"
+                />
+              </div>
+            </div>
+
+            <div className="ingresso-col">
+              <h3 className="subtitulo">Detalhes:</h3>
+              <div className="campo">
+                <label htmlFor="quantidade-ingresso">Quantidade de ingressos</label>
+                <input type="number" id="quantidade-ingresso" placeholder="Digite a quantidade" />
+              </div>
+
+              <div className="campo">
+                <label htmlFor="inicio-venda">Início data/hora da venda</label>
+                <input type="datetime-local" id="inicio-venda" />
+              </div>
+
+              <div className="campo">
+                <label htmlFor="fim-venda">Fim data/hora da venda</label>
+                <input type="datetime-local" id="fim-venda" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 6. Doação */}
+        <div className="informacoes-basicas-container">
+          <h2 className="criar-doacao-title">6. Deseja fazer uma doação?</h2>
+          <p className="criar-doacao-descricao">
+            Você pode contribuir com uma doação para uma instituição beneficente. Todo o valor arrecadado será destinado a causas sociais selecionadas pelos organizadores. E mais: ao doar, seu nome (ou empresa) ganhará um lugar de destaque no topo do nosso site, reconhecendo seu apoio e solidariedade.
+          </p>
+
+          <div className="botoes-doacao">
+            <button
+              onClick={() => setQuerDoar(true)}
+              className={querDoar === true ? 'ativo' : ''}
+            >
+              Sim
+            </button>
+            <button
+              onClick={() => setQuerDoar(false)}
+              className={querDoar === false ? 'ativo' : ''}
+            >
+              Não
+            </button>
+          </div>
+
+          {querDoar && (
+            <div className="campo-doacao">
+              <label htmlFor="valor-doacao">Valor da doação</label>
+              <NumericFormat
+                id="valor-doacao"
+                value={valorDoacao}
+                onValueChange={(values) => setValorDoacao(values.value)}
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="R$ "
+                decimalScale={2}
+                fixedDecimalScale
+                allowNegative={false}
+                placeholder="R$ 0,00"
+                className="input-doacao"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+      <Rodape />
+    </div>
+  );
 }
 
 export default CriarEventos;

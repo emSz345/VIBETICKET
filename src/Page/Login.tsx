@@ -117,7 +117,7 @@ const Login: React.FC = () => {
           <img src={logo} alt="Logo" className="logo-image" />
         </div>
         <div className="form-section">
-          <h2 className="title">Bem-vindo</h2>
+          <h2 className="login-bemvido">Bem-vindo</h2>
 
           <h3 className="login-title">Email</h3>
           <Input

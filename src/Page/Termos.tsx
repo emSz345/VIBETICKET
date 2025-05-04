@@ -1,11 +1,9 @@
 import Footer from "../components/Footer/Footer";
-import Header from "../components/Header/Header";
 import '../styles/Termos.css'
 
 function Termos() {
     return (
         <>
-            <Header />
             <div className="container-title">
                 <h3>Termos de uso da plataforma <span>B4Y</span></h3>
             </div>
