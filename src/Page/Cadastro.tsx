@@ -8,7 +8,7 @@ import { signInWithGoogle, signInWithFacebook } from "../firebase";
 
 import "../styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
-
+import TermosContent from './TermosContent'
 import logo from "../assets/img-logo.png";
 import googleIcon from "../assets/logo-google.png";
 import facebookIcon from "../assets/logo-facebook.png";
@@ -31,6 +31,11 @@ const Cadastro: React.FC = () => {
   });
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [termosPopupAberto, setTermosPopupAberto] = useState(false);
+  const [mostrarTermos, setMostrarTermos] = useState(false);
+
+  const fecharModal = () => {
+    setMostrarTermos(false);
+  };
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const navigate = useNavigate();
@@ -202,10 +207,29 @@ const Cadastro: React.FC = () => {
               id="termos"
               name="termos"
               checked={termosAceitos}
-              onChange={handleTermosChange} />
+              onChange={(e) => {
+                setTermosAceitos(e.target.checked);
+                if (e.target.checked) setMostrarTermos(true); // abre o modal ao marcar
+              }} />
             <label htmlFor="termos">
-              Eu concordo com os <a href="/Termos" onClick={abrirTermos} className="Termos">termos & políticas</a>
+              Eu concordo com os  <a href="#"  onClick={(e) => {
+                e.preventDefault(); // Não faz o redirecionamento
+                setMostrarTermos(true); // Exibe os termos ao clicar no link
+              }}
+                className="Termos"
+              >
+                termos & políticas
+              </a>
             </label>
+            {mostrarTermos && (
+              <div className="modal">
+                <div className="modal-content">
+                  <button className="close-button"></button>
+                  <TermosContent onClose={fecharModal} />
+
+                </div>
+              </div>
+            )}
           </div>
 
           <Button text="criar minha conta" onClick={handleSubmit} />

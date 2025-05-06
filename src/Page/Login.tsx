@@ -23,6 +23,11 @@ const Login: React.FC = () => {
   const [senha, setSenha] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [senhaError, setSenhaError] = useState<string>("");
+  const [tempoBloqueado, setTempoBloqueado] = useState(100000);
+  const [falhas, setFalhas] = useState<number>(() => {
+    const stored = localStorage.getItem("loginFalhas");
+    return stored ? parseInt(stored) : 0;
+  });
   const [tentativas, setTentativas] = useState<number>(() => {
     const stored = localStorage.getItem("loginTentativas");
     return stored ? parseInt(stored) : 0;
@@ -33,12 +38,24 @@ const Login: React.FC = () => {
   useEffect(() => {
     if (tentativas >= 5) {
       setBloqueado(true);
-      alert("Muitas tentativas falhas. Tente novamente em 30 segundos.");
+
+      let tempo = tempoBloqueado;
+
+      alert("Muitas tentativas falhas. Tente novamente em "+ Math.floor(tempoBloqueado / 1000 / 60) + " minuto.");
+      if (falhas === 1) {
+        tempo = 500000 * (falhas + 1);
+      setTempoBloqueado(tempo);
+      }
       setTimeout(() => {
         setTentativas(0);
         localStorage.removeItem("loginTentativas");
+        setFalhas(prev => {
+          const novoValor = prev + 1;
+          localStorage.setItem("loginFalhas", novoValor.toString());
+          return novoValor;
+        });
         setBloqueado(false);
-      }, 30000);
+      }, tempo);
     }
   }, [tentativas]);
   
@@ -178,6 +195,7 @@ const Login: React.FC = () => {
            {senhaError && <p className="error">{senhaError}</p>}
            </div>
           
+          <p>Esqueceu sua senha? <span></span></p>
 
           <Button text="Entrar" onClick={handleSubmit} />
 
