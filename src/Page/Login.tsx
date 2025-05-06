@@ -33,31 +33,32 @@ const Login: React.FC = () => {
     return stored ? parseInt(stored) : 0;
   });
   const [bloqueado, setBloqueado] = useState<boolean>(false);
-
+  const [tempoRestante, setTempoRestante] = useState<number>(0);
 
   useEffect(() => {
-    if (tentativas >= 5) {
+    const storedUnlockTime = localStorage.getItem("unlockTime");
+    const now = Date.now();
+  
+    if (storedUnlockTime && parseInt(storedUnlockTime) > now) {
       setBloqueado(true);
-
-      let tempo = tempoBloqueado;
-
-      alert("Muitas tentativas falhas. Tente novamente em "+ Math.floor(tempoBloqueado / 1000 / 60) + " minuto.");
-      if (falhas === 1) {
-        tempo = 500000 * (falhas + 1);
-      setTempoBloqueado(tempo);
-      }
-      setTimeout(() => {
-        setTentativas(0);
-        localStorage.removeItem("loginTentativas");
-        setFalhas(prev => {
-          const novoValor = prev + 1;
-          localStorage.setItem("loginFalhas", novoValor.toString());
-          return novoValor;
-        });
+      const timeLeft = parseInt(storedUnlockTime) - now;
+      setTempoRestante(timeLeft);
+  
+      const timeout = setTimeout(() => {
         setBloqueado(false);
-      }, tempo);
+        setTentativas(0);
+        setFalhas(prev => {
+          const novo = prev + 1;
+          localStorage.setItem("loginFalhas", novo.toString());
+          return novo;
+        });
+        localStorage.removeItem("loginTentativas");
+        localStorage.removeItem("unlockTime");
+      }, timeLeft);
+  
+      return () => clearTimeout(timeout);
     }
-  }, [tentativas]);
+  }, []);
   
   
 
@@ -151,6 +152,23 @@ const Login: React.FC = () => {
     setTentativas(prev => {
       const novoValor = prev + 1;
       localStorage.setItem("loginTentativas", novoValor.toString());
+    
+      if (novoValor >= 5) {
+        const falhasAtual = falhas + 1;
+        const minutosBloqueio = 1 * falhasAtual; // Aumenta progressivamente: 1min, 2min, 3min...
+    
+        const tempo = minutosBloqueio * 60 * 1000;
+        const desbloqueio = Date.now() + tempo;
+    
+        localStorage.setItem("unlockTime", desbloqueio.toString());
+    
+        setBloqueado(true);
+        setTempoRestante(tempo);
+        alert(`Muitas tentativas falhas. Tente novamente em ${minutosBloqueio} minuto(s).`);
+    
+        setFalhas(falhasAtual);
+      }
+    
       return novoValor;
     });
 
@@ -197,7 +215,8 @@ const Login: React.FC = () => {
           
           <p>Esqueceu sua senha? <span></span></p>
 
-          <Button text="Entrar" onClick={handleSubmit} />
+          <Button text="Entrar" color="Blue" onClick={handleSubmit} />
+   
 
           <p className="ou">ou</p>
 

@@ -224,7 +224,7 @@ const Cadastro: React.FC = () => {
             {mostrarTermos && (
               <div className="modal">
                 <div className="modal-content">
-                  <button className="close-button"></button>
+                  <button className="close-button" ></button>
                   <TermosContent onClose={fecharModal} />
 
                 </div>
@@ -232,7 +232,7 @@ const Cadastro: React.FC = () => {
             )}
           </div>
 
-          <Button text="criar minha conta" onClick={handleSubmit} />
+          <Button color="Blue" text="criar minha conta" onClick={handleSubmit} />
 
           <p className="ou">ou</p>
 

@@ -96,8 +96,15 @@ const NavBar = () => {
         </div>
 
         <div className={`home-menu-links ${menuOpen ? 'active' : ''}`}>
-          <Link to="/Categorias">CATEGORIAS</Link>
+        {!usuarioLogado ? (
+          <div>
+            <Link to="/Login">CRIAR EVENTOS</Link>
+          </div>
+        ):(
+        <div>
           <Link to="/CriarEventos">CRIAR EVENTOS</Link>
+        </div>
+        )}
           {usuarioLogado && (
             <Link to="/carrinho"><FaShoppingCart size={28} /></Link>
           )}

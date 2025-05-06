@@ -57,7 +57,8 @@ interface TermosProps {
               ou suporte, entre em contato pelo e-mail [e-mail de contato].
             </p>
   
-            <Button text="Concordo" onClick={onClose} />
+            <Button text="Concordo" color="Blue" onClick={onClose} />
+            <Button text="Não concordo" color="Red" onClick={() => window.location.reload()} />
           </div>
         </div>
       </div>
