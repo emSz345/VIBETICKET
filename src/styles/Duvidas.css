@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.duvidas-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #333;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10%;
+
+}
+  
+.duvidas-header-logo {
+    height: 130px;
+
+}
+
+.duvida-hr {
+  width: 1px;
+  border: none;
+  height: 100px;
+  background-color: #fff;
+  margin: 0 0px;
+
+}
+
+.duvidas-title {
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 20px;
+    margin-left: 10px;
+}

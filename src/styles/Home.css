@@ -34,6 +34,29 @@
   padding: 20px;
 }
 
+.home-duvidas {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  z-index: 1000;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px #0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-duvidas:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px (0, 0, 0, 0.35);
+}
+
 @media (min-width: 1024px) {
   .shows-container {
       grid-template-columns: repeat(3, 1fr);

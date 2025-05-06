@@ -8,5 +8,4 @@ function Termos() {
     );
   }
   
-  export default Termos;
-  
+export default Termos;  

@@ -174,7 +174,15 @@
   color: red;
 }
 
+Link {
+  text-decoration: none;
+}
 
+.navbar-criar-evento {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 
 /* Hambúrguer visível apenas no mobile */

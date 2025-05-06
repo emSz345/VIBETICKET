@@ -11,6 +11,9 @@ import EventCard from '../components/Home/Evento/EventoCard';
 import Rodape from '../components/Footer/Footer';
 import EventBanner from '../components/Home/EventBanner/EventBanner';
 import NavBar from '../components/Home/NavBar/NavBar';
+import { Link } from 'react-router-dom';
+
+import { MdOutlineContactSupport } from 'react-icons/md';
 
 function Home() {
 
@@ -40,6 +43,12 @@ function Home() {
                 <Detalhes />
 
                 <EventBanner />
+
+                <Link to={'/Duvidas'}>
+                    <div className="home-duvidas" title='Tire sua dúvida'>
+                        <MdOutlineContactSupport size={30} style={{ color: '#fff' }}/>
+                    </div>
+                </Link>
 
                 <Bolinhas />
                 
