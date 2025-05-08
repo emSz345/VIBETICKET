@@ -38,24 +38,41 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 60px;
-  height: 60px;
   z-index: 1000;
   cursor: pointer;
   background-color: #007bff;
   color: #fff;
-  border-radius: 50%;
-  box-shadow: 0 4px 10px #0000;
+  border-radius: 30px;
+  height: 60px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 0 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  gap: 8px;
+}
+
+.duvida-texto {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.4s ease, opacity 0.4s ease;
 }
 
 .home-duvidas:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 14px (0, 0, 0, 0.35);
+  justify-content: flex-start;
 }
+
+.home-duvidas:hover .duvida-texto {
+  max-width: 150px;
+  opacity: 1;
+}
+
+
+
 
 @media (min-width: 1024px) {
   .shows-container {

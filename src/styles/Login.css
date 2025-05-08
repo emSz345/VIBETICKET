@@ -90,6 +90,11 @@ input {
   left: 20px;
 }
 
+.login-recuperar-senha {
+  display: flex;
+  flex-direction: row;
+  margin-top: -20px;
+}
 
 /* ========================
    estilo error

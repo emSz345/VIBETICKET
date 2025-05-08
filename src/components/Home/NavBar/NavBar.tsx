@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import axios from 'axios'; // certifique-se que está instalado
 import { Link } from 'react-router-dom';
 import {
-  FaMap, 
-  FaBars, 
-  FaHome, 
-  FaStar, 
+  FaMap,
+  FaBars,
+  FaHome,
+  FaStar,
   FaTicketAlt,
-  FaCog, 
-  FaStore, 
-  FaHeadphones, 
-  FaSignOutAlt, 
-  FaShoppingCart
+  FaCog,
+  FaStore,
+  FaHeadphones,
+  FaSignOutAlt,
+  FaShoppingCart,
+  FaPlusCircle
 } from 'react-icons/fa';
 import { FiChevronDown } from 'react-icons/fi';
 import { IoSearch, IoCreateOutline } from 'react-icons/io5';
@@ -67,7 +68,7 @@ const NavBar = () => {
                   <Link to="/home" className="menu-item"><FaHome /> Home</Link>
                   <Link to="/favoritos" className="menu-item"><FaStar /> Favoritos</Link>
                   <Link to="/meus-ingressos" className="menu-item"><FaTicketAlt /> Meus ingressos</Link>
-                  <Link to="/configuracoes" className="menu-item"><FaCog /> Configurações</Link>
+                  <Link to="/configuracoes" className="menu-item"><FaCog /> Meu perfil</Link>
                   <Link to="/gerenciar-eventos" className="menu-item"><FaStore /> Gerenciar eventos</Link>
                   <Link to="/suporte" className="menu-item"><FaHeadphones /> Suporte</Link>
                   <div className="menu-item sair" onClick={handleLogout}>
@@ -97,15 +98,21 @@ const NavBar = () => {
         </div>
 
         <div className={`home-menu-links ${menuOpen ? 'active' : ''}`}>
-        {!usuarioLogado ? (
-          <div className='navbar-criar-evento'>
-            <Link to="/Login">CRIAR EVENTOS</Link>
-          </div>
-        ):(
-        <div>
-          <Link to="/CriarEventos">CRIAR EVENTOS</Link>
-        </div>
-        )}
+          {!usuarioLogado ? (
+            <div className='navbar-criar-evento'>
+              <Link to="/Login">
+                <FaPlusCircle className="criar-evento-icone" />
+                <span className="criar-evento-texto">CRIAR EVENTOS</span>
+              </Link>
+            </div>
+          ) : (
+            <div>
+              <Link to="/CriarEventos">
+                <FaPlusCircle className="criar-evento-icone" />
+                <span className="criar-evento-texto">CRIAR EVENTOS</span>
+              </Link>
+            </div>
+          )}
           {usuarioLogado && (
             <Link to="/carrinho"><FaShoppingCart size={28} /></Link>
           )}

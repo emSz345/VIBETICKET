@@ -1,14 +1,14 @@
 .cidades-container {
     padding: 20px;
-    margin-top: 40px;  /* Coloca um espaço para baixo, evitando sobreposição */
+    margin-top: 40px;
     margin-bottom: 20px;
-    position: relative;  /* Garante que o z-index funcione */
-    z-index: 10;  /* Dá um índice de empilhamento alto para o Cidades */
+    position: relative;
+    z-index: 10;
 }
 
 .title {
     margin-left: 5%;
-    font-size: 16px;
+    font-size: clamp(14px, 2vw, 20px);
     font-weight: bold;
     margin-bottom: 10px;
     color: #333;
@@ -22,13 +22,19 @@
     padding-left: 5%;
     padding-right: 5%;
     scroll-snap-type: x mandatory;
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* IE/Edge */
+}
+
+.cidades-grid::-webkit-scrollbar {
+    display: none;                  /* Chrome/Safari */
 }
 
 .cidade-card {
     flex: 0 0 auto;
     width: 200px;
     height: 300px;
-    border-radius: 6px;
+    border-radius: 13px;
     overflow: hidden;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease-in-out;
@@ -40,16 +46,16 @@
     transform: scale(1.05);
 }
 
-.cidade-card img {
-    width: 100%;
-    height: 130%;
-    object-fit: cover;
-}
-
 .imagem-container {
     position: relative;
     width: 100%;
-    height: 90%;
+    height: 100%;
+}
+
+.cidade-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .texto-sobre-imagem {
@@ -67,62 +73,45 @@
     box-sizing: border-box;
 }
 
-
-
-/* Scrollbar */
-.cidades-grid::-webkit-scrollbar {
-    height: 8px;
-}
-
-.cidades-grid::-webkit-scrollbar-track {
-    background: #eee;
-    border-radius: 10px;
-}
-
-.cidades-grid::-webkit-scrollbar-thumb {
-    background: #2196f3;
-    border-radius: 10px;
-}
-
-.cidades-grid {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.cidades-grid::-webkit-scrollbar {
-    display: none;
-}
-
-
-
-/* RESPONSIVO*/
-@media (max-width: 768px) {
-    .cidades-container {
-        margin-top: 0;
-        padding: 10px;
-        display: grid; /* Ajusta para um layout de grid */
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Ajusta o número de colunas de acordo com a largura */
-        gap: 20px; /* Adiciona espaçamento entre os cartões */
+/* RESPONSIVO */
+@media (min-width: 768px) {
+    .cidades-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        overflow-x: unset;
+        scroll-snap-type: none;
     }
 
     .cidade-card {
-        width: 100%; /* Usa 100% da largura disponível */
-        height: auto; /* Ajusta automaticamente a altura para manter a proporção */
-        max-height: 300px; /* Define um limite para a altura */
-        border-radius: 8px; /* Borda arredondada */
-        overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
+        width: 100%;
+        height: 300px;
+    }
+
+    .cidade-card img {
+        height: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .cidade-card {
+        width: 180px;
+        height: auto;
+        max-height: 300px;
+    }
+
+    .cidade-card img {
+        height: auto;
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cidade-card {
+        width: 100%;
+        max-height: 220px;
     }
 
     .texto-sobre-imagem {
-        font-size: 1rem; /* Tamanho relativo à raiz */
-        line-height: 1.4; /* Aumenta o espaçamento entre as linhas para melhorar a legibilidade */
-        padding: 10px;
-    }
-
-    /* Caso precise ajustar a imagem */
-    .cidade-card img {
-        width: 100%;
-        height: auto;
-        object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
+        font-size: 0.9rem;
     }
 }
