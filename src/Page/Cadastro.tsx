@@ -212,10 +212,7 @@ const Cadastro: React.FC = () => {
                 if (e.target.checked) setMostrarTermos(true); // abre o modal ao marcar
               }} />
             <label htmlFor="termos">
-              Eu concordo com os  <a href="#"  onClick={(e) => {
-                e.preventDefault(); // Não faz o redirecionamento
-                setMostrarTermos(true); // Exibe os termos ao clicar no link
-              }}
+              Eu concordo com os  <a href="/Termos"  
                 className="Termos"
               >
                 termos & políticas

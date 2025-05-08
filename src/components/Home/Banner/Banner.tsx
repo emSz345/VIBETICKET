@@ -9,15 +9,12 @@ const Banner: React.FC = () => {
       <div className="banner-content">
         <img src={help} alt="Ajuda" className="banner-image" />
         <div>
-          <p className="banner-title">Está perdido?</p>
+          <p className="banner-title">Ajude a transformar vidas</p>
           <p className="banner-subtitle">
-            Use o filtro para pesquisas específicas!
+          Doe na compra de ingressos e apoie projetos que fazem a diferença.
           </p>
         </div>
       </div>
-      <button className="filter-button">
-        <Filter className="filter-icon" />
-      </button>
     </div>
   );
 };

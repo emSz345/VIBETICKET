@@ -1,90 +1,89 @@
 .event-container {
-    width: 87%;
-    margin: 20px auto;
-    margin-top: -90px;
-  }
-  
-  .event-title {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  .event-card {
-    display: flex;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .event-info {
-    flex: 1;
-    padding: 20px;
-  }
-  
-  .event-date {
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .event-day {
-    color: #1e88e5;
-    font-weight: bold;
-  }
-  
-  .event-name {
-    font-size: 20px;
-    font-weight: bold; 
-    margin: 40px 0;
-    margin-right: 460px;
-  }
-  
-  .event-location {
-    font-size: 14px;
-    color: #666;
-    translate: -5px -66px;
-    
-    margin-bottom: 15px;
-  }
-  
-  .event-buttons {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .btn {
-    padding: 10px 16px;
-    font-size: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .btn-outline {
-    background: white;
-    color: #1e88e5;
-    border: 1px solid #1e88e5;
-  }
-  
-  .btn-outline:hover {
-    background: #1e88e5;
-    color: white;
-  }
-  
-  .btn-primary {
-    background: #1e88e5;
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background: #1565c0;
-  }
-  
-  .event-image {
-    width: 450px;
-    height: 250px;
-    
-  }
-  
+  width: 87%;
+  margin: 20px auto;
+}
+
+.event-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.event-card {
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.event-info {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Adicione esta propriedade para empurrar os botões para a base */
+  justify-content: space-between;
+}
+
+.event-date {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.event-name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 20px;
+}
+
+.event-location {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.event-buttons {
+  display: flex;
+  gap: 10px;
+  /* Remova a margem superior que adicionamos antes, pois o justify-content cuidará do espaçamento */
+  /* margin-top: 15px; */
+}
+
+.btn {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-outline {
+  background: white;
+  color: #1e88e5;
+  border: 1px solid #1e88e5;
+}
+
+.btn-outline:hover {
+  background: #1e88e5;
+  color: white;
+}
+
+.btn-primary {
+  background: #1e88e5;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1565c0;
+}
+
+.event-image {
+  width: 450px;
+  height: 250px;
+}

@@ -1,8 +1,21 @@
 import React from "react";
 import "./EventBanner.css";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const EventBanner: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    const token = localStorage.getItem("firebaseToken");
+    if (token) {
+      navigate("/CriarEventos");
+    } else {
+      navigate("/Login");
+    }
+  };
+  
+
   return (
     <div className="event-banner">
       <div className="event-content">
@@ -12,7 +25,9 @@ const EventBanner: React.FC = () => {
           <span>Seja um parceiro <b>B4Y</b></span>
         </div>
       </div>
-      <button className="start-button">Começar agora →</button>
+      <button className="start-button" onClick={handleClick}>
+        Começar agora →
+      </button>
     </div>
   );
 };

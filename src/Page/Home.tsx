@@ -4,7 +4,7 @@ import '../styles/Home.css'
 
 import Bolinhas from '../components/Bolinhas/Bolinhas';
 import Carrossel from '../components/Home/Carrossel/Carrossel';
-import Detalhes from '../components/Home/Shows/Detalhes/Detalhes';
+import Detalhes from '../components/Home/Shows/Rock/Rock';
 import Cidades from '../components/Home/Cidades/Cidades';
 import Banner from '../components/Home/Banner/Banner';
 import EventCard from '../components/Home/Evento/EventoCard';
@@ -12,7 +12,7 @@ import Rodape from '../components/Footer/Footer';
 import EventBanner from '../components/Home/EventBanner/EventBanner';
 import NavBar from '../components/Home/NavBar/NavBar';
 import { Link } from 'react-router-dom';
-import Duvidas from './Duvidas';
+
 import { MdOutlineContactSupport } from 'react-icons/md';
 import Funk from '../components/Home/Shows/Funk/Funk';
 import Sertanejo from '../components/Home/Shows/Sertanejo/Sertanejo';
@@ -40,7 +40,7 @@ function Home() {
 
                 <Banner />
 
-                <h3 className='title-show'>Tipos de shows...</h3>
+                <h3 className='title-show'>Rock</h3>
 
                 <Detalhes />
 
@@ -56,11 +56,9 @@ function Home() {
 
                 <Link to={'/Duvidas'}>
                     <div className="home-duvidas" title='Tire sua dúvida'>
-                        <MdOutlineContactSupport size={30} style={{ color: '#' }} />
+                        <MdOutlineContactSupport size={30} style={{ color: '#fff' }} />
                     </div>
                 </Link>
-
-                
 
                 <Bolinhas />
 
