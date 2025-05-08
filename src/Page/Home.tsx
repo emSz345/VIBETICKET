@@ -12,7 +12,7 @@ import Rodape from '../components/Footer/Footer';
 import EventBanner from '../components/Home/EventBanner/EventBanner';
 import NavBar from '../components/Home/NavBar/NavBar';
 import { Link } from 'react-router-dom';
-
+import Duvidas from './Duvidas';
 import { MdOutlineContactSupport } from 'react-icons/md';
 import Funk from '../components/Home/Shows/Funk/Funk';
 import Sertanejo from '../components/Home/Shows/Sertanejo/Sertanejo';
@@ -56,9 +56,11 @@ function Home() {
 
                 <Link to={'/Duvidas'}>
                     <div className="home-duvidas" title='Tire sua dúvida'>
-                        <MdOutlineContactSupport size={30} style={{ color: '#fff' }} />
+                        <MdOutlineContactSupport size={30} style={{ color: '#' }} />
                     </div>
                 </Link>
+
+                
 
                 <Bolinhas />
 

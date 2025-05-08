@@ -60,8 +60,8 @@ const Cadastro: React.FC = () => {
       newErrors.email = "Email deve estar em formato válido e conter pelo menos 10 caracteres.";
     }
 
-    if (!/^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/.test(formData.senha)) {
-      newErrors.senha = "A senha deve ter no mínimo 6 caracteres e conter letras e números.";
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{6,}$/.test(formData.senha)) {
+      newErrors.senha = "A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.";
     }
 
     if (formData.confirmSenha !== formData.senha) {

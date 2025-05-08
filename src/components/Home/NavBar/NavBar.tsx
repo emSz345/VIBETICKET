@@ -2,19 +2,11 @@ import { useEffect, useState } from 'react';
 import axios from 'axios'; // certifique-se que está instalado
 import { Link } from 'react-router-dom';
 import {
-  FaMap, 
-  FaBars, 
-  FaHome, 
-  FaStar, 
-  FaTicketAlt,
-  FaCog, 
-  FaStore, 
-  FaHeadphones, 
-  FaSignOutAlt, 
-  FaShoppingCart
+  FaMap, FaBars, FaHome, FaStar, FaTicketAlt,
+  FaCog, FaStore, FaHeadphones, FaSignOutAlt, FaShoppingCart
 } from 'react-icons/fa';
 import { FiChevronDown } from 'react-icons/fi';
-import { IoSearch, IoCreateOutline } from 'react-icons/io5';
+import { IoSearch } from 'react-icons/io5';
 
 import './NavBar.css';
 import logo from '../../../assets/img-logo.png';
@@ -105,7 +97,7 @@ const NavBar = () => {
 
         <div className={`home-menu-links ${menuOpen ? 'active' : ''}`}>
         {!usuarioLogado ? (
-          <div className='navbar-criar-evento'>
+          <div>
             <Link to="/Login">CRIAR EVENTOS</Link>
           </div>
         ):(

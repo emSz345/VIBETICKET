@@ -5,6 +5,7 @@ import {
   signInWithGoogle, 
   signInWithFacebook 
 } from '../firebase';
+import { sendPasswordResetEmail } from "firebase/auth";
 
 import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
@@ -64,6 +65,8 @@ const Login: React.FC = () => {
 
   const navigate = useNavigate();
 
+  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === "email") setEmail(value);
@@ -91,6 +94,20 @@ const Login: React.FC = () => {
       console.error(error);
     }
   };
+
+  const handleReset = async () => {
+    try{
+      if(!email){
+        setEmailError("Digite seu email para redefinir sua senha")
+      }else{
+        await sendPasswordResetEmail(auth, email)
+        alert("Email de redefinição enviado!")
+      }
+    }catch(err){
+      alert("Erro ao enviar email de redefinição")
+    }
+
+  }
 
   const handleSubmit = async () => {
 
@@ -213,8 +230,8 @@ const Login: React.FC = () => {
            {senhaError && <p className="error">{senhaError}</p>}
            </div>
           
-          <p>Esqueceu sua senha? <span></span></p>
-
+          <p>Esqueceu sua senha? <a className="redefinir" href="#" onClick={handleReset}>Clique aqui!</a></p>
+          <br/>
           <Button text="Entrar" color="Blue" onClick={handleSubmit} />
    
 

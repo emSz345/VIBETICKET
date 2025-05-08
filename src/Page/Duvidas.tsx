@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import "../styles/Duvidas.css"
 import logo from "../assets/img-logo.png";
-import FAQ from "../components/faq/FAQ";
+
 
 
 function Duvidas() {
@@ -16,7 +16,7 @@ function Duvidas() {
                 <h3 className="duvidas-title">Dúvidas e Suporte</h3>
             </header>
             <div className="main">
-                <FAQ />
+               
             </div>
         </div>
     );
