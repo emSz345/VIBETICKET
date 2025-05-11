@@ -57,6 +57,16 @@
 }
 /* === FIM HEADER === */
 
+.erro-asterisco {
+  color: red;
+  font-weight: bold;
+}
+
+.erro-campo {
+  border: 1px solid red;
+}
+
+
 /* === INÍCIO CONTEÚDO PRINCIPAL === */
 .criar-conteudo-principal {
   padding: 40px 60px;

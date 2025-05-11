@@ -13,10 +13,52 @@ function CriarEventos() {
   const [horaInicio, setHoraInicio] = useState('');
   const [querDoar, setQuerDoar] = useState<boolean | null>(null);
   const [valorDoacao, setValorDoacao] = useState('');
+  const [erros, setErros] = useState<string[]>([]);
 
   const handleInput = () => {
     if (editorRef.current) {
       setDescricao(editorRef.current.innerHTML);
+    }
+  };
+
+  const validarFormulario = () => {
+    const erros: string[] = [];
+
+    const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
+    const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
+    const rua = (document.getElementById('rua-evento') as HTMLInputElement)?.value;
+    const cidade = (document.getElementById('cidade-evento') as HTMLInputElement)?.value;
+    const estado = (document.getElementById('estado-evento') as HTMLInputElement)?.value;
+    const linkMaps = (document.getElementById('link-maps') as HTMLInputElement)?.value;
+
+    if (!nomeEvento) erros.push('O nome do evento é obrigatório.');
+    if (!image) erros.push('A imagem do evento é obrigatória.');
+    if (!categoriaEvento) erros.push('A categoria do evento é obrigatória.');
+    if (!descricao.trim()) erros.push('A descrição do evento é obrigatória.');
+    if (!rua) erros.push('A rua do evento é obrigatória.');
+    if (!cidade) erros.push('A cidade do evento é obrigatória.');
+    if (!estado) erros.push('O estado do evento é obrigatório.');
+    if (!dataInicio) erros.push('A data de início é obrigatória.');
+    if (!horaInicio) erros.push('A hora de início é obrigatória.');
+    if (!linkMaps || !/^https?:\/\/(www\.)?google\.[a-z.]+\/maps/.test(linkMaps)) {
+      erros.push('O link do Google Maps é inválido ou não foi fornecido.');
+    }
+
+    if (querDoar && (!valorDoacao || parseFloat(valorDoacao.replace(',', '.')) <= 0)) {
+      erros.push('Se deseja doar, informe um valor válido.');
+    }
+
+    return erros;
+  };
+
+  const handleEnviarAnalise = () => {
+    const erros = validarFormulario();
+    if (erros.length > 0) {
+      setErros(erros);
+    } else {
+      setErros([]);
+      alert('Formulário válido! Enviando...');
+      // Aqui vai o código para enviar os dados ao backend, se quiser
     }
   };
 
@@ -29,7 +71,9 @@ function CriarEventos() {
         </h1>
         <div className="criar-header-botoes">
           <button className="btn-salvar-sair">Salvar / Sair</button>
-          <button className="criar-btn-enviar">Enviar para Análise</button>
+          <button className="criar-btn-enviar" onClick={handleEnviarAnalise}>
+            Enviar para Análise
+          </button>
         </div>
       </header>
 
@@ -41,12 +85,21 @@ function CriarEventos() {
           </div>
 
           <div className="campo">
-            <label htmlFor="nome-evento">Nome do evento</label>
-            <input type="text" id="nome-evento" placeholder="Digite o nome do evento" />
+            <label htmlFor="nome-evento">
+              Nome do evento <span className={erros.includes('O nome do evento é obrigatório.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
+            <input
+              type="text"
+              id="nome-evento"
+              placeholder="Digite o nome do evento"
+              className={erros.includes('O nome do evento é obrigatório.') ? 'erro-campo' : ''}
+            />
           </div>
 
           <div className="campo">
-            <label htmlFor="imagem-evento">Imagem do evento</label>
+            <label htmlFor="imagem-evento">
+              Imagem do evento <span className={erros.includes('A imagem do evento é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
             <div className="upload-imagem">
               {image ? (
                 <p>{image.name}</p>
@@ -54,18 +107,32 @@ function CriarEventos() {
                 <>
                   <MdAddPhotoAlternate size={55} color="#333" />
                   <p>Arraste ou clique para adicionar a imagem</p>
-                  <input type="file" id="imagem-evento" className="input-file" />
+                  <input
+                    type="file"
+                    id="imagem-evento"
+                    className="input-file"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setImage(e.target.files[0]);
+                      }
+                    }}
+                  />
                 </>
               )}
             </div>
           </div>
 
           <div className="campo">
-            <label htmlFor="categoria-evento">Categoria do evento</label>
-            <select id="categoria-evento">
+            <label htmlFor="categoria-evento">
+              Categoria do evento <span className={erros.includes('A categoria do evento é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
+            <select
+              id="categoria-evento"
+              className={erros.includes('A categoria do evento é obrigatória.') ? 'erro-campo' : ''}
+            >
               <option value="">Selecione uma categoria</option>
               <option value="show">Funk</option>
-              <option value="festa">sertanejo</option>
+              <option value="festa">Sertanejo</option>
               <option value="palestra">Palestra</option>
               <option value="esporte">Esporte</option>
             </select>
@@ -78,13 +145,15 @@ function CriarEventos() {
             <h2>2. Descrição</h2>
           </div>
           <div className="campo">
-            <label htmlFor="descricao-evento">Descrição do evento</label>
+            <label htmlFor="descricao-evento">
+              Descrição do evento <span className={erros.includes('A descrição do evento é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
             <textarea
               id="descricao-evento"
               placeholder="Digite aqui a descrição do evento..."
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
-              className="criar-descricao"
+              className={`criar-descricao ${erros.includes('A descrição do evento é obrigatória.') ? 'erro-campo' : ''}`}
             />
           </div>
         </div>
@@ -96,23 +165,51 @@ function CriarEventos() {
           </div>
 
           <div className="campo">
-            <label htmlFor="rua-evento">Rua</label>
-            <input type="text" id="rua-evento" placeholder="Digite o nome da rua" />
+            <label htmlFor="rua-evento">
+              Rua <span className={erros.includes('A rua do evento é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
+            <input
+              type="text"
+              id="rua-evento"
+              placeholder="Digite o nome da rua"
+              className={erros.includes('A rua do evento é obrigatória.') ? 'erro-campo' : ''}
+            />
           </div>
 
           <div className="campo">
-            <label htmlFor="cidade-evento">Cidade</label>
-            <input type="text" id="cidade-evento" placeholder="Digite a cidade" />
+            <label htmlFor="cidade-evento">
+              Cidade <span className={erros.includes('A cidade do evento é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
+            <input
+              type="text"
+              id="cidade-evento"
+              placeholder="Digite a cidade"
+              className={erros.includes('A cidade do evento é obrigatória.') ? 'erro-campo' : ''}
+            />
           </div>
 
           <div className="campo">
-            <label htmlFor="estado-evento">Estado</label>
-            <input type="text" id="estado-evento" placeholder="Digite o estado" />
+            <label htmlFor="estado-evento">
+              Estado <span className={erros.includes('O estado do evento é obrigatório.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
+            <input
+              type="text"
+              id="estado-evento"
+              placeholder="Digite o estado"
+              className={erros.includes('O estado do evento é obrigatório.') ? 'erro-campo' : ''}
+            />
           </div>
 
           <div className="campo">
-            <label htmlFor="link-maps">Link do Local no Google Maps</label>
-            <input type="url" id="link-maps" placeholder="Cole o link do local no Google Maps" />
+            <label htmlFor="link-maps">
+              Link do Local no Google Maps <span className={erros.includes('O link do Google Maps é inválido ou não foi fornecido.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
+            <input
+              type="url"
+              id="link-maps"
+              placeholder="Cole o link do local no Google Maps"
+              className={erros.includes('O link do Google Maps é inválido ou não foi fornecido.') ? 'erro-campo' : ''}
+            />
           </div>
         </div>
 
@@ -123,81 +220,29 @@ function CriarEventos() {
           </div>
 
           <div className="campo">
-            <label htmlFor="data-inicio">Data de Início do Evento</label>
+            <label htmlFor="data-inicio">
+              Data de Início do Evento <span className={erros.includes('A data de início é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
             <input
               type="date"
               id="data-inicio"
               value={dataInicio}
-              className="input-data"
+              onChange={(e) => setDataInicio(e.target.value)}
+              className={erros.includes('A data de início é obrigatória.') ? 'erro-campo' : ''}
             />
           </div>
 
           <div className="campo">
-            <label htmlFor="hora-inicio">Hora de Início do Evento</label>
+            <label htmlFor="hora-inicio">
+              Hora de Início do Evento <span className={erros.includes('A hora de início é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+            </label>
             <input
               type="time"
               id="hora-inicio"
               value={horaInicio}
-              className="input-hora"
+              onChange={(e) => setHoraInicio(e.target.value)}
+              className={erros.includes('A hora de início é obrigatória.') ? 'erro-campo' : ''}
             />
-          </div>
-        </div>
-
-        {/* 5. Ingressos */}
-        <div className="informacoes-basicas-container">
-          <div className="criar-Informaçao">
-            <h2>5. Ingressos</h2>
-          </div>
-
-          <div className="ingresso-grid">
-            <div className="ingresso-col">
-              <h3 className="subtitulo">Tipos de ingresso:</h3>
-              <div className="campo">
-                <label htmlFor="preco-inteira">Inteira (R$)</label>
-                <NumericFormat
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  prefix="R$ "
-                  decimalScale={2}
-                  fixedDecimalScale
-                  allowNegative={false}
-                  placeholder="Valor"
-                  className="input-ingresso"
-                />
-              </div>
-
-              <div className="campo">
-                <label htmlFor="preco-meia">Meia (R$)</label>
-                <NumericFormat
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  prefix="R$ "
-                  decimalScale={2}
-                  fixedDecimalScale
-                  allowNegative={false}
-                  placeholder="Valor"
-                  className="input-ingresso"
-                />
-              </div>
-            </div>
-
-            <div className="ingresso-col">
-              <h3 className="subtitulo">Detalhes:</h3>
-              <div className="campo">
-                <label htmlFor="quantidade-ingresso">Quantidade de ingressos</label>
-                <input type="number" id="quantidade-ingresso" placeholder="Digite a quantidade" />
-              </div>
-
-              <div className="campo">
-                <label htmlFor="inicio-venda">Início data/hora da venda</label>
-                <input type="datetime-local" id="inicio-venda" />
-              </div>
-
-              <div className="campo">
-                <label htmlFor="fim-venda">Fim data/hora da venda</label>
-                <input type="datetime-local" id="fim-venda" />
-              </div>
-            </div>
           </div>
         </div>
 
@@ -205,7 +250,7 @@ function CriarEventos() {
         <div className="informacoes-basicas-container">
           <h2 className="criar-doacao-title">6. Deseja fazer uma doação?</h2>
           <p className="criar-doacao-descricao">
-            Você pode contribuir com uma doação para uma instituição beneficente. Todo o valor arrecadado será destinado a causas sociais selecionadas pelos organizadores. E mais: ao doar, seu nome (ou empresa) ganhará um lugar de destaque no topo do nosso site, reconhecendo seu apoio e solidariedade.
+            Você pode contribuir com uma doação para uma instituição beneficente. Todo o valor arrecadado será destinado a causas sociais selecionadas pelos organizadores.
           </p>
 
           <div className="botoes-doacao">
@@ -243,6 +288,7 @@ function CriarEventos() {
           )}
         </div>
       </div>
+
       <Rodape />
     </div>
   );

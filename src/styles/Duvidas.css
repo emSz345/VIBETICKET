@@ -1,41 +1,206 @@
+/* Reset de estilo */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fc;
+    color: #333;
+}
+
+/* Estilo do header */
 .duvidas-header {
-    position: fixed;
+    /* position: fixed;
     top: 0;
-    left: 0;
+    left: 0; */
     width: 100%;
-    background: #333;
-    padding: 10px 0;
+    background: linear-gradient(145deg, #0066cc, #00b3b3);
+    padding: 15px 0;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10%;
-
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
 }
-  
-.duvidas-header-logo {
-    height: 130px;
 
+.duvidas-header-logo {
+    height: 120px;
+    width: auto;
+    object-fit: contain;
 }
 
 .duvida-hr {
-  width: 1px;
-  border: none;
-  height: 100px;
-  background-color: #fff;
-  margin: 0 0px;
-
+    width: 1px;
+    border: none;
+    height: 70px;
+    background-color: #fff;
 }
 
 .duvidas-title {
     color: #fff;
-    font-family: sans-serif;
-    font-size: 20px;
-    margin-left: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Estilo da área principal */
+.duvidas-main {
+    margin-top: 50px;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 50px auto;
+    overflow: hidden;
+}
+
+/* Container de cada seção */
+.duvidas-container-subtitulo {
+    margin-top: 40px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+
+.duvidas-container {
+    margin-top: 40px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo do subtítulo */
+.duvidas-container-subtitulo h2 {
+    font-size: 1.2rem;
+    color: #444;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.duvidas-container-subtitulo p {
+    color: #777;
+    font-size: 1rem;
+}
+
+/* Estilo das perguntas frequentes */
+.faq-container h3 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #0066cc;
+}
+
+.duvidas-faq-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.duvidas-faq-list li {
+    background: #f9f9f9;
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 6px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.duvidas-faq-list li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.duvidas-faq-list strong {
+    font-size: 1.1rem;
+    color: #005bb5;
+}
+
+.duvidas-faq-list p {
+    font-size: 0.95rem;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Estilo do formulário de suporte */
+.duvidas-form-suporte {
+    margin-top: 30px;
+}
+
+.duvidas-form-suporte h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.duvidas-campo {
+    margin-bottom: 20px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    color: #555;
+    margin-top: 5px;
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #00b3b3;
+    box-shadow: 0 0 10px rgba(0, 179, 179, 0.3);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+button.duvidas-btn-enviar-suporte {
+    background-color: #00b3b3;
+    color: #fff;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+button.duvidas-btn-enviar-suporte:hover {
+    background-color: #009999;
+}
+
+.duvidas-sucesso-enviado {
+    background-color: #e2f7e2;
+    color: #4CAF50;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .duvidas-main {
+        margin-top: 100px;
+        padding: 20px;
+    }
+
+    .duvidas-header-logo {
+        height: 60px;
+    }
+
+    .duvidas-title {
+        font-size: 18px;
+    }
 }
