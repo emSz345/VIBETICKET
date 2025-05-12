@@ -51,14 +51,62 @@ function CriarEventos() {
     return erros;
   };
 
-  const handleEnviarAnalise = () => {
-    const erros = validarFormulario();
-    if (erros.length > 0) {
-      setErros(erros);
-    } else {
-      setErros([]);
-      alert('Formulário válido! Enviando...');
-      // Aqui vai o código para enviar os dados ao backend, se quiser
+  const handleEnviarAnalise = async () => {
+
+   
+
+    const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
+    const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
+    const rua = (document.getElementById('rua-evento') as HTMLInputElement)?.value;
+    const cidade = (document.getElementById('cidade-evento') as HTMLInputElement)?.value;
+    const estado = (document.getElementById('estado-evento') as HTMLInputElement)?.value;
+    const linkMaps = (document.getElementById('link-maps') as HTMLInputElement)?.value;
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('firebaseToken'); // ou onde você estiver armazenando o JWT
+
+
+    const formData = new FormData();
+    formData.append("nome", nomeEvento);
+    if (image) {
+      formData.append('imagem', image); // arquivo real
+    } // arquivo real
+    formData.append("categoria", categoriaEvento);
+    formData.append("descricao", descricao);
+    formData.append("rua", rua);
+    formData.append("cidade", cidade);
+    formData.append("estado", estado);
+    formData.append("linkMaps", linkMaps);
+    formData.append("dataInicio", dataInicio);
+    formData.append("horaInicio", horaInicio);
+    formData.append("querDoar", String(querDoar));
+    formData.append("valorDoacao", valorDoacao);
+    formData.append("criadoPor", "teste");
+
+    try {
+
+
+      const response = await fetch('http://localhost:5000/api/eventos/criar', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+
+
+      if (!response.ok) {
+        const text = await response.text(); // lê como texto para evitar erro de parsing
+        throw new Error(`Erro do servidor: ${response.status} - ${text}`);
+      }
+
+      const data = await response.json(); // só tenta parsear se ok
+
+      alert('Evento enviado para análise com sucesso!');
+      
+
+    } catch (error: any) {
+      alert(error.message);
     }
   };
 
