@@ -130,7 +130,7 @@ const Cadastro: React.FC = () => {
   return (
     <div className="login-container">
       <header className="header">
-        <Link to="/Home">
+        <Link to="/Home" title="Voltar">
           <img src={logo} alt="Logo" className="header-logo" />
         </Link>
       </header>
@@ -204,6 +204,7 @@ const Cadastro: React.FC = () => {
 
           <div className="radio-container">
             <input type="checkbox"
+              className="radio-checkbox"
               id="termos"
               name="termos"
               checked={termosAceitos}

@@ -154,6 +154,22 @@ input {
   gap: 15px;
 }
 
+
+/* ========================
+   TERMOS
+======================== */
+
+.radio-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.radio-checkbox {
+  width: auto;
+}
+
+
 /* ========================
    RESPONSIVIDADE
 ======================== */
