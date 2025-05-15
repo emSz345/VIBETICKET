@@ -1,10 +1,11 @@
+/* Container principal */
 .container {
   height: 100%;
 }
 
+/* Navbar principal */
 .home-navbar {
   background: linear-gradient(135deg, #000000, #333); /* Preto para cinza escuro */
-
   color: white;
   padding: 10px 20px;
   height: 150px;
@@ -12,6 +13,7 @@
   z-index: 10;
 }
 
+/* Topo da navbar */
 .home-nav-top {
   display: flex;
   justify-content: space-between;
@@ -20,16 +22,15 @@
   margin: 0 40px;
 }
 
+/* Localização */
 .home-location {
   display: flex;
   align-items: center;
 }
-
 .home-iconMap {
   color: #2196f3;
   margin-right: 10px;
 }
-
 .home-location-btn {
   background-color: #2196f3;
   color: white;
@@ -38,29 +39,28 @@
   cursor: pointer;
 }
 
+/* Autenticação no topo */
 .home-auth {
   display: flex;
   gap: 10px;
   margin-left: auto;
 }
-
 .home-auth a {
   color: white;
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s;
 }
-
 .home-auth a:hover {
   color: #2196f3;
   text-decoration: underline;
 }
-
 .home-auth a:active {
   color: #1976d2;
   transform: scale(0.98);
 }
 
+/* Linha horizontal */
 .home-hr {
   border: 0;
   height: 1px;
@@ -68,6 +68,7 @@
   margin: 10px 0;
 }
 
+/* Navbar principal - parte principal */
 .home-nav-main {
   display: flex;
   justify-content: space-between;
@@ -77,16 +78,17 @@
   margin-top: -25px;
 }
 
+/* Logo */
 .home-logo {
   max-height: 140px;
 }
 
+/* Campo de busca */
 .home-search-container {
   position: relative;
   width: 100%;
   max-width: 500px;
 }
-
 .home-search-input {
   width: 100%;
   height: 40px;
@@ -97,7 +99,6 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   outline: none;
 }
-
 .home-search-icon {
   position: absolute;
   right: 15px;
@@ -108,11 +109,11 @@
   cursor: pointer;
 }
 
+/* Links do menu */
 .home-menu-links {
   display: flex;
   align-items: center;
 }
-
 .home-menu-links a {
   color: white;
   text-decoration: none;
@@ -120,23 +121,21 @@
   font-weight: bold;
   transition: all 0.3s;
 }
-
 .home-menu-links a:hover {
   color: #2196f3;
   text-decoration: underline;
 }
-
 .home-menu-links a:active {
   color: #1976d2;
   transform: scale(0.98);
 }
 
+/* Botão Criar Evento */
 .navbar-criar-evento {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .navbar-criar-evento a {
   display: flex;
   align-items: center;
@@ -147,43 +146,21 @@
   position: relative;
   transition: color 0.3s;
 }
-
 .navbar-criar-evento a:hover {
   text-decoration: none;
 }
-
 .criar-evento-icone {
   opacity: 0;
   transform: translateX(-10px);
   transition: opacity 0.3s ease, transform 0.3s ease;
   color: #2196f3;
 }
-
 .navbar-criar-evento a:hover .criar-evento-icone {
   opacity: 1;
   transform: translateX(0);
 }
 
-
-/*  Parte do login  */
-.usuario-menu {
-  position: relative;
-  cursor: pointer;
-}
-
-.usuario-topo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  background-color: #ddd;
-  border-radius: 50%;
-}
-
+/* Dropdown Menu e Itens do menu */
 .dropdown-menu {
   position: absolute;
   top: 40px;
@@ -196,49 +173,77 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Itens do dropdown padrão */
 .menu-item {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  user-select: none;
+  border-radius: 5px;
+}
+
+
+.menu-item a {
+  text-decoration: none;
+  color: inherit; /* herda a cor branca */
+}
+.menu-item:hover {
+  color: #2196f3;
+  background-color: rgba(33, 150, 243, 0.1);
+}
+.menu-item.sair {
+  color: #f44336;
+}
+.menu-item.sair:hover {
+  color: #d32f2f;
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+/* Menu do usuário */
+.usuario-menu {
+  position: relative;
   cursor: pointer;
 }
-
-.menu-item.sair {
-  color: red;
+.usuario-topo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  background-color: #ddd;
+  border-radius: 50%;
 }
 
+/* Correção de Link */
 Link {
   text-decoration: none;
 }
 
-.navbar-criar-evento {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-/* Hambúrguer visível apenas no mobile */
+/* Ícone hamburguer - só mobile */
 .hamburger {
   display: none;
   cursor: pointer;
   color: white;
 }
 
+/* Mobile auth (links de login e afins) */
 .mobile-auth {
   display: none;
   flex-direction: row;
   gap: 8px;
   margin-top: 10px;
 }
-
 .mobile-auth a:hover {
   color: #2196f3;
 }
-
-
-
 
 /* MOBILE */
 @media (max-width: 768px) {

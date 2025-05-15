@@ -5,6 +5,9 @@ import Rodape from '../components/Footer/Footer';
 import NavBar from '../components/Home/NavBar/NavBar';
 import { MdAddPhotoAlternate } from 'react-icons/md';
 
+import { ImExit } from "react-icons/im";
+import { IoSend } from "react-icons/io5";
+
 function CriarEventos() {
   const [image, setImage] = useState<File | null>(null);
   const [descricao, setDescricao] = useState('');
@@ -118,9 +121,13 @@ function CriarEventos() {
           Crie <span className="criar-dubtitle">seu evento</span>
         </h1>
         <div className="criar-header-botoes">
-          <button className="btn-salvar-sair">Salvar / Sair</button>
+          <button className="btn-salvar-sair">
+          <ImExit size={13}/>
+            Sair
+            </button>
           <button className="criar-btn-enviar" onClick={handleEnviarAnalise}>
             Enviar para Análise
+            <IoSend/> 
           </button>
         </div>
       </header>

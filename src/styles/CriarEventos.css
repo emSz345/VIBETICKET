@@ -8,7 +8,7 @@
   align-items: center;
   padding: 20px 60px;
   border-bottom: 1px solid #ccc;
-  z-index: 1000;
+  z-index: 2;
 }
 
 .criar-header-botoes {
@@ -28,21 +28,25 @@
 
 .criar-btn-enviar {
   padding: 10px 20px;
-  background-color: #4caf50;
+  background-color: #33f83a;
   color: white;
   border: none;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
 .criar-btn-enviar:hover {
-  background-color: #45a049;
+  background-color: #00b509;
 }
 
 .btn-salvar-sair {
-  background-color: #f0ad4e;
+  background-color: #ff5353;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -50,10 +54,14 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .btn-salvar-sair:hover {
-  background-color: #ec971f;
+  background-color: #fd0606;
 }
 /* === FIM HEADER === */
 
