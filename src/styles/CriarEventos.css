@@ -295,3 +295,15 @@
   }
 }
 /* === FIM INGRESSOS === */
+
+.container-ingressos {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.lado-esquerdo,
+.lado-direito {
+  flex: 1;
+  min-width: 300px;
+}

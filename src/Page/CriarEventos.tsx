@@ -4,11 +4,11 @@ import { NumericFormat } from 'react-number-format';
 import Rodape from '../components/Footer/Footer';
 import NavBar from '../components/Home/NavBar/NavBar';
 import { MdAddPhotoAlternate } from 'react-icons/md';
-
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 
 function CriarEventos() {
+  // Estados do componente
   const [image, setImage] = useState<File | null>(null);
   const [descricao, setDescricao] = useState('');
   const editorRef = useRef<HTMLDivElement>(null);
@@ -17,7 +17,14 @@ function CriarEventos() {
   const [querDoar, setQuerDoar] = useState<boolean | null>(null);
   const [valorDoacao, setValorDoacao] = useState('');
   const [erros, setErros] = useState<string[]>([]);
+  const [valorIngressoInteira, setValorIngressoInteira] = useState('');
+  const [valorIngressoMeia, setValorIngressoMeia] = useState('');
+  const [quantidadeInteira, setQuantidadeInteira] = useState('');
+  const [quantidadeMeia, setQuantidadeMeia] = useState('');
+  const [temMeia, setTemMeia] = useState('false');
+  const [dataFim, setDataFim] = useState('');
 
+  // Manipuladores de eventos
   const handleInput = () => {
     if (editorRef.current) {
       setDescricao(editorRef.current.innerHTML);
@@ -26,7 +33,6 @@ function CriarEventos() {
 
   const validarFormulario = () => {
     const erros: string[] = [];
-
     const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
     const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
     const rua = (document.getElementById('rua-evento') as HTMLInputElement)?.value;
@@ -43,6 +49,7 @@ function CriarEventos() {
     if (!estado) erros.push('O estado do evento é obrigatório.');
     if (!dataInicio) erros.push('A data de início é obrigatória.');
     if (!horaInicio) erros.push('A hora de início é obrigatória.');
+    
     if (!linkMaps || !/^https?:\/\/(www\.)?google\.[a-z.]+\/maps/.test(linkMaps)) {
       erros.push('O link do Google Maps é inválido ou não foi fornecido.');
     }
@@ -55,8 +62,11 @@ function CriarEventos() {
   };
 
   const handleEnviarAnalise = async () => {
-
-   
+    const errosValidacao = validarFormulario();
+    if (errosValidacao.length > 0) {
+      setErros(errosValidacao);
+      return;
+    }
 
     const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
     const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
@@ -64,15 +74,11 @@ function CriarEventos() {
     const cidade = (document.getElementById('cidade-evento') as HTMLInputElement)?.value;
     const estado = (document.getElementById('estado-evento') as HTMLInputElement)?.value;
     const linkMaps = (document.getElementById('link-maps') as HTMLInputElement)?.value;
-    const userId = localStorage.getItem('userId');
-    const token = localStorage.getItem('firebaseToken'); // ou onde você estiver armazenando o JWT
-
+    const token = localStorage.getItem('firebaseToken');
 
     const formData = new FormData();
     formData.append("nome", nomeEvento);
-    if (image) {
-      formData.append('imagem', image); // arquivo real
-    } // arquivo real
+    if (image) formData.append('imagem', image);
     formData.append("categoria", categoriaEvento);
     formData.append("descricao", descricao);
     formData.append("rua", rua);
@@ -86,8 +92,6 @@ function CriarEventos() {
     formData.append("criadoPor", "teste");
 
     try {
-
-
       const response = await fetch('http://localhost:5000/api/eventos/criar', {
         method: 'POST',
         headers: {
@@ -96,43 +100,43 @@ function CriarEventos() {
         body: formData,
       });
 
-
-
       if (!response.ok) {
-        const text = await response.text(); // lê como texto para evitar erro de parsing
+        const text = await response.text();
         throw new Error(`Erro do servidor: ${response.status} - ${text}`);
       }
 
-      const data = await response.json(); // só tenta parsear se ok
-
+      const data = await response.json();
       alert('Evento enviado para análise com sucesso!');
-      
-
     } catch (error: any) {
       alert(error.message);
     }
   };
 
+  // Renderização do componente
   return (
     <div>
       <NavBar />
+      
+      {/* Cabeçalho */}
       <header className="criar-evento-header">
         <h1 className="criar-titulo">
           Crie <span className="criar-dubtitle">seu evento</span>
         </h1>
         <div className="criar-header-botoes">
           <button className="btn-salvar-sair">
-          <ImExit size={13}/>
+            <ImExit size={13} />
             Sair
-            </button>
+          </button>
           <button className="criar-btn-enviar" onClick={handleEnviarAnalise}>
             Enviar para Análise
-            <IoSend/> 
+            <IoSend />
           </button>
         </div>
       </header>
 
+      {/* Formulário */}
       <div className="criar-form">
+        
         {/* 1. Informações Básicas */}
         <div className="informacoes-basicas-container">
           <div className="criar-Informaçao">
@@ -298,6 +302,119 @@ function CriarEventos() {
               onChange={(e) => setHoraInicio(e.target.value)}
               className={erros.includes('A hora de início é obrigatória.') ? 'erro-campo' : ''}
             />
+          </div>
+        </div>
+
+        {/* 5. Ingressos */}
+        <div className="informacoes-basicas-container">
+          <div className="criar-Informaçao">
+            <h2>5. Ingressos</h2>
+          </div>
+
+          <div className="container-ingressos">
+            {/* Lado Esquerdo */}
+            <div className="lado-esquerdo">
+              <div className="campo">
+                <label>
+                  Valor do Ingresso Inteira (R$) <span className={erros.some(e => e.includes('inteira')) ? 'erro-asterisco' : ''}>*</span>
+                </label>
+                <NumericFormat
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  prefix="R$ "
+                  value={valorIngressoInteira}
+                  onValueChange={(values) => setValorIngressoInteira(values.value)}
+                  className={erros.some(e => e.includes('inteira')) ? 'erro-campo' : ''}
+                />
+              </div>
+
+              <div className="campo">
+                <label>
+                  Haverá ingresso meia?
+                  <select
+                    value={temMeia}
+                    onChange={(e) => {
+                      setTemMeia(e.target.value);
+                      if (e.target.value === 'nao') {
+                        setValorIngressoMeia('');
+                        setQuantidadeMeia('');
+                      }
+                    }}
+                    className="select"
+                  >
+                    <option value="nao">Não</option>
+                    <option value="sim">Sim</option>
+                  </select>
+                </label>
+              </div>
+
+              {temMeia === 'sim' && (
+                <div className="campo">
+                  <label>
+                    Valor do Ingresso Meia (R$) <span className={erros.some(e => e.includes('meia')) ? 'erro-asterisco' : ''}>*</span>
+                  </label>
+                  <NumericFormat
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    prefix="R$ "
+                    value={valorIngressoMeia}
+                    onValueChange={(values) => setValorIngressoMeia(values.value)}
+                    className={erros.some(e => e.includes('meia')) ? 'erro-campo' : ''}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Lado Direito */}
+            <div className="lado-direito">
+              <div className="campo">
+                <label>
+                  Quantidade Inteira <span className={erros.some(e => e.includes('quantidadeInteira')) ? 'erro-asterisco' : ''}>*</span>
+                </label>
+                <input
+                  type="number"
+                  value={quantidadeInteira}
+                  onChange={(e) => setQuantidadeInteira(e.target.value)}
+                  min={1}
+                  className={erros.some(e => e.includes('quantidadeInteira')) ? 'erro-campo' : ''}
+                />
+              </div>
+
+              {temMeia === 'sim' && (
+                <div className="campo">
+                  <label>
+                    Quantidade Meia <span className={erros.some(e => e.includes('quantidadeMeia')) ? 'erro-asterisco' : ''}>*</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={quantidadeMeia}
+                    onChange={(e) => setQuantidadeMeia(e.target.value)}
+                    min={1}
+                    className={erros.some(e => e.includes('quantidadeMeia')) ? 'erro-campo' : ''}
+                  />
+                </div>
+              )}
+
+              <div className="campo">
+                <label>Data de Início das Vendas *</label>
+                <input
+                  type="date"
+                  value={dataInicio}
+                  onChange={(e) => setDataInicio(e.target.value)}
+                  className={erros.some(e => e.includes('dataInicio')) ? 'erro-campo' : ''}
+                />
+              </div>
+
+              <div className="campo">
+                <label>Data de Fim das Vendas *</label>
+                <input
+                  type="date"
+                  value={dataFim}
+                  onChange={(e) => setDataFim(e.target.value)}
+                  className={erros.some(e => e.includes('dataFim')) ? 'erro-campo' : ''}
+                />
+              </div>
+            </div>
           </div>
         </div>
 

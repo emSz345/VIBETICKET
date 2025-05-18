@@ -114,14 +114,14 @@ const NavBar = () => {
                   <span className="criar-evento-texto">CRIAR EVENTOS</span>
                 </Link>
               </div>
-            ) : (
+            ) : ( 
               <div className='navbar-criar-evento'>
                 <Link to="/CriarEventos">
                   <FaPlusCircle className="criar-evento-icone" />
                   <span className="criar-evento-texto">CRIAR EVENTOS</span>
                 </Link>
               </div>
-            )}
+             )}
             {usuarioLogado && (
               <Link to="/carrinho"><FaShoppingCart size={28} /></Link>
             )}
