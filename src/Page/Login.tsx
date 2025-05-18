@@ -17,6 +17,10 @@ import logo from "../assets/img-logo.png";
 import googleIcon from "../assets/logo-google.png";
 import facebookIcon from "../assets/logo-facebook.png";
 
+import { toast } from 'react-toastify';
+
+
+
 import "../styles/Login.css";
 
 const Login: React.FC = () => {
@@ -35,6 +39,14 @@ const Login: React.FC = () => {
   });
   const [bloqueado, setBloqueado] = useState<boolean>(false);
   const [tempoRestante, setTempoRestante] = useState<number>(0);
+
+
+  const [showGoogleAlert, setShowGoogleAlert] = useState(false);
+  const [showFacebookAlert, setShowFacebookAlert] = useState<boolean>(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
+  const [facebookError, setFacebookError] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     const storedUnlockTime = localStorage.getItem("unlockTime");
@@ -76,22 +88,30 @@ const Login: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      alert("Login com Google bem-sucedido!");
-      navigate("/Home");
+      setShowGoogleAlert(true);
+      setTimeout(() => {
+        setShowGoogleAlert(false);
+        navigate("/Home");
+      }, 2000);
     } catch (error) {
-      alert("Erro ao realizar login com Google.");
+      setGoogleError("Erro ao realizar login com Google.");
       console.error(error);
+      setTimeout(() => setGoogleError(null), 3000);
     }
   };
 
   const handleFacebookSignIn = async () => {
     try {
       await signInWithFacebook();
-      alert("Login com Facebook bem-sucedido!");
-      navigate("/Home");
+      setShowFacebookAlert(true);
+      setTimeout(() => {
+        setShowFacebookAlert(false);
+        navigate("/Home");
+      }, 2000);
     } catch (error) {
-      alert("Erro ao realizar login com Facebook.");
+      setFacebookError("Erro ao realizar login com Facebook.");
       console.error(error);
+      setTimeout(() => setFacebookError(null), 3000);
     }
   };
 
@@ -153,7 +173,7 @@ const Login: React.FC = () => {
       const response = await axios.get(`http://localhost:5000/api/users/me?email=${user.email}`);
       localStorage.setItem("userName", response.data.nome || user.email);
 
-      alert("Login bem-sucedido!");
+      alert('Login feito com sucesso')
       navigate("/Home");
     } catch (error: any) {
       if (error.code === "auth/wrong-password") {
@@ -194,7 +214,7 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       <header className="header">
-        <Link to="/Home" title="Voltar">
+        <Link to="/Home">
           <img src={logo} alt="Logo" className="header-logo" />
         </Link>
       </header>
@@ -247,6 +267,35 @@ const Login: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* ALERTA DE LOGIN GOOGLE E FACEBOOK */}
+      {showGoogleAlert && (
+        <div className="login-alerta-google">
+          <span className="login-check">✔</span>
+          <span>Login com Google realizado com sucesso!</span>
+        </div>
+      )}
+      {googleError && (
+        <div className="login-alerta-erro-google">
+          <span className="login-error-icon">⚠</span>
+          <span>{googleError}</span>
+        </div>
+      )}
+
+      {/* ALERTA DE LOGIN FACEBOOK */}
+      {showFacebookAlert && (
+        <div className="login-alerta-facebook">
+          <span className="login-check">✔</span>
+          <span>Login com Facebook realizado com sucesso!</span>
+        </div>
+      )}
+      {facebookError && (
+        <div className="login-alerta-erro-facebook">
+          <span className="login-error-icon">⚠</span>
+          <span>{facebookError}</span>
+        </div>
+      )}
+      
     </div>
   );
 };

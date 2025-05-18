@@ -5,7 +5,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Centraliza verticalmente */
+  justify-content: center;
+  /* Centraliza verticalmente */
   background-color: #f4f4f4;
   min-height: 100vh;
   padding-top: 140px;
@@ -29,7 +30,7 @@
   height: 130px;
 }
 
-.redefinir{
+.redefinir {
   color: #007bff;
   text-decoration: none;
 }
@@ -154,19 +155,96 @@ input {
   gap: 15px;
 }
 
-
-/* ========================
-   TERMOS
-======================== */
-
-.radio-container {
+.login-alerta-google {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #e6f4ea;
+  color: #2e7d32;
+  padding: 15px 25px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 15px;
+  font-weight: 500;
+  animation: slideInFadeOut 2s ease forwards;
+  z-index: 1000;
 }
 
-.radio-checkbox {
-  width: auto;
+.login-alerta-google .check {
+  margin-right: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.login-alerta-facebook {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  padding: 15px 25px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 15px;
+  font-weight: 500;
+  animation: slideInFadeOut 2s ease forwards;
+  z-index: 1000;
+}
+
+.login-alerta-facebook .check {
+  margin-right: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+.alerta-erro-google,
+.alerta-erro-facebook {
+  position: fixed;
+  top: 130px;
+  right: 20px;
+  background-color: #fbe9e7;
+  color: #d32f2f;
+  padding: 15px 25px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 15px;
+  font-weight: 500;
+  animation: slideInFadeOut 3s ease forwards;
+  z-index: 1000;
+}
+
+.alerta-erro-facebook {
+  top: 180px;
+}
+
+
+@keyframes slideInFadeOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
 
