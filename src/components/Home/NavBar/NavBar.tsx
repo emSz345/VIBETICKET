@@ -24,7 +24,7 @@ import Perfil from '../../../Page/Auth/Perfil';
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [usuarioLogado, setUsuarioLogado] = useState(false);
+  const [usuarioLogado, setUsuarioLogado] = useState(true);
   const [nomeUsuario, setNomeUsuario] = useState<string>("");
   const [mostrarPerfilTela, setMostrarPerfilTela] = useState(false);
  

@@ -32,6 +32,7 @@ function CriarEventos() {
   };
 
   const validarFormulario = () => {
+    alert("clicou");
     const erros: string[] = [];
     const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
     const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
@@ -49,7 +50,7 @@ function CriarEventos() {
     if (!estado) erros.push('O estado do evento é obrigatório.');
     if (!dataInicio) erros.push('A data de início é obrigatória.');
     if (!horaInicio) erros.push('A hora de início é obrigatória.');
-    
+
     if (!linkMaps || !/^https?:\/\/(www\.)?google\.[a-z.]+\/maps/.test(linkMaps)) {
       erros.push('O link do Google Maps é inválido ou não foi fornecido.');
     }
@@ -74,6 +75,13 @@ function CriarEventos() {
     const cidade = (document.getElementById('cidade-evento') as HTMLInputElement)?.value;
     const estado = (document.getElementById('estado-evento') as HTMLInputElement)?.value;
     const linkMaps = (document.getElementById('link-maps') as HTMLInputElement)?.value;
+    const dataInicio = (document.getElementById('data-inicio') as HTMLInputElement)?.value;
+    const dataFim = (document.getElementById('data-fim') as HTMLInputElement)?.value;
+    const horaInicio = (document.getElementById('hora-inicio') as HTMLInputElement)?.value;
+    const horaFim = (document.getElementById('hora-fim') as HTMLInputElement)?.value;
+    const valorIngresso = (document.getElementById('valor-ingresso') as HTMLInputElement)?.value;
+    const tipoIngresso = (document.getElementById('tipo-ingresso') as HTMLSelectElement)?.value;
+    const descricao = (document.getElementById('descricao-evento') as HTMLTextAreaElement)?.value;
     const token = localStorage.getItem('firebaseToken');
 
     const formData = new FormData();
@@ -87,9 +95,21 @@ function CriarEventos() {
     formData.append("linkMaps", linkMaps);
     formData.append("dataInicio", dataInicio);
     formData.append("horaInicio", horaInicio);
-    formData.append("querDoar", String(querDoar));
+    formData.append("dataFim", dataFim);
+
+    // Campos de ingresso
+    formData.append("valorIngressoInteira", valorIngressoInteira);
+    formData.append("valorIngressoMeia", valorIngressoMeia);
+    formData.append("quantidadeInteira", quantidadeInteira);
+    formData.append("quantidadeMeia", quantidadeMeia);
+    formData.append("temMeia", temMeia); // true ou false
+
+    // Doações
+    formData.append("querDoar", String(querDoar)); // true ou false
     formData.append("valorDoacao", valorDoacao);
-    formData.append("criadoPor", "teste");
+
+    // Criador do evento
+    formData.append("criadoPor", "usuarioId"); // ou e-mail, nome etc.
 
     try {
       const response = await fetch('http://localhost:5000/api/eventos/criar', {
@@ -116,7 +136,7 @@ function CriarEventos() {
   return (
     <div>
       <NavBar />
-      
+
       {/* Cabeçalho */}
       <header className="criar-evento-header">
         <h1 className="criar-titulo">
@@ -136,7 +156,7 @@ function CriarEventos() {
 
       {/* Formulário */}
       <div className="criar-form">
-        
+
         {/* 1. Informações Básicas */}
         <div className="informacoes-basicas-container">
           <div className="criar-Informaçao">
