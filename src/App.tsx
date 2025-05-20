@@ -2,16 +2,16 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import Cadastro from "./Page/Cadastro";
-import Home from './Page/Home';
-import Login from './Page/Login';
-import CriarEventos from './Page/CriarEventos';
-import Categorias from "./Page/Categorias";
-import Termos from './Page/Termos';
-import Detalhes from './Page/Detalhes'
-import Duvidas from './Page/Duvidas'
+import Cadastro from "./Page/Auth/Cadastro";
+import Home from './Page/Public/Home';
+import Login from './Page/Auth/Login';
+import CriarEventos from './Page/Eventos/CriarEventos';
+import Categorias from "./Page/Public/Categorias";
+import Termos from './Page/Public/Termos';
+import Detalhes from './Page/Eventos/Detalhes'
+import Duvidas from './Page/Public/Duvidas'
 
-import Perfil from './Page/Auth/Perfil';
+import Perfil from './Page/User/Perfil';
 
 function App() {
   //MONGODB
