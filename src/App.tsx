@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+
 import Cadastro from "./Page/Auth/Cadastro";
 import Home from './Page/Public/Home';
 import Login from './Page/Auth/Login';
@@ -12,6 +12,9 @@ import Detalhes from './Page/Eventos/Detalhes'
 import Duvidas from './Page/Public/Duvidas'
 
 import Perfil from './Page/User/Perfil';
+import { ImOmega } from 'react-icons/im';
+
+import Painel from './Page/Admin/Painel';
 
 function App() {
   //MONGODB
@@ -42,6 +45,8 @@ function App() {
             />
           }
         />
+
+         <Route path="/Painel" element={<Painel />} />
 
 
       </Routes>
