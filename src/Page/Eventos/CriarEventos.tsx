@@ -162,7 +162,7 @@ function CriarEventos() {
           <div className="criar-Informaçao">
             <h2>1. Informações básicas</h2>
           </div>
-
+          <p style={{ margin: 10}}>(*) Todos que tiver isso na frente é obrigatória!!!</p>
           <div className="campo">
             <label htmlFor="nome-evento">
               Nome do evento <span className={erros.includes('O nome do evento é obrigatório.') ? 'erro-asterisco' : ''}>*</span>

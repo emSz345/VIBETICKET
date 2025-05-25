@@ -2,25 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
+// ROTA AUTH
 import Cadastro from "./Page/Auth/Cadastro";
-import Home from './Page/Public/Home';
 import Login from './Page/Auth/Login';
+
+// ROTA EVENTOS
+import Detalhes from './Page/Eventos/Detalhes';
 import CriarEventos from './Page/Eventos/CriarEventos';
+
+// ROTA HOME
+import Home from './Page/Public/Home';
 import Categorias from "./Page/Public/Categorias";
 import Termos from './Page/Public/Termos';
-import Detalhes from './Page/Eventos/Detalhes'
 import Duvidas from './Page/Public/Duvidas'
 
+// ROTAS USERS
 import Perfil from './Page/User/Perfil';
-import { ImOmega } from 'react-icons/im';
 
+// ROTAS ADM
 import Painel from './Page/Admin/Painel';
+import Aprovados from "./Page/Admin/Aprovados";
+import Rejeitados from "./Page/Admin/Rejeitados";
+
 
 function App() {
   //MONGODB
   const [mensagem, setMensagem] = useState('');
-
-  
 
   //ROTAS
   return (
@@ -46,7 +53,9 @@ function App() {
           }
         />
 
-         <Route path="/Painel" element={<Painel />} />
+        <Route path="/Painel" element={<Painel />} />
+        <Route path="/Aprovados" element={<Aprovados />} />
+        <Route path="/Rejeitados" element={<Rejeitados />} />
 
 
       </Routes>

@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from "react";
 import { FiEdit2, FiCheck } from "react-icons/fi";
 
-import "../../styles/AuthStyle/Perfil.css";
+import "../../styles/Perfil.css";
 
 interface PerfilProps {
   nomeUsuario: string;

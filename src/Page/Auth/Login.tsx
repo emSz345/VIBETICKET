@@ -7,7 +7,7 @@ import {
 } from '../../services/firebase';
 import { sendPasswordResetEmail } from "firebase/auth";
 
-import Input from "../../components/ui/Input/Input";
+import Input from "../../components/ui/Input/Input"
 import Button from "../../components/ui/Button/Button";
 import SocialButton from "../../components/ui/SocialButton/SocialButton";
 import axios from "axios";
@@ -47,31 +47,67 @@ const Login: React.FC = () => {
   const [facebookError, setFacebookError] = useState<string | null>(null);
 
 
+  const getUnlockTime = () => parseInt(localStorage.getItem("unlockTime") || "0");
+  const getFalhas = () => parseInt(localStorage.getItem("loginFalhas") || "0");
+  const getTentativas = () => parseInt(localStorage.getItem("loginTentativas") || "0");
+
+  const bloquearLogin = (falhasAtualizadas: number) => {
+    const minutosBloqueio = falhasAtualizadas; // 1 min por falha consecutiva
+    const tempoBloqueioMs = minutosBloqueio * 60 * 1000;
+    const tempoDesbloqueio = Date.now() + tempoBloqueioMs;
+
+    localStorage.setItem("unlockTime", tempoDesbloqueio.toString());
+    localStorage.setItem("loginFalhas", falhasAtualizadas.toString());
+    localStorage.setItem("loginTentativas", "0");
+
+    setBloqueado(true);
+    setTempoRestante(tempoBloqueioMs);
+
+    setTimeout(() => {
+      setBloqueado(false);
+      setTempoRestante(0);
+      localStorage.removeItem("unlockTime");
+    }, tempoBloqueioMs);
+
+    alert(`Muitas tentativas falhas. Tente novamente em ${minutosBloqueio} minuto(s).`);
+  };
 
   useEffect(() => {
-    const storedUnlockTime = localStorage.getItem("unlockTime");
+    const unlockTime = getUnlockTime();
     const now = Date.now();
 
-    if (storedUnlockTime && parseInt(storedUnlockTime) > now) {
+    if (unlockTime > now) {
+      const restante = unlockTime - now;
       setBloqueado(true);
-      const timeLeft = parseInt(storedUnlockTime) - now;
-      setTempoRestante(timeLeft);
+      setTempoRestante(restante);
 
       const timeout = setTimeout(() => {
         setBloqueado(false);
-        setTentativas(0);
-        setFalhas(prev => {
-          const novo = prev + 1;
-          localStorage.setItem("loginFalhas", novo.toString());
-          return novo;
-        });
-        localStorage.removeItem("loginTentativas");
+        setTempoRestante(0);
         localStorage.removeItem("unlockTime");
-      }, timeLeft);
+      }, restante);
 
       return () => clearTimeout(timeout);
     }
   }, []);
+
+  useEffect(() => {
+    if (!bloqueado || tempoRestante <= 0) return;
+
+    const interval = setInterval(() => {
+      setTempoRestante((prev) => {
+        if (prev <= 1000) {
+          clearInterval(interval);
+          setBloqueado(false);
+          localStorage.removeItem("unlockTime");
+          return 0;
+        }
+        return prev - 1000;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [bloqueado, tempoRestante]);
 
 
 
@@ -130,6 +166,7 @@ const Login: React.FC = () => {
   }
 
   const handleSubmit = async () => {
+   
 
     if (bloqueado) {
       alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
@@ -167,11 +204,12 @@ const Login: React.FC = () => {
 
       const user = userCredential.user;
       const token = await user.getIdToken();
-
+      const uid = user.uid;
       localStorage.setItem("firebaseToken", token);
 
       const response = await axios.get(`http://localhost:5000/api/users/me?email=${user.email}`);
       localStorage.setItem("userName", response.data.nome || user.email);
+      localStorage.setItem("id", uid);
 
       alert('Login feito com sucesso')
       navigate("/Home");
@@ -186,30 +224,16 @@ const Login: React.FC = () => {
       }
     }
 
-    setTentativas(prev => {
-      const novoValor = prev + 1;
-      localStorage.setItem("loginTentativas", novoValor.toString());
+    const novasTentativas = getTentativas() + 1;
+    localStorage.setItem("loginTentativas", novasTentativas.toString());
+    setTentativas(novasTentativas);
 
-      if (novoValor >= 5) {
-        const falhasAtual = falhas + 1;
-        const minutosBloqueio = 1 * falhasAtual; // Aumenta progressivamente: 1min, 2min, 3min...
-
-        const tempo = minutosBloqueio * 60 * 1000;
-        const desbloqueio = Date.now() + tempo;
-
-        localStorage.setItem("unlockTime", desbloqueio.toString());
-
-        setBloqueado(true);
-        setTempoRestante(tempo);
-        alert(`Muitas tentativas falhas. Tente novamente em ${minutosBloqueio} minuto(s).`);
-
-        setFalhas(falhasAtual);
-      }
-
-      return novoValor;
-    });
-
-  };
+    if (novasTentativas >= 5) {
+      const novasFalhas = getFalhas() + 1;
+      setFalhas(novasFalhas);
+      bloquearLogin(novasFalhas);
+    }
+  }
 
   return (
     <div className="login-container">
@@ -218,6 +242,14 @@ const Login: React.FC = () => {
           <img src={logo} alt="Logo" className="header-logo" />
         </Link>
       </header>
+      {bloqueado && (
+        <div className="login-bloqueado-msg">
+          <p>
+            Login bloqueado. Tente novamente em{" "}
+            <strong>{Math.ceil(tempoRestante / 1000)}</strong> segundo(s).
+          </p>
+        </div>
+      )}
       <div className="login-content">
         <div className="logo-section">
           <img src={logo} alt="Logo" className="logo-image" />
@@ -295,7 +327,8 @@ const Login: React.FC = () => {
           <span>{facebookError}</span>
         </div>
       )}
-      
+
+
     </div>
   );
 };

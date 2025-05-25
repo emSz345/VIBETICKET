@@ -26,6 +26,7 @@ const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
+    const uid = user.uid;
 
     const nome = user.displayName;
     const email = user.email;
@@ -43,6 +44,7 @@ const signInWithGoogle = async () => {
     //salva o token no navegador 
     const token = await user.getIdToken();
     localStorage.setItem("firebaseToken", token);
+    localStorage.setItem("id",uid);
     localStorage.setItem("userName", nome);
 
     
@@ -92,6 +94,7 @@ function realizarLoginComFacebook(resolve, reject) {
         try {
           const result = await signInWithCredential(auth, credential);
           const user = result.user;
+          const uid = user.uid;
 
           const nome = user.displayName || "Usuário";
           const email = user.email;
@@ -111,6 +114,7 @@ function realizarLoginComFacebook(resolve, reject) {
           const token = await user.getIdToken();
           localStorage.setItem("firebaseToken", token);
           localStorage.setItem("userName", nome);
+          localStorage.setItem("id",uid)
 
           resolve(user); 
         } catch (error) {

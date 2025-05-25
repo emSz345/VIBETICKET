@@ -104,7 +104,7 @@ const Cadastro: React.FC = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
       const user = userCredential.user;
-
+      const UsuarioID = user.uid;
       const { nome, email, senha } = formData;
       const provedor = "local";
 
@@ -118,6 +118,7 @@ const Cadastro: React.FC = () => {
       const token = await user.getIdToken();
       localStorage.setItem("firebaseToken", token);
       localStorage.setItem("userName", nome);
+      localStorage.setItem("id", UsuarioID);
 
       alert("Conta criada com sucesso!");
       navigate("/Home");
@@ -213,7 +214,7 @@ const Cadastro: React.FC = () => {
                 if (e.target.checked) setMostrarTermos(true); // abre o modal ao marcar
               }} />
             <label htmlFor="termos">
-              Eu concordo com os  <a href="/Termos"  
+              Eu concordo com os  <a href="/Termos"
                 className="Termos"
               >
                 termos & políticas
