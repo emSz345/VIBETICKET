@@ -72,25 +72,7 @@ const Cadastro: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleTermosChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const isChecked = e.target.checked;
-    setTermosAceitos(isChecked);
-
-    if (isChecked) {
-      window.open("/Termos", "_blank", "width=600,height=600");
-      setTermosPopupAberto(true);
-    }
-  };
-
-  const abrirTermos = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-
-    if (!termosPopupAberto) {
-      window.open("/Termos", "_blank", "width=600,height=600");
-      setTermosPopupAberto(true);
-    }
-  };
-
+  
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

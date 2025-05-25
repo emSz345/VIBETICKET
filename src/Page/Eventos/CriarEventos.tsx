@@ -24,50 +24,11 @@ function CriarEventos() {
   const [temMeia, setTemMeia] = useState('false');
   const [dataFim, setDataFim] = useState('');
 
-  // Manipuladores de eventos
-  const handleInput = () => {
-    if (editorRef.current) {
-      setDescricao(editorRef.current.innerHTML);
-    }
-  };
 
-  const validarFormulario = () => {
-    alert("clicou");
-    const erros: string[] = [];
-    const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
-    const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
-    const rua = (document.getElementById('rua-evento') as HTMLInputElement)?.value;
-    const cidade = (document.getElementById('cidade-evento') as HTMLInputElement)?.value;
-    const estado = (document.getElementById('estado-evento') as HTMLInputElement)?.value;
-    const linkMaps = (document.getElementById('link-maps') as HTMLInputElement)?.value;
 
-    if (!nomeEvento) erros.push('O nome do evento é obrigatório.');
-    if (!image) erros.push('A imagem do evento é obrigatória.');
-    if (!categoriaEvento) erros.push('A categoria do evento é obrigatória.');
-    if (!descricao.trim()) erros.push('A descrição do evento é obrigatória.');
-    if (!rua) erros.push('A rua do evento é obrigatória.');
-    if (!cidade) erros.push('A cidade do evento é obrigatória.');
-    if (!estado) erros.push('O estado do evento é obrigatório.');
-    if (!dataInicio) erros.push('A data de início é obrigatória.');
-    if (!horaInicio) erros.push('A hora de início é obrigatória.');
-
-    if (!linkMaps || !/^https?:\/\/(www\.)?google\.[a-z.]+\/maps/.test(linkMaps)) {
-      erros.push('O link do Google Maps é inválido ou não foi fornecido.');
-    }
-
-    if (querDoar && (!valorDoacao || parseFloat(valorDoacao.replace(',', '.')) <= 0)) {
-      erros.push('Se deseja doar, informe um valor válido.');
-    }
-
-    return erros;
-  };
 
   const handleEnviarAnalise = async () => {
-    const errosValidacao = validarFormulario();
-    if (errosValidacao.length > 0) {
-      setErros(errosValidacao);
-      return;
-    }
+
 
     const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
     const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
@@ -83,6 +44,7 @@ function CriarEventos() {
     const tipoIngresso = (document.getElementById('tipo-ingresso') as HTMLSelectElement)?.value;
     const descricao = (document.getElementById('descricao-evento') as HTMLTextAreaElement)?.value;
     const token = localStorage.getItem('firebaseToken');
+    const id = localStorage.getItem("id")
 
     const formData = new FormData();
     formData.append("nome", nomeEvento);
@@ -109,7 +71,7 @@ function CriarEventos() {
     formData.append("valorDoacao", valorDoacao);
 
     // Criador do evento
-    formData.append("criadoPor", "usuarioId"); // ou e-mail, nome etc.
+    formData.append("criadoPor", String(id)); // ou e-mail, nome etc.
 
     try {
       const response = await fetch('http://localhost:5000/api/eventos/criar', {
@@ -162,7 +124,7 @@ function CriarEventos() {
           <div className="criar-Informaçao">
             <h2>1. Informações básicas</h2>
           </div>
-          <p style={{ margin: 10}}>(*) Todos que tiver isso na frente é obrigatória!!!</p>
+          <p style={{ margin: 10 }}>(*) Todos que tiver isso na frente é obrigatória!!!</p>
           <div className="campo">
             <label htmlFor="nome-evento">
               Nome do evento <span className={erros.includes('O nome do evento é obrigatório.') ? 'erro-asterisco' : ''}>*</span>
