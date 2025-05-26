@@ -17,10 +17,6 @@ import logo from "../../assets/img-logo.png";
 import googleIcon from "../../assets/logo-google.png";
 import facebookIcon from "../../assets/logo-facebook.png";
 
-
-
-
-
 import "../../styles/Login.css";
 
 const Login: React.FC = () => {
@@ -166,7 +162,7 @@ const Login: React.FC = () => {
   }
 
   const handleSubmit = async () => {
-   
+
 
     if (bloqueado) {
       alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");

@@ -27,25 +27,22 @@ const NavBar = () => {
   const [usuarioLogado, setUsuarioLogado] = useState(true);
   const [nomeUsuario, setNomeUsuario] = useState<string>("");
   const [mostrarPerfilTela, setMostrarPerfilTela] = useState(false);
-
-
+ 
+   
   const emailUsuario = localStorage.getItem("userEmail") || "usuario@email.com";
   const tipoLogin = (localStorage.getItem("tipoLogin") as "email" | "google" | "facebook") || "email";
 
   useEffect(() => {
     const token = localStorage.getItem("firebaseToken");
-    const nome = localStorage.getItem("userName");
-    if (token && nome) {
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
       setUsuarioLogado(true);
-      setNomeUsuario(nome);
-    } else {
-      setUsuarioLogado(false);
-      setNomeUsuario("");
+      setNomeUsuario(payload.nome);
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("firebaseToken");
     setUsuarioLogado(false);
     setDropdownOpen(false);
     setNomeUsuario("");
@@ -70,7 +67,7 @@ const NavBar = () => {
               <div className="usuario-menu">
                 <div className="usuario-topo" onClick={() => setDropdownOpen(!dropdownOpen)}>
                   <div className="avatar" />
-                  <span>{localStorage.getItem("userName")}</span>
+                  <span>{localStorage.getItem("userName") || "Usuário"}</span>
                   <FiChevronDown size={20} />
                 </div>
                 {dropdownOpen && (
@@ -117,14 +114,14 @@ const NavBar = () => {
                   <span className="criar-evento-texto">CRIAR EVENTOS</span>
                 </Link>
               </div>
-            ) : (
+            ) : ( 
               <div className='navbar-criar-evento'>
                 <Link to="/CriarEventos">
                   <FaPlusCircle className="criar-evento-icone" />
                   <span className="criar-evento-texto">CRIAR EVENTOS</span>
                 </Link>
               </div>
-            )}
+             )}
             {usuarioLogado && (
               <Link to="/carrinho"><FaShoppingCart size={28} /></Link>
             )}
@@ -142,7 +139,7 @@ const NavBar = () => {
               X
             </button>
 
-            <Perfil nomeUsuario={nomeUsuario} emailUsuario={emailUsuario} tipoLogin={tipoLogin} />
+            <Perfil nomeUsuario={nomeUsuario} emailUsuario={emailUsuario} tipoLogin={tipoLogin}/>
           </div>
         </div>
       )}

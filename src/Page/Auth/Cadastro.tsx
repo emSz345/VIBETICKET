@@ -32,6 +32,7 @@ const Cadastro: React.FC = () => {
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [termosPopupAberto, setTermosPopupAberto] = useState(false);
   const [mostrarTermos, setMostrarTermos] = useState(false);
+  const [mensagem, setMensagem] = useState("");
 
   const fecharModal = () => {
     setMostrarTermos(false);
@@ -72,7 +73,25 @@ const Cadastro: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  
+  const handleTermosChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const isChecked = e.target.checked;
+    setTermosAceitos(isChecked);
+
+    if (isChecked) {
+      window.open("/Termos", "_blank", "width=600,height=600");
+      setTermosPopupAberto(true);
+    }
+  };
+
+  const abrirTermos = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    if (!termosPopupAberto) {
+      window.open("/Termos", "_blank", "width=600,height=600");
+      setTermosPopupAberto(true);
+    }
+  };
+
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -102,8 +121,8 @@ const Cadastro: React.FC = () => {
       localStorage.setItem("userName", nome);
       localStorage.setItem("id", UsuarioID);
 
-      alert("Conta criada com sucesso!");
-      navigate("/Home");
+      setMensagem("Conta criada com sucesso!");
+      setTimeout(() => navigate("/Home"), 3000);
     } catch (error: any) {
       alert("Erro ao registrar. Verifique os dados e tente novamente.");
       console.error(error.message);
@@ -123,7 +142,7 @@ const Cadastro: React.FC = () => {
         </div>
 
         <div className="form-section">
-          <h2 className="login-bemvido">Seja bem-vindo</h2>
+          <h2 className="login-bemvido">Seja Bem-vindo</h2>
 
           <h3 className="login-title">Nome completo</h3>
           <Input
@@ -186,22 +205,21 @@ const Cadastro: React.FC = () => {
           </div>
 
           <div className="radio-container">
-            <input type="checkbox"
-              className="radio-checkbox"
-              id="termos"
-              name="termos"
-              checked={termosAceitos}
-              onChange={(e) => {
-                setTermosAceitos(e.target.checked);
-                if (e.target.checked) setMostrarTermos(true); // abre o modal ao marcar
-              }} />
-            <label htmlFor="termos">
-              Eu concordo com os  <a href="/Termos"
-                className="Termos"
-              >
-                termos & políticas
-              </a>
+            <label className="termos-label">
+              <input
+                type="checkbox"
+                className="checkbox-ajustado"
+                checked={termosAceitos}
+                onChange={(e) => {
+                  setTermosAceitos(e.target.checked);
+                  if (e.target.checked) setMostrarTermos(true);
+                }}
+              />
+              <span>
+                Eu concordo com os <span className="link">termos & políticas</span>
+              </span>
             </label>
+
             {mostrarTermos && (
               <div className="modal">
                 <div className="modal-content">
@@ -226,6 +244,12 @@ const Cadastro: React.FC = () => {
             Já possui uma conta? <Link to="/Login" className="crie-conta">Faça login!</Link>
           </p>
         </div>
+        {mensagem && (
+          <div className="mensagem-sucesso">
+            {mensagem}
+          </div>
+        )}
+
       </div>
     </div>
   );
