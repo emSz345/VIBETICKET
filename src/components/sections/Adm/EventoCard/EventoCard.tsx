@@ -5,8 +5,8 @@ import ModalEvento from "../ModalEevnto/ModalEvento";
 
 interface Props {
     evento: Evento;
-    onAceitar: (id: number) => void;
-    onRejeitar: (id: number) => void;
+    onAceitar: (id: string) => void;
+    onRejeitar: (id: string) => void;
 }
 
 const EventoCard: React.FC<Props> = ({ evento, onAceitar, onRejeitar }) => {
@@ -18,8 +18,7 @@ const EventoCard: React.FC<Props> = ({ evento, onAceitar, onRejeitar }) => {
                 <img src={evento.imagem} alt="Evento" className="evento-imagem" />
                 <div className="evento-dados">
                     <p><strong>{evento.nome}</strong></p>
-                    <p>{evento.criador.nome}</p>
-                    <p>{evento.criador.email}</p>
+                    <p>{evento.criadoPor}</p>
                 </div>
             </div>
 

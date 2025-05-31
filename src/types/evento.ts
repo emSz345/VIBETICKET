@@ -1,21 +1,22 @@
 export interface Evento {
-  id: number;
+  _id: string;
   nome: string;
   imagem: string;
-  data: string; 
-  hora: string; 
-  descricao: string;
   categoria: string;
-  ingressos: number;
-  criador: {
-    nome: string;
-    email: string;
-  };
-  local: {
-    rua: string;
-    bairro: string;
-    cidade: string;
-    estado: string;
-    urlMaps: string;
-  };
+  descricao: string;
+  rua: string;
+  cidade: string;
+  estado: string;
+  linkMaps: string;
+  dataInicio: string;
+  horaInicio: string;
+  dataFim?: string;
+  valorIngressoInteira?: number;
+  valorIngressoMeia?: number;
+  quantidadeInteira?: number;
+  quantidadeMeia?: number;
+  temMeia?: boolean;
+  querDoar?: boolean;
+  valorDoacao?: number;
+  criadoPor: string;
 }

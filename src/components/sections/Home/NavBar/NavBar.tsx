@@ -27,22 +27,28 @@ const NavBar = () => {
   const [usuarioLogado, setUsuarioLogado] = useState(true);
   const [nomeUsuario, setNomeUsuario] = useState<string>("");
   const [mostrarPerfilTela, setMostrarPerfilTela] = useState(false);
- 
-   
+
+
   const emailUsuario = localStorage.getItem("userEmail") || "usuario@email.com";
   const tipoLogin = (localStorage.getItem("tipoLogin") as "email" | "google" | "facebook") || "email";
 
   useEffect(() => {
     const token = localStorage.getItem("firebaseToken");
-    if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+    const nome = localStorage.getItem("userName");
+    if (token && nome) {
       setUsuarioLogado(true);
-      setNomeUsuario(payload.nome);
+      setNomeUsuario(nome);
+    } else {
+      setUsuarioLogado(false);
+      setNomeUsuario("");
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("firebaseToken");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("tipoLogin");
     setUsuarioLogado(false);
     setDropdownOpen(false);
     setNomeUsuario("");
@@ -114,14 +120,14 @@ const NavBar = () => {
                   <span className="criar-evento-texto">CRIAR EVENTOS</span>
                 </Link>
               </div>
-            ) : ( 
+            ) : (
               <div className='navbar-criar-evento'>
                 <Link to="/CriarEventos">
                   <FaPlusCircle className="criar-evento-icone" />
                   <span className="criar-evento-texto">CRIAR EVENTOS</span>
                 </Link>
               </div>
-             )}
+            )}
             {usuarioLogado && (
               <Link to="/carrinho"><FaShoppingCart size={28} /></Link>
             )}
@@ -139,7 +145,7 @@ const NavBar = () => {
               X
             </button>
 
-            <Perfil nomeUsuario={nomeUsuario} emailUsuario={emailUsuario} tipoLogin={tipoLogin}/>
+            <Perfil nomeUsuario={nomeUsuario} emailUsuario={emailUsuario} tipoLogin={tipoLogin} />
           </div>
         </div>
       )}

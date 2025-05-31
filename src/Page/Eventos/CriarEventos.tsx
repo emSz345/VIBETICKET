@@ -11,7 +11,6 @@ function CriarEventos() {
   // Estados do componente
   const [image, setImage] = useState<File | null>(null);
   const [descricao, setDescricao] = useState('');
-  const editorRef = useRef<HTMLDivElement>(null);
   const [dataInicio, setDataInicio] = useState('');
   const [horaInicio, setHoraInicio] = useState('');
   const [querDoar, setQuerDoar] = useState<boolean | null>(null);
@@ -25,11 +24,7 @@ function CriarEventos() {
   const [dataFim, setDataFim] = useState('');
 
   // Manipuladores de eventos
-  const handleInput = () => {
-    if (editorRef.current) {
-      setDescricao(editorRef.current.innerHTML);
-    }
-  };
+  
 
   const validarFormulario = () => {
     alert("clicou");
@@ -63,11 +58,7 @@ function CriarEventos() {
   };
 
   const handleEnviarAnalise = async () => {
-    const errosValidacao = validarFormulario();
-    if (errosValidacao.length > 0) {
-      setErros(errosValidacao);
-      return;
-    }
+   
 
     const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
     const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
@@ -78,12 +69,11 @@ function CriarEventos() {
     const dataInicio = (document.getElementById('data-inicio') as HTMLInputElement)?.value;
     const dataFim = (document.getElementById('data-fim') as HTMLInputElement)?.value;
     const horaInicio = (document.getElementById('hora-inicio') as HTMLInputElement)?.value;
-    const horaFim = (document.getElementById('hora-fim') as HTMLInputElement)?.value;
-    const valorIngresso = (document.getElementById('valor-ingresso') as HTMLInputElement)?.value;
-    const tipoIngresso = (document.getElementById('tipo-ingresso') as HTMLSelectElement)?.value;
+
     const descricao = (document.getElementById('descricao-evento') as HTMLTextAreaElement)?.value;
     const token = localStorage.getItem('firebaseToken');
-
+    const id = localStorage.getItem('id');
+    
     const formData = new FormData();
     formData.append("nome", nomeEvento);
     if (image) formData.append('imagem', image);
@@ -109,7 +99,7 @@ function CriarEventos() {
     formData.append("valorDoacao", valorDoacao);
 
     // Criador do evento
-    formData.append("criadoPor", "usuarioId"); // ou e-mail, nome etc.
+    formData.append("criadoPor", String(id)); // ou e-mail, nome etc.
 
     try {
       const response = await fetch('http://localhost:5000/api/eventos/criar', {

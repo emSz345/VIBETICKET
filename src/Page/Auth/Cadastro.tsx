@@ -73,24 +73,9 @@ const Cadastro: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleTermosChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const isChecked = e.target.checked;
-    setTermosAceitos(isChecked);
+  
 
-    if (isChecked) {
-      window.open("/Termos", "_blank", "width=600,height=600");
-      setTermosPopupAberto(true);
-    }
-  };
-
-  const abrirTermos = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-
-    if (!termosPopupAberto) {
-      window.open("/Termos", "_blank", "width=600,height=600");
-      setTermosPopupAberto(true);
-    }
-  };
+  
 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -121,8 +106,8 @@ const Cadastro: React.FC = () => {
       localStorage.setItem("userName", nome);
       localStorage.setItem("id", UsuarioID);
 
-      setMensagem("Conta criada com sucesso!");
-      setTimeout(() => navigate("/Home"), 3000);
+      
+      navigate("/Home")
     } catch (error: any) {
       alert("Erro ao registrar. Verifique os dados e tente novamente.");
       console.error(error.message);
@@ -244,11 +229,7 @@ const Cadastro: React.FC = () => {
             Já possui uma conta? <Link to="/Login" className="crie-conta">Faça login!</Link>
           </p>
         </div>
-        {mensagem && (
-          <div className="mensagem-sucesso">
-            {mensagem}
-          </div>
-        )}
+        
 
       </div>
     </div>
