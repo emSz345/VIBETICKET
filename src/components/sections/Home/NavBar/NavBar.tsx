@@ -29,7 +29,7 @@ const NavBar = () => {
   const [mostrarPerfilTela, setMostrarPerfilTela] = useState(false);
 
 
-  const emailUsuario = localStorage.getItem("userEmail") || "usuario@email.com";
+  const emailUsuario = localStorage.getItem("email") || "usuario@email.com";
   const tipoLogin = (localStorage.getItem("tipoLogin") as "email" | "google" | "facebook") || "email";
 
   useEffect(() => {

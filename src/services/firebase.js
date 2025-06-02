@@ -41,10 +41,11 @@ const signInWithGoogle = async () => {
 
     console.log("Login com Google bem-sucedido!", user);
 
-    //salva o token no navegador 
+    
     const token = await user.getIdToken();
     localStorage.setItem("firebaseToken", token);
     localStorage.setItem("id",uid);
+    localStorage.setItem("email",email);
     localStorage.setItem("userName", nome);
 
     
@@ -114,6 +115,7 @@ function realizarLoginComFacebook(resolve, reject) {
           const token = await user.getIdToken();
           localStorage.setItem("firebaseToken", token);
           localStorage.setItem("userName", nome);
+          localStorage.setItem("email",email);
           localStorage.setItem("id",uid)
 
           resolve(user); 

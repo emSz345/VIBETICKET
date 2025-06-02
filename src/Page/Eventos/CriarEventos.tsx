@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import '../../styles/CriarEventos.css';
 import { NumericFormat } from 'react-number-format';
 import Rodape from '../../components/layout/Footer/Footer';
@@ -6,6 +6,7 @@ import NavBar from '../../components/sections/Home/NavBar/NavBar';
 import { MdAddPhotoAlternate } from 'react-icons/md';
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
+
 
 function CriarEventos() {
   // Estados do componente
@@ -16,6 +17,8 @@ function CriarEventos() {
   const [querDoar, setQuerDoar] = useState<boolean | null>(null);
   const [valorDoacao, setValorDoacao] = useState('');
   const [erros, setErros] = useState<string[]>([]);
+  const [isCooldown, setIsCooldown] = useState(false);
+  const [cooldownTimeLeft, setCooldownTimeLeft] = useState<number | null>(null);
   const [valorIngressoInteira, setValorIngressoInteira] = useState('');
   const [valorIngressoMeia, setValorIngressoMeia] = useState('');
   const [quantidadeInteira, setQuantidadeInteira] = useState('');
@@ -23,8 +26,40 @@ function CriarEventos() {
   const [temMeia, setTemMeia] = useState('false');
   const [dataFim, setDataFim] = useState('');
 
-  // Manipuladores de eventos
-  
+  const formatTime = (seconds: number): string => {
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+
+  useEffect(() => {
+    const savedCooldownEnd = localStorage.getItem('eventoCooldownEnd');
+    if (savedCooldownEnd) {
+      const interval = setInterval(() => {
+        const now = Date.now();
+        const end = parseInt(savedCooldownEnd);
+        const remaining = Math.floor((end - now) / 1000);
+
+        if (remaining <= 0) {
+          setIsCooldown(false);
+          setCooldownTimeLeft(null);
+          localStorage.removeItem('eventoCooldownEnd');
+          clearInterval(interval);
+        } else {
+          setIsCooldown(true);
+          setCooldownTimeLeft(remaining);
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, []);
+
+
+
 
   const validarFormulario = () => {
     alert("clicou");
@@ -58,7 +93,7 @@ function CriarEventos() {
   };
 
   const handleEnviarAnalise = async () => {
-   
+
 
     const nomeEvento = (document.getElementById('nome-evento') as HTMLInputElement)?.value;
     const categoriaEvento = (document.getElementById('categoria-evento') as HTMLSelectElement)?.value;
@@ -72,8 +107,8 @@ function CriarEventos() {
 
     const descricao = (document.getElementById('descricao-evento') as HTMLTextAreaElement)?.value;
     const token = localStorage.getItem('firebaseToken');
-    const id = localStorage.getItem('id');
-    
+    const email = localStorage.getItem('email');
+
     const formData = new FormData();
     formData.append("nome", nomeEvento);
     if (image) formData.append('imagem', image);
@@ -99,7 +134,7 @@ function CriarEventos() {
     formData.append("valorDoacao", valorDoacao);
 
     // Criador do evento
-    formData.append("criadoPor", String(id)); // ou e-mail, nome etc.
+    formData.append("criadoPor", String(email)); // ou e-mail, nome etc.
 
     try {
       const response = await fetch('http://localhost:5000/api/eventos/criar', {
@@ -117,6 +152,15 @@ function CriarEventos() {
 
       const data = await response.json();
       alert('Evento enviado para análise com sucesso!');
+
+      const cooldownDuration = 5 * 60 * 1000; // 5 minutos
+      const cooldownEndTime = Date.now() + cooldownDuration;
+
+      localStorage.setItem('eventoCooldownEnd', cooldownEndTime.toString());
+      setIsCooldown(true);
+      setCooldownTimeLeft(Math.floor(cooldownDuration / 1000));
+
+
     } catch (error: any) {
       alert(error.message);
     }
@@ -137,9 +181,10 @@ function CriarEventos() {
             <ImExit size={13} />
             Sair
           </button>
-          <button className="criar-btn-enviar" onClick={handleEnviarAnalise}>
-            Enviar para Análise
-            <IoSend />
+          <button className="criar-btn-enviar" onClick={handleEnviarAnalise} disabled={isCooldown}>
+            {isCooldown
+              ? `Aguarde... (${formatTime(cooldownTimeLeft || 0)})`
+              : 'Enviar para Análise'} <IoSend />
           </button>
         </div>
       </header>
@@ -152,7 +197,7 @@ function CriarEventos() {
           <div className="criar-Informaçao">
             <h2>1. Informações básicas</h2>
           </div>
-          <p style={{ margin: 10}}>(*) Todos que tiver isso na frente é obrigatória!!!</p>
+          <p style={{ margin: 10 }}>(*) Todos que tiver isso na frente é obrigatória!!!</p>
           <div className="campo">
             <label htmlFor="nome-evento">
               Nome do evento <span className={erros.includes('O nome do evento é obrigatório.') ? 'erro-asterisco' : ''}>*</span>

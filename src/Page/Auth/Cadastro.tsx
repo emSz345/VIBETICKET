@@ -105,7 +105,7 @@ const Cadastro: React.FC = () => {
       localStorage.setItem("firebaseToken", token);
       localStorage.setItem("userName", nome);
       localStorage.setItem("id", UsuarioID);
-
+      localStorage.setItem("email", email);
       
       navigate("/Home")
     } catch (error: any) {
