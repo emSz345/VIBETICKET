@@ -1,15 +1,16 @@
 import React from "react";
 import "./Footer.css";
 import logo from '../../../assets/img-logo.png'
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
     <footer className="footer-container">
       <div className="foote-container">
         <img src={logo} alt="Logo B4Y" className="logo" />
-        <hr className="hr" />
+        <hr className="footer-hr" />
         <div className="footer-sections">
-          <div className="section">
+          <div className="fotterSection">
             <h4>Encontre estilos</h4>
             <ul>
               <li>Rock</li>
@@ -18,7 +19,7 @@ const Footer: React.FC = () => {
               <li>Rap</li>
             </ul>
           </div>
-          <div className="section">
+          <div className="fotterSection">
             <h4>Cidades</h4>
             <ul>
               <li>São Paulo</li>
@@ -27,31 +28,29 @@ const Footer: React.FC = () => {
               <li>Rio de Janeiro</li>
             </ul>
           </div>
-          <div className="section">
+          <div className="fotterSection">
             <h4>Produtores</h4>
             <ul>
-              <li>Central de produtos</li>
-              <li>Criar novo evento</li>
-              <li>Gerenciar eventos</li>
-              <li>Gerenciar ingressos</li>
+              <li><Link to='/Duvidas' className="Link">Criar novo evento</Link></li>
+              <li><Link to='/Duvidas' className="Link">Gerenciar eventos</Link></li>
+              <li><Link to='/Duvidas' className="Link">Gerenciar ingressos</Link></li>
             </ul>
           </div>
-          <div className="section">
+          <div className="fotterSection">
             <h4>Ajuda</h4>
             <ul>
-              <li>Termos e políticas</li>
-              <li>Criar novo evento</li>
-              <li>Gerenciar eventos</li>
-              <li>Gerenciar ingressos</li>
+              <li><Link to='/Duvidas' className="Link">Termos e políticas</Link></li>
+              <li><Link to='/Duvidas' className="Link">Dúvias e suport</Link></li>
+              <li><Link to='' className="Link">Gerenciar eventos</Link></li>
+              <li><Link to='' className="Link">Gerenciar ingressos</Link></li>
             </ul>
           </div>
-          <div className="section">
+          <div className="fotterSection">
             <h4>Páginas</h4>
             <ul>
-              <li>Início</li>
-              <li>Categorias</li>
-              <li>Central produtores</li>
-              <li>Carrinho</li>
+              <li><Link to='/Duvidas' className="Link">Home</Link></li>
+              <li><Link to='/Duvidas' className="Link">Categorias</Link></li>
+              <li><Link to='/Duvidas' className="Link">Central produtores</Link></li>
             </ul>
           </div>
         </div>

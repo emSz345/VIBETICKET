@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 .footer-container {
   width: 100%;
   background-color: #2d2d38;
@@ -30,32 +32,51 @@
   margin-top: 50px;
 }
 
-.section {
+.fotterSection {
   flex: 1;
   min-width: 150px;
   margin-bottom: 20px;
 }
 
-.section h4 {
-  font-size: 16px;
-  margin-bottom: 10px;
+.fotterSection h4 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 
-.section ul {
+.fotterSection ul {
   list-style: none;
   padding: 0;
 }
 
-.section li {
-  margin-bottom: 5px;
+.fotterSection li{
+  margin-bottom: 15px;
   font-size: 14px;
   cursor: pointer;
 }
 
-.hr {
+.fotterSection .Link {
+  color: #ffffff;
+  text-decoration: none;
+  font-family: 'Ariel', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  
+  
+}
+
+.fotterSection .Link:hover {
+  color: #007bff
+}
+
+.footer-hr {
   margin: 0 0 20px 0;
   border-color: #919191;
 }
+
+
 
 @media (max-width: 768px) {
   .footer-sections {

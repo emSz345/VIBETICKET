@@ -54,13 +54,6 @@ function Home() {
 
                 <EventBanner />
 
-                <Link to={'/Duvidas'}>
-                    <div className="home-duvidas" title='Tire sua dúvida'>
-                        <MdOutlineContactSupport size={30} style={{ color: '#fff' }} />
-                        <span className="duvida-texto">Tenho dúvidas</span>
-                    </div>
-                </Link>
-
                 <Bolinhas />
 
                 <Rodape />
