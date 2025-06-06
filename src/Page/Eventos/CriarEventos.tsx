@@ -9,6 +9,9 @@ import { IoSend } from "react-icons/io5";
 
 
 function CriarEventos() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   // Estados do componente
   const [image, setImage] = useState<File | null>(null);
   const [descricao, setDescricao] = useState('');
@@ -245,10 +248,12 @@ function CriarEventos() {
               className={erros.includes('A categoria do evento é obrigatória.') ? 'erro-campo' : ''}
             >
               <option value="">Selecione uma categoria</option>
-              <option value="show">Funk</option>
-              <option value="festa">Sertanejo</option>
-              <option value="palestra">Palestra</option>
-              <option value="esporte">Esporte</option>
+              <option value="show">Rock</option>
+              <option value="pop">Pop</option>
+              <option value="Funk">Funk</option>
+              <option value="Rap">Rap</option>
+              <option value="Jazz">Jazz</option>
+              <option value="Eletônica">Eletônica</option>
             </select>
           </div>
         </div>

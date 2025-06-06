@@ -5,4 +5,5 @@ export interface Evento {
     data: string;
     local: string;
     vendidos: string;
+    
 }

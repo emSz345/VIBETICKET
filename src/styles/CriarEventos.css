@@ -1,3 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --cor-primaria: #007bff;
+  --cor-texto-claro: #fff;
+  --cor-fundo-cinza: #404040;
+  --cor-fundo-claro: #f9f9f9;
+  
+}
+
 /* === INÍCIO HEADER === */
 .criar-evento-header {
   position: sticky;
@@ -23,7 +37,9 @@
 
 .criar-dubtitle {
   font-size: 30px;
-  font-weight: bold;
+  font-weight: 900;
+  font-family: 'Poppins', sans-serif;
+  color: var(--cor-primaria);
 }
 
 .criar-btn-enviar {
@@ -111,6 +127,7 @@
   margin-bottom: 20px;
   color: #027bff;
   font-weight: bold;
+  font-family: 'Poppins', sans-serif;
 }
 /* === FIM BLOCO PADRÃO (SEÇÃO) === */
 

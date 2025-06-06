@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Footer.css";
 import logo from '../../../assets/img-logo.png'
 import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
+  const [usuarioLogado, setUsuarioLogado] = useState(true);
+
   return (
     <footer className="footer-container">
       <div className="foote-container">
@@ -13,25 +15,35 @@ const Footer: React.FC = () => {
           <div className="fotterSection">
             <h4>Encontre estilos</h4>
             <ul>
-              <li>Rock</li>
-              <li>Pop</li>
-              <li>Funk</li>
-              <li>Rap</li>
+              <li><Link to='' className="Link">Rock</Link></li>
+              <li><Link to='' className="Link">Pop</Link></li>
+              <li><Link to='' className="Link">Funk</Link></li>
+              <li><Link to='' className="Link">Rap</Link></li>
+              <li><Link to='' className="Link">Jazz</Link></li>
+              <li><Link to='' className="Link">Eletônica</Link></li>
             </ul>
           </div>
           <div className="fotterSection">
             <h4>Cidades</h4>
             <ul>
-              <li>São Paulo</li>
-              <li>Ribeirão Preto</li>
-              <li>Taquaritinga</li>
-              <li>Rio de Janeiro</li>
+              <li><Link to='' className="Link">São Paulo</Link></li>
+              <li><Link to='' className="Link">Rio de Janeiro</Link></li>
+              <li><Link to='' className="Link">Maranhão</Link></li>
+              <li><Link to='' className="Link">Minhas Gerais</Link></li>
+              <li><Link to='' className="Link">Pará</Link></li>
+              <li><Link to='' className="Link">Paraná</Link></li>
             </ul>
           </div>
           <div className="fotterSection">
             <h4>Produtores</h4>
             <ul>
-              <li><Link to='/Duvidas' className="Link">Criar novo evento</Link></li>
+              {!usuarioLogado ? (
+                <Link to="/Login">
+                  <li><Link to='/CriarEventos' className="Link">Criar novo evento</Link></li>
+                </Link>
+              ) : (
+                <li><Link to='/CriarEventos' className="Link">Criar novo evento</Link></li>
+              )}
               <li><Link to='/Duvidas' className="Link">Gerenciar eventos</Link></li>
               <li><Link to='/Duvidas' className="Link">Gerenciar ingressos</Link></li>
             </ul>
@@ -39,8 +51,8 @@ const Footer: React.FC = () => {
           <div className="fotterSection">
             <h4>Ajuda</h4>
             <ul>
-              <li><Link to='/Duvidas' className="Link">Termos e políticas</Link></li>
-              <li><Link to='/Duvidas' className="Link">Dúvias e suport</Link></li>
+              <li><Link to='/Termos' className="Link">Termos e políticas</Link></li>
+              <li><Link to='/Duvidas' className="Link">Dúvidas e Suporte</Link></li>
               <li><Link to='' className="Link">Gerenciar eventos</Link></li>
               <li><Link to='' className="Link">Gerenciar ingressos</Link></li>
             </ul>
@@ -48,8 +60,8 @@ const Footer: React.FC = () => {
           <div className="fotterSection">
             <h4>Páginas</h4>
             <ul>
-              <li><Link to='/Duvidas' className="Link">Home</Link></li>
-              <li><Link to='/Duvidas' className="Link">Categorias</Link></li>
+              <li><Link to='/' className="Link">Home</Link></li>
+              <li><Link to='/Categorias' className="Link">Busque por cidade</Link></li>
               <li><Link to='/Duvidas' className="Link">Central produtores</Link></li>
             </ul>
           </div>

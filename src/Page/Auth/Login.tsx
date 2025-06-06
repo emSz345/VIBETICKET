@@ -207,7 +207,7 @@ const Login: React.FC = () => {
       localStorage.setItem("userName", response.data.nome || user.email);
       localStorage.setItem("id", uid);
 
-      alert('Login feito com sucesso')
+
       navigate("/Home");
     } catch (error: any) {
       if (error.code === "auth/wrong-password") {
