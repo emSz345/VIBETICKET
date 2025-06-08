@@ -31,6 +31,7 @@ const Cadastro: React.FC = () => {
   });
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [termosPopupAberto, setTermosPopupAberto] = useState(false);
+  const [imagemPerfil, setImagemPerfil] = useState<File | null>(null);
   const [mostrarTermos, setMostrarTermos] = useState(false);
   const [mensagem, setMensagem] = useState("");
 
@@ -73,16 +74,59 @@ const Cadastro: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  
-
-  
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" }); // limpa erro ao digitar
   };
+
+
+  const handleSubmitLocal = async () => {
+    if (!validate()) return;
+
+    const { nome, email, senha } = formData;
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("nome", nome);
+      formDataToSend.append("email", email);
+      formDataToSend.append("senha", senha);
+      formDataToSend.append("provedor", "local");
+
+      if (imagemPerfil) {
+        formDataToSend.append("imagemPerfil", imagemPerfil);
+      }
+
+      // Envia para o MongoDB via sua API
+      const response = await fetch("http://localhost:5000/api/users/register", {
+        method: "POST",
+        body: formDataToSend,
+        // NÃO definir headers Content-Type aqui — o navegador cuida disso
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Erro ao registrar no servidor.");
+        return;
+      }
+
+      // Salva usuário localmente
+      localStorage.setItem("userName", data.user.nome);
+      localStorage.setItem("email", data.user.email);
+      localStorage.setItem("imagemPerfil", data.user.imagemPerfil);
+      localStorage.setItem("id", data.user._id); // aqui corrigido para id, não senha
+      localStorage.setItem("token", data.token);
+
+      navigate("/Home");
+    } catch (error) {
+      alert("Erro de conexão com o servidor.");
+      console.error(error);
+    }
+  };
+
+
 
   const handleSubmit = async () => {
     if (!validate()) return;
@@ -106,7 +150,7 @@ const Cadastro: React.FC = () => {
       localStorage.setItem("userName", nome);
       localStorage.setItem("id", UsuarioID);
       localStorage.setItem("email", email);
-      
+
       navigate("/Home")
     } catch (error: any) {
       alert("Erro ao registrar. Verifique os dados e tente novamente.");
@@ -216,7 +260,7 @@ const Cadastro: React.FC = () => {
             )}
           </div>
 
-          <Button color="Blue" text="criar minha conta" onClick={handleSubmit} />
+          <Button color="Blue" text="criar minha conta" onClick={handleSubmitLocal} />
 
           <p className="ou">ou</p>
 
@@ -229,7 +273,7 @@ const Cadastro: React.FC = () => {
             Já possui uma conta? <Link to="/Login" className="crie-conta">Faça login!</Link>
           </p>
         </div>
-        
+
 
       </div>
     </div>

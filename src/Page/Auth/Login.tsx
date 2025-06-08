@@ -24,6 +24,7 @@ const Login: React.FC = () => {
   const [senha, setSenha] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [senhaError, setSenhaError] = useState<string>("");
+  const modoLocal = true;
   const [tempoBloqueado, setTempoBloqueado] = useState(100000);
   const [falhas, setFalhas] = useState<number>(() => {
     const stored = localStorage.getItem("loginFalhas");
@@ -161,62 +162,74 @@ const Login: React.FC = () => {
 
   }
 
-  const handleSubmit = async () => {
+ const handleSubmit = async () => {
+  if (bloqueado) {
+    alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
+    return;
+  }
 
+  setEmailError("");
+  setSenhaError("");
 
-    if (bloqueado) {
-      alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
-      return;
-    }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const senhaForteRegex = /^.{6,}$/;
 
+  if (!email || !senha) {
+    if (!email) setEmailError("Digite seu e-mail.");
+    if (!senha) setSenhaError("Digite sua senha.");
+    return;
+  }
 
-    setEmailError("");
-    setSenhaError("");
+  if (!emailRegex.test(email)) {
+    setEmailError("Digite um email válido.");
+    return;
+  }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const senhaForteRegex = /^.{6,}$/;;
-    ;
+  if (!senhaForteRegex.test(senha)) {
+    setSenhaError("A senha deve conter pelo menos 6 caracteres.");
+    return;
+  }
 
-    // Verificação de campos vazios
-    if (!email || !senha) {
-      if (!email) setEmailError("Digite seu e-mail.");
-      if (!senha) setSenhaError("Digite sua senha.");
-      return;
-    }
+  try {
+    if (modoLocal) {
+      // LOGIN LOCAL
+      const response = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        senha,
+      });
 
-    // Validação do e-mail
-    if (email.length < 6 || !emailRegex.test(email)) {
-      setEmailError("Digite um email válido com pelo menos 6 caracteres.");
-      return;
-    }
+      const { token, user } = response.data;
 
-    if (!senhaForteRegex.test(senha)) {
-      setSenhaError("A senha deve conter pelo menos 6 caractere.");
-      return;
-    }
-    //Token temporarario
-    try {
+      localStorage.setItem("token", token);
+      localStorage.setItem("userName", user.nome);
+      localStorage.setItem("imagemPerfil", user.foto || "");
+
+      navigate("/Home");
+    } else {
+      // LOGIN COM FIREBASE
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-
       const user = userCredential.user;
       const token = await user.getIdToken();
       const uid = user.uid;
+
       localStorage.setItem("firebaseToken", token);
 
       const response = await axios.get(`http://localhost:5000/api/users/me?email=${user.email}`);
       localStorage.setItem("userName", response.data.nome || user.email);
       localStorage.setItem("id", uid);
 
-
       navigate("/Home");
-    } catch (error: any) {
+    }
+  } catch (error: any) {
+    if (modoLocal) {
+      setSenhaError(error.response?.data?.message || "Erro ao fazer login local.");
+    } else {
       if (error.code === "auth/wrong-password") {
         setSenhaError("Senha incorreta.");
       } else if (error.code === "auth/user-not-found") {
         setEmailError("Usuário não encontrado.");
       } else {
         setSenhaError("Erro ao realizar login. Tente novamente.");
-        console.error(error);
       }
     }
 
@@ -230,6 +243,8 @@ const Login: React.FC = () => {
       bloquearLogin(novasFalhas);
     }
   }
+};
+
 
   return (
     <div className="login-container">

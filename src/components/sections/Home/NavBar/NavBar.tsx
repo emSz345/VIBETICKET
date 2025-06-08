@@ -33,7 +33,7 @@ const NavBar = () => {
   const tipoLogin = (localStorage.getItem("tipoLogin") as "email" | "google" | "facebook") || "email";
 
   useEffect(() => {
-    const token = localStorage.getItem("firebaseToken");
+    const token = localStorage.getItem("token");
     const nome = localStorage.getItem("userName");
     if (token && nome) {
       setUsuarioLogado(true);

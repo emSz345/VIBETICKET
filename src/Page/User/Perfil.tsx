@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { FiEdit2, FiCheck } from "react-icons/fi";
 
 import "../../styles/Perfil.css";
@@ -17,12 +17,54 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
   const [senha, setSenha] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(avatarUrl);
+  
 
   const isSocialLogin = tipoLogin === "google" || tipoLogin === "facebook";
 
-  const handleSalvar = () => {
-    setEditando(false);
-    alert("Salvar alterações (nome/email/senha)");
+   useEffect(() => {
+    // Quando o componente monta, buscar a imagem salva no localStorage
+    const imagemPerfilSalva = localStorage.getItem("imagemPerfil");
+
+    if (imagemPerfilSalva) {
+      setPreviewUrl(`http://localhost:5000/uploads/${imagemPerfilSalva}`);
+    } else if (avatarUrl) {
+      setPreviewUrl(avatarUrl);
+    }
+  }, []);
+    
+  
+
+  const handleSalvar = async () => {
+    try {
+      const emailParaImagem = localStorage.getItem("email");
+      
+      const response = await fetch(`http://localhost:5000/api/users/updateByEmail/${emailParaImagem}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nome,
+          email,
+          ...(senha && { senha }), 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Dados atualizados com sucesso!");
+        localStorage.setItem("userName",nome)
+        localStorage.setItem("email",email)
+        
+        setEditando(false);
+      } else {
+        alert("Erro ao atualizar dados: " + data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao salvar alterações.");
+    }
   };
 
   const handleImagemChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,9 +74,36 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
     }
   };
 
-  const handleSalvarImagem = () => {
+  const handleSalvarImagem = async () => {
     if (!imagem) return;
-    alert("Implementar envio da imagem ao backend");
+
+    const formData = new FormData();
+    formData.append("imagemPerfil", imagem);
+
+    try {
+      const userId = localStorage.getItem("email");
+
+      const response = await fetch(`http://localhost:5000/api/users/updateByEmail/${userId}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Imagem atualizada com sucesso!");
+        
+        if (data.user.imagemPerfil) {
+          setPreviewUrl(`http://localhost:5000/uploads/${data.user.imagemPerfil}`);
+          localStorage.setItem("imagemPerfil",data.user.imagemPerfil);
+        }
+      } else {
+        alert("Erro ao atualizar imagem: " + data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao enviar imagem.");
+    }
   };
 
   return (
@@ -44,8 +113,8 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
 
         <div className="perfil-avatar-section">
           <img
-            src={previewUrl || "https://via.placeholder.com/150"}
-            alt="Avatar"
+            src={ previewUrl }
+            
             className="perfil-avatar"
           />
           {!isSocialLogin && (
