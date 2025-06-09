@@ -193,7 +193,7 @@ const Login: React.FC = () => {
   try {
     if (modoLocal) {
       // LOGIN LOCAL
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post("http://localhost:5000/api/users/login", {
         email,
         senha,
       });
@@ -202,7 +202,7 @@ const Login: React.FC = () => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("userName", user.nome);
-      localStorage.setItem("imagemPerfil", user.foto || "");
+      localStorage.setItem("imagemPerfil", user.imagemPerfil || "");
 
       navigate("/Home");
     } else {

@@ -34,7 +34,7 @@ function Home() {
 
                 <Carrossel />
 
-                <EventCard />
+                
 
                 <Cidades />
 

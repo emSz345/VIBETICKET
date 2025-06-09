@@ -7,8 +7,9 @@ const EventBanner: React.FC = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    const token = localStorage.getItem("firebaseToken");
-    if (token) {
+    const tokenFirebase = localStorage.getItem("firebaseToken");
+    const tokenLocal = localStorage.getItem("token");
+    if (tokenFirebase || tokenLocal) {
       navigate("/CriarEventos");
     } else {
       navigate("/Login");

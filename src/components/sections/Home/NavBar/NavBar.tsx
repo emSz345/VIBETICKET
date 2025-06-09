@@ -46,9 +46,11 @@ const NavBar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("firebaseToken");
+    localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
     localStorage.removeItem("userName");
     localStorage.removeItem("tipoLogin");
+    localStorage.removeItem("imagemPerfil");
     setUsuarioLogado(false);
     setDropdownOpen(false);
     setNomeUsuario("");
