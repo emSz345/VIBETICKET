@@ -59,7 +59,7 @@ function CriarEventos() {
       .toString()
       .padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
-    return `<span class="math-inline">\{m\}\:</span>{s}`;
+    return `${m}:${s}`;
   };
 
 
@@ -187,8 +187,9 @@ function CriarEventos() {
 
       const cooldownDuration = 5 * 60 * 1000; // 5 minutos
       const cooldownEndTime = Date.now() + cooldownDuration;
-
+      
       localStorage.setItem('eventoCooldownEnd', cooldownEndTime.toString());
+      navigate('/Home');
       setIsCooldown(true);
       setCooldownTimeLeft(Math.floor(cooldownDuration / 1000));
 
@@ -212,7 +213,7 @@ function CriarEventos() {
           </button>
           <button className="criar-btn-enviar" onClick={handleEnviarAnalise} disabled={isCooldown}>
             {isCooldown
-              ? `Aguarde... (${formatTime(cooldownTimeLeft || 0)})`
+              ? `Aguarde... (${formatTime(cooldownTimeLeft || 0)})` // ← Agora mostrará "05:00" corretamente
               : 'Enviar para Análise'} <IoSend />
           </button>
         </div>
