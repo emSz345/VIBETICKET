@@ -17,11 +17,11 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
   const [senha, setSenha] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(avatarUrl);
-
+  
 
   const isSocialLogin = tipoLogin === "google" || tipoLogin === "facebook";
 
-  useEffect(() => {
+   useEffect(() => {
     // Quando o componente monta, buscar a imagem salva no localStorage
     const imagemPerfilSalva = localStorage.getItem("imagemPerfil");
 
@@ -31,13 +31,13 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
       setPreviewUrl(avatarUrl);
     }
   }, []);
-
-
+    
+  
 
   const handleSalvar = async () => {
     try {
       const emailParaImagem = localStorage.getItem("email");
-
+      
       const response = await fetch(`http://localhost:5000/api/users/updateByEmail/${emailParaImagem}`, {
         method: "PUT",
         headers: {
@@ -46,7 +46,7 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
         body: JSON.stringify({
           nome,
           email,
-          ...(senha && { senha }),
+          ...(senha && { senha }), 
         }),
       });
 
@@ -54,9 +54,9 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
 
       if (response.ok) {
         alert("Dados atualizados com sucesso!");
-        localStorage.setItem("userName", nome)
-        localStorage.setItem("email", email)
-
+        localStorage.setItem("userName",nome)
+        localStorage.setItem("email",email)
+        
         setEditando(false);
       } else {
         alert("Erro ao atualizar dados: " + data.message);
@@ -92,10 +92,10 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
 
       if (response.ok) {
         alert("Imagem atualizada com sucesso!");
-
+        
         if (data.user.imagemPerfil) {
           setPreviewUrl(`http://localhost:5000/uploads/${data.user.imagemPerfil}`);
-          localStorage.setItem("imagemPerfil", data.user.imagemPerfil);
+          localStorage.setItem("imagemPerfil",data.user.imagemPerfil);
         }
       } else {
         alert("Erro ao atualizar imagem: " + data.message);
@@ -113,8 +113,8 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
 
         <div className="perfil-avatar-section">
           <img
-            src={previewUrl}
-
+            src={ previewUrl }
+            
             className="perfil-avatar"
           />
           {!isSocialLogin && (

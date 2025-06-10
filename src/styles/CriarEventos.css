@@ -12,6 +12,84 @@
   
 }
 
+/* === MODAL === */
+/* Adicione este código ao final do seu arquivo CriarEventos.css */
+
+.modal-overlay {
+  position: fixed; /* Fica fixo na tela */
+  top: 0;
+  left: 0;
+  width: 100vw; /* 100% da largura da tela */
+  height: 100vh; /* 100% da altura da tela */
+  background-color: rgba(0, 0, 0, 0.6); /* Fundo preto semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Garante que o modal fique na frente de tudo */
+}
+
+.modal-content {
+  background: white;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 400px; /* Largura máxima */
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.modal-content p {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.modal-botoes {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* Espaçamento entre os botões */
+}
+
+.modal-botoes button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: transform 0.2s ease;
+}
+
+.modal-botoes button:hover {
+    transform: scale(1.05);
+}
+
+.modal-btn-cancelar {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.modal-btn-confirmar {
+  background-color: #d9534f; /* Vermelho para indicar uma ação destrutiva */
+  color: white;
+}
+
+/* === DATA E HORA COLADOS === */
+
+.campos-horizontais {
+  display: flex; /* Ativa o layout flexbox */
+  gap: 20px;     /* Cria um espaço de 20px entre os campos */
+}
+
+.campos-horizontais .campo {
+  flex: 1; /* Faz com que cada campo ocupe o mesmo espaço disponível */
+}
+
 /* === INÍCIO HEADER === */
 .criar-evento-header {
   position: sticky;

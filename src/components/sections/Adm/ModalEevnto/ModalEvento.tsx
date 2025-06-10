@@ -21,7 +21,8 @@ const ModalEvento: React.FC<Props> = ({ evento, onClose, onAceitar, onRejeitar }
                 <p><strong>Categoria:</strong> {evento.categoria}</p>
                 <p><strong>Data de início:</strong> {evento.dataInicio}</p>
                 <p><strong>Hora do início:</strong> {evento.horaInicio}</p>
-                <p><strong>Rua:</strong> {evento.rua}</p>
+                <p><strong>Hora do termino:</strong> {evento.horaTermino}</p>
+                <p><strong>Endereço completo:</strong> {evento.rua}</p>
                 <p><strong>Cidade:</strong> {evento.cidade}</p>
                 <p><strong>Estado:</strong> {evento.estado}</p>
                 <p><strong>Maps:</strong> <a href={evento.linkMaps} target="_blank" rel="noreferrer">{evento.linkMaps}</a></p>

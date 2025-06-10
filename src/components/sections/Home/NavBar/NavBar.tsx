@@ -26,25 +26,18 @@ const NavBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [usuarioLogado, setUsuarioLogado] = useState(true);
   const [nomeUsuario, setNomeUsuario] = useState<string>("");
-  const [imagemDePerfil, setImagemDePerfil] = useState<string>("");
   const [mostrarPerfilTela, setMostrarPerfilTela] = useState(false);
 
-  const perfil = localStorage.getItem("imagemPerfil");
+
   const emailUsuario = localStorage.getItem("email") || "usuario@email.com";
   const tipoLogin = (localStorage.getItem("tipoLogin") as "email" | "google" | "facebook") || "email";
 
   useEffect(() => {
-
     const token = localStorage.getItem("token");
     const nome = localStorage.getItem("userName");
-    const imagem = localStorage.getItem("imagemPerfil");
-
-    setImagemDePerfil(imagem || "");
-    console.log(imagem);
     if (token && nome) {
       setUsuarioLogado(true);
       setNomeUsuario(nome);
-
     } else {
       setUsuarioLogado(false);
       setNomeUsuario("");
@@ -81,8 +74,7 @@ const NavBar = () => {
             ) : (
               <div className="usuario-menu">
                 <div className="usuario-topo" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                  <img
-                    className="avatar" src={`http://localhost:5000/uploads/${imagemDePerfil}`} alt="avatar" />
+                  <div className="avatar" />
                   <span>{localStorage.getItem("userName") || "Usuário"}</span>
                   <FiChevronDown size={20} />
                 </div>

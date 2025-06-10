@@ -2,21 +2,26 @@ import { useState, useEffect } from 'react';
 import '../../styles/CriarEventos.css';
 import { NumericFormat } from 'react-number-format';
 import Rodape from '../../components/layout/Footer/Footer';
-import NavBar from '../../components/sections/Home/NavBar/NavBar';
 import { MdAddPhotoAlternate } from 'react-icons/md';
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
+import { useNavigate } from 'react-router-dom';
 
 
 function CriarEventos() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  // ===================================================================
+  // CORREÇÃO 1: Hooks e estados foram movidos para o topo do componente
+  // ===================================================================
+  const navigate = useNavigate(); // Hook para navegação
+
   // Estados do componente
+  const [horaFim, setHoraFim] = useState('');
+  const [modalAberto, setModalAberto] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [descricao, setDescricao] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [horaInicio, setHoraInicio] = useState('');
+  const [horaTermino, setHoraTermino] = useState('');
   const [querDoar, setQuerDoar] = useState<boolean | null>(null);
   const [valorDoacao, setValorDoacao] = useState('');
   const [erros, setErros] = useState<string[]>([]);
@@ -29,12 +34,32 @@ function CriarEventos() {
   const [temMeia, setTemMeia] = useState('false');
   const [dataFim, setDataFim] = useState('');
 
+  // ===================================================================
+  // CORREÇÃO 2: Funções handlers declaradas APÓS os hooks e estados
+  // ===================================================================
+  const handleAbrirModal = () => {
+    setModalAberto(true);
+  };
+
+  const handleFecharModal = () => {
+    setModalAberto(false);
+  };
+
+  const handleConfirmarSaida = () => {
+    navigate('/'); // Navega para a página inicial
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+
   const formatTime = (seconds: number): string => {
     const m = Math.floor(seconds / 60)
       .toString()
       .padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+    return `<span class="math-inline">\{m\}\:</span>{s}`;
   };
 
 
@@ -83,6 +108,8 @@ function CriarEventos() {
     if (!estado) erros.push('O estado do evento é obrigatório.');
     if (!dataInicio) erros.push('A data de início é obrigatória.');
     if (!horaInicio) erros.push('A hora de início é obrigatória.');
+    if (!horaTermino) erros.push('A hora de termino é obrigatória.');
+
 
     if (!linkMaps || !/^https?:\/\/(www\.)?google\.[a-z.]+\/maps/.test(linkMaps)) {
       erros.push('O link do Google Maps é inválido ou não foi fornecido.');
@@ -107,6 +134,7 @@ function CriarEventos() {
     const dataInicio = (document.getElementById('data-inicio') as HTMLInputElement)?.value;
     const dataFim = (document.getElementById('data-fim') as HTMLInputElement)?.value;
     const horaInicio = (document.getElementById('hora-inicio') as HTMLInputElement)?.value;
+    const horaTermino = (document.getElementById('hora-termino') as HTMLInputElement)?.value;
 
     const descricao = (document.getElementById('descricao-evento') as HTMLTextAreaElement)?.value;
     const token = localStorage.getItem('firebaseToken');
@@ -123,6 +151,7 @@ function CriarEventos() {
     formData.append("linkMaps", linkMaps);
     formData.append("dataInicio", dataInicio);
     formData.append("horaInicio", horaInicio);
+    formData.append("horaTermino", horaTermino);
     formData.append("dataFim", dataFim);
 
     // Campos de ingresso
@@ -172,15 +201,12 @@ function CriarEventos() {
   // Renderização do componente
   return (
     <div>
-      <NavBar />
-
-      {/* Cabeçalho */}
       <header className="criar-evento-header">
         <h1 className="criar-titulo">
           Crie <span className="criar-dubtitle">seu evento</span>
         </h1>
         <div className="criar-header-botoes">
-          <button className="btn-salvar-sair">
+          <button className="btn-salvar-sair" onClick={handleAbrirModal}>
             <ImExit size={13} />
             Sair
           </button>
@@ -191,6 +217,23 @@ function CriarEventos() {
           </button>
         </div>
       </header>
+
+      {modalAberto && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Tem certeza que deseja sair?</h2>
+            <p>Todo o progresso preenchido no formulário será perdido.</p>
+            <div className="modal-botoes">
+              <button onClick={handleFecharModal} className="modal-btn-cancelar">
+                Não, continuar
+              </button>
+              <button onClick={handleConfirmarSaida} className="modal-btn-confirmar">
+                Sim, quero sair
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Formulário */}
       <div className="criar-form">
@@ -285,7 +328,7 @@ function CriarEventos() {
 
           <div className="campo">
             <label htmlFor="rua-evento">
-              Rua <span className={erros.includes('A rua do evento é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+              Endereço Completo <span className={erros.includes('A rua do evento é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
             </label>
             <input
               type="text"
@@ -335,9 +378,10 @@ function CriarEventos() {
         {/* 4. Data e Hora */}
         <div className="informacoes-basicas-container">
           <div className="criar-Informaçao">
-            <h2>4. Data e Hora de Início</h2>
+            <h2>4. Data e Hora</h2>
           </div>
 
+          {/* Campo de Data de Início (continua o mesmo) */}
           <div className="campo">
             <label htmlFor="data-inicio">
               Data de Início do Evento <span className={erros.includes('A data de início é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
@@ -351,17 +395,37 @@ function CriarEventos() {
             />
           </div>
 
-          <div className="campo">
-            <label htmlFor="hora-inicio">
-              Hora de Início do Evento <span className={erros.includes('A hora de início é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
-            </label>
-            <input
-              type="time"
-              id="hora-inicio"
-              value={horaInicio}
-              onChange={(e) => setHoraInicio(e.target.value)}
-              className={erros.includes('A hora de início é obrigatória.') ? 'erro-campo' : ''}
-            />
+          {/* Container para alinhar os campos de hora lado a lado */}
+          <div className="campos-horizontais">
+
+            {/* Campo de Hora de Início */}
+            <div className="campo">
+              <label htmlFor="hora-inicio">
+                Hora de Início <span className={erros.includes('A hora de início é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+              </label>
+              <input
+                type="time"
+                id="hora-inicio"
+                value={horaInicio}
+                onChange={(e) => setHoraInicio(e.target.value)}
+                className={erros.includes('A hora de início é obrigatória.') ? 'erro-campo' : ''}
+              />
+            </div>
+
+            {/* Campo de Hora de Término (CORRIGIDO) */}
+            <div className="campo">
+              <label htmlFor="hora-fim">
+                Hora de Término <span className={erros.includes('A hora de término é obrigatória.') ? 'erro-asterisco' : ''}>*</span>
+              </label>
+              <input
+                type="time"
+                id="hora-termino" // ID corrigido
+                value={horaTermino} // Estado corrigido
+                onChange={(e) => setHoraTermino(e.target.value)} // Função do estado corrigida
+                className={erros.includes('A hora de término é obrigatória.') ? 'erro-campo' : ''}
+              />
+            </div>
+
           </div>
         </div>
 

@@ -10,6 +10,7 @@ export interface Evento {
   linkMaps: string;
   dataInicio: string;
   horaInicio: string;
+  horaTermino: string;
   dataFim?: string;
   valorIngressoInteira?: number;
   valorIngressoMeia?: number;
