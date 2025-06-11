@@ -15,7 +15,7 @@
 /* === MODAL === */
 /* Adicione este código ao final do seu arquivo CriarEventos.css */
 
-.modal-overlay {
+.criar-modal-overlay {
   position: fixed; /* Fica fixo na tela */
   top: 0;
   left: 0;
@@ -28,7 +28,7 @@
   z-index: 1000; /* Garante que o modal fique na frente de tudo */
 }
 
-.modal-content {
+.criar-modal-content {
   background: white;
   padding: 25px 30px;
   border-radius: 8px;
@@ -38,23 +38,23 @@
   max-width: 400px; /* Largura máxima */
 }
 
-.modal-content h2 {
+.criar-modal-content h2 {
   margin-top: 0;
   color: #333;
 }
 
-.modal-content p {
+.criar-modal-content p {
   color: #666;
   margin-bottom: 25px;
 }
 
-.modal-botoes {
+.criar-modal-botoes {
   display: flex;
   justify-content: center;
   gap: 15px; /* Espaçamento entre os botões */
 }
 
-.modal-botoes button {
+.criar-modal-botoes button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -64,17 +64,17 @@
   transition: transform 0.2s ease;
 }
 
-.modal-botoes button:hover {
+.criar-modal-botoes button:hover {
     transform: scale(1.05);
 }
 
-.modal-btn-cancelar {
+.criar-modal-btn-cancelar {
   background-color: #f0f0f0;
   color: #333;
   border: 1px solid #ccc;
 }
 
-.modal-btn-confirmar {
+.criar-modal-btn-confirmar {
   background-color: #d9534f; /* Vermelho para indicar uma ação destrutiva */
   color: white;
 }

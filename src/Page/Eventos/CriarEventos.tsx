@@ -220,15 +220,15 @@ function CriarEventos() {
       </header>
 
       {modalAberto && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="criar-modal-overlay">
+          <div className="criar-modal-content">
             <h2>Tem certeza que deseja sair?</h2>
             <p>Todo o progresso preenchido no formulário será perdido.</p>
-            <div className="modal-botoes">
-              <button onClick={handleFecharModal} className="modal-btn-cancelar">
+            <div className="criar-modal-botoes">
+              <button onClick={handleFecharModal} className="criar-modal-btn-cancelar">
                 Não, continuar
               </button>
-              <button onClick={handleConfirmarSaida} className="modal-btn-confirmar">
+              <button onClick={handleConfirmarSaida} className="criar-modal-btn-confirmar">
                 Sim, quero sair
               </button>
             </div>
