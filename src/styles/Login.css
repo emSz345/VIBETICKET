@@ -152,7 +152,7 @@ input {
 }
 
 .crie-conta:hover {
-  color: rgb(68, 68, 68);
+  color: rgb(206, 51, 24);
   opacity: 0.6;
 }
 
@@ -324,4 +324,14 @@ input {
   .social-login {
     gap: 10px;
   }
+}
+
+
+.password-hint {
+  font-size: 12px;         /* Tamanho de fonte menor */
+  color: #888;              /* Cor cinza claro, para ser discreto */
+  margin-top: 0px;         /* Um pequeno espaço acima da mensagem */
+  margin-bottom: 0;        /* Remove a margem de baixo padrão do <p> */
+  text-align: left;        /* Alinha o texto à esquerda */
+  padding-left: 5px;       /* Um pequeno recuo para alinhar com o texto do input */
 }

@@ -74,7 +74,7 @@ const NavBar = () => {
             ) : (
               <div className="usuario-menu">
                 <div className="usuario-topo" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                  <div className="avatar" />
+                  <img className='avatar' src={`http://localhost:5000/uploads/${localStorage.getItem("imagemPerfil")}`} alt="Erro ao carregar a imagem" />
                   <span>{localStorage.getItem("userName") || "Usuário"}</span>
                   <FiChevronDown size={20} />
                 </div>
