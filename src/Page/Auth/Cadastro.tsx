@@ -1,19 +1,16 @@
-import React, { useState, ChangeEvent } from "react";
-import { auth, createUserWithEmailAndPassword } from "../../services/firebase";
+import React, { useState, ChangeEvent, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithGoogle, signInWithFacebook } from "../../services/firebase";
+
 import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
 import SocialButton from "../../components/ui/SocialButton/SocialButton";
-
-import { signInWithGoogle, signInWithFacebook } from "../../services/firebase";
+import TermosContent from '../../Page/Public/TermosContent';
 
 import "../../styles/Login.css";
-import { Link, useNavigate } from "react-router-dom";
-import TermosContent from '../../Page/Public/TermosContent'
 import logo from "../../assets/img-logo.png";
 import googleIcon from "../../assets/logo-google.png";
 import facebookIcon from "../../assets/logo-facebook.png";
-
-import axios from "axios";
 
 interface FormData {
   nome: string;
@@ -30,73 +27,63 @@ const Cadastro: React.FC = () => {
     confirmSenha: "",
   });
   const [termosAceitos, setTermosAceitos] = useState(false);
-  // const [termosPopupAberto, setTermosPopupAberto] = useState(false); // Unused state
   const [imagemPerfil, setImagemPerfil] = useState<File | null>(null);
   const [mostrarTermos, setMostrarTermos] = useState(false);
-  // const [mensagem, setMensagem] = useState(""); // Unused state
+  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const navigate = useNavigate();
+
+  // NOVO: Estados para controlar o fluxo de verificação
+  const [aguardandoVerificacao, setAguardandoVerificacao] = useState(false);
+  const [emailParaVerificar, setEmailParaVerificar] = useState('');
 
   const fecharModal = () => {
     setMostrarTermos(false);
   };
 
-  const [errors, setErrors] = useState<Partial<FormData>>({});
-  const navigate = useNavigate();
-
   const validate = () => {
     const newErrors: Partial<FormData> = {};
-
     if (!termosAceitos) {
       alert("Você deve aceitar os termos e políticas para continuar.");
       return false;
     }
-
+    // ... (suas outras validações continuam iguais)
     if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(formData.nome)) {
       newErrors.nome = "Nome deve conter pelo menos 10 letras e nenhum número.";
     }
-
-    if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) ||
-      formData.email.length < 10
-    ) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) || formData.email.length < 10) {
       newErrors.email = "Email deve estar em formato válido e conter pelo menos 10 caracteres.";
     }
-
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{6,}$/.test(formData.senha)) {
       newErrors.senha = "A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.";
     }
-
     if (formData.confirmSenha !== formData.senha) {
       newErrors.confirmSenha = "As senhas não coincidem.";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: "" }); // This correctly clears the error, which will make the hint reappear
+    setErrors({ ...errors, [name]: "" });
   };
 
-
+  // ALTERADO: Lógica de envio do formulário de cadastro
   const handleSubmitLocal = async () => {
     if (!validate()) return;
 
     const { nome, email, senha } = formData;
+    const formDataToSend = new FormData();
+    formDataToSend.append("nome", nome);
+    formDataToSend.append("email", email);
+    formDataToSend.append("senha", senha);
+    formDataToSend.append("provedor", "local");
+    if (imagemPerfil) {
+      formDataToSend.append("imagemPerfil", imagemPerfil);
+    }
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("nome", nome);
-      formDataToSend.append("email", email);
-      formDataToSend.append("senha", senha);
-      formDataToSend.append("provedor", "local");
-
-      if (imagemPerfil) {
-        formDataToSend.append("imagemPerfil", imagemPerfil);
-      }
-
       const response = await fetch("http://localhost:5000/api/users/register", {
         method: "POST",
         body: formDataToSend,
@@ -105,30 +92,99 @@ const Cadastro: React.FC = () => {
       const data = await response.json();
 
       if (!response.ok) {
+        // Exibe a mensagem de erro do backend (ex: "E-mail já em uso")
         alert(data.message || "Erro ao registrar no servidor.");
         return;
       }
 
-      localStorage.setItem("userName", data.user.nome);
-      localStorage.setItem("email", data.user.email);
-      localStorage.setItem("imagemPerfil", data.user.imagemPerfil);
-      localStorage.setItem("id", data.user._id);
-      localStorage.setItem("token", data.token);
+      // Se o cadastro foi bem-sucedido (status 201), iniciamos o modo de espera
+      if (response.status === 201) {
+        setEmailParaVerificar(email); // Guarda o e-mail para a verificação
+        setAguardandoVerificacao(true); // Ativa a tela de "Aguardando verificação"
+      }
 
-      navigate("/Home");
     } catch (error) {
       alert("Erro de conexão com o servidor.");
       console.error(error);
     }
   };
 
-  // This second submit handler might be redundant. Ensure you are calling the correct one.
-  const handleSubmit = async () => {
-    // ... same logic
-  };
+  // NOVO: Efeito que verifica o status do e-mail em intervalos regulares
+  useEffect(() => {
+    // Só executa se estivermos aguardando verificação
+    if (!aguardandoVerificacao) return;
 
+    // Inicia um "poller" que vai checar o status do usuário a cada 5 segundos
+    const intervalId = setInterval(async () => {
+      try {
+        const statusResponse = await fetch(`http://localhost:5000/api/users/me?email=${emailParaVerificar}`);
+        const userData = await statusResponse.json();
+
+        // Se o backend confirmar que o usuário foi verificado...
+        if (userData && userData.isVerified) {
+          clearInterval(intervalId); // Para de verificar
+
+          // ...agora fazemos o login para obter o token
+          const loginResponse = await fetch("http://localhost:5000/api/users/login", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: formData.email, senha: formData.senha }),
+          });
+          
+          const loginData = await loginResponse.json();
+
+          if (!loginResponse.ok) {
+            alert(loginData.message || "Erro ao fazer login após verificação.");
+            setAguardandoVerificacao(false); // Volta para a tela de cadastro
+            return;
+          }
+
+          // Login bem-sucedido, salva os dados e navega
+          localStorage.setItem("userName", loginData.user.nome);
+          localStorage.setItem("email", loginData.user.email);
+          localStorage.setItem("imagemPerfil", loginData.user.imagemPerfil);
+          localStorage.setItem("id", loginData.user._id);
+          localStorage.setItem("token", loginData.token);
+
+          navigate("/Home");
+        }
+      } catch (error) {
+        console.error("Erro ao verificar status do usuário:", error);
+      }
+    }, 5000); // Verifica a cada 5 segundos
+
+    // Função de limpeza: para o intervalo se o componente for desmontado
+    return () => clearInterval(intervalId);
+  }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate]);
+
+  // NOVO: Renderização condicional da tela de espera
+  if (aguardandoVerificacao) {
+    return (
+      <div className="login-container">
+        <div className="form-section" style={{ textAlign: 'center' }}>
+          <img src={logo} alt="Logo" className="logo-image" style={{ marginBottom: '2rem' }} />
+          <h2 className="login-bemvido">Quase lá!</h2>
+          <p style={{ fontSize: '1.1rem', color: '#666', lineHeight: '1.6' }}>
+            Enviamos um link de verificação para o seu e-mail: <br />
+            <strong>{emailParaVerificar}</strong>
+          </p>
+          <p style={{ marginTop: '1.5rem' }}>
+            Por favor, clique no link para ativar sua conta. <br />
+            Assim que você verificar, faremos seu login automaticamente.
+          </p>
+          <div className="loader" style={{ margin: '2rem auto' }}></div>
+          <p style={{ fontSize: '0.9rem', color: '#999' }}>
+            Não recebeu? Verifique sua caixa de spam.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Renderização padrão do formulário de cadastro
   return (
     <div className="login-container">
+      {/* ... seu JSX do formulário continua exatamente o mesmo aqui ... */}
       <header className="header">
         <Link to="/Home" title="Voltar">
           <img src={logo} alt="Logo" className="header-logo" />
@@ -193,13 +249,13 @@ const Cadastro: React.FC = () => {
           />
           <div className="login-container-error">
             {errors.senha ? (
-                <p className="error">{errors.senha}</p>
+               <p className="error">{errors.senha}</p>
             ) : (
-                <span className="password-hint">A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.</span>
+               <span className="password-hint">A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.</span>
             )}
           </div>
 
-          {/* --- CONFIRMAR SENHA (No hint needed here, so it remains the same) --- */}
+          {/* --- CONFIRMAR SENHA --- */}
           <h3 className="login-title">Confirmar senha</h3>
           <Input
             type="password"

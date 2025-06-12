@@ -326,6 +326,9 @@ input {
   }
 }
 
+/* ========================
+   DICA SENHA
+======================== */
 
 .password-hint {
   font-size: 12px;         /* Tamanho de fonte menor */
@@ -334,4 +337,22 @@ input {
   margin-bottom: 0;        /* Remove a margem de baixo padrão do <p> */
   text-align: left;        /* Alinha o texto à esquerda */
   padding-left: 5px;       /* Um pequeno recuo para alinhar com o texto do input */
+}
+
+/* ========================
+   CADASTRO VERIFICAÇÃO
+======================== */
+
+.loader {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #007bff; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
