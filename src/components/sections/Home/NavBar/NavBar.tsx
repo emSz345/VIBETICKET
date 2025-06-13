@@ -82,7 +82,7 @@ const NavBar = () => {
                   <div className="dropdown-menu">
                     <Link to="/home" className="menu-item"><FaHome /> Home</Link>
                     <Link to="/favoritos" className="menu-item"><FaStar /> Favoritos</Link>
-                    <Link to="/meus-ingressos" className="menu-item"><FaTicketAlt /> Meus ingressos</Link>
+                    <Link to="/Meus-Ingressos" className="menu-item"><FaTicketAlt /> Meus ingressos</Link>
                     <div className="menu-item" onClick={() => setMostrarPerfilTela(true)}>
                       <CgProfile /> Meu perfil
                     </div>
@@ -130,9 +130,8 @@ const NavBar = () => {
                 </Link>
               </div>
             )}
-            {usuarioLogado && (
-              <Link to="/carrinho"><FaShoppingCart size={28} /></Link>
-            )}
+           
+            <Link to="/Carrinho"><FaShoppingCart size={28} /></Link>
           </div>
         </div>
       </nav>

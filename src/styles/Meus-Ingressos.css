@@ -1,0 +1,78 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.pagina-meus-ingressos {
+    max-width: 90%;
+    margin: 0 auto;
+    padding: 48px 20px;
+    background-color: #f1f5f9;
+    min-height: 100vh;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+
+/* Estilo do header */
+.meus-ingressos-duvidas-header {
+    width: 100%;
+    background: #333;
+    padding: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.meus-ingressos-duvidas-header-conteudo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.meus-ingressos-duvidas-header-logo {
+    height: 120px;
+    width: auto;
+    object-fit: contain;
+}
+
+.meus-ingressos-duvidas-hr {
+    width: 1px;
+    border: none;
+    height: 70px;
+    background-color: #fff;
+}
+
+.meus-ingressos-duvidas-title {
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0; /* remove margem padrão */
+}
+
+.meus-ingressos-titulo-pagina {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    color: #1f2937;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+.meus-ingressos-lista-ingressos {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.meus-ingressos-mensagem-vazia {
+    text-align: center;
+    font-size: 1.125rem;
+    color: #6b7280;
+    margin-top: 60px;
+}

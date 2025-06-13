@@ -23,6 +23,8 @@ import Perfil from './Page/User/Perfil';
 import Painel from './Page/Admin/Painel';
 import Aprovados from "./Page/Admin/Aprovados";
 import Rejeitados from "./Page/Admin/Rejeitados";
+import Carrinho from './Page/User/Carrinho';
+import MeusIngressos from './Page/User/Meus-Ingressos';
 
 
 function App() {
@@ -52,7 +54,8 @@ function App() {
             />
           }
         />
-
+        <Route path="/Carrinho" element={<Carrinho />} />
+        <Route path="/Meus-Ingressos" element={<MeusIngressos />} />
         <Route path="/Painel" element={<Painel />} />
         <Route path="/Aprovados" element={<Aprovados />} />
         <Route path="/Rejeitados" element={<Rejeitados />} />

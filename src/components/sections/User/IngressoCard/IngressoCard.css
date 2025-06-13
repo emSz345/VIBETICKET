@@ -1,0 +1,70 @@
+.ingresso-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease;
+  }
+  
+  .ingresso-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .ingresso-card h3 {
+    margin-bottom: 12px;
+    color: #111827;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .detalhes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    font-size: 0.95rem;
+    color: #374151;
+  }
+  
+  .detalhes p {
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .acoes {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .btn-azul,
+  .btn-vermelho {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .btn-azul {
+    background-color: #2563eb;
+    color: white;
+  }
+  
+  .btn-azul:hover {
+    background-color: #1e40af;
+  }
+  
+  .btn-vermelho {
+    background-color: #dc2626;
+    color: white;
+  }
+  
+  .btn-vermelho:hover {
+    background-color: #991b1b;
+  }
+  
