@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import axios from 'axios';
-
+import React from 'react';
 // ROTA AUTH
 import Cadastro from "./Page/Auth/Cadastro";
 import Login from './Page/Auth/Login';
@@ -26,41 +23,67 @@ import Rejeitados from "./Page/Admin/Rejeitados";
 import Carrinho from './Page/User/Carrinho';
 import MeusIngressos from './Page/User/Meus-Ingressos';
 
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+
+// Importe suas páginas normalmente...
 
 function App() {
-  //MONGODB
-  const [mensagem, setMensagem] = useState('');
+  // Função simples para verificar se o usuário está autenticado
+  const isAuthenticated = () => {
+    return localStorage.getItem("token") || localStorage.getItem("firebaseToken");
+  };
 
-  //ROTAS
   return (
     <Router>
       <Routes>
+      
         <Route path="/" element={<Navigate to="/Home" />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Cadastro" element={<Cadastro />} />
-        <Route path="/Criareventos" element={<CriarEventos />} />
         <Route path="/Categorias" element={<Categorias />} />
         <Route path="/Termos" element={<Termos />} />
         <Route path="/Detalhes/:id" element={<Detalhes />} />
         <Route path="/Duvidas" element={<Duvidas />} />
-        <Route
-          path="/Perfil"
-          element={
+
+       
+        <Route path="/Criareventos" element={
+          isAuthenticated() ? <CriarEventos /> : <Navigate to="/Login" />
+        } />
+        
+        <Route path="/Perfil" element={
+          isAuthenticated() ? 
             <Perfil
               nomeUsuario={localStorage.getItem("userName") || "Usuário"}
               emailUsuario={localStorage.getItem("userEmail") || "usuario@email.com"}
               tipoLogin={localStorage.getItem("tipoLogin") as "email" | "google" | "facebook" || "email"}
-            />
-          }
-        />
-        <Route path="/Carrinho" element={<Carrinho />} />
-        <Route path="/Meus-Ingressos" element={<MeusIngressos />} />
-        <Route path="/Painel" element={<Painel />} />
-        <Route path="/Aprovados" element={<Aprovados />} />
-        <Route path="/Rejeitados" element={<Rejeitados />} />
+            /> 
+            : <Navigate to="/Login" />
+        } />
+        
+        <Route path="/Carrinho" element={
+          isAuthenticated() ? <Carrinho /> : <Navigate to="/Login" />
+        } />
+        
+        <Route path="/Meus-Ingressos" element={
+          isAuthenticated() ? <MeusIngressos /> : <Navigate to="/Login" />
+        } />
 
+        
+        <Route path="/Painel" element={
+          isAuthenticated() ? <Painel /> : <Navigate to="/Home" />
+        } />
+        
+        <Route path="/Aprovados" element={
+          isAuthenticated() ? <Aprovados /> : <Navigate to="/Home" />
+        } />
+        
+        <Route path="/Rejeitados" element={
+          isAuthenticated() ? <Rejeitados /> : <Navigate to="/Home" />
+        } />
 
+        
+        <Route path="*" element={<Navigate to="/Home" />} />
       </Routes>
     </Router>
   );
