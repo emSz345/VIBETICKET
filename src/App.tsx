@@ -28,8 +28,9 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 // Importe suas páginas normalmente...
 
 function App() {
-  // Função simples para verificar se o usuário está autenticado
+ 
   const isAuthenticated = () => {
+    
     return localStorage.getItem("token") || localStorage.getItem("firebaseToken");
   };
 

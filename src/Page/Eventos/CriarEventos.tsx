@@ -6,6 +6,7 @@ import { MdAddPhotoAlternate } from 'react-icons/md';
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../../components/sections/Home/NavBar/NavBar';
 
 
 function CriarEventos() {
@@ -202,7 +203,9 @@ function CriarEventos() {
   // Renderização do componente
   return (
     <div>
+      <NavBar/>
       <header className="criar-evento-header">
+        
         <h1 className="criar-titulo">
           Crie <span className="criar-dubtitle">seu evento</span>
         </h1>
