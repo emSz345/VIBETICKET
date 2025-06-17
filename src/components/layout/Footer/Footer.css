@@ -2,7 +2,7 @@
 
 .footer-container {
   width: 100%;
-  background-color: #2d2d38;
+  background-color: #0969fb;
   color: white;
   padding: 20px 40px;
   bottom: 0;
@@ -13,8 +13,8 @@
 
 
 .logo {
-  width: 100px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   margin-bottom: 20px;
 }
 
@@ -28,7 +28,7 @@
 .footer-sections2 {
   display: flex;
   justify-content: center;
-  color: #919191;
+  color: #ffffff;
   margin-top: 50px;
 }
 
@@ -43,6 +43,7 @@
   font-weight: 600;
   font-size: 18px;
   margin-bottom: 20px;
+  color: #ffffff;
 }
 
 .fotterSection ul {
@@ -57,7 +58,7 @@
 }
 
 .fotterSection .Link {
-  color: #989898;
+  color: #ffffff;
   text-decoration: none;
   font-family: 'Ariel', sans-serif;
   cursor: pointer;
@@ -68,12 +69,12 @@
 }
 
 .fotterSection .Link:hover {
-  color: #007bff
+  color: #000000
 }
 
 .footer-hr {
   margin: 0 0 20px 0;
-  border-color: #919191;
+  border-color: #ffffff;
 }
 
 

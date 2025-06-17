@@ -8,7 +8,7 @@ import SocialButton from "../../components/ui/SocialButton/SocialButton";
 import TermosContent from '../../Page/Public/TermosContent';
 
 import "../../styles/Login.css";
-import logo from "../../assets/img-logo.png";
+import logo from "../../assets/logo.png";
 import googleIcon from "../../assets/logo-google.png";
 import facebookIcon from "../../assets/logo-facebook.png";
 
@@ -185,14 +185,11 @@ const Cadastro: React.FC = () => {
   return (
     <div className="login-container">
       {/* ... seu JSX do formulário continua exatamente o mesmo aqui ... */}
-      <header className="header">
-        <Link to="/Home" title="Voltar">
-          <img src={logo} alt="Logo" className="header-logo" />
-        </Link>
-      </header>
       <div className="login-content">
         <div className="logo-section">
-          <img src={logo} alt="Logo" className="logo-image" />
+          <Link to='/Home' title="Voltar para Home">
+           <img src={logo} alt="Logo" className="logo-image" />
+          </Link>
         </div>
 
         <div className="form-section">

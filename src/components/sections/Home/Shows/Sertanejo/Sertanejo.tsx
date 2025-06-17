@@ -53,7 +53,6 @@ const Sertanejo: React.FC = () => {
                 <h3 className="evento-titulo">{evento.titulo}</h3>
                 <p className="evento-local">{evento.local}</p>
               </div>
-              <p className="evento-vendidos">{evento.vendidos}</p>
             </div>
           </SwiperSlide>
         ))}

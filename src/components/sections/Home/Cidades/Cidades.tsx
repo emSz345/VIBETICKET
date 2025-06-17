@@ -16,7 +16,7 @@ const Cidades = () => {
 
     return (
         <div className="cidades-container">
-            <h3 className="title">Busque por cidades</h3>
+            <h3 className="title">Busque por estados</h3>
             <div className="cidades-grid">
                 {cidades.map((cidade, index) => (
                     <div key={index} className="cidade-card">

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Footer.css";
-import logo from '../../../assets/img-logo.png'
+import logo from '../../../assets/logo.png'
 import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="footer-container">
       <div className="foote-container">
-        <img src={logo} alt="Logo B4Y" className="logo" />
+        <img src={logo} alt="Logo NaVibe" className="logo" />
         <hr className="footer-hr" />
         <div className="footer-sections">
           <div className="fotterSection">
@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           <div className="fotterSection">
-            <h4>Cidades</h4>
+            <h4>Estados</h4>
             <ul>
               <li><Link to='' className="Link">São Paulo</Link></li>
               <li><Link to='' className="Link">Rio de Janeiro</Link></li>

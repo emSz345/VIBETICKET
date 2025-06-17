@@ -120,7 +120,7 @@ const Detalhes: React.FC = () => {
                                         </div>
 
                                         <button className="detalhes-btn-comprar" onClick={() => comprarIngresso(ingresso)}>
-                                            Comprar {ingresso.tipo}
+                                            Enviar ao carrinho {ingresso.tipo}
                                         </button>
                                     </div>
                                 ))}
