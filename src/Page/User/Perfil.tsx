@@ -4,22 +4,22 @@ import { FiEdit2, FiCheck } from "react-icons/fi";
 import "../../styles/Perfil.css";
 
 interface PerfilProps {
-  nomeUsuario: string;
-  emailUsuario: string;
-  tipoLogin: "email" | "google" | "facebook";
+  name: string;
+  email: string;
+  loginType: "email" | "google" | "facebook";
   avatarUrl?: string;
 }
 
-const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, avatarUrl }) => {
+const Perfil: React.FC<PerfilProps> = ({  name, email, loginType, avatarUrl }) => {
   const [editando, setEditando] = useState(false);
-  const [nome, setNome] = useState(nomeUsuario);
-  const [email, setEmail] = useState(emailUsuario);
+   const [nome, setNome] = useState(name); // Agora usando 'name'
+  const [emailLocal, setEmailLocal] = useState(email);
   const [senha, setSenha] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(avatarUrl);
   
 
-  const isSocialLogin = tipoLogin === "google" || tipoLogin === "facebook";
+  const isSocialLogin = loginType === "google" || loginType === "facebook";
 
    useEffect(() => {
     // Quando o componente monta, buscar a imagem salva no localStorage
@@ -147,8 +147,8 @@ const Perfil: React.FC<PerfilProps> = ({ nomeUsuario, emailUsuario, tipoLogin, a
           <input
             type="email"
             disabled={!editando || isSocialLogin}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={emailLocal}
+            onChange={(e) => setEmailLocal(e.target.value)}
           />
         </div>
 
