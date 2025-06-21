@@ -1,7 +1,7 @@
 // utils/auth.ts
 export const isAuthenticated = () => {
   return !!localStorage.getItem("token") || !!localStorage.getItem("firebaseToken");
-};
+}
 
 export const isAdmin = () => {
   // Adicione sua lógica para verificar se o usuário é admin

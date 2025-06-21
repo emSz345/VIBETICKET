@@ -45,29 +45,26 @@ const Footer: React.FC = () => {
                 <li><Link to='/CriarEventos' className="Link">Criar novo evento</Link></li>
               )}
               <li><Link to='/Duvidas' className="Link">Gerenciar eventos</Link></li>
-              <li><Link to='/Duvidas' className="Link">Gerenciar ingressos</Link></li>
             </ul>
           </div>
           <div className="fotterSection">
             <h4>Ajuda</h4>
             <ul>
               <li><Link to='/Termos' className="Link">Termos e políticas</Link></li>
-              <li><Link to='/Duvidas' className="Link">Dúvidas e Suporte</Link></li>
-              <li><Link to='' className="Link">Gerenciar eventos</Link></li>
-              <li><Link to='' className="Link">Gerenciar ingressos</Link></li>
+              <li><Link to='/Duvidas' className="Link">Central de duvidas</Link></li>
             </ul>
           </div>
           <div className="fotterSection">
             <h4>Páginas</h4>
             <ul>
               <li><Link to='/' className="Link">Home</Link></li>
-              <li><Link to='/Categorias' className="Link">Busque por cidade</Link></li>
-              <li><Link to='/Duvidas' className="Link">Central produtores</Link></li>
+              <li><Link to='/Categorias' className="Link">Estados</Link></li>
+              <li><Link to='/Carrinho' className="Link">Carrinho</Link></li>
             </ul>
           </div>
         </div>
         <div className="footer-sections2">
-          <p>© 2025 B4Y. Todos os direitos reservados.</p>
+          <p style={{ fontFamily: 'Poppins', }}>© 2025 NaVibe. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

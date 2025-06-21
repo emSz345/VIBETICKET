@@ -12,7 +12,7 @@ import Rodape from '../../components/layout/Footer/Footer';
 import EventBanner from '../../components/sections/Home/EventBanner/EventBanner';
 import NavBar from '../../components/sections/Home/NavBar/NavBar';
 import { Link } from 'react-router-dom';
-
+import { useEffect } from 'react';
 import { MdOutlineContactSupport } from 'react-icons/md';
 import Funk from '../../components/sections/Home/Shows/Funk/Funk';
 import Sertanejo from '../../components/sections/Home/Shows/Sertanejo/Sertanejo';
@@ -20,13 +20,12 @@ import NavBar3 from '../../components/sections/Home/NavBar3/NavBar3';
 import Eletonica from '../../components/sections/Home/Shows/Eletrônica/Eletrônica';
 import Jazz from '../../components/sections/Home/Shows/Jazz/Jazz';
 
+
+ 
+
 function Home() {
 
-    // const [menuOpen, setMenuOpen] = useState(false);
-
-    // const toggleMenu = () => {
-    //     setMenuOpen(!menuOpen);
-    // };
+   
 
     return (
         <div className='container'>

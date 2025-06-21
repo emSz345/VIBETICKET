@@ -202,6 +202,7 @@ const Login: React.FC = () => {
 
         localStorage.setItem("token", token);
         localStorage.setItem("userName", user.nome);
+        localStorage.setItem("userEmail", user.email);
         localStorage.setItem("imagemPerfil", user.imagemPerfil || "");
 
         navigate("/Home");

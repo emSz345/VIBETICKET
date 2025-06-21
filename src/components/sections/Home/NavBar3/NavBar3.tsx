@@ -1,14 +1,46 @@
-// NavBar2.tsx
 import React, { useEffect, useState } from 'react';
 import { FaPlusCircle, FaShoppingCart, FaSearch } from 'react-icons/fa';
 import './NavBar3.css';
 import logoLight from '../../../../assets/logo.png';
-import logoDark from '../../../../assets/logo-blue2.png';
+
+import { TfiMenu } from "react-icons/tfi";
+
 import { useNavigate } from 'react-router-dom';
+
+import {
+  FaHome,
+  FaTicketAlt,
+  FaUserCircle,
+  FaClipboardList,
+  FaHeadphones,
+  FaSignOutAlt,
+} from 'react-icons/fa';
 
 export default function NavBar3() {
   const [scrolled, setScrolled] = useState(false);
-  
+  const [usuarioLogado, setUsuarioLogado] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [nomeUsuario, setNomeUsuario] = useState('');
+  const [emailUsuario, setEmailUsuario] = useState('');
+  const [imagemPerfil, setImagemPerfil] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const nome = localStorage.getItem('userName');
+    const email = localStorage.getItem('userEmail');
+    const imagem = localStorage.getItem('imagemPerfil');
+
+    if (token && nome && email) {
+      setUsuarioLogado(true);
+      setNomeUsuario(nome);
+      setEmailUsuario(email);
+      setImagemPerfil(imagem || '');
+    } else {
+      setUsuarioLogado(false);
+    }
+  }, []);
+
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,20 +62,62 @@ export default function NavBar3() {
 
       {/* Ações */}
       <div className="nav__actions">
-        <button className="nav__cta">
+        <button className="nav__cta" onClick={() => navigate("/CriarEventos")}>
           <FaPlusCircle size={20} />
           CRIE SEU EVENTO
         </button>
 
         <div className="cart-icon" title="Carrinho de compras" aria-label="Carrinho de compras">
-          <FaShoppingCart size={24} />
+          <FaShoppingCart size={24} onClick={() => navigate("/Carrinho")} />
         </div>
 
         <div className="nav__auth">
-          <button onClick={() => navigate('/Login')}>
-            Login / Cadastro
-          </button>
+          {!usuarioLogado ? (
+            <button onClick={() => navigate('/Login')} className="nav_login_cadastro">Login / Cadastro</button>
+          ) : (
+            <div className="user-dropdown">
+              <div className="user-info" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                {imagemPerfil ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: "10px", fontWeight: 1, border: "2px solid white", borderRadius: "20px", padding: "5px", cursor: "pointer" }}>
+                    <img src={`http://localhost:5000/uploads/${imagemPerfil}`} className="avatar" alt="Avatar" />
+                    <TfiMenu style={{ color: "#fff", fontSize: "24px" }} />
+                  </div>
+                ) : (
+                  <div className="avatar-placeholder">
+                    {nomeUsuario?.slice(0, 1).toUpperCase()}
+                  </div>
+                )}
+              </div>
+
+              {dropdownOpen && (
+                <div className="dropdown-menu">
+                  <div className="dropdown-header">
+                    <img src={`http://localhost:5000/uploads/${imagemPerfil}`} className="avatar" alt="Avatar" />
+                    <div className="user-header">
+                      <strong>{nomeUsuario}</strong>
+                      <small>{emailUsuario}</small>
+                    </div>
+                  </div>
+                  <hr />
+                  <button onClick={() => navigate('/')}>          <FaHome />         <span>Home</span></button>
+                  <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
+                  <button onClick={() => navigate('/perfil')}>    <FaUserCircle />   <span>Minha conta</span></button>
+                  <button onClick={() => navigate('/favoritos')}> <FaClipboardList />        <span>Gerenciar eventos</span></button>
+                  <button onClick={() => navigate('/duvidas')}>   <FaHeadphones />   <span>Central de Duvidas</span></button>
+                  <button className="logout-btn" onClick={() => {
+                    localStorage.clear();
+                    setUsuarioLogado(false);
+                    navigate('/');
+                  }}>
+                    <FaSignOutAlt /><span>Sair</span>
+                  </button>
+                </div>
+              )}
+
+            </div>
+          )}
         </div>
+
       </div>
 
     </header>

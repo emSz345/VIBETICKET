@@ -22,25 +22,29 @@ body {
   color: #222;
 }
 
-/* Container do header */
+/* ============================ */
+/* NAVBAR PRINCIPAL            */
+/* ============================ */
+
 .nav {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 120px; /* maior */
+  height: 120px;
   background: var(--primary);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 24px;
   gap: 24px;
-  justify-content: space-between; /* espaçamento lateral */
-  transition: background var(--transition-speed) ease, height var(--transition-speed) ease;
+  transition: background var(--transition-speed), height var(--transition-speed);
   z-index: 10000;
 }
 
 .nav--scrolled {
   height: 80px;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(16, 25, 44, 0.55);
   backdrop-filter: blur(12px);
   box-shadow: 0 1px 5px rgb(0 0 0 / 0.15);
 }
@@ -56,14 +60,14 @@ body {
 }
 
 .nav__search {
-  max-width: 450px; /* menor */
+  max-width: 450px;
   flex-grow: 1;
   display: flex;
   align-items: center;
   background: var(--white);
   padding: 1px 14px;
   border-radius: var(--border-radius);
-  box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow var(--transition-speed);
 }
 
@@ -85,35 +89,33 @@ body {
   margin-left: auto;
 }
 
-/* Botão "Crie seu evento" - botão primário com borda branca */
 .nav__cta {
   display: flex;
   align-items: center;
   gap: 8px;
   background-color: transparent;
   color: #fff;
-  border: 2px solid #ffffff;
+  border: 2px solid #fff;
   padding: 8px 18px;
   font-weight: 600;
   font-size: 14px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.2s;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.2s;
 }
 
 .nav__cta:hover,
 .nav__cta:focus-visible {
-  background-color: #ffffff;
-  color: #0969FB;
+  background-color: #fff;
+  color: var(--primary);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
   outline: none;
 }
 
-/* Ícone do carrinho */
 .cart-icon {
   cursor: pointer;
   color: #fff;
-  transition: transform 0.2s ease, color 0.3s ease;
+  transition: transform 0.2s, color 0.3s;
   display: flex;
   align-items: center;
 }
@@ -123,74 +125,183 @@ body {
   color: #dbe9ff;
 }
 
-/* Login / Cadastro - botão secundário mais discreto */
-.nav__auth button {
-  background-color: rgba(255, 255, 255, 0.1);
+/* ============================ */
+/* BOTÃO LOGIN / CADASTRO      */
+/* ============================ */
+
+.nav__auth > button {
+  background: transparent;
   color: #fff;
-  border: 2px solid transparent;
-  padding: 8px 20px;
+  border: 2px solid #fff;
+  padding: 8px 18px;
+  border-radius: 30px;
   font-weight: 600;
   font-size: 14px;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, border 0.3s ease;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.nav__auth button:hover,
-.nav__auth button:focus-visible {
-  background-color: #ffffff;
-  color: #0969FB;
-  border: 2px solid #ffffff;
-  outline: none;
+.nav__auth > button:hover {
+  background: #fff;
+  color: var(--primary);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
 }
 
+/* ============================ */
+/* DROPDOWN MENU               */
+/* ============================ */
 
-/* ---------- ESTILO SÓ QUANDO SCROLLAR ---------- */
-.nav--scrolled {
-  /* já tem altura menor + blur */
-  /* se quiser outra cor base, troque aqui */
-  background: rgba(16, 25, 44, 0.55); /* um azul‑marinho translúcido */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 58px;
+  background: #fff;
+  color: #333;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 14px 12px;
+  min-width: 240px;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* Input + lupa viram “ghost” (somente contorno branco) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-header,
+.dropdown-container-parte-cima {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.dropdown-header .avatar,
+.dropdown-container-parte-cima .avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.user-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.user-header strong {
+  color: #333;
+  font-size: 15px;
+}
+
+.user-header small {
+  color: #777;
+  font-size: 12px;
+}
+
+.dropdown-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f0f2f5;
+  color: var(--primary);
+}
+
+.logout-btn {
+  color: #d63636;
+}
+
+.logout-btn:hover {
+  background-color: #ffe6e6;
+  color: #b22222;
+}
+
+/* ============================ */
+/* SCROLL COMPORTAMENTO        */
+/* ============================ */
+
 .nav--scrolled .nav__search {
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.4);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: none;
 }
-.nav--scrolled .nav__search svg { color:#fff; }
+
+.nav--scrolled .nav__search svg {
+  color: #fff;
+}
+
 .nav--scrolled .nav__search input {
-  color:#fff;
-  ::placeholder { color:#dbe9ff; }    /* texto placeholder clarinho */
+  color: #fff;
 }
 
-/* Botão principal muda para fundo branco e texto azul */
-.nav--scrolled .nav__cta  {
-  background:#fff;
-  color:#0969fb;
-  border:2px solid #fff;
+.nav--scrolled .nav__search input::placeholder {
+  color: #dbe9ff;
 }
+
+.nav--scrolled .nav__cta {
+  background: #fff;
+  color: var(--primary);
+  border: 2px solid #fff;
+}
+
 .nav--scrolled .nav__cta:hover {
-  background:#dbe9ff;
-  color:#074bb5;
+  background: #dbe9ff;
+  color: #074bb5;
 }
 
-/* Carrinho clareia ligeiramente p/ destacar */
-.nav--scrolled .cart-icon { color:#dbe9ff; }
-
-/* Botão Login/Cadastro vira contorno branco */
-.nav--scrolled .nav__auth button  {
-  background:transparent;
-  color:#fff;
-  border:2px solid #fff;
+.nav--scrolled .cart-icon {
+  color: #dbe9ff;
 }
+
+.nav--scrolled .nav__auth .nav_login_cadastro {
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.nav--scrolled .nav__auth button {
+  background: transparent;
+  color: #000;
+  
+}
+
 .nav--scrolled .nav__auth button:hover {
-  background:#fff;
-  color:#0969fb;
+  background: #fff;
+  color: var(--primary);
 }
 
+/* ============================ */
+/* RESPONSIVIDADE              */
+/* ============================ */
 
-/* Responsividade */
 @media (max-width: 768px) {
   .nav {
     gap: 16px;
@@ -198,7 +309,7 @@ body {
   }
 
   .nav__search {
-    display: none; /* Para mobile você pode implementar um drawer ou um ícone de busca */
+    display: none;
   }
 
   .nav__cta {
