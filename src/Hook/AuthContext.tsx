@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
 interface UserData {
   name: string;
@@ -14,6 +14,7 @@ interface AuthContextType {
   checkAuth: () => void;
 }
 
+// Valor padrão para o contexto
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   userData: {
@@ -22,46 +23,79 @@ const AuthContext = createContext<AuthContextType>({
     loginType: 'email',
     isAdmin: false
   },
-  checkAuth: () => {}
+  checkAuth: () => { /* Vazio, será sobrescrito pelo Provider */ }
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [authState, setAuthState] = useState<AuthContextType>({
-    isAuthenticated: false,
-    userData: {
-      name: '',
-      email: '',
-      loginType: 'email',
-      isAdmin: false
-    },
-    checkAuth: () => {}
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserData>({
+    name: '',
+    email: '',
+    loginType: 'email',
+    isAdmin: false
   });
 
-  const checkAuth = () => {
+  // A função checkAuth agora é completamente estável, sem dependências
+  const checkAuth = useCallback(() => {
     const token = localStorage.getItem('token') || localStorage.getItem('firebaseToken');
     const isAuth = !!token;
     
-    setAuthState({
-      isAuthenticated: isAuth,
-      userData: {
-        name: localStorage.getItem('userName') || '',
-        email: localStorage.getItem('userEmail') || '',
-        loginType: (localStorage.getItem('tipoLogin') as 'email' | 'google' | 'facebook') || 'email',
-        isAdmin: localStorage.getItem('userRole') === 'admin',
-        avatarUrl: localStorage.getItem('imagemPerfil') || undefined
-      },
-      checkAuth
-    });
-  };
+    const newName = localStorage.getItem('userName') || '';
+    const newEmail = localStorage.getItem('userEmail') || '';
+    const newLoginType = (localStorage.getItem('tipoLogin') as 'email' | 'google' | 'facebook') || 'email';
+    const newIsAdmin = localStorage.getItem('userRole') === 'admin';
+    const newAvatarUrl = localStorage.getItem('imagemPerfil') || undefined;
 
+    // Usando forma funcional para setIsAuthenticated
+    setIsAuthenticated(prevIsAuth => {
+      if (isAuth !== prevIsAuth) {
+        return isAuth;
+      }
+      return prevIsAuth; // Retorna o estado anterior se não houver mudança real
+    });
+
+    // Crie um novo objeto de dados do usuário
+    const newUserData = {
+      name: newName,
+      email: newEmail,
+      loginType: newLoginType,
+      isAdmin: newIsAdmin,
+      avatarUrl: newAvatarUrl
+    };
+
+    // Usando forma funcional para setUserData e comparando com o estado anterior
+    setUserData(prevUserData => {
+      // Comparação superficial para ver se o userData realmente mudou
+      if (
+        newUserData.name !== prevUserData.name ||
+        newUserData.email !== prevUserData.email ||
+        newUserData.loginType !== prevUserData.loginType ||
+        newUserData.isAdmin !== prevUserData.isAdmin ||
+        newUserData.avatarUrl !== prevUserData.avatarUrl
+      ) {
+        return newUserData;
+      }
+      return prevUserData; // Retorna o objeto anterior se não houver mudança real
+    });
+  }, []); // Array de dependências vazio: esta função nunca será recriada
+
+  // Este useEffect executa checkAuth na montagem do componente
+  // e configura um intervalo para verificar a autenticação periodicamente.
+  // A dependência `checkAuth` é segura aqui porque `useCallback` a tornou estável.
   useEffect(() => {
     checkAuth();
-    const interval = setInterval(checkAuth, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    const interval = setInterval(checkAuth, 30000); // Verifica a cada 30 segundos
+    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+  }, [checkAuth]); // checkAuth é uma dependência, mas agora é estável devido ao useCallback
+
+  const contextValue = {
+    isAuthenticated,
+    userData,
+    checkAuth,
+  };
 
   return (
-    <AuthContext.Provider value={authState}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

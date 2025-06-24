@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
 // ROTA AUTH
@@ -8,7 +8,7 @@ import Login from './Page/Auth/Login';
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
 import AdminRoute from './Hook/RotaDoAdm';
 import ProtectedRoute from './Hook/RotaProtegida';
-import { AuthProvider, useAuth } from './Hook/AuthContext';
+import { AuthProvider, useAuth } from './Hook/AuthContext'; // Importe AuthProvider e useAuth
 
 // ROTA EVENTOS
 import Detalhes from './Page/Eventos/Detalhes';
@@ -31,31 +31,29 @@ import Aprovados from "./Page/Admin/Aprovados";
 import Rejeitados from "./Page/Admin/Rejeitados";
 
 function AppRoutes() {
-    const { userData, isAuthenticated, checkAuth } = useAuth();
-
-    // Verificação adicional quando o componente monta
-    useEffect(() => {
-        checkAuth();
-    }, [checkAuth]);
+    // Pegamos os dados do contexto de autenticação
+    const { userData, isAuthenticated } = useAuth();
+    // A função checkAuth não precisa ser chamada aqui, pois já é gerenciada no AuthContext.
 
     // Define se o usuário é um administrador. Assume que userData.isAdmin existe e é um booleano.
-    // Se userData.isAdmin não for confiável ou for undefined/null, defina como false por padrão.
-    const isAdminUser = userData?.isAdmin || false; // Garante que isAdminUser seja um booleano
+    // Garante que isAdminUser seja um booleano, mesmo se userData ou isAdmin for undefined/null.
+    const isAdminUser = userData?.isAdmin || false;
 
     return (
         <Routes>
             {/* Rotas públicas */}
+            {/* Redireciona a rota raiz para /home */}
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
             <Route path="/categorias" element={<Categorias />} />
-            <Route path="/termos" element={<Termos />} />
             <Route path="/detalhes/:id" element={<Detalhes />} />
+            <Route path="/termos" element={<Termos />} />
             <Route path="/duvidas" element={<Duvidas />} />
 
             {/* Rotas protegidas (usuário autenticado) */}
-            {/* Agora passando as props 'isAllowed' e 'redirectPath' */}
+            {/* O ProtectedRoute verifica a autenticação antes de renderizar as rotas filhas */}
             <Route
                 element={
                     <ProtectedRoute
@@ -81,7 +79,7 @@ function AppRoutes() {
             </Route>
 
             {/* Rotas de admin */}
-            {/* Agora passando a prop 'isAdmin' */}
+            {/* O AdminRoute verifica se o usuário é admin antes de renderizar as rotas filhas */}
             <Route
                 element={
                     <AdminRoute
@@ -95,7 +93,7 @@ function AppRoutes() {
                 <Route path="/rejeitados" element={<Rejeitados />} />
             </Route>
 
-            {/* Rota de fallback para qualquer caminho não definido */}
+            {/* Rota de fallback para qualquer caminho não definido, redireciona para /home */}
             <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
     );
@@ -104,7 +102,8 @@ function AppRoutes() {
 function App() {
     return (
         <Router>
-            <AuthProvider> {/* Envolve tudo com o AuthProvider */}
+            {/* AuthProvider deve envolver AppRoutes para que o contexto esteja disponível */}
+            <AuthProvider>
                 <AppRoutes />
             </AuthProvider>
         </Router>

@@ -1,22 +1,22 @@
 // src/Hook/RotaDoAdm.tsx
 
 import { Navigate, Outlet } from 'react-router-dom';
-import React from 'react'; // Import React if you haven't already
+import React from 'react';
 
 interface AdminRouteProps {
     isAdmin: boolean;
-    redirectPath?: string; // <--- ADICIONE ESTA LINHA
+    redirectPath?: string;
 }
 
 const AdminRoute: React.FC<AdminRouteProps> = ({
     isAdmin,
-    redirectPath = '/home', // <--- USE O redirectPath, com um valor padrão
+    redirectPath = '/home',
 }) => {
     if (!isAdmin) {
         return <Navigate to={redirectPath} replace />;
     }
 
-    return <Outlet />;
+    return <Outlet />; // Já está usando Outlet corretamente
 };
 
 export default AdminRoute;
