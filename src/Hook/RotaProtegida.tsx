@@ -1,16 +1,18 @@
-// components/ProtectedRoute.tsx
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import React from 'react';
 
-const ProtectedRoute = () => {
-  const { isAuthenticated, checkAuth } = useAuth();
+interface RotaProtegidaProps {
+  isAllowed: boolean;
+  redirectPath: string;
+  children?: React.ReactNode;
+}
 
-  useEffect(() => {
-    checkAuth(); // Verifica a autenticação ao montar o componente
-  }, [checkAuth]);
+const RotaProtegida = ({ isAllowed, redirectPath, children }: RotaProtegidaProps) => {
+  if (!isAllowed) {
+    return <Navigate to={redirectPath} replace />;
+  }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  return <>{children}</>;
 };
 
-export default ProtectedRoute
+export default RotaProtegida;
