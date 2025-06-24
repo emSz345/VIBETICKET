@@ -9,23 +9,28 @@
   --cor-texto-claro: #fff;
   --cor-fundo-cinza: #404040;
   --cor-fundo-claro: #f9f9f9;
-  
+
 }
 
 /* === MODAL === */
 /* Adicione este código ao final do seu arquivo CriarEventos.css */
 
 .criar-modal-overlay {
-  position: fixed; /* Fica fixo na tela */
+  position: fixed;
+  /* Fica fixo na tela */
   top: 0;
   left: 0;
-  width: 100vw; /* 100% da largura da tela */
-  height: 100vh; /* 100% da altura da tela */
-  background-color: rgba(0, 0, 0, 0.6); /* Fundo preto semi-transparente */
+  width: 100vw;
+  /* 100% da largura da tela */
+  height: 100vh;
+  /* 100% da altura da tela */
+  background-color: rgba(0, 0, 0, 0.6);
+  /* Fundo preto semi-transparente */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Garante que o modal fique na frente de tudo */
+  z-index: 1000;
+  /* Garante que o modal fique na frente de tudo */
 }
 
 .criar-modal-content {
@@ -35,7 +40,8 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   text-align: center;
   width: 90%;
-  max-width: 400px; /* Largura máxima */
+  max-width: 400px;
+  /* Largura máxima */
 }
 
 .criar-modal-content h2 {
@@ -51,7 +57,8 @@
 .criar-modal-botoes {
   display: flex;
   justify-content: center;
-  gap: 15px; /* Espaçamento entre os botões */
+  gap: 15px;
+  /* Espaçamento entre os botões */
 }
 
 .criar-modal-botoes button {
@@ -65,7 +72,7 @@
 }
 
 .criar-modal-botoes button:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .criar-modal-btn-cancelar {
@@ -75,19 +82,23 @@
 }
 
 .criar-modal-btn-confirmar {
-  background-color: #d9534f; /* Vermelho para indicar uma ação destrutiva */
+  background-color: #d9534f;
+  /* Vermelho para indicar uma ação destrutiva */
   color: white;
 }
 
 /* === DATA E HORA COLADOS === */
 
 .campos-horizontais {
-  display: flex; /* Ativa o layout flexbox */
-  gap: 20px;     /* Cria um espaço de 20px entre os campos */
+  display: flex;
+  /* Ativa o layout flexbox */
+  gap: 20px;
+  /* Cria um espaço de 20px entre os campos */
 }
 
 .campos-horizontais .campo {
-  flex: 1; /* Faz com que cada campo ocupe o mesmo espaço disponível */
+  flex: 1;
+  /* Faz com que cada campo ocupe o mesmo espaço disponível */
 }
 
 /* === INÍCIO HEADER === */
@@ -157,6 +168,7 @@
 .btn-salvar-sair:hover {
   background-color: #fd0606;
 }
+
 /* === FIM HEADER === */
 
 .erro-asterisco {
@@ -183,6 +195,7 @@
   align-items: center;
   gap: 40px;
 }
+
 /* === FIM CONTEÚDO PRINCIPAL === */
 
 /* === INÍCIO BLOCO PADRÃO (SEÇÃO) === */
@@ -207,6 +220,7 @@
   font-weight: bold;
   font-family: 'Poppins', sans-serif;
 }
+
 /* === FIM BLOCO PADRÃO (SEÇÃO) === */
 
 /* === INÍCIO CAMPOS GERAIS === */
@@ -242,6 +256,7 @@
   background-color: #f9f9f9;
   font-size: 15px;
 }
+
 /* === FIM CAMPOS GERAIS === */
 
 /* === INÍCIO INPUT FILE/IMAGEM === */
@@ -263,6 +278,7 @@
   height: 100%;
   cursor: pointer;
 }
+
 /* === FIM INPUT FILE/IMAGEM === */
 
 /* === INÍCIO DESCRIÇÃO RICA === */
@@ -273,6 +289,7 @@
   font-size: 16px;
   border-radius: 5px;
 }
+
 /* === FIM DESCRIÇÃO RICA === */
 
 /* === INÍCIO DATA E HORA === */
@@ -285,6 +302,7 @@
   width: 100%;
   margin-bottom: 20px;
 }
+
 /* === FIM DATA E HORA === */
 
 /* === INÍCIO DOAÇÃO === */
@@ -355,6 +373,7 @@
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
 /* === FIM DOAÇÃO === */
 
 /* === INÍCIO INGRESSOS === */
@@ -389,6 +408,7 @@
     flex: 1 1 100%;
   }
 }
+
 /* === FIM INGRESSOS === */
 
 .container-ingressos {
@@ -401,4 +421,701 @@
 .lado-direito {
   flex: 1;
   min-width: 300px;
+}
+
+.navegacao-etapas {
+  display: flex;
+  justify-content: space-between;
+  /* Alinha os botões nas extremidades */
+  margin-top: 30px;
+  /* Espaço acima dos botões */
+  padding: 0 20px;
+  /* Adiciona um pouco de padding nas laterais */
+}
+
+/* --- Estilos para o Botão "Voltar" --- */
+.btn-anterior {
+  background-color: #6c757d;
+  /* Um cinza mais suave */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  /* Transição suave ao hover */
+}
+
+.btn-anterior:hover {
+  background-color: #5a6268;
+  /* Escurece um pouco no hover */
+}
+
+/* --- Estilos para o Botão "Próxima Etapa" --- */
+.btn-proximo {
+  background-color: #007bff;
+  /* Azul primário */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-proximo:hover {
+  background-color: #0056b3;
+  /* Escurece um pouco no hover */
+}
+
+/* --- Estilos para o Botão "Enviar para Análise" (na última etapa) --- */
+/* Este é o mesmo que você já tinha, mas reforço que ele será condicional */
+.criar-btn-enviar {
+  background-color: #28a745;
+  /* Verde para ação de envio */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  display: flex;
+  /* Para alinhar o ícone e o texto */
+  align-items: center;
+  gap: 8px;
+  /* Espaço entre o ícone e o texto */
+}
+
+.criar-btn-enviar:hover {
+  background-color: #218838;
+}
+
+.criar-btn-enviar:disabled {
+  background-color: #cccccc;
+  /* Cinza claro quando desabilitado */
+  cursor: not-allowed;
+}
+
+/* --- Estilos para campos com erro (asterisco e borda) --- */
+/* Estes estilos já existiam, mas são importantes para a validação por etapa */
+.erro-asterisco {
+  color: #dc3545;
+  /* Vermelho para o asterisco de erro */
+  font-weight: bold;
+}
+
+.erro-campo {
+  border: 1px solid #dc3545;
+  /* Borda vermelha para o campo com erro */
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  /* Sombra suave vermelha */
+}
+
+.erro-campo::placeholder {
+  color: #dc3545;
+  /* Placeholder vermelho para campos com erro */
+}
+
+/* --- Estilos para o cabeçalho (apenas para garantir o alinhamento dos botões) --- */
+.criar-evento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  /* Um fundo claro para o cabeçalho */
+  border-bottom: 1px solid #e9ecef;
+  /* Linha sutil abaixo do cabeçalho */
+}
+
+.criar-header-botoes {
+  display: flex;
+  gap: 10px;
+  /* Espaço entre o botão "Sair" e o botão "Enviar para Análise" */
+}
+
+.upload-imagem {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 150px;
+  /* Garante uma altura mínima */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  /* Para posicionar o input file */
+  transition: border-color 0.3s ease;
+}
+
+.upload-imagem:hover {
+  border-color: #007bff;
+}
+
+.upload-imagem .input-file {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  /* Esconde o input, mas o torna clicável */
+  cursor: pointer;
+}
+
+.image-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  /* Espaço entre imagem, nome e botão */
+  width: 100%;
+  /* Ocupa a largura total do upload-imagem */
+  padding: 10px;
+}
+
+.image-preview {
+  max-width: 100%;
+  /* Garante que a imagem não transborde */
+  max-height: 200px;
+  /* Altura máxima para o preview */
+  object-fit: contain;
+  /* Redimensiona a imagem sem cortar */
+  border-radius: 8px;
+  /* Cantos arredondados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Sombra suave */
+}
+
+.image-name {
+  font-size: 0.9em;
+  color: #555;
+  word-break: break-all;
+  /* Quebra palavras longas */
+  text-align: center;
+  margin-top: 5px;
+}
+
+.remove-image-button {
+  background-color: #dc3545;
+  /* Vermelho para remover */
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.remove-image-button:hover {
+  background-color: #c82333;
+}
+
+/* Garante que o ícone e o texto de "Arraste ou clique" não apareçam com o preview */
+.upload-imagem svg,
+.upload-imagem p {
+  pointer-events: none;
+  /* Desabilita eventos de clique direto nestes elementos */
+}
+
+/* Estilo para campos com erro */
+.erro-campo {
+  border-color: #e74c3c !important;
+  /* Vermelho mais forte para a borda do campo */
+}
+
+/* Estilo para o asterisco de campos obrigatórios com erro */
+.erro-asterisco {
+  color: #e74c3c;
+  /* Vermelho para o asterisco que indica campo obrigatório */
+}
+
+/* Estilo para as mensagens de erro que aparecem abaixo dos campos */
+.mensagem-erro {
+  color: #e74c3c;
+  /* Cor do texto da mensagem de erro */
+  font-size: 0.85em;
+  /* Tamanho da fonte menor para as mensagens */
+  margin-top: 5px;
+  /* Espaçamento superior para separar do input */
+  display: block;
+  /* Garante que o span ocupe sua própria linha, sem quebrar o layout */
+}
+
+/* Estilo para o tooltip do Google Maps */
+/* Quando o mouse passa sobre um elemento com o atributo 'title' */
+[title]:hover::after {
+  content: attr(title);
+  /* Pega o texto do atributo 'title' para exibir */
+  padding: 8px 12px;
+  /* Espaçamento interno do tooltip */
+  background: #333;
+  /* Fundo escuro */
+  color: #fff;
+  /* Texto branco */
+  border-radius: 4px;
+  /* Cantos arredondados */
+  position: absolute;
+  /* Posição absoluta em relação ao elemento pai */
+  z-index: 1000;
+  /* Garante que o tooltip fique acima de outros elementos */
+  white-space: pre-line;
+  /* Permite quebras de linha definidas por &#10; no HTML */
+
+  /* Centraliza o tooltip horizontalmente */
+  transform: translateX(-50%) translateY(5px);
+  left: 50%;
+
+  /* Posiciona o tooltip abaixo do ícone (ajustável) */
+  top: calc(100% + 5px);
+  /* Aparece 5px abaixo do elemento */
+  /* Se preferir que apareça acima, use: bottom: calc(100% + 5px); */
+}
+
+/* Esconde o tooltip por padrão e revela no hover */
+[title]::after {
+  display: none;
+}
+
+[title]:hover::after {
+  display: block;
+}
+
+
+/* Ajuste para o label com ícone para um melhor alinhamento */
+.campo label {
+  display: flex;
+  /* Permite alinhamento flexível de itens */
+  align-items: center;
+  /* Alinha os itens verticalmente ao centro */
+  gap: 5px;
+  /* Espaço entre o texto do label e o ícone de interrogação */
+}
+
+/* Opcional: Estilo para o cursor de ajuda no ícone */
+.campo label svg {
+  cursor: help;
+}
+
+
+/* Estilos gerais do cabeçalho */
+.criar-evento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.criar-titulo {
+  font-size: 2em;
+  color: #333;
+  margin: 0;
+}
+
+.criar-dubtitle {
+  color: #007bff;
+}
+
+.criar-header-botoes {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-salvar-sair,
+.criar-btn-enviar {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-salvar-sair {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-salvar-sair:hover {
+  background-color: #c82333;
+}
+
+.criar-btn-enviar {
+  background-color: #28a745;
+  color: white;
+}
+
+.criar-btn-enviar:hover {
+  background-color: #218838;
+}
+
+.criar-btn-enviar:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Estilos do Modal */
+.criar-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.criar-modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+}
+
+.criar-modal-content h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.criar-modal-content p {
+  margin-bottom: 25px;
+  color: #666;
+}
+
+.criar-modal-botoes {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.criar-modal-btn-cancelar,
+.criar-modal-btn-confirmar {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.criar-modal-btn-cancelar {
+  background-color: #6c757d;
+  color: white;
+}
+
+.criar-modal-btn-cancelar:hover {
+  background-color: #5a6268;
+}
+
+.criar-modal-btn-confirmar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.criar-modal-btn-confirmar:hover {
+  background-color: #c82333;
+}
+
+/* Estilos do Formulário */
+.criar-form {
+  padding: 20px;
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.informacoes-basicas-container,
+.container-ingressos {
+  margin-bottom: 30px;
+}
+
+.criar-Informaçao h2,
+.criar-doacao-title {
+  font-size: 1.8em;
+  color: #333;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+.campo {
+  margin-bottom: 15px;
+}
+
+.campo label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.campo input[type="text"],
+.campo input[type="url"],
+.campo input[type="number"],
+.campo input[type="date"],
+.campo input[type="time"],
+.campo select,
+.campo textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  /* Ensures padding doesn't increase total width */
+  font-size: 1rem;
+  color: #333;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.erro-campo {
+  border-color: #dc3545 !important;
+}
+
+.mensagem-erro {
+  color: #dc3545;
+  font-size: 0.85em;
+  margin-top: 5px;
+  display: block;
+}
+
+.erro-asterisco {
+  color: #dc3545;
+}
+
+/* Estilos de upload de imagem */
+.upload-imagem {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+  /* Altura fixa para a área de upload */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+}
+
+.upload-imagem .input-file {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 150px;
+  /* Limita a altura da imagem de preview */
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.image-name {
+  font-size: 0.9em;
+  color: #555;
+  word-break: break-all;
+}
+
+.remove-image-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8em;
+  margin-top: 10px;
+}
+
+.remove-image-button:hover {
+  background-color: #c82333;
+}
+
+.criar-descricao {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* NOVOS ESTILOS PARA OS CAMPOS DE ENDEREÇO */
+.input-readonly {
+  background-color: #f0f0f0;
+  /* Deixa os campos somente leitura em tom de cinza */
+  cursor: not-allowed;
+}
+
+.campos-horizontais {
+  display: flex;
+  flex-wrap: wrap;
+  /* Permite que os itens quebrem a linha em telas menores */
+  gap: 20px;
+  /* Espaçamento entre os campos horizontais */
+  margin-bottom: 15px;
+}
+
+.campos-horizontais .campo {
+  flex: 1;
+  /* Faz com que os campos ocupem largura igual */
+  min-width: 150px;
+  /* Garante um tamanho mínimo para os campos em telas pequenas */
+  margin-bottom: 0;
+  /* Remove a margem inferior de campos individuais dentro deste container */
+}
+
+.mensagem-info {
+  color: #007bff;
+  font-size: 0.85em;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Estilos de Ingressos */
+.container-ingressos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+}
+
+.container-ingressos .lado-esquerdo,
+.container-ingressos .lado-direito {
+  flex: 1;
+  min-width: 300px;
+  /* Garante que as colunas não fiquem muito estreitas */
+}
+
+.container-ingressos .campo {
+  margin-bottom: 15px;
+}
+
+.container-ingressos .select {
+  width: auto;
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+
+/* Estilos de Doação */
+.criar-doacao-descricao {
+  font-size: 0.95em;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.botoes-doacao {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.botoes-doacao button {
+  padding: 10px 25px;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  background-color: white;
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.botoes-doacao button:hover {
+  background-color: #e7f2ff;
+}
+
+.botoes-doacao button.ativo {
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.campo-doacao {
+  margin-top: 20px;
+}
+
+
+/* Estilos para navegação entre etapas */
+.navegacao-etapas {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.btn-anterior,
+.btn-proximo {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-anterior {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-anterior:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+.btn-proximo {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-proximo:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
 }
