@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import "../../styles/Carrinho.css";
-import NavBar from '../../components/sections/Home/NavBar/NavBar';
-
+import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/img-logo.png'
+import AppHeader from '../../components/layout/Header/AppHeader'
 
 interface CarrinhoItem {
     id: string;
@@ -33,6 +33,8 @@ const Carrinho = () => {
         },
     ]);
 
+    const navigate = useNavigate();
+
     const aumentarQuantidade = (id: string) => {
         setCarrinho(prev =>
             prev.map(item =>
@@ -59,7 +61,7 @@ const Carrinho = () => {
 
     return (
         <>
-            <NavBar />
+            <AppHeader/>
             <div className="carrinho-container">
                 <table className="carrinho-tabela">
                     <thead>
@@ -99,7 +101,7 @@ const Carrinho = () => {
                 </table>
 
                 <div className="carrinho-acoes">
-                    <button className="carrinho-continuar">Continuar comprando</button>
+                    <button onClick={() => navigate('/Home')} className="carrinho-continuar">Continuar comprando</button>
                     <div className="carrinho-total">
                         <span>Subtotal:</span>
                         <strong>R$ {total.toFixed(2)}</strong>

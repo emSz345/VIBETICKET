@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/Duvidas.css";
-import logo from "../../assets/img-logo.png";
+import logo from "../../assets/logo.png";
 
 function Duvidas() {
   useEffect(() => {

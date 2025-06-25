@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaPlusCircle, FaShoppingCart, FaSearch } from 'react-icons/fa';
 import './NavBar3.css';
 import logoLight from '../../../../assets/logo.png';
+import { Link } from 'react-router-dom';
 
 import { TfiMenu } from "react-icons/tfi";
 
@@ -52,7 +53,9 @@ export default function NavBar3() {
   return (
     <header className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
       {/* Logo */}
-      <img src={scrolled ? logoLight : logoLight} alt="Logo" className="nav__logo" />
+      <Link to="/Home" aria-label="Página inicial">
+        <img src={scrolled ? logoLight : logoLight} alt="Logo" className="app-header__logo"/>
+      </Link>
 
       {/* Busca */}
       <div className="nav__search">

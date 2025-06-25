@@ -69,6 +69,33 @@ const Cadastro: React.FC = () => {
     setErrors({ ...errors, [name]: "" });
   };
 
+  const handleGoogleLogin = async () => {
+  if (!termosAceitos) {
+    alert("Você deve aceitar os termos e políticas para continuar.");
+    return;
+  }
+  try {
+    await signInWithGoogle();
+    // O restante do fluxo do Google continua aqui...
+  } catch (error) {
+    console.error("Erro no login com Google:", error);
+  }
+};
+
+const handleFacebookLogin = async () => {
+  if (!termosAceitos) {
+    alert("Você deve aceitar os termos e políticas para continuar.");
+    return;
+  }
+  try {
+    await signInWithFacebook();
+    // O restamento do fluxo do Facebook continua aqui...
+  } catch (error) {
+    console.error("Erro no login com Facebook:", error);
+  }
+};
+
+
   // ALTERADO: Lógica de envio do formulário de cadastro
   const handleSubmitLocal = async () => {
     if (!validate()) return;
@@ -141,7 +168,7 @@ const Cadastro: React.FC = () => {
 
           // Login bem-sucedido, salva os dados e navega
           localStorage.setItem("userName", loginData.user.nome);
-          localStorage.setItem("email", loginData.user.email);
+          localStorage.setItem("userEmail", loginData.user.email);
           localStorage.setItem("imagemPerfil", loginData.user.imagemPerfil);
           localStorage.setItem("id", loginData.user._id);
           localStorage.setItem("token", loginData.token);
@@ -302,8 +329,11 @@ const Cadastro: React.FC = () => {
           <p className="ou">ou</p>
 
           <div className="social-login">
-            <SocialButton icon={googleIcon} alt="Google" onClick={signInWithGoogle} />
-            <SocialButton icon={facebookIcon} alt="Facebook" onClick={signInWithFacebook} />
+              
+                 <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleLogin} />
+              
+           
+            <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookLogin} />
           </div>
 
           <p>

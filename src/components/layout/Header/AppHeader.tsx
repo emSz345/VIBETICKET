@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import './AppHeader.css'; // <-- ATUALIZE O NOME DO ARQUIVO CSS AQUI
 import logoLight from '../../../../src/assets/logo.png';
 
+
 import { TfiMenu } from "react-icons/tfi";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   FaHome,
   FaTicketAlt,
@@ -49,7 +50,10 @@ export default function AppHeader() {
   return (
     <header className={`app-header ${scrolled ? 'app-header--scrolled' : ''}`}>
       {/* Logo */}
-      <img src={scrolled ? logoLight : logoLight} alt="Logo" className="app-header__logo" />
+
+      <Link to="/Home" aria-label="Página inicial">
+        <img src={scrolled ? logoLight : logoLight} alt="Logo" className="app-header__logo"/>
+      </Link>
 
       {/* Ações do Usuário */}
       <div className="app-header__actions">

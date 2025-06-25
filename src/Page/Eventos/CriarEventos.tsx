@@ -6,7 +6,8 @@ import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import { FaQuestionCircle } from 'react-icons/fa';
-
+import logo from '../../assets/logo.png';
+import { Link } from 'react-router-dom';
 import AppHeader from '../../components/layout/Header/AppHeader'
 
 function CriarEventos() {
@@ -371,13 +372,18 @@ function CriarEventos() {
   return (
 
     <div>
-      <AppHeader/>
       {/* Removido NavBar */}
 
       <header className="criar-evento-header">
+        <div className="criar-juntos">
+          <Link to="/Home" title="Voltar">
+            <img src={logo} alt="Logo" className="duvidas-header-logo" />
+          </Link>
+        <hr className="duvidas-hr" />
         <h1 className="criar-titulo">
           Crie <span className="criar-dubtitle">seu evento</span>
         </h1>
+        </div>
         <div className="criar-header-botoes">
           <button className="btn-salvar-sair" onClick={handleAbrirModal}>
             {/* Ícone de saída SVG */}

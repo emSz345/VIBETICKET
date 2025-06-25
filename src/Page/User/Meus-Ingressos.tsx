@@ -3,8 +3,6 @@ import { IngressoCard } from '../../components/sections/User/IngressoCard/Ingres
 import '../../styles/Meus-Ingressos.css';
 import { Link } from 'react-router-dom';
 
-import logo from "../../assets/img-logo.png";
-
 import { Ingresso } from '../../types/Ingresso';
 
 
@@ -45,15 +43,6 @@ const ingressos: Ingresso[] = [
 const MeusIngressos: React.FC = () => {
     return (
         <>
-            <header className="meus-ingressos-duvidas-header">
-                <div className="meus-ingressos-duvidas-header-conteudo">
-                    <Link to="/Home" title="Voltar">
-                        <img src={logo} alt="Logo" className="meus-ingressos-duvidas-header-logo" />
-                    </Link>
-                    <hr className="meus-ingressos-duvidas-hr" />
-                    <h3 className="meus-ingressos-duvidas-title">Meus Ingressos</h3>
-                </div>
-            </header>
             <div className="meus-ingressos-pagina-meus-ingressos">
                 {ingressos.length === 0 ? (
                     <p className="meus-ingressos-mensagem-vazia">Você ainda não comprou nenhum ingresso.</p>

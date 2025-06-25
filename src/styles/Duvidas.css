@@ -14,7 +14,7 @@ body {
 /* Estilo do header */
 .duvidas-header {
     width: 100%;
-    background: linear-gradient(145deg, #0066cc, #00b3b3);
+    background: #0969fb;
     padding: 15px 0;
     display: flex;
     justify-content: center;
@@ -31,7 +31,7 @@ body {
 }
 
 .duvidas-header-logo {
-    height: 120px;
+    height: 160px;
     width: auto;
     object-fit: contain;
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import AppHeader from './components/layout/Header/AppHeader'; // <-- VERIFIQUE SE ESTE CAMINHO ESTÁ CORRETO
 import './App.css'; // <-- VAMOS CRIAR ESTE ARQUIVO NO PRÓXIMO PASSO
-
+import { useEffect } from 'react';
 // ROTA AUTH
 import Cadastro from "./Page/Auth/Cadastro";
 import Login from './Page/Auth/Login';
@@ -37,7 +37,7 @@ import Rejeitados from "./Page/Admin/Rejeitados";
 // Este componente inclui a navbar e um espaço para o conteúdo da página.
 // O <Outlet /> é um placeholder do React Router que renderiza a rota filha.
 // ==================================================================
-function MainLayout() {
+function LayoutWithHeader() {
   return (
     <div>
       <AppHeader />
@@ -51,7 +51,14 @@ function MainLayout() {
 
 
 function AppRoutes() {
-    const { userData, isAuthenticated } = useAuth();
+    const { userData, isAuthenticated, checkAuth } = useAuth();
+
+    useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+
+
     const isAdminUser = userData?.isAdmin || false;
 
     return (
@@ -60,31 +67,35 @@ function AppRoutes() {
             {/* 2. AGRUPAMOS AS ROTAS QUE USARÃO O LAYOUT PRINCIPAL */}
             {/* Todas as rotas dentro deste elemento terão a navbar fixa no topo. */}
             {/* ================================================================== */}
-            <Route element={<MainLayout />}>
-                {/* Rotas públicas com navbar */}
+
+
                 <Route path="/home" element={<Home />} />
                 <Route path="/categorias" element={<Categorias />} />
                 <Route path="/detalhes/:id" element={<Detalhes />} />
                 <Route path="/termos" element={<Termos />} />
                 <Route path="/duvidas" element={<Duvidas />} />
+                <Route path="/carrinho" element={<Carrinho />} />
+
+                {/* Rotas públicas com navbar */}
 
                 {/* Rotas protegidas com navbar */}
                 <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectPath="/login" />}>
+                    
                     <Route path="/CriarEventos" element={<CriarEventos />} />
-                    <Route
-                        path="/perfil"
-                        element={
-                            <Perfil
-                                name={userData?.name}
-                                email={userData?.email}
-                                loginType={userData?.loginType}
-                                avatarUrl={userData?.avatarUrl}
-                            />
-                        }
-                    />
-                    <Route path="/carrinho" element={<Carrinho />} />
-                    <Route path="/Meus-Ingressos" element={<MeusIngressos />} />
-                </Route>
+                    <Route element={<LayoutWithHeader />}>
+                        <Route
+                            path="/perfil"
+                            element={
+                                <Perfil
+                                    name={userData?.name}
+                                    email={userData?.email}
+                                    loginType={userData?.loginType}
+                                    avatarUrl={userData?.avatarUrl}
+                                />
+                            }
+                        />
+                        <Route path="/Meus-Ingressos" element={<MeusIngressos />} />
+                    </Route>
 
                 {/* Rotas de admin com navbar */}
                 <Route element={<AdminRoute isAdmin={isAdminUser} redirectPath="/home" />}>

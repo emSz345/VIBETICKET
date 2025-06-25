@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const isAuth = !!token;
     
     const newName = localStorage.getItem('userName') || '';
-    const newEmail = localStorage.getItem('userEmail') || '';
+    const newEmail = localStorage.getItem('userEmail') || localStorage.getItem('email') || '';
     const newLoginType = (localStorage.getItem('tipoLogin') as 'email' | 'google' | 'facebook') || 'email';
     const newIsAdmin = localStorage.getItem('userRole') === 'admin';
     const newAvatarUrl = localStorage.getItem('imagemPerfil') || undefined;
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // A dependência `checkAuth` é segura aqui porque `useCallback` a tornou estável.
   useEffect(() => {
     checkAuth();
-    const interval = setInterval(checkAuth, 30000); // Verifica a cada 30 segundos
+    const interval = setInterval(checkAuth, 1000); // Verifica a cada 30 segundos
     return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
   }, [checkAuth]); // checkAuth é uma dependência, mas agora é estável devido ao useCallback
 
