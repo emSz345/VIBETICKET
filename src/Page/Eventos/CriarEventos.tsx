@@ -8,6 +8,7 @@ import { IoSend } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../../components/sections/Home/NavBar/NavBar';
 import { FaQuestionCircle } from 'react-icons/fa';
+import NavbarSeca from '../../components/layout/Header/NavbarSeca'
 
 function CriarEventos() {
   const navigate = useNavigate();
@@ -369,9 +370,11 @@ function CriarEventos() {
 
   // Renderização do componente
   return (
-    <div>
 
+    <div>
+      <NavbarSeca/>
       {/* Removido NavBar */}
+
       <header className="criar-evento-header">
         <h1 className="criar-titulo">
           Crie <span className="criar-dubtitle">seu evento</span>
@@ -396,7 +399,7 @@ function CriarEventos() {
         </div>
       </header>
 
-      {modalAberto && (
+      {modalAberto && ( // This line is key
         <div className="criar-modal-overlay">
           <div className="criar-modal-content">
             <h2>Tem certeza que deseja sair?</h2>

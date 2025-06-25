@@ -116,7 +116,9 @@
 
 .criar-header-botoes {
   display: flex;
-  gap: 15px;
+  gap: 15px; /* Já existe */
+  position: relative; /* Garante que z-index funcione */
+  z-index: 3; /* Z-index maior que o da navbar */
 }
 
 .criar-titulo {
@@ -919,7 +921,7 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  height: 200px;
+  height: 400px;
   /* Altura fixa para a área de upload */
   display: flex;
   flex-direction: column;
@@ -951,7 +953,7 @@
 
 .image-preview {
   max-width: 100%;
-  max-height: 150px;
+  max-height: 200px;
   /* Limita a altura da imagem de preview */
   object-fit: contain;
   border-radius: 5px;

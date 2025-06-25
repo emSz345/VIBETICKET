@@ -1,0 +1,324 @@
+:root {
+    --primary: #0969fb;
+    --primary-dark: #0756cc;
+    --white: #fff;
+    --gray-light: #f2f2f2;
+    --gray-border: #ccc;
+    --header-height: 80px;
+    --header-height-scrolled: 64px;
+    --transition-speed: 0.25s;
+    --border-radius: 8px;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    font-family: var(--font-family);
+    background: #fafafa;
+    color: #222;
+  }
+  
+  /* ============================ */
+  /* NAVBAR PRINCIPAL            */
+  /* ============================ */
+  
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    gap: 24px;
+    transition: background var(--transition-speed), height var(--transition-speed);
+    z-index: 10000;
+  }
+  
+  .nav--scrolled {
+    height: 80px;
+    background: rgba(16, 25, 44, 0.55);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 5px rgb(0 0 0 / 0.15);
+  }
+  
+  .nav__logo {
+    width: 140px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .nav--scrolled .nav__logo {
+    width: 120px;
+  }
+  
+  .nav__search {
+    max-width: 450px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    padding: 1px 14px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow var(--transition-speed);
+  }
+  
+  .nav__search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: #222;
+    background: transparent;
+    caret-color: var(--primary);
+  }
+  
+  .nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-left: auto;
+  }
+  
+  .nav__cta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.2s;
+  }
+  
+  .nav__cta:hover,
+  .nav__cta:focus-visible {
+    background-color: #fff;
+    color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    outline: none;
+  }
+  
+  .cart-icon {
+    cursor: pointer;
+    color: #fff;
+    transition: transform 0.2s, color 0.3s;
+    display: flex;
+    align-items: center;
+  }
+  
+  .cart-icon:hover {
+    transform: scale(1.1);
+    color: #dbe9ff;
+  }
+  
+  /* ============================ */
+  /* BOTÃO LOGIN / CADASTRO      */
+  /* ============================ */
+  
+  .nav__auth > button {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .nav__auth > button:hover {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  }
+  
+  /* ============================ */
+  /* DROPDOWN MENU               */
+  /* ============================ */
+  
+  .dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 58px;
+    background: #fff;
+    color: #333;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 14px 12px;
+    min-width: 240px;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .dropdown-header,
+  .dropdown-container-parte-cima {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  
+  .dropdown-header .avatar,
+  .dropdown-container-parte-cima .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+  }
+  
+  .user-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 14px;
+  }
+  
+  .user-header strong {
+    color: #333;
+    font-size: 15px;
+  }
+  
+  .user-header small {
+    color: #777;
+    font-size: 12px;
+  }
+  
+  .dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .dropdown-menu button:hover {
+    background-color: #f0f2f5;
+    color: var(--primary);
+  }
+  
+  .logout-btn {
+    color: #d63636;
+  }
+  
+  .logout-btn:hover {
+    background-color: #ffe6e6;
+    color: #b22222;
+  }
+  
+  /* ============================ */
+  /* SCROLL COMPORTAMENTO        */
+  /* ============================ */
+  
+  .nav--scrolled .nav__search {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: none;
+  }
+  
+  .nav--scrolled .nav__search svg {
+    color: #fff;
+  }
+  
+  .nav--scrolled .nav__search input {
+    color: #fff;
+  }
+  
+  .nav--scrolled .nav__search input::placeholder {
+    color: #dbe9ff;
+  }
+  
+  .nav--scrolled .nav__cta {
+    background: #fff;
+    color: var(--primary);
+    border: 2px solid #fff;
+  }
+  
+  .nav--scrolled .nav__cta:hover {
+    background: #dbe9ff;
+    color: #074bb5;
+  }
+  
+  .nav--scrolled .cart-icon {
+    color: #dbe9ff;
+  }
+  
+  .nav--scrolled .nav__auth .nav_login_cadastro {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+  }
+  
+  .nav--scrolled .nav__auth button {
+    background: transparent;
+    color: #000;
+    
+  }
+  
+  .nav--scrolled .nav__auth button:hover {
+    background: #fff;
+    color: var(--primary);
+  }
+  
+  /* ============================ */
+  /* RESPONSIVIDADE              */
+  /* ============================ */
+  
+  @media (max-width: 768px) {
+    .nav {
+      gap: 16px;
+      padding: 0 16px;
+    }
+  
+    .nav__search {
+      display: none;
+    }
+  
+    .nav__cta {
+      padding: 6px 14px;
+      font-size: 14px;
+    }
+  
+    .nav__auth {
+      font-size: 0.85rem;
+    }
+  }
+  
