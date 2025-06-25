@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
+import AppHeader from './components/layout/Header/AppHeader'; // <-- VERIFIQUE SE ESTE CAMINHO ESTÁ CORRETO
+import './App.css'; // <-- VAMOS CRIAR ESTE ARQUIVO NO PRÓXIMO PASSO
 
 // ROTA AUTH
 import Cadastro from "./Page/Auth/Cadastro";
@@ -8,7 +10,7 @@ import Login from './Page/Auth/Login';
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
 import AdminRoute from './Hook/RotaDoAdm';
 import ProtectedRoute from './Hook/RotaProtegida';
-import { AuthProvider, useAuth } from './Hook/AuthContext'; // Importe AuthProvider e useAuth
+import { AuthProvider, useAuth } from './Hook/AuthContext';
 
 // ROTA EVENTOS
 import Detalhes from './Page/Eventos/Detalhes';
@@ -30,70 +32,77 @@ import Painel from './Page/Admin/Painel';
 import Aprovados from "./Page/Admin/Aprovados";
 import Rejeitados from "./Page/Admin/Rejeitados";
 
-function AppRoutes() {
-    // Pegamos os dados do contexto de autenticação
-    const { userData, isAuthenticated } = useAuth();
-    // A função checkAuth não precisa ser chamada aqui, pois já é gerenciada no AuthContext.
+// ==================================================================
+// 1. CRIAMOS UM COMPONENTE DE LAYOUT
+// Este componente inclui a navbar e um espaço para o conteúdo da página.
+// O <Outlet /> é um placeholder do React Router que renderiza a rota filha.
+// ==================================================================
+function MainLayout() {
+  return (
+    <div>
+      <AppHeader />
+      {/* A classe 'main-content' é crucial para o espaçamento */}
+      <main className="main-content">
+        <Outlet /> 
+      </main>
+    </div>
+  );
+}
 
-    // Define se o usuário é um administrador. Assume que userData.isAdmin existe e é um booleano.
-    // Garante que isAdminUser seja um booleano, mesmo se userData ou isAdmin for undefined/null.
+
+function AppRoutes() {
+    const { userData, isAuthenticated } = useAuth();
     const isAdminUser = userData?.isAdmin || false;
 
     return (
         <Routes>
-            {/* Rotas públicas */}
-            {/* Redireciona a rota raiz para /home */}
-            <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={<Home />} />
+            {/* ================================================================== */}
+            {/* 2. AGRUPAMOS AS ROTAS QUE USARÃO O LAYOUT PRINCIPAL */}
+            {/* Todas as rotas dentro deste elemento terão a navbar fixa no topo. */}
+            {/* ================================================================== */}
+            <Route element={<MainLayout />}>
+                {/* Rotas públicas com navbar */}
+                <Route path="/home" element={<Home />} />
+                <Route path="/categorias" element={<Categorias />} />
+                <Route path="/detalhes/:id" element={<Detalhes />} />
+                <Route path="/termos" element={<Termos />} />
+                <Route path="/duvidas" element={<Duvidas />} />
+
+                {/* Rotas protegidas com navbar */}
+                <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectPath="/login" />}>
+                    <Route path="/CriarEventos" element={<CriarEventos />} />
+                    <Route
+                        path="/perfil"
+                        element={
+                            <Perfil
+                                name={userData?.name}
+                                email={userData?.email}
+                                loginType={userData?.loginType}
+                                avatarUrl={userData?.avatarUrl}
+                            />
+                        }
+                    />
+                    <Route path="/carrinho" element={<Carrinho />} />
+                    <Route path="/Meus-Ingressos" element={<MeusIngressos />} />
+                </Route>
+
+                {/* Rotas de admin com navbar */}
+                <Route element={<AdminRoute isAdmin={isAdminUser} redirectPath="/home" />}>
+                    <Route path="/painel" element={<Painel />} />
+                    <Route path="/aprovados" element={<Aprovados />} />
+                    <Route path="/rejeitados" element={<Rejeitados />} />
+                </Route>
+            </Route>
+
+            {/* ================================================================== */}
+            {/* 3. ROTAS SEM LAYOUT (TELA CHEIA) */}
+            {/* Login e Cadastro não terão a navbar, o que é comum. */}
+            {/* ================================================================== */}
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
-            <Route path="/categorias" element={<Categorias />} />
-            <Route path="/detalhes/:id" element={<Detalhes />} />
-            <Route path="/termos" element={<Termos />} />
-            <Route path="/duvidas" element={<Duvidas />} />
 
-            {/* Rotas protegidas (usuário autenticado) */}
-            {/* O ProtectedRoute verifica a autenticação antes de renderizar as rotas filhas */}
-            <Route
-                element={
-                    <ProtectedRoute
-                        isAllowed={isAuthenticated}
-                        redirectPath="/login" // Redireciona para o login se não estiver autenticado
-                    />
-                }
-            >
-                <Route path="/CriarEventos" element={<CriarEventos />} />
-                <Route
-                    path="/perfil"
-                    element={
-                        <Perfil
-                            name={userData?.name} // Use optional chaining para evitar erros se userData for null/undefined
-                            email={userData?.email}
-                            loginType={userData?.loginType}
-                            avatarUrl={userData?.avatarUrl}
-                        />
-                    }
-                />
-                <Route path="/carrinho" element={<Carrinho />} />
-                <Route path="/Meus-Ingressos" element={<MeusIngressos />} />
-            </Route>
-
-            {/* Rotas de admin */}
-            {/* O AdminRoute verifica se o usuário é admin antes de renderizar as rotas filhas */}
-            <Route
-                element={
-                    <AdminRoute
-                        isAdmin={isAdminUser}
-                        redirectPath="/home" // Redireciona para a home se não for admin
-                    />
-                }
-            >
-                <Route path="/painel" element={<Painel />} />
-                <Route path="/aprovados" element={<Aprovados />} />
-                <Route path="/rejeitados" element={<Rejeitados />} />
-            </Route>
-
-            {/* Rota de fallback para qualquer caminho não definido, redireciona para /home */}
+            {/* Redirecionamentos e rotas de fallback */}
+            <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
     );
@@ -102,7 +111,6 @@ function AppRoutes() {
 function App() {
     return (
         <Router>
-            {/* AuthProvider deve envolver AppRoutes para que o contexto esteja disponível */}
             <AuthProvider>
                 <AppRoutes />
             </AuthProvider>

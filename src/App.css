@@ -1,0 +1,10 @@
+/* Conteúdo do novo arquivo: App.css */
+
+.main-content {
+    /*
+      Esta regra CRUCIAL adiciona um espaço no topo da área de conteúdo,
+      com a mesma altura inicial da sua navbar (120px),
+      impedindo que o conteúdo fique escondido atrás dela.
+    */
+    padding-top: 120px;
+  }

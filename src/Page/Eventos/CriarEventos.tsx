@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import '../../styles/CriarEventos.css';
 import { NumericFormat } from 'react-number-format';
-import Rodape from '../../components/layout/Footer/Footer';
 import { MdAddPhotoAlternate } from 'react-icons/md';
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../../components/sections/Home/NavBar/NavBar';
 import { FaQuestionCircle } from 'react-icons/fa';
-import NavbarSeca from '../../components/layout/Header/NavbarSeca'
+
+import AppHeader from '../../components/layout/Header/AppHeader'
 
 function CriarEventos() {
   const navigate = useNavigate();
@@ -372,7 +371,7 @@ function CriarEventos() {
   return (
 
     <div>
-      <NavbarSeca/>
+      <AppHeader/>
       {/* Removido NavBar */}
 
       <header className="criar-evento-header">
