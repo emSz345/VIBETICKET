@@ -23,7 +23,7 @@ function CriarEventos() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
 
   // Etapa 2
-  const [descricao, setDescricao] = useState(''); // Estado de descrição corrigido para useState
+  const [descricao, setDescricao] = useState('');
 
   // Etapa 3 - ESTADOS ATUALIZADOS PARA O ENDEREÇO
   const [cep, setCep] = useState('');
@@ -34,7 +34,7 @@ function CriarEventos() {
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [linkMaps, setLinkMaps] = useState('');
-  const [isFetchingCep, setIsFetchingCep] = useState(false); // Novo estado para loading do CEP
+  const [isFetchingCep, setIsFetchingCep] = useState(false);
 
   // Etapa 4
   const [dataInicio, setDataInicio] = useState('');
@@ -104,7 +104,7 @@ function CriarEventos() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [etapaAtual]); // Adicionado etapaAtual como dependência para garantir scroll ao mudar de etapa
+  }, [etapaAtual]);
 
   const formatTime = (seconds: number): string => {
     const m = Math.floor(seconds / 60)
@@ -139,7 +139,6 @@ function CriarEventos() {
 
   // FUNÇÃO PARA BUSCAR ENDEREÇO POR CEP
   const buscarEnderecoPorCep = async (cep: string) => {
-    // Remove qualquer caractere não numérico do CEP
     const cleanedCep = cep.replace(/\D/g, '');
 
     if (cleanedCep.length !== 8) {
@@ -153,7 +152,7 @@ function CriarEventos() {
 
     setErros(prevErros => {
       const newErros = { ...prevErros };
-      delete newErros.cep; // Limpa o erro de CEP se o formato estiver correto
+      delete newErros.cep;
       return newErros;
     });
 
@@ -192,20 +191,20 @@ function CriarEventos() {
 
   // FUNÇÃO DE VALIDAÇÃO PRINCIPAL
   const validarEtapa = (etapa: number) => {
-    const novosErros: { [key: string]: string } = {}; // Objeto para armazenar erros
+    const novosErros: { [key: string]: string } = {};
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
     switch (etapa) {
-      case 1: // Informações Básicas
+      case 1:
         if (!nomeEvento) novosErros.nomeEvento = 'O nome do evento é obrigatório.';
         if (!image) novosErros.imagem = 'A imagem do evento é obrigatória.';
         if (!categoriaEvento) novosErros.categoriaEvento = 'A categoria do evento é obrigatória.';
         break;
-      case 2: // Descrição
+      case 2:
         if (!descricao.trim()) novosErros.descricao = 'A descrição do evento é obrigatória.';
         break;
-      case 3: // Local - VALIDAÇÃO ATUALIZADA
+      case 3:
         if (!cep.replace(/\D/g, '')) novosErros.cep = 'O CEP é obrigatório.';
         if (cep.replace(/\D/g, '').length !== 8) novosErros.cep = 'O CEP deve conter 8 dígitos.';
         if (!rua) novosErros.rua = 'A rua é obrigatória e deve ser preenchida automaticamente pelo CEP.';
@@ -217,7 +216,7 @@ function CriarEventos() {
           novosErros.linkMaps = 'O link do Google Maps é inválido ou não foi fornecido.';
         }
         break;
-      case 4: // Data e Hora do Evento
+      case 4:
         if (!dataInicio) {
           novosErros.dataInicio = 'A data de início do evento é obrigatória.';
         } else {
@@ -226,11 +225,10 @@ function CriarEventos() {
             novosErros.dataInicio = 'A data de início do evento não pode ser no passado.';
           }
         }
-
         if (!horaInicio) novosErros.horaInicio = 'A hora de início é obrigatória.';
         if (!horaTermino) novosErros.horaTermino = 'A hora de término é obrigatória.';
         break;
-      case 5: // Ingressos
+      case 5:
         if (!valorIngressoInteira || parseFloat(valorIngressoInteira.replace(',', '.')) <= 0) {
           novosErros.valorInteira = 'O valor do ingresso inteiro é obrigatório e deve ser maior que zero.';
         }
@@ -245,17 +243,13 @@ function CriarEventos() {
             novosErros.quantidadeMeia = 'A quantidade de ingressos meia é obrigatória se houver meia-entrada.';
           }
         }
-
-        // --- VALIDAÇÃO DA DATA DE INÍCIO DAS VENDAS ---
         if (!dataInicioVendas) {
           novosErros.dataInicioVendas = 'A data de início das vendas é obrigatória.';
         } else {
           const inicioVendas = new Date(dataInicioVendas + 'T00:00:00');
-
           if (inicioVendas < hoje) {
             novosErros.dataInicioVendas = 'A data de início das vendas não pode ser no passado.';
           }
-
           if (dataInicio) {
             const dataEventoObj = new Date(dataInicio + 'T00:00:00');
             if (inicioVendas > dataEventoObj) {
@@ -263,8 +257,6 @@ function CriarEventos() {
             }
           }
         }
-
-        // --- VALIDAÇÃO DA DATA DE FIM DAS VENDAS ---
         if (!dataFimVendas) {
           novosErros.dataFimVendas = 'A data de fim das vendas é obrigatória.';
         } else {
@@ -275,13 +267,12 @@ function CriarEventos() {
           if (inicioVendasObj && fimVendas < inicioVendasObj) {
             novosErros.dataFimVendas = 'A data de fim das vendas não pode ser anterior à data de início das vendas.';
           }
-
           if (dataEventoObj && fimVendas > dataEventoObj) {
             novosErros.dataFimVendas = 'A data de fim das vendas não pode ser posterior à data de início do evento.';
           }
         }
         break;
-      case 6: // Doação
+      case 6:
         if (querDoar && (!valorDoacao || parseFloat(valorDoacao.replace(',', '.')) <= 0)) {
           novosErros.valorDoacao = 'Se deseja doar, informe um valor válido.';
         }
@@ -291,12 +282,19 @@ function CriarEventos() {
     }
 
     setErros(novosErros);
-    return Object.keys(novosErros).length === 0; // Retorna true se não houver erros
+    return Object.keys(novosErros).length === 0;
   };
 
   const handleEnviarAnalise = async () => {
+    // Validar a última etapa antes de enviar
     if (!validarEtapa(6)) {
-      // Exibe uma mensagem mais amigável ao invés de um alert genérico
+      // Forçar a ida para a etapa com erro, se não for a 6
+      if (!validarEtapa(1)) { setEtapaAtual(1); return; }
+      if (!validarEtapa(2)) { setEtapaAtual(2); return; }
+      if (!validarEtapa(3)) { setEtapaAtual(3); return; }
+      if (!validarEtapa(4)) { setEtapaAtual(4); return; }
+      if (!validarEtapa(5)) { setEtapaAtual(5); return; }
+      if (!validarEtapa(6)) { setEtapaAtual(6); return; }
       console.log('Por favor, corrija os erros nos campos antes de enviar para análise.');
       return;
     }
@@ -309,8 +307,7 @@ function CriarEventos() {
     if (image) formData.append('imagem', image);
     formData.append("categoria", categoriaEvento);
     formData.append("descricao", descricao);
-    // Adicionando os novos campos de endereço
-    formData.append("cep", cep.replace(/\D/g, '')); // Envia o CEP limpo
+    formData.append("cep", cep.replace(/\D/g, ''));
     formData.append("rua", rua);
     formData.append("bairro", bairro);
     formData.append("numero", numero);
@@ -318,21 +315,18 @@ function CriarEventos() {
     formData.append("cidade", cidade);
     formData.append("estado", estado);
     formData.append("linkMaps", linkMaps);
-    formData.append("dataInicio", dataInicio); // Data de início do EVENTO
+    formData.append("dataInicio", dataInicio);
     formData.append("horaInicio", horaInicio);
     formData.append("horaTermino", horaTermino);
-    formData.append("dataFimVendas", dataFimVendas); // Data de fim das VENDAS
-    formData.append("dataInicioVendas", dataInicioVendas); // Data de início das VENDAS
-
+    formData.append("dataFimVendas", dataFimVendas);
+    formData.append("dataInicioVendas", dataInicioVendas);
     formData.append("valorIngressoInteira", valorIngressoInteira);
     formData.append("valorIngressoMeia", temMeia === 'sim' ? valorIngressoMeia : '0');
     formData.append("quantidadeInteira", quantidadeInteira);
     formData.append("quantidadeMeia", temMeia === 'sim' ? quantidadeMeia : '0');
     formData.append("temMeia", temMeia);
-
     formData.append("querDoar", String(querDoar));
     formData.append("valorDoacao", querDoar ? valorDoacao : '0');
-
     formData.append("criadoPor", String(email));
 
     try {
@@ -365,46 +359,35 @@ function CriarEventos() {
     }
   };
 
-  // Função para obter o erro de um campo específico
   const getError = (fieldName: string) => erros[fieldName];
 
-  // Renderização do componente
   return (
-
     <div>
-      {/* Removido NavBar */}
-
       <header className="criar-evento-header">
         <div className="criar-juntos">
           <Link to="/Home" title="Voltar">
             <img src={logo} alt="Logo" className="duvidas-header-logo" />
           </Link>
-        <hr className="duvidas-hr" />
-        <h1 className="criar-titulo">
-          Crie <span className="criar-dubtitle">seu evento</span>
-        </h1>
+          <hr className="duvidas-hr" />
+          <h1 className="criar-titulo">
+            Crie <span className="criar-dubtitle">seu evento</span>
+          </h1>
         </div>
         <div className="criar-header-botoes">
           <button className="btn-salvar-sair" onClick={handleAbrirModal}>
-            {/* Ícone de saída SVG */}
-            <ImExit></ImExit>
+            <ImExit />
             Sair
           </button>
-          {etapaAtual === 6 && (
-            <button className="criar-btn-enviar" onClick={handleEnviarAnalise} disabled={isCooldown}>
-              {isCooldown
-                ? `Aguarde... (${formatTime(cooldownTimeLeft || 0)})`
-                : 'Enviar para Análise'}
-              {/* Ícone de envio SVG */}
-              <svg xmlns="http://www.w3.org/248/svg" viewBox="0 0 24 24" fill="currentColor" width="16px" height="16px">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-              </svg>
-            </button>
+          {/* MODIFICAÇÃO: Timer de cooldown aparece aqui quando ativo */}
+          {isCooldown && (
+            <span className="header-cooldown-timer">
+              {`Próximo envio disponível em (${formatTime(cooldownTimeLeft || 0)})`}
+            </span>
           )}
         </div>
       </header>
 
-      {modalAberto && ( // This line is key
+      {modalAberto && (
         <div className="criar-modal-overlay">
           <div className="criar-modal-content">
             <h2>Tem certeza que deseja sair?</h2>
@@ -421,7 +404,6 @@ function CriarEventos() {
         </div>
       )}
 
-      {/* Formulário - Renderização Condicional por Etapa */}
       <div className="criar-form">
 
         {etapaAtual === 1 && (
@@ -465,10 +447,7 @@ function CriarEventos() {
                   </div>
                 ) : (
                   <>
-                    {/* Ícone de adicionar foto SVG */}
-                    <svg xmlns="http://www.w3.org/248/svg" viewBox="0 0 24 24" fill="currentColor" width="55px" height="55px">
-                      <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                    </svg>
+                    <MdAddPhotoAlternate size={55} />
                     <p>Arraste ou clique para adicionar a imagem</p>
                     <input
                       type="file"
@@ -532,8 +511,6 @@ function CriarEventos() {
             <div className="criar-Informaçao">
               <h2>3. Local do seu evento</h2>
             </div>
-
-            {/* NOVOS CAMPOS DE ENDEREÇO */}
             <div className="campo">
               <label htmlFor="cep-evento">
                 CEP <span className={getError('cep') ? 'erro-asterisco' : ''}>*</span>
@@ -544,33 +521,26 @@ function CriarEventos() {
                 placeholder="Digite o CEP (ex: 00000-000)"
                 value={cep}
                 onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                  let value = e.target.value.replace(/\D/g, '');
+                  if (value.length > 8) {
+                    value = value.substring(0, 8);
+                  }
                   let formattedValue = value;
                   if (value.length > 5) {
-                    formattedValue = value.substring(0, 5) + '-' + value.substring(5, 8);
-                  } else if (value.length > 8) { // Max 8 digits
-                    formattedValue = value.substring(0, 8);
+                    formattedValue = value.substring(0, 5) + '-' + value.substring(5);
                   }
 
                   setCep(formattedValue);
-                  if (value.length === 8) { // Use raw value for API call
+                  if (value.length === 8) {
                     buscarEnderecoPorCep(value);
                   } else {
                     setRua('');
                     setBairro('');
                     setCidade('');
                     setEstado('');
-                    setErros(prevErros => {
-                      const newErros = { ...prevErros };
-                      delete newErros.rua;
-                      delete newErros.bairro;
-                      delete newErros.cidade;
-                      delete newErros.estado;
-                      return newErros;
-                    });
                   }
                 }}
-                maxLength={9} // 8 digits + 1 hyphen
+                maxLength={9}
                 className={getError('cep') ? 'erro-campo' : ''}
               />
               {isFetchingCep && <span className="mensagem-info">Buscando CEP...</span>}
@@ -666,12 +636,10 @@ function CriarEventos() {
               />
               {getError('estado') && <span className="mensagem-erro">{getError('estado')}</span>}
             </div>
-            {/* FIM DOS NOVOS CAMPOS DE ENDEREÇO */}
 
             <div className="campo">
               <label htmlFor="link-maps" style={{ display: 'flex', alignItems: 'center' }}>
                 Link do Local no Google Maps <span className={getError('linkMaps') ? 'erro-asterisco' : ''}>*</span>
-                {/* Ícone de interrogação SVG */}
                 <FaQuestionCircle
                   size={16}
                   color="#555"
@@ -944,22 +912,18 @@ function CriarEventos() {
               Próxima Etapa
             </button>
           )}
+          {/* MODIFICAÇÃO: Botão de Envio agora apenas aqui */}
           {etapaAtual === 6 && (
             <button className="criar-btn-enviar" onClick={handleEnviarAnalise} disabled={isCooldown}>
               {isCooldown
                 ? `Aguarde... (${formatTime(cooldownTimeLeft || 0)})`
                 : 'Enviar para Análise'}
-              {/* Ícone de envio SVG */}
-              <svg xmlns="http://www.w3.org/248/svg" viewBox="0 0 24 24" fill="currentColor" width="16px" height="16px">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-              </svg>
+              <IoSend />
             </button>
           )}
         </div>
 
       </div>
-
-      {/* Removido Rodape */}
     </div>
   );
 }

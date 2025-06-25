@@ -11,10 +11,10 @@ interface UserData {
 interface AuthContextType {
   isAuthenticated: boolean;
   userData: UserData;
+  isLoading: boolean; // <-- NOVO ESTADO
   checkAuth: () => void;
 }
 
-// Valor padrão para o contexto
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   userData: {
@@ -23,7 +23,8 @@ const AuthContext = createContext<AuthContextType>({
     loginType: 'email',
     isAdmin: false
   },
-  checkAuth: () => { /* Vazio, será sobrescrito pelo Provider */ }
+  isLoading: true, // <-- VALOR INICIAL
+  checkAuth: () => {}
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -34,63 +35,49 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loginType: 'email',
     isAdmin: false
   });
+  const [isLoading, setIsLoading] = useState<boolean>(true); // <-- NOVO ESTADO COM VALOR INICIAL true
 
-  // A função checkAuth agora é completamente estável, sem dependências
   const checkAuth = useCallback(() => {
+    // Para garantir que não haja "flicker", você pode manter o loading até o fim
+    // setIsLoading(true); // Opcional, dependendo da UX desejada
+
     const token = localStorage.getItem('token') || localStorage.getItem('firebaseToken');
     const isAuth = !!token;
     
+    // ... (toda a sua lógica de buscar dados do localStorage permanece a mesma)
     const newName = localStorage.getItem('userName') || '';
     const newEmail = localStorage.getItem('userEmail') || localStorage.getItem('email') || '';
     const newLoginType = (localStorage.getItem('tipoLogin') as 'email' | 'google' | 'facebook') || 'email';
     const newIsAdmin = localStorage.getItem('userRole') === 'admin';
     const newAvatarUrl = localStorage.getItem('imagemPerfil') || undefined;
 
-    // Usando forma funcional para setIsAuthenticated
-    setIsAuthenticated(prevIsAuth => {
-      if (isAuth !== prevIsAuth) {
-        return isAuth;
-      }
-      return prevIsAuth; // Retorna o estado anterior se não houver mudança real
-    });
+    setIsAuthenticated(isAuth);
 
-    // Crie um novo objeto de dados do usuário
-    const newUserData = {
-      name: newName,
-      email: newEmail,
-      loginType: newLoginType,
-      isAdmin: newIsAdmin,
-      avatarUrl: newAvatarUrl
-    };
+    if (isAuth) {
+        setUserData({
+            name: newName,
+            email: newEmail,
+            loginType: newLoginType,
+            isAdmin: newIsAdmin,
+            avatarUrl: newAvatarUrl
+        });
+    }
 
-    // Usando forma funcional para setUserData e comparando com o estado anterior
-    setUserData(prevUserData => {
-      // Comparação superficial para ver se o userData realmente mudou
-      if (
-        newUserData.name !== prevUserData.name ||
-        newUserData.email !== prevUserData.email ||
-        newUserData.loginType !== prevUserData.loginType ||
-        newUserData.isAdmin !== prevUserData.isAdmin ||
-        newUserData.avatarUrl !== prevUserData.avatarUrl
-      ) {
-        return newUserData;
-      }
-      return prevUserData; // Retorna o objeto anterior se não houver mudança real
-    });
-  }, []); // Array de dependências vazio: esta função nunca será recriada
+    // Ao final da verificação, independentemente do resultado, o carregamento termina.
+    setIsLoading(false); // <-- INFORMA QUE A VERIFICAÇÃO TERMINOU
+  }, []);
 
-  // Este useEffect executa checkAuth na montagem do componente
-  // e configura um intervalo para verificar a autenticação periodicamente.
-  // A dependência `checkAuth` é segura aqui porque `useCallback` a tornou estável.
   useEffect(() => {
     checkAuth();
-    const interval = setInterval(checkAuth, 1000); // Verifica a cada 30 segundos
-    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
-  }, [checkAuth]); // checkAuth é uma dependência, mas agora é estável devido ao useCallback
+    // O intervalo para sincronização entre abas é uma boa ideia, mas não é necessário para a lógica de refresh.
+    const interval = setInterval(checkAuth, 30000); // 30 segundos é um intervalo mais razoável
+    return () => clearInterval(interval);
+  }, [checkAuth]);
 
   const contextValue = {
     isAuthenticated,
     userData,
+    isLoading, // <-- EXPOR O ESTADO NO VALOR DO CONTEXTO
     checkAuth,
   };
 

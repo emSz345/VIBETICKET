@@ -1,19 +1,37 @@
-import { Navigate, Outlet } from 'react-router-dom'; // Importe Outlet
+// src/components/RotaProtegida.tsx
+
 import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../Hook/AuthContext'; // Ajuste o caminho para o seu AuthContext
+import LoadingSpinner from './LoadingSpinner'; // <-- Um componente de spinner que você tenha
 
 interface RotaProtegidaProps {
-  isAllowed: boolean;
-  redirectPath: string;
-  // `children` não é necessário quando se usa `<Outlet />` para rotas aninhadas
-  // children?: React.ReactNode; // Removido ou tornado opcional se você planeja usar como rota de layout com Outlet
+  /**
+   * O caminho para redirecionar o usuário caso ele não esteja autenticado.
+   * @default "/login"
+   */
+  redirectPath?: string;
 }
 
-const RotaProtegida = ({ isAllowed, redirectPath }: RotaProtegidaProps) => {
-  if (!isAllowed) {
+const RotaProtegida = ({ redirectPath = '/login' }: RotaProtegidaProps) => {
+  // Pega os estados diretamente do contexto de autenticação
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // 1. Enquanto o AuthContext estiver verificando o token (isLoading === true),
+  //    exibimos um componente de carregamento. Isso EVITA o redirecionamento
+  //    prematuro durante o refresh da página.
+  if (isLoading) {
+    return <LoadingSpinner />; // ou simplesmente <div>Carregando...</div>
+  }
+
+  // 2. Após o carregamento (isLoading === false), verificamos se o usuário
+  //    está de fato autenticado. Se não estiver, redirecionamos.
+  if (!isAuthenticated) {
     return <Navigate to={redirectPath} replace />;
   }
 
-  // Se o usuário tem permissão, renderize o Outlet para as rotas filhas
+  // 3. Se passou pelas verificações, o usuário está autenticado e a página pode
+  //    ser renderizada através do <Outlet />.
   return <Outlet />;
 };
 

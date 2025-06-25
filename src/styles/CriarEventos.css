@@ -1,510 +1,523 @@
 /* ==========================================================================
    CONFIGURAÇÕES GLOBAIS E VARIÁVEIS
    ========================================================================== */
-   * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  :root {
-    --cor-primaria: #007bff;
-    --cor-sucesso: #28a745;
-    --cor-perigo: #dc3545;
-    --cor-aviso: #ffc107;
-    --cor-cinza-escuro: #333;
-    --cor-cinza-claro: #666;
-    --cor-fundo: #f8f9fa;
-    --cor-fundo-campos: #f9f9f9;
-    --cor-borda: #ccc;
-    --cor-branca: #fff;
-  }
-  
-  
-  /* ==========================================================================
-     CABEÇALHO
-     ========================================================================== */
-  .criar-evento-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 40px;
-    background-color: var(--cor-primaria);
-    border-bottom: 1px solid #e9ecef;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 999;
-    height: 120px;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
 
-  .criar-juntos{
+:root {
+  --cor-primaria: #007bff;
+  --cor-sucesso: #28a745;
+  --cor-perigo: #dc3545;
+  --cor-aviso: #ffc107;
+  --cor-cinza-escuro: #333;
+  --cor-cinza-claro: #666;
+  --cor-fundo: #f8f9fa;
+  --cor-fundo-campos: #f9f9f9;
+  --cor-borda: #ccc;
+  --cor-branca: #fff;
+}
+
+
+/* ==========================================================================
+    CABEÇALHO
+    ========================================================================== */
+.criar-evento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 40px;
+  background-color: var(--cor-primaria);
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  height: 120px;
+}
+
+.criar-juntos{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.duvidas-header-logo {
+  height: 150px; /* Ajustado para melhor caber na altura do header */
+  width: auto;
+}
+
+.duvidas-hr {
+  width: 1px;
+  border: none;
+  height: 60px;
+  background-color: var(--cor-branca);
+  margin: 0 20px;
+}
+
+.criar-titulo {
+  font-size: 2em;
+  color: var(--cor-fundo);
+}
+
+.criar-dubtitle {
+  font-weight: 500;
+  color: var(--cor-branca);
+}
+
+.criar-header-botoes {
+  display: flex;
+  align-items: center; /* Alinha verticalmente o botão de sair e o timer */
+  gap: 15px;
+}
+
+.btn-salvar-sair {
+  background-color: var(--cor-perigo);
+  color: var(--cor-branca);
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-salvar-sair:hover {
+  background-color: #c82333;
+}
+
+/* Novo estilo para o timer de cooldown no header */
+.header-cooldown-timer {
     display: flex;
-    justify-content: center;
     align-items: center;
-  }
-  
-  .duvidas-header-logo {
-    height: 150px; /* Ajustado para melhor caber na altura do header */
-    width: auto;
-  }
-  
-  .duvidas-hr {
-    width: 1px;
-    border: none;
-    height: 60px;
-    background-color: var(--cor-branca);
-    margin: 0 20px;
-  }
-  
-  .criar-titulo {
-    font-size: 2em;
-    color: var(--cor-fundo);
-  }
-  
-  .criar-dubtitle {
-    font-weight: 500;
-    color: var(--cor-branca);
-  }
-  
-  .criar-header-botoes {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .btn-salvar-sair {
-    background-color: var(--cor-perigo);
-    color: var(--cor-branca);
+    justify-content: center;
     padding: 10px 20px;
-    font-weight: bold;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  
-  .btn-salvar-sair:hover {
-    background-color: #c82333;
-  }
-  
-  
-  /* ==========================================================================
-     MODAL DE CONFIRMAÇÃO
-     ========================================================================== */
-  .criar-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .criar-modal-content {
-    background: var(--cor-branca);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
-  }
-  
-  .criar-modal-content h2 {
-    margin-top: 0;
-    margin-bottom: 15px;
+    background-color: var(--cor-aviso);
     color: var(--cor-cinza-escuro);
-  }
-  
-  .criar-modal-content p {
-    color: var(--cor-cinza-claro);
-    margin-bottom: 25px;
-  }
-  
-  .criar-modal-botoes {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-  }
-  
-  .criar-modal-botoes button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: transform 0.2s ease, background-color 0.3s ease;
-  }
-  
-  .criar-modal-botoes button:hover {
-    transform: scale(1.05);
-  }
-  
-  .criar-modal-btn-cancelar {
-    background-color: #f0f0f0;
-    color: var(--cor-cinza-escuro);
-    border: 1px solid var(--cor-borda);
-  }
-  
-  .criar-modal-btn-confirmar {
-    background-color: var(--cor-perigo);
-    color: var(--cor-branca);
-  }
-  
-  
-  /* ==========================================================================
-     ESTRUTURA PRINCIPAL DO FORMULÁRIO
-     ========================================================================== */
-  .criar-form {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-  }
-  
-  .informacoes-basicas-container {
-    width: 100%;
-    background-color: var(--cor-branca);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 40px; /* Separar seções */
-  }
-  
-  .criar-Informaçao h2 {
-    font-size: 1.8em;
-    color: var(--cor-primaria);
-    margin-bottom: 25px;
-    font-weight: bold;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-  }
-  
-  /* ==========================================================================
-     CAMPOS DE FORMULÁRIO GERAIS
-     ========================================================================== */
-  .campo {
-    margin-bottom: 25px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .campo label {
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: var(--cor-cinza-escuro);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  .campo label svg {
-    cursor: help;
-  }
-  
-  .campo input[type="text"],
-  .campo input[type="url"],
-  .campo input[type="number"],
-  .campo input[type="date"],
-  .campo input[type="time"],
-  .campo select,
-  .campo textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--cor-borda);
     border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 1rem;
-    background-color: var(--cor-fundo-campos);
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  
-  .campo input:focus,
-  .campo select:focus,
-  .campo textarea:focus {
-    border-color: var(--cor-primaria);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-  }
-  
-  .input-readonly {
-    background-color: #e9ecef;
-    cursor: not-allowed;
-  }
-  
-  .campos-horizontais {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
-  .campos-horizontais .campo {
-    flex: 1;
-    min-width: 200px;
-    margin-bottom: 0;
-  }
-  
-  
-  /* ==========================================================================
-     VALIDAÇÃO E ERROS
-     ========================================================================== */
-  .erro-asterisco {
-    color: var(--cor-perigo);
     font-weight: bold;
-  }
-  
-  .erro-campo {
-    border-color: var(--cor-perigo) !important;
-  }
-  
-  .erro-campo::placeholder {
-    color: var(--cor-perigo);
-    opacity: 0.7;
-  }
-  
-  .mensagem-erro {
-    color: var(--cor-perigo);
-    font-size: 0.85em;
-    margin-top: 6px;
-    display: block;
-  }
-  
-  .mensagem-info {
-    color: var(--cor-primaria);
-    font-size: 0.85em;
-    margin-top: 6px;
-    display: block;
-  }
-  
-  
-  /* ==========================================================================
-     ETAPA 1: UPLOAD DE IMAGEM
-     ========================================================================== */
-  .upload-imagem {
-    border: 2px dashed var(--cor-borda);
-    padding: 30px;
-    text-align: center;
-    border-radius: 10px;
-    cursor: pointer;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 200px;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-  }
-  
-  .upload-imagem:hover {
-    border-color: var(--cor-primaria);
-    background-color: #f5faff;
-  }
-  
-  .upload-imagem p {
-    color: var(--cor-cinza-claro);
-  }
-  
-  .input-file {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
-  
-  .image-preview-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .image-preview {
-    max-width: 100%;
-    max-height: 250px;
-    object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .image-name {
-    font-size: 0.9em;
-    color: var(--cor-cinza-escuro);
-    word-break: break-all;
-  }
-  
-  .remove-image-button {
-    background-color: var(--cor-perigo);
-    color: var(--cor-branca);
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
-  }
-  
-  .remove-image-button:hover {
-    background-color: #c82333;
-  }
-  
-  
-  /* ==========================================================================
-     ETAPA 2: DESCRIÇÃO
-     ========================================================================== */
-  .criar-descricao {
-    min-height: 150px;
-    resize: vertical;
-  }
-  
-  
-  /* ==========================================================================
-     ETAPA 5: INGRESSOS
-     ========================================================================== */
-  .container-ingressos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
-  }
-  
-  .lado-esquerdo,
-  .lado-direito {
-    flex: 1;
-    min-width: 300px;
-  }
-  
-  .lado-esquerdo .select {
-    width: auto;
-    padding: 10px;
-  }
-  
-  
-  /* ==========================================================================
-     ETAPA 6: DOAÇÃO
-     ========================================================================== */
-  .criar-doacao-title {
-    font-size: 1.8em;
-    font-weight: 700;
-    color: var(--cor-primaria);
-    margin-bottom: 1rem;
-  }
-  
-  .criar-doacao-descricao {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--cor-cinza-claro);
-    background-color: var(--cor-fundo-campos);
-    padding: 1rem 1.2rem;
-    border-left: 4px solid var(--cor-sucesso);
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-  
-  .botoes-doacao {
-    display: flex;
-    gap: 15px;
-    margin: 25px 0;
-  }
-  
-  .botoes-doacao button {
-    padding: 10px 25px;
-    border: 2px solid var(--cor-sucesso);
-    background-color: var(--cor-branca);
-    color: var(--cor-sucesso);
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-  }
-  
-  .botoes-doacao button:hover {
-    background-color: #eafaf1;
-  }
-  
-  .botoes-doacao button.ativo {
-    background-color: var(--cor-sucesso);
-    color: var(--cor-branca);
-    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
-  }
-  
-  .campo-doacao {
-    margin-top: 20px;
-  }
-  
-  
-  /* ==========================================================================
-     NAVEGAÇÃO ENTRE ETAPAS
-     ========================================================================== */
-  .navegacao-etapas {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 40px;
-    border-top: 1px solid #eee;
-    padding-top: 30px;
-  }
-  
-  .btn-anterior,
-  .btn-proximo,
-  .criar-btn-enviar {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .btn-anterior:hover,
-  .btn-proximo:hover,
-  .criar-btn-enviar:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
-  
-  .btn-anterior {
-    background-color: var(--cor-cinza-claro);
-    color: var(--cor-branca);
-  }
-  
-  .btn-anterior:hover {
-    background-color: #5a6268;
-  }
-  
-  .btn-proximo {
-    background-color: var(--cor-primaria);
-    color: var(--cor-branca);
-  }
-  
-  .btn-proximo:hover {
-    background-color: #0056b3;
-  }
-  
-  .criar-btn-enviar {
-    background-color: var(--cor-sucesso);
-    color: var(--cor-branca);
-  }
-  
-  .criar-btn-enviar:hover:not(:disabled) {
-    background-color: #218838;
-  }
-  
-  .criar-btn-enviar:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    transform: none;
-  }
+}
+
+
+/* ==========================================================================
+    MODAL DE CONFIRMAÇÃO
+    ========================================================================== */
+.criar-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.criar-modal-content {
+  background: var(--cor-branca);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.criar-modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--cor-cinza-escuro);
+}
+
+.criar-modal-content p {
+  color: var(--cor-cinza-claro);
+  margin-bottom: 25px;
+}
+
+.criar-modal-botoes {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.criar-modal-botoes button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.criar-modal-botoes button:hover {
+  transform: scale(1.05);
+}
+
+.criar-modal-btn-cancelar {
+  background-color: #f0f0f0;
+  color: var(--cor-cinza-escuro);
+  border: 1px solid var(--cor-borda);
+}
+
+.criar-modal-btn-confirmar {
+  background-color: var(--cor-perigo);
+  color: var(--cor-branca);
+}
+
+
+/* ==========================================================================
+    ESTRUTURA PRINCIPAL DO FORMULÁRIO
+    ========================================================================== */
+.criar-form {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.informacoes-basicas-container {
+  width: 100%;
+  background-color: var(--cor-branca);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 40px; /* Separar seções */
+}
+
+.criar-Informaçao h2 {
+  font-size: 1.8em;
+  color: var(--cor-primaria);
+  margin-bottom: 25px;
+  font-weight: bold;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* ==========================================================================
+    CAMPOS DE FORMULÁRIO GERAIS
+    ========================================================================== */
+.campo {
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.campo label {
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: var(--cor-cinza-escuro);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.campo label svg {
+  cursor: help;
+}
+
+.campo input[type="text"],
+.campo input[type="url"],
+.campo input[type="number"],
+.campo input[type="date"],
+.campo input[type="time"],
+.campo select,
+.campo textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  background-color: var(--cor-fundo-campos);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  border-color: var(--cor-primaria);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.input-readonly {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.campos-horizontais {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.campos-horizontais .campo {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 0;
+}
+
+
+/* ==========================================================================
+    VALIDAÇÃO E ERROS
+    ========================================================================== */
+.erro-asterisco {
+  color: var(--cor-perigo);
+  font-weight: bold;
+}
+
+.erro-campo {
+  border-color: var(--cor-perigo) !important;
+}
+
+.erro-campo::placeholder {
+  color: var(--cor-perigo);
+  opacity: 0.7;
+}
+
+.mensagem-erro {
+  color: var(--cor-perigo);
+  font-size: 0.85em;
+  margin-top: 6px;
+  display: block;
+}
+
+.mensagem-info {
+  color: var(--cor-primaria);
+  font-size: 0.85em;
+  margin-top: 6px;
+  display: block;
+}
+
+
+/* ==========================================================================
+    ETAPA 1: UPLOAD DE IMAGEM
+    ========================================================================== */
+.upload-imagem {
+  border: 2px dashed var(--cor-borda);
+  padding: 30px;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.upload-imagem:hover {
+  border-color: var(--cor-primaria);
+  background-color: #f5faff;
+}
+
+.upload-imagem p {
+  color: var(--cor-cinza-claro);
+}
+
+.input-file {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.image-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-name {
+  font-size: 0.9em;
+  color: var(--cor-cinza-escuro);
+  word-break: break-all;
+}
+
+.remove-image-button {
+  background-color: var(--cor-perigo);
+  color: var(--cor-branca);
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.remove-image-button:hover {
+  background-color: #c82333;
+}
+
+
+/* ==========================================================================
+    ETAPA 2: DESCRIÇÃO
+    ========================================================================== */
+.criar-descricao {
+  min-height: 150px;
+  resize: vertical;
+}
+
+
+/* ==========================================================================
+    ETAPA 5: INGRESSOS
+    ========================================================================== */
+.container-ingressos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.lado-esquerdo,
+.lado-direito {
+  flex: 1;
+  min-width: 300px;
+}
+
+.lado-esquerdo .select {
+  width: auto;
+  padding: 10px;
+}
+
+
+/* ==========================================================================
+    ETAPA 6: DOAÇÃO
+    ========================================================================== */
+.criar-doacao-title {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  margin-bottom: 1rem;
+}
+
+.criar-doacao-descricao {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--cor-cinza-claro);
+  background-color: var(--cor-fundo-campos);
+  padding: 1rem 1.2rem;
+  border-left: 4px solid var(--cor-sucesso);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.botoes-doacao {
+  display: flex;
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.botoes-doacao button {
+  padding: 10px 25px;
+  border: 2px solid var(--cor-sucesso);
+  background-color: var(--cor-branca);
+  color: var(--cor-sucesso);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.botoes-doacao button:hover {
+  background-color: #eafaf1;
+}
+
+.botoes-doacao button.ativo {
+  background-color: var(--cor-sucesso);
+  color: var(--cor-branca);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+}
+
+.campo-doacao {
+  margin-top: 20px;
+}
+
+
+/* ==========================================================================
+    NAVEGAÇÃO ENTRE ETAPAS
+    ========================================================================== */
+.navegacao-etapas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+  border-top: 1px solid #eee;
+  padding-top: 30px;
+}
+
+.btn-anterior,
+.btn-proximo,
+.criar-btn-enviar {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-anterior:hover,
+.btn-proximo:hover,
+.criar-btn-enviar:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.btn-anterior {
+  background-color: var(--cor-cinza-claro);
+  color: var(--cor-branca);
+}
+
+.btn-anterior:hover {
+  background-color: #5a6268;
+}
+
+.btn-proximo {
+  background-color: var(--cor-primaria);
+  color: var(--cor-branca);
+}
+
+.btn-proximo:hover {
+  background-color: #0056b3;
+}
+
+.criar-btn-enviar {
+  background-color: var(--cor-sucesso);
+  color: var(--cor-branca);
+}
+
+.criar-btn-enviar:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.criar-btn-enviar:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}

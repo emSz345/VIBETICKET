@@ -79,7 +79,7 @@ function AppRoutes() {
                 {/* Rotas públicas com navbar */}
 
                 {/* Rotas protegidas com navbar */}
-                <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectPath="/login" />}>
+                <Route element={<ProtectedRoute  />}>
                     
                     <Route path="/CriarEventos" element={<CriarEventos />} />
                     <Route element={<LayoutWithHeader />}>
