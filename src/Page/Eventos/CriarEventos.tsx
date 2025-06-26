@@ -286,21 +286,40 @@ function CriarEventos() {
   };
 
   const handleEnviarAnalise = async () => {
-    // Validar a última etapa antes de enviar
-    if (!validarEtapa(6)) {
-      // Forçar a ida para a etapa com erro, se não for a 6
+    // Valida todas as etapas antes de enviar
+    if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5) || !validarEtapa(6)) {
+      alert('Por favor, corrija os erros em todos os campos antes de enviar para análise.');
+      // Opcional: navegar para a primeira etapa com erro
       if (!validarEtapa(1)) { setEtapaAtual(1); return; }
       if (!validarEtapa(2)) { setEtapaAtual(2); return; }
       if (!validarEtapa(3)) { setEtapaAtual(3); return; }
       if (!validarEtapa(4)) { setEtapaAtual(4); return; }
       if (!validarEtapa(5)) { setEtapaAtual(5); return; }
-      if (!validarEtapa(6)) { setEtapaAtual(6); return; }
-      console.log('Por favor, corrija os erros nos campos antes de enviar para análise.');
       return;
     }
 
+    // --- INÍCIO DA CORREÇÃO ---
+    // 1. Obtenha a string com os dados do usuário do localStorage.
+    //    Assumindo que você salva como 'user' após o login.
+    const userDataString = localStorage.getItem('user');
+
+    if (!userDataString) {
+      alert('Usuário não autenticado. Por favor, faça login para criar um evento.');
+      navigate('/login'); // Redireciona para o login
+      return;
+    }
+
+    // 2. Converta a string para um objeto e pegue o _id.
+    const usuario = JSON.parse(userDataString);
+    const userId = usuario?._id;
+
+    if (!userId) {
+      alert('Não foi possível encontrar o ID do usuário. Por favor, faça login novamente.');
+      return;
+    }
+    // --- FIM DA CORREÇÃO ---
+
     const token = localStorage.getItem('firebaseToken');
-    const email = localStorage.getItem('email');
 
     const formData = new FormData();
     formData.append("nome", nomeEvento);
@@ -327,24 +346,28 @@ function CriarEventos() {
     formData.append("temMeia", temMeia);
     formData.append("querDoar", String(querDoar));
     formData.append("valorDoacao", querDoar ? valorDoacao : '0');
-    formData.append("criadoPor", String(email));
+
+    // 3. Envie o ID do usuário correto para o backend.
+    formData.append("criadoPor", userId);
 
     try {
       const response = await fetch('http://localhost:5000/api/eventos/criar', {
         method: 'POST',
         headers: {
+          // O token ainda pode ser útil para uma rota autenticada
           'Authorization': `Bearer ${token}`
         },
         body: formData,
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Erro do servidor: ${response.status} - ${text}`);
+        // Usa a mensagem de erro do backend se disponível
+        throw new Error(responseData.message || `Erro do servidor: ${response.status}`);
       }
 
-      const data = await response.json();
-      alert('Evento enviado para análise com sucesso!');
+      alert('Evento criado com sucesso!');
 
       const cooldownDuration = 5 * 60 * 1000; // 5 minutos
       const cooldownEndTime = Date.now() + cooldownDuration;
@@ -378,7 +401,6 @@ function CriarEventos() {
             <ImExit />
             Sair
           </button>
-          {/* MODIFICAÇÃO: Timer de cooldown aparece aqui quando ativo */}
           {isCooldown && (
             <span className="header-cooldown-timer">
               {`Próximo envio disponível em (${formatTime(cooldownTimeLeft || 0)})`}
@@ -912,7 +934,6 @@ function CriarEventos() {
               Próxima Etapa
             </button>
           )}
-          {/* MODIFICAÇÃO: Botão de Envio agora apenas aqui */}
           {etapaAtual === 6 && (
             <button className="criar-btn-enviar" onClick={handleEnviarAnalise} disabled={isCooldown}>
               {isCooldown
