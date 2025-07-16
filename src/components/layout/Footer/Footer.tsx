@@ -1,70 +1,100 @@
-import React, { useState } from "react";
-import "./Footer.css";
-import logo from '../../../assets/logo.png'
+import React from "react";
+import { FaFacebook, FaInstagram, FaTwitter, FaWhatsapp, FaCreditCard } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import "./Footer.css";
+import logo from '../../../assets/logo.png';
 
 const Footer: React.FC = () => {
-  const [usuarioLogado, setUsuarioLogado] = useState(true);
-
   return (
     <footer className="footer-container">
-      <div className="foote-container">
-        <img src={logo} alt="Logo NaVibe" className="logo" />
-        <hr className="footer-hr" />
-        <div className="footer-sections">
-          <div className="fotterSection">
-            <h4>Encontre estilos</h4>
-            <ul>
-              <li><Link to='' className="Link">Rock</Link></li>
-              <li><Link to='' className="Link">Pop</Link></li>
-              <li><Link to='' className="Link">Funk</Link></li>
-              <li><Link to='' className="Link">Rap</Link></li>
-              <li><Link to='' className="Link">Jazz</Link></li>
-              <li><Link to='' className="Link">Eletônica</Link></li>
-            </ul>
+      <div className="footer-wrapper">
+        {/* Cabeçalho com logo e redes sociais */}
+        <div className="footer-header">
+          <div className="footer-logo-container">
+            <img src={logo} alt="Logo NaVibe" className="footer-logo" />
           </div>
-          <div className="fotterSection">
-            <h4>Estados</h4>
-            <ul>
-              <li><Link to='' className="Link">São Paulo</Link></li>
-              <li><Link to='' className="Link">Rio de Janeiro</Link></li>
-              <li><Link to='' className="Link">Maranhão</Link></li>
-              <li><Link to='' className="Link">Minhas Gerais</Link></li>
-              <li><Link to='' className="Link">Pará</Link></li>
-              <li><Link to='' className="Link">Paraná</Link></li>
-            </ul>
-          </div>
-          <div className="fotterSection">
-            <h4>Produtores</h4>
-            <ul>
-              {!usuarioLogado ? (
-                <Link to="/Login">
-                  <li><Link to='/CriarEventos' className="Link">Criar novo evento</Link></li>
-                </Link>
-              ) : (
-                <li><Link to='/CriarEventos' className="Link">Criar novo evento</Link></li>
-              )}
-              <li><Link to='/Duvidas' className="Link">Gerenciar eventos</Link></li>
-            </ul>
-          </div>
-          <div className="fotterSection">
-            <h4>Ajuda</h4>
-            <ul>
-              <li><Link to='/Termos' className="Link">Termos e políticas</Link></li>
-              <li><Link to='/Duvidas' className="Link">Central de duvidas</Link></li>
-            </ul>
-          </div>
-          <div className="fotterSection">
-            <h4>Páginas</h4>
-            <ul>
-              <li><Link to='/' className="Link">Home</Link></li>
-              <li><Link to='/Categorias' className="Link">Estados</Link></li>
-              <li><Link to='/Carrinho' className="Link">Carrinho</Link></li>
-            </ul>
+          <div className="footer-social-container">
+            <a href="#" className="footer-social-link"><FaFacebook /></a>
+            <a href="#" className="footer-social-link"><FaInstagram /></a>
+            <a href="#" className="footer-social-link"><FaTwitter /></a>
+            <a href="#" className="footer-social-link"><FaWhatsapp /></a>
           </div>
         </div>
-        <div className="footer-sections2">
-          <p style={{ fontFamily: 'Poppins', }}>© 2025 NaVibe. Todos os direitos reservados.</p>
+
+        {/* Seções de conteúdo */}
+        <div className="footer-sections-grid">
+          {/* Seção 1 - Explore */}
+          <div className="footer-section">
+            <h4 className="footer-section-title">Explore</h4>
+            <ul className="footer-section-list">
+              <li className="footer-section-item"><Link to="/eventos/rock" className="footer-link">Eventos de Rock</Link></li>
+              <li className="footer-section-item"><Link to="/eventos/pop" className="footer-link">Eventos de Pop</Link></li>
+              <li className="footer-section-item"><Link to="/eventos/funk" className="footer-link">Eventos de Funk</Link></li>
+              <li className="footer-section-item"><Link to="/eventos/eletronica" className="footer-link">Eventos Eletrônicos</Link></li>
+              <li className="footer-section-item"><Link to="/eventos" className="footer-link footer-link-highlight">Todos os Eventos →</Link></li>
+            </ul>
+          </div>
+
+          {/* Seção 2 - Por Local */}
+          <div className="footer-section">
+            <h4 className="footer-section-title">Por Local</h4>
+            <ul className="footer-section-list">
+              <li className="footer-section-item"><Link to="/eventos/sao-paulo" className="footer-link">São Paulo</Link></li>
+              <li className="footer-section-item"><Link to="/eventos/rio-de-janeiro" className="footer-link">Rio de Janeiro</Link></li>
+              <li className="footer-section-item"><Link to="/eventos/minas-gerais" className="footer-link">Minas Gerais</Link></li>
+              <li className="footer-section-item"><Link to="/eventos/parana" className="footer-link">Paraná</Link></li>
+              <li className="footer-section-item"><Link to="/eventos" className="footer-link footer-link-highlight">Ver todos os estados →</Link></li>
+            </ul>
+          </div>
+
+          {/* Seção 3 - Produtores */}
+          <div className="footer-section">
+            <h4 className="footer-section-title">Produtores</h4>
+            <ul className="footer-section-list">
+              <li className="footer-section-item"><Link to="/criarEeventos" className="footer-link">Criar Evento</Link></li>
+              <li className="footer-section-item"><Link to="/gerenciar-eventos" className="footer-link">Gerenciar Eventos</Link></li>
+              <li className="footer-section-item"><Link to="/duvidas-produtores" className="footer-link">Dúvidas para Produtores</Link></li>
+            </ul>
+          </div>
+
+          {/* Seção 4 - Ajuda */}
+          <div className="footer-section">
+            <h4 className="footer-section-title">Ajuda</h4>
+            <ul className="footer-section-list">
+              <li className="footer-section-item"><Link to="/duvidas" className="footer-link">Central de Ajuda</Link></li>
+              <li className="footer-section-item"><Link to="/termos" className="footer-link">Termos de Uso</Link></li>
+              <li className="footer-section-item"><Link to="/politica-privacidade" className="footer-link">Política de Privacidade</Link></li>
+              <li className="footer-section-item"><Link to="/reembolsos" className="footer-link">Política de Reembolso</Link></li>
+            </ul>
+          </div>
+
+          {/* Seção 5 - Pagamentos e Newsletter */}
+          <div className="footer-section">
+            <h4 className="footer-section-title">Fique por dentro</h4>
+            <div className="footer-newsletter">
+              <p>Receba alertas sobre novos eventos</p>
+              <input
+                type="email"
+                placeholder="Seu melhor email"
+                className="footer-newsletter-input"
+              />
+              <button className="footer-newsletter-button">
+                Cadastrar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Rodapé inferior */}
+        <div className="footer-bottom">
+          <p className="footer-copyright">© {new Date().getFullYear()} NaVibe. Todos os direitos reservados.</p>
+          <div className="footer-bottom-links">
+            <Link to="/termos" className="footer-bottom-link">Termos</Link>
+            <span className="footer-bottom-separator">|</span>
+            <Link to="/privacidade" className="footer-bottom-link">Privacidade</Link>
+            <span className="footer-bottom-separator">|</span>
+            <Link to="/contato" className="footer-bottom-link">Contato</Link>
+          </div>
         </div>
       </div>
     </footer>
