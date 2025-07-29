@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
-import AppHeader from './components/layout/Header/AppHeader'; // <-- VERIFIQUE SE ESTE CAMINHO ESTÁ CORRETO
-import './App.css'; // <-- VAMOS CRIAR ESTE ARQUIVO NO PRÓXIMO PASSO
-import { useEffect } from 'react';
+import AppHeader from './components/layout/Header/AppHeader';
+import './App.css';
+
 // ROTA AUTH
 import Cadastro from "./Page/Auth/Cadastro";
 import Login from './Page/Auth/Login';
@@ -10,115 +10,100 @@ import Login from './Page/Auth/Login';
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
 import AdminRoute from './Hook/RotaDoAdm';
 import ProtectedRoute from './Hook/RotaProtegida';
-import { AuthProvider, useAuth } from './Hook/AuthContext';
+import { AuthProvider, useAuth } from './Hook/AuthContext'; // Hook que já corrigimos
 
-// ROTA EVENTOS
+// ... (seus outros imports de páginas permanecem os mesmos) ...
 import Detalhes from './Page/Eventos/Detalhes';
 import CriarEventos from './Page/Eventos/CriarEventos';
-
-// ROTA HOME
 import Home from './Page/Public/Home';
 import Categorias from "./Page/Public/Categorias";
 import Termos from './Page/Public/Termos';
 import Duvidas from './Page/Public/Duvidas';
-
-// ROTAS USERS
 import Perfil from './Page/User/Perfil';
 import Carrinho from './Page/User/Carrinho';
 import MeusIngressos from './Page/User/Meus-Ingressos';
-
-// ROTAS ADM
 import Painel from './Page/Admin/Painel';
 import Aprovados from "./Page/Admin/Aprovados";
 import Rejeitados from "./Page/Admin/Rejeitados";
 
+
 // ==================================================================
-// 1. CRIAMOS UM COMPONENTE DE LAYOUT
-// Este componente inclui a navbar e um espaço para o conteúdo da página.
-// O <Outlet /> é um placeholder do React Router que renderiza a rota filha.
+// COMPONENTE DE LAYOUT (permanece o mesmo, está perfeito)
+// Ele renderiza o Header e depois a página da rota atual.
 // ==================================================================
 function LayoutWithHeader() {
   return (
     <div>
       <AppHeader />
-      {/* A classe 'main-content' é crucial para o espaçamento */}
       <main className="main-content">
-        <Outlet /> 
+        <Outlet />
       </main>
     </div>
   );
 }
 
-
+// ==================================================================
+// COMPONENTE DE ROTAS (aqui estão as principais mudanças)
+// ==================================================================
 function AppRoutes() {
-    const { userData, isAuthenticated, checkAuth } = useAuth();
+  // 1. REMOVEMOS O useEffect e o checkAuth daqui.
+  // O nosso novo AuthContext já faz isso internamente e de forma mais eficiente.
+  const { user } = useAuth(); // Pegamos o 'user' para passar para as rotas que precisam.
 
-    useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+  return (
+    <Routes>
+      {/* ================================================================== */}
+      {/* MUDANÇA PRINCIPAL: Grupo de rotas QUE TÊM a Navbar */}
+      {/* Todas as rotas filhas de `LayoutWithHeader` terão a navbar no topo. */}
+      {/* ================================================================== */}
+
+      <Route element={<ProtectedRoute />}>
+          <Route path="/CriarEventos" element={<CriarEventos />} />
+          <Route path="/carrinho" element={<Carrinho />} />
+      </Route>
 
 
+      <Route element={<LayoutWithHeader />}>
+        
+        {/* --- Rotas Públicas (acessíveis a todos) --- */}
+        <Route path="/home" element={<Home />} />
+        <Route path="/categorias" element={<Categorias />} />
+        <Route path="/detalhes/:id" element={<Detalhes />} />
+        <Route path="/termos" element={<Termos />} />
+        <Route path="/duvidas" element={<Duvidas />} />
+        
+        {/* --- Rotas Protegidas (só para usuários logados) --- */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/perfil" element={<Perfil />} /> {/* O Perfil pode pegar os dados do useAuth() internamente */}
+          <Route path="/meus-ingressos" element={<MeusIngressos />} />
+          <Route path="/carrinho" element={<Carrinho />} />
+        </Route>
 
-    const isAdminUser = userData?.isAdmin || false;
+        {/* --- Rotas de Admin (só para usuários logados E que são admin) --- */}
+        <Route element={<AdminRoute />}>
+          <Route path="/painel" element={<Painel />} />
+          <Route path="/aprovados" element={<Aprovados />} />
+          <Route path="/rejeitados" element={<Rejeitados />} />
+        </Route>
 
-    return (
-        <Routes>
-            {/* ================================================================== */}
-            {/* 2. AGRUPAMOS AS ROTAS QUE USARÃO O LAYOUT PRINCIPAL */}
-            {/* Todas as rotas dentro deste elemento terão a navbar fixa no topo. */}
-            {/* ================================================================== */}
+      </Route>
 
+      {/* ================================================================== */}
+      {/* Grupo de rotas QUE NÃO TÊM a Navbar (tela cheia) */}
+      {/* ================================================================== */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/cadastro" element={<Cadastro />} />
 
-                <Route path="/home" element={<Home />} />
-                <Route path="/categorias" element={<Categorias />} />
-                <Route path="/detalhes/:id" element={<Detalhes />} />
-                <Route path="/termos" element={<Termos />} />
-                <Route path="/duvidas" element={<Duvidas />} />
-                <Route path="/carrinho" element={<Carrinho />} />
-
-                {/* Rotas públicas com navbar */}
-
-                {/* Rotas protegidas com navbar */}
-                <Route element={<ProtectedRoute  />}>
-                    
-                    <Route path="/CriarEventos" element={<CriarEventos />} />
-                    <Route element={<LayoutWithHeader />}>
-                        <Route
-                            path="/perfil"
-                            element={
-                                <Perfil
-                                    name={userData?.name}
-                                    email={userData?.email}
-                                    loginType={userData?.loginType}
-                                    avatarUrl={userData?.avatarUrl}
-                                />
-                            }
-                        />
-                        <Route path="/Meus-Ingressos" element={<MeusIngressos />} />
-                    </Route>
-
-                {/* Rotas de admin com navbar */}
-                <Route element={<AdminRoute isAdmin={isAdminUser} redirectPath="/home" />}>
-                    <Route path="/painel" element={<Painel />} />
-                    <Route path="/aprovados" element={<Aprovados />} />
-                    <Route path="/rejeitados" element={<Rejeitados />} />
-                </Route>
-            </Route>
-
-            {/* ================================================================== */}
-            {/* 3. ROTAS SEM LAYOUT (TELA CHEIA) */}
-            {/* Login e Cadastro não terão a navbar, o que é comum. */}
-            {/* ================================================================== */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/cadastro" element={<Cadastro />} />
-
-            {/* Redirecionamentos e rotas de fallback */}
-            <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="*" element={<Navigate to="/home" replace />} />
-        </Routes>
-    );
+      {/* Redirecionamentos e rotas de fallback */}
+      <Route path="/" element={<Navigate to="/home" replace />} />
+      <Route path="*" element={<Navigate to="/home" replace />} />
+    </Routes>
+  );
 }
 
+// ==================================================================
+// COMPONENTE PRINCIPAL APP (permanece o mesmo)
+// ==================================================================
 function App() {
     return (
         <Router>

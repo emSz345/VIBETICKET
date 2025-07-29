@@ -1,85 +1,99 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react'; // 1. IMPORTAMOS O useMemo
+import axios from 'axios';
 
+
+// Interface para os dados do usuário
 interface UserData {
-  name: string;
+  _id: string;
+  nome: string;
   email: string;
-  loginType: 'email' | 'google' | 'facebook';
   isAdmin: boolean;
-  avatarUrl?: string;
+  imagemPerfil?: string;
 }
 
+// Interface para o valor do nosso contexto
 interface AuthContextType {
   isAuthenticated: boolean;
-  userData: UserData;
-  isLoading: boolean; // <-- NOVO ESTADO
-  checkAuth: () => void;
+  user: UserData | null;
+  isLoading: boolean;
+  login: (email: string, senha: string) => Promise<void>;
+  logout: () => void;
+  updateUser: (newUserData: UserData) => void;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  userData: {
-    name: '',
-    email: '',
-    loginType: 'email',
-    isAdmin: false
-  },
-  isLoading: true, // <-- VALOR INICIAL
-  checkAuth: () => {}
-});
+// Criação do contexto
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
+// Componente Provedor
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<UserData | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [userData, setUserData] = useState<UserData>({
-    name: '',
-    email: '',
-    loginType: 'email',
-    isAdmin: false
-  });
-  const [isLoading, setIsLoading] = useState<boolean>(true); // <-- NOVO ESTADO COM VALOR INICIAL true
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const checkAuth = useCallback(() => {
-    // Para garantir que não haja "flicker", você pode manter o loading até o fim
-    // setIsLoading(true); // Opcional, dependendo da UX desejada
+  // Efeito para carregar dados do usuário na inicialização do app
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem('token');
+      const storedUserString = localStorage.getItem('user');
 
-    const token = localStorage.getItem('token') || localStorage.getItem('firebaseToken');
-    const isAuth = !!token;
-    
-    // ... (toda a sua lógica de buscar dados do localStorage permanece a mesma)
-    const newName = localStorage.getItem('userName') || '';
-    const newEmail = localStorage.getItem('userEmail') || localStorage.getItem('email') || '';
-    const newLoginType = (localStorage.getItem('tipoLogin') as 'email' | 'google' | 'facebook') || 'email';
-    const newIsAdmin = localStorage.getItem('userRole') === 'admin';
-    const newAvatarUrl = localStorage.getItem('imagemPerfil') || undefined;
-
-    setIsAuthenticated(isAuth);
-
-    if (isAuth) {
-        setUserData({
-            name: newName,
-            email: newEmail,
-            loginType: newLoginType,
-            isAdmin: newIsAdmin,
-            avatarUrl: newAvatarUrl
-        });
+      if (token && storedUserString) {
+        const storedUser = JSON.parse(storedUserString);
+        setUser(storedUser);
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error("Falha ao carregar dados do usuário do localStorage", error);
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.clear();
+    } finally {
+      setIsLoading(false);
     }
-
-    // Ao final da verificação, independentemente do resultado, o carregamento termina.
-    setIsLoading(false); // <-- INFORMA QUE A VERIFICAÇÃO TERMINOU
   }, []);
 
-  useEffect(() => {
-    checkAuth();
-    // O intervalo para sincronização entre abas é uma boa ideia, mas não é necessário para a lógica de refresh.
-    const interval = setInterval(checkAuth, 30000); // 30 segundos é um intervalo mais razoável
-    return () => clearInterval(interval);
-  }, [checkAuth]);
+  // --- Funções de manipulação de estado ---
 
-  const contextValue = {
-    isAuthenticated,
-    userData,
-    isLoading, // <-- EXPOR O ESTADO NO VALOR DO CONTEXTO
-    checkAuth,
+  const login = async (email: string, senha: string) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/users/login", { email, senha });
+      const { token, user: userData } = response.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      console.log("✅ [AuthContext] Estado atualizado! Autenticado:", true, "Usuário:", userData);
+    } catch (error) {
+      console.error("Falha no login:", error);
+      logout();
+      throw error;
+    }
   };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
+  const updateUser = (newUserData: UserData) => {
+    setUser(newUserData);
+    localStorage.setItem('user', JSON.stringify(newUserData));
+  };
+
+  // 2. A VARIÁVEL `contextValue` AGORA É "MEMORIZADA"
+  // O React só vai recriar este objeto se um dos itens no array de dependências mudar.
+  const contextValue = useMemo(() => ({
+    isAuthenticated,
+    user,
+    isLoading,
+    login,
+    logout,
+    updateUser,
+  }), [isAuthenticated, user, isLoading]); // Array de dependências
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -88,4 +102,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// Hook customizado para usar o contexto
 export const useAuth = () => useContext(AuthContext);

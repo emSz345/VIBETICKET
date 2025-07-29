@@ -1,198 +1,149 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   FaBars,
   FaHome,
   FaStar,
   FaTicketAlt,
   FaStore,
-  FaHeadphones, // Corrigido o nome do ícone
+  FaHeadphones,
   FaSignOutAlt,
   FaShoppingCart,
   FaPlusCircle
 } from 'react-icons/fa';
 import { FiChevronDown } from 'react-icons/fi';
-import { getUserInfo } from '../../../../Data/DadosLocal';
 import { IoSearch } from 'react-icons/io5';
 import { CgProfile } from "react-icons/cg";
-
 import './NavBar.css';
 import logo from '../../../../assets/img-logo.png';
-import Perfil from '../../../../Page/User/Perfil';
 
-type LoginType = "email" | "google" | "facebook";
-
+// 1. A INTERFACE PARA OS DADOS DO USUÁRIO FICA AQUI
 interface UserData {
   nome: string;
-  email: string;
-  tipoLogin: LoginType;
   imagemPerfil?: string;
 }
 
 const NavBar = () => {
+  // 2. A NAVBAR VOLTA A TER SEU PRÓPRIO ESTADO LOCAL
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
+
+  // Estados locais para controlar a UI (menus abertos/fechados)
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [usuarioLogado, setUsuarioLogado] = useState(false);
-  const [mostrarPerfil, setMostrarPerfil] = useState(false);
-  const [userData, setUserData] = useState<UserData>({
-    nome: "",
-    email: "usuario@email.com",
-    tipoLogin: "email"
-  });
 
-  // Carrega dados do usuário ao montar o componente
+  const navigate = useNavigate();
+  const location = useLocation(); // Hook para detectar mudanças de URL
+
+  // 3. O useEffect LÊ O localStorage TODA VEZ QUE A ROTA MUDA
   useEffect(() => {
-    const loadUserData = () => {
-      const token = localStorage.getItem("token");
-      const nome = localStorage.getItem("userName") || "";
-      const email = localStorage.getItem("email") || "usuario@email.com";
-      const tipoLogin = (localStorage.getItem("tipoLogin") as LoginType) || "email";
-      const imagemPerfil = localStorage.getItem("imagemPerfil");
+    const token = localStorage.getItem("token");
+    const userString = localStorage.getItem("user");
 
-      setUsuarioLogado(!!token);
-      setUserData({
-        nome,
-        email,
-        tipoLogin,
-        imagemPerfil: imagemPerfil || undefined
-      });
-    };
+    if (token && userString) {
+      setIsAuthenticated(true);
+      setUser(JSON.parse(userString));
+    } else {
+      setIsAuthenticated(false);
+      setUser(null);
+    }
+  }, [location]); // O array de dependência [location] faz este código rodar a cada mudança de página
 
-    loadUserData();
-  }, []);
-
+  // 4. A FUNÇÃO DE LOGOUT AGORA É LOCAL
   const handleLogout = () => {
-    // Limpa todos os dados de autenticação
-    ["firebaseToken", "token", "userEmail", "userName", "tipoLogin", "imagemPerfil"].forEach(
-      key => localStorage.removeItem(key)
-    );
-    
-    setUsuarioLogado(false);
+    // Limpa todos os dados de autenticação do localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("imagemPerfil");
+    localStorage.removeItem("userId");
+
+    // Atualiza o estado local para refletir o logout
+    setIsAuthenticated(false);
+    setUser(null);
     setDropdownOpen(false);
-    setUserData(prev => ({ ...prev, nome: "" }));
+    navigate('/login'); // Redireciona para a página de login
   };
 
   const getAvatarUrl = () => {
-    if (!userData.imagemPerfil) return undefined;
-    return `http://localhost:5000/uploads/${userData.imagemPerfil}`;
+    if (!user || !user.imagemPerfil) return undefined;
+    return `http://localhost:5000/uploads/${user.imagemPerfil}`;
   };
 
   return (
-    <>
-      <nav className="home-navbar">
-        <div className="home-nav-top">
-          {usuarioLogado && (
-            <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-              <FaBars size={22} />
-            </div>
-          )}
+    <nav className="home-navbar">
+      <div className="home-nav-top">
+        {isAuthenticated && (
+          <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+            <FaBars size={22} />
+          </div>
+        )}
 
-          <div className={`home-auth ${menuOpen ? 'mobile-hide' : ''}`}>
-            {!usuarioLogado ? (
-              <>
-                <Link to="/Login">Login</Link> | <Link to="/Cadastro">Cadastro</Link>
-              </>
-            ) : (
+        <div className={`home-auth ${menuOpen ? 'mobile-hide' : ''}`}>
+          {/* 5. O JSX AGORA USA O ESTADO LOCAL 'isAuthenticated' e 'user' */}
+          {!isAuthenticated ? (
+            <>
+              <Link to="/Login">Login</Link> | <Link to="/Cadastro">Cadastro</Link>
+            </>
+          ) : (
+            user && (
               <div className="usuario-menu">
                 <div 
                   className="usuario-topo" 
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   aria-expanded={dropdownOpen}
                 >
-                  {userData.imagemPerfil ? (
-                    <img 
-                      className='avatar' 
-                      src={getAvatarUrl()} 
-                      alt={`Avatar de ${userData.nome}`} 
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
+                  {user.imagemPerfil ? (
+                    <img className='avatar' src={getAvatarUrl()} alt={`Avatar de ${user.nome}`} />
                   ) : (
-                    <div className="avatar-placeholder">
-                      {userData.nome.charAt(0).toUpperCase()}
-                    </div>
+                    <div className="avatar-placeholder">{user.nome.charAt(0).toUpperCase()}</div>
                   )}
-                  <span>{userData.nome || "Usuário"}</span>
+                  <span>{user.nome}</span>
                   <FiChevronDown size={20} />
                 </div>
                 
                 {dropdownOpen && (
                   <div className="dropdown-menu">
-                    <Link to="/home" className="menu-item"><FaHome /> Home</Link>
-                    <Link to="/favoritos" className="menu-item"><FaStar /> Favoritos</Link>
-                    <Link to="/Meus-Ingressos" className="menu-item"><FaTicketAlt /> Meus ingressos</Link>
-                    <button 
-                      className="menu-item" 
-                      onClick={() => {
-                        setMostrarPerfil(true);
-                        setDropdownOpen(false);
-                      }}
-                    >
+                    <Link to="/home" className="menu-item" onClick={() => setDropdownOpen(false)}><FaHome /> Home</Link>
+                    <Link to="/favoritos" className="menu-item" onClick={() => setDropdownOpen(false)}><FaStar /> Favoritos</Link>
+                    <Link to="/Meus-Ingressos" className="menu-item" onClick={() => setDropdownOpen(false)}><FaTicketAlt /> Meus ingressos</Link>
+                    <Link to="/perfil" className="menu-item" onClick={() => setDropdownOpen(false)}>
                       <CgProfile /> Meu perfil
-                    </button>
-                    <Link to="/gerenciar-eventos" className="menu-item"><FaStore /> Gerenciar eventos</Link>
-                    <Link to="/Duvidas" className="menu-item"><FaHeadphones /> Suporte</Link>
+                    </Link>
+                    <Link to="/gerenciar-eventos" className="menu-item" onClick={() => setDropdownOpen(false)}><FaStore /> Gerenciar eventos</Link>
+                    <Link to="/Duvidas" className="menu-item" onClick={() => setDropdownOpen(false)}><FaHeadphones /> Suporte</Link>
                     <button className="menu-item sair" onClick={handleLogout}>
                       <FaSignOutAlt /> Sair
                     </button>
                   </div>
                 )}
               </div>
-            )}
-          </div>
+            )
+          )}
         </div>
+      </div>
 
-        <hr className="home-hr" />
+      <hr className="home-hr" />
 
-        <div className="home-nav-main">
-          <Link to="/Home" aria-label="Página inicial">
-            <img src={logo} alt="Logo" className="home-logo" />
-          </Link>
-
-          <div className="home-search-container">
-            <input
-              type="text"
-              placeholder="Pesquisar eventos, shows"
-              className="home-search-input"
-              aria-label="Pesquisar eventos"
-            />
-            <IoSearch className="home-search-icon" />
-          </div>
-
-          <div className={`home-menu-links ${menuOpen ? 'active' : ''}`}>
-            <div className='navbar-criar-evento'>
-              <Link to={usuarioLogado ? "/CriarEventos" : "/Login"}>
-                <FaPlusCircle className="criar-evento-icone" />
-                <span className="criar-evento-texto">CRIAR EVENTOS</span>
-              </Link>
-            </div>
-           
-            <Link to="/Carrinho" aria-label="Carrinho de compras">
-              <FaShoppingCart size={28} />
+      <div className="home-nav-main">
+        {/* ... o resto do seu JSX permanece o mesmo ... */}
+        <Link to="/Home" aria-label="Página inicial"><img src={logo} alt="Logo" className="home-logo" /></Link>
+        <div className="home-search-container">
+          <input type="text" placeholder="Pesquisar eventos, shows" className="home-search-input" />
+          <IoSearch className="home-search-icon" />
+        </div>
+        <div className={`home-menu-links ${menuOpen ? 'active' : ''}`}>
+          <div className='navbar-criar-evento'>
+            <Link to={isAuthenticated ? "/CriarEventos" : "/Login"}>
+              <FaPlusCircle className="criar-evento-icone" />
+              <span className="criar-evento-texto">CRIAR EVENTOS</span>
             </Link>
           </div>
+          <Link to="/Carrinho" aria-label="Carrinho de compras"><FaShoppingCart size={28} /></Link>
         </div>
-      </nav>
-
-        {mostrarPerfil && (
-        <div className="modal perfil-tela">
-          <div className="modal-content">
-            <button
-              className="close-button"
-              onClick={() => setMostrarPerfil(false)}
-              aria-label="Fechar perfil"
-            >
-              &times;
-            </button>
-
-            <Perfil 
-              {...getUserInfo()}
-            />
-          </div>
-        </div>
-      )}
-    </>
+      </div>
+    </nav>
   );
 };
 
