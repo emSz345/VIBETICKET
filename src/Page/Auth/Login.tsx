@@ -140,6 +140,7 @@ const Login: React.FC = () => {
         localStorage.setItem("tipoLogin", "email");
         localStorage.setItem("userId", user._id);
         navigate("/Home");
+        window.location.reload();
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, senha);
         const user = userCredential.user;

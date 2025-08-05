@@ -71,12 +71,12 @@ function AppRoutes() {
         <Route path="/detalhes/:id" element={<Detalhes />} />
         <Route path="/termos" element={<Termos />} />
         <Route path="/duvidas" element={<Duvidas />} />
-        
+        <Route path="/carrinho" element={<Carrinho />} />
         {/* --- Rotas Protegidas (só para usuários logados) --- */}
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<Perfil />} /> {/* O Perfil pode pegar os dados do useAuth() internamente */}
           <Route path="/meus-ingressos" element={<MeusIngressos />} />
-          <Route path="/carrinho" element={<Carrinho />} />
+          
         </Route>
 
         {/* --- Rotas de Admin (só para usuários logados E que são admin) --- */}

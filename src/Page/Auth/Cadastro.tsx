@@ -174,6 +174,7 @@ const handleFacebookLogin = async () => {
           localStorage.setItem("token", loginData.token);
 
           navigate("/Home");
+          window.location.reload();
         }
       } catch (error) {
         console.error("Erro ao verificar status do usuário:", error);

@@ -111,6 +111,7 @@ export default function NavBar3() {
                     localStorage.clear();
                     setUsuarioLogado(false);
                     navigate('/');
+                    window.location.reload();
                   }}>
                     <FaSignOutAlt /><span>Sair</span>
                   </button>

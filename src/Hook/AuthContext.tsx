@@ -26,8 +26,18 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 // Componente Provedor
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<UserData | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<UserData | null>(() => {
+    try {
+      const storedUserString = localStorage.getItem('user');
+      return storedUserString ? JSON.parse(storedUserString) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return !!localStorage.getItem('token');
+  });
+  
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Efeito para carregar dados do usuário na inicialização do app
@@ -73,8 +83,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+   localStorage.clear();
     setUser(null);
     setIsAuthenticated(false);
   };
