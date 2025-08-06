@@ -25,6 +25,7 @@ import MeusIngressos from './Page/User/Meus-Ingressos';
 import Painel from './Page/Admin/Painel';
 import Aprovados from "./Page/Admin/Aprovados";
 import Rejeitados from "./Page/Admin/Rejeitados";
+import ResetPassword from './Page/Auth/ResetPassword';
 
 
 // ==================================================================
@@ -72,6 +73,7 @@ function AppRoutes() {
         <Route path="/termos" element={<Termos />} />
         <Route path="/duvidas" element={<Duvidas />} />
         <Route path="/carrinho" element={<Carrinho />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         {/* --- Rotas Protegidas (só para usuários logados) --- */}
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<Perfil />} /> {/* O Perfil pode pegar os dados do useAuth() internamente */}

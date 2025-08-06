@@ -24,7 +24,7 @@ const Login: React.FC = () => {
   const [emailError, setEmailError] = useState<string>("");
   const [senhaError, setSenhaError] = useState<string>("");
   const modoLocal = true;
-  
+
   // --- Estados da Lógica de Bloqueio (do seu código original) ---
   const [falhas, setFalhas] = useState<number>(() => parseInt(localStorage.getItem("loginFalhas") || "0"));
   const [tentativas, setTentativas] = useState<number>(() => parseInt(localStorage.getItem("loginTentativas") || "0"));
@@ -36,7 +36,7 @@ const Login: React.FC = () => {
   const [showFacebookAlert, setShowFacebookAlert] = useState<boolean>(false);
   const [googleError, setGoogleError] = useState<string | null>(null);
   const [facebookError, setFacebookError] = useState<string | null>(null);
-  
+
   const navigate = useNavigate();
 
   // --- Lógica de Bloqueio (do seu código original) ---
@@ -54,9 +54,9 @@ const Login: React.FC = () => {
     setBloqueado(true);
     setTempoRestante(tempoBloqueioMs);
     setTimeout(() => {
-        setBloqueado(false);
-        setTempoRestante(0);
-        localStorage.removeItem("unlockTime");
+      setBloqueado(false);
+      setTempoRestante(0);
+      localStorage.removeItem("unlockTime");
     }, tempoBloqueioMs);
     alert(`Muitas tentativas falhas. Tente novamente em ${minutosBloqueio} minuto(s).`);
   };
@@ -139,6 +139,7 @@ const Login: React.FC = () => {
         localStorage.setItem("imagemPerfil", user.imagemPerfil || "");
         localStorage.setItem("tipoLogin", "email");
         localStorage.setItem("userId", user._id);
+        localStorage.setItem("userRole", "admin");
         navigate("/Home");
         window.location.reload();
       } else {
@@ -174,7 +175,29 @@ const Login: React.FC = () => {
   // Funções de login social e reset de senha (do seu código original)
   const handleGoogleSignIn = async () => { /* ... sua lógica original ... */ };
   const handleFacebookSignIn = async () => { /* ... sua lógica original ... */ };
-  const handleReset = async () => { /* ... sua lógica original ... */ };
+  const handleReset = async () => {
+    if (!email) {
+      setEmailError("Digite seu e-mail para redefinir a senha");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("Digite um email válido");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/users/forgot-password", {
+        email
+      });
+
+      alert("E-mail de redefinição enviado com sucesso! Verifique sua caixa de entrada.");
+    } catch (error: any) {
+      console.error("Erro ao solicitar redefinição de senha:", error);
+      alert(error.response?.data?.message || "Erro ao solicitar redefinição de senha");
+    }
+  };
 
   return (
     <div className="login-container">

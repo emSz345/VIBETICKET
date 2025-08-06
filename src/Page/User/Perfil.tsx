@@ -56,9 +56,11 @@ const Perfil = () => {
         alert("Perfil atualizado com sucesso!");
         // ATUALIZA O ESTADO GLOBAL! A Navbar e outros componentes vão mudar instantaneamente.
         updateUser(data.user); 
+        localStorage.setItem("userName",nome);
         setEditando(false);
         setSenha(""); // Limpa o campo de senha
         setImagem(null); // Limpa a seleção de imagem
+        window.location.reload();
       } else {
         alert("Erro ao atualizar perfil: " + data.message);
       }

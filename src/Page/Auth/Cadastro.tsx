@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithGoogle, signInWithFacebook } from "../../services/firebase";
-
+import { useAuth } from "../../Hook/AuthContext";
 import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
 import SocialButton from "../../components/ui/SocialButton/SocialButton";
@@ -31,6 +31,7 @@ const Cadastro: React.FC = () => {
   const [mostrarTermos, setMostrarTermos] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   // NOVO: Estados para controlar o fluxo de verificação
   const [aguardandoVerificacao, setAguardandoVerificacao] = useState(false);
@@ -136,8 +137,9 @@ const handleFacebookLogin = async () => {
     }
   };
 
-  // NOVO: Efeito que verifica o status do e-mail em intervalos regulares
-  useEffect(() => {
+
+/*
+ useEffect(() => {
     // Só executa se estivermos aguardando verificação
     if (!aguardandoVerificacao) return;
 
@@ -184,6 +186,43 @@ const handleFacebookLogin = async () => {
     // Função de limpeza: para o intervalo se o componente for desmontado
     return () => clearInterval(intervalId);
   }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate]);
+
+*/
+
+  // NOVO: Efeito que verifica o status do e-mail em intervalos regulares
+ useEffect(() => {
+  if (!aguardandoVerificacao) return;
+
+  const intervalId = setInterval(async () => {
+    try {
+      const statusResponse = await fetch(`http://localhost:5000/api/users/me?email=${emailParaVerificar}`);
+      const userData = await statusResponse.json();
+
+      if (userData && userData.isVerified) {
+        clearInterval(intervalId);
+        
+        // USANDO O MÉTODO LOGIN DO AUTHCONTEXT
+        try {
+          await login(formData.email, formData.senha);
+          localStorage.setItem("userName", userData.nome);
+          localStorage.setItem("userEmail", userData.email);
+          localStorage.setItem("token",userData.token);
+          localStorage.setItem("imagemPerfil", userData.imagemPerfil || "");
+          navigate("/Home");
+        } catch (error) {
+          alert("Erro ao fazer login após verificação.");
+          setAguardandoVerificacao(false);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao verificar status do usuário:", error);
+    }
+  }, 5000);
+
+  return () => clearInterval(intervalId);
+}, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate, login]);
+
+
 
   // NOVO: Renderização condicional da tela de espera
   if (aguardandoVerificacao) {

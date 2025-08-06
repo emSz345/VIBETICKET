@@ -28,16 +28,22 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserData | null>(() => {
     try {
-      const storedUserString = localStorage.getItem('user');
-      return storedUserString ? JSON.parse(storedUserString) : null;
+      const storedUser = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+
+      // Se não houver token, retorna null mesmo que tenha user
+      if (!token) return null;
+
+      return storedUser ? JSON.parse(storedUser) : null;
     } catch {
       return null;
     }
   });
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return !!localStorage.getItem('token');
   });
-  
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Efeito para carregar dados do usuário na inicialização do app
@@ -67,14 +73,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const response = await axios.post("http://localhost:5000/api/users/login", { email, senha });
       const { token, user: userData } = response.data;
+    
+      //chaves antigas 
+     
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
+      
 
       setUser(userData);
       setIsAuthenticated(true);
 
       console.log("✅ [AuthContext] Estado atualizado! Autenticado:", true, "Usuário:", userData);
+      return userData; // Adicione este retorno
     } catch (error) {
       console.error("Falha no login:", error);
       logout();
@@ -83,7 +94,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-   localStorage.clear();
+    localStorage.clear();
     setUser(null);
     setIsAuthenticated(false);
   };

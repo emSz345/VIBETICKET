@@ -41,6 +41,10 @@ export default function NavBar3() {
     }
   }, []);
 
+ const voltar = (): void => {
+  navigate("/")
+  window.location.reload();
+ }
 
   const navigate = useNavigate();
 
@@ -82,7 +86,7 @@ export default function NavBar3() {
               <div className="user-info" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 {imagemPerfil ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: "10px", fontWeight: 1, border: "2px solid white", borderRadius: "20px", padding: "5px", cursor: "pointer" }}>
-                    <img src={`http://localhost:5000/uploads/${imagemPerfil}`} className="avatar" alt="Avatar" />
+                    <img src={`http://localhost:5000/uploads/${imagemPerfil}`} className="avatar" alt="Avatar" style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "50%", border: "2px solid var(--primary)" }} />
                     <TfiMenu style={{ color: "#fff", fontSize: "24px" }} />
                   </div>
                 ) : (
@@ -102,7 +106,7 @@ export default function NavBar3() {
                     </div>
                   </div>
                   <hr />
-                  <button onClick={() => navigate('/')}>          <FaHome />         <span>Home</span></button>
+                  <button onClick={() => voltar()}>          <FaHome />         <span>Home</span></button>
                   <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
                   <button onClick={() => navigate('/perfil')}>    <FaUserCircle />   <span>Minha conta</span></button>
                   <button onClick={() => navigate('/favoritos')}> <FaClipboardList />        <span>Gerenciar eventos</span></button>
