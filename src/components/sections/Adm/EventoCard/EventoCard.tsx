@@ -7,9 +7,10 @@ interface Props {
     evento: Evento;
     onAceitar: (id: string) => void;
     onRejeitar: (id: string) => void;
+    onReanalise: (id: string) => void;
 }
 
-const EventoCard: React.FC<Props> = ({ evento, onAceitar, onRejeitar }) => {
+const EventoCard: React.FC<Props> = ({ evento, onAceitar, onRejeitar, onReanalise }) => {
     const [mostrarModal, setMostrarModal] = React.useState(false);
 
     return (

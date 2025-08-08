@@ -71,30 +71,30 @@ const Cadastro: React.FC = () => {
   };
 
   const handleGoogleLogin = async () => {
-  if (!termosAceitos) {
-    alert("Você deve aceitar os termos e políticas para continuar.");
-    return;
-  }
-  try {
-    await signInWithGoogle();
-    // O restante do fluxo do Google continua aqui...
-  } catch (error) {
-    console.error("Erro no login com Google:", error);
-  }
-};
+    if (!termosAceitos) {
+      alert("Você deve aceitar os termos e políticas para continuar.");
+      return;
+    }
+    try {
+      await signInWithGoogle();
+      // O restante do fluxo do Google continua aqui...
+    } catch (error) {
+      console.error("Erro no login com Google:", error);
+    }
+  };
 
-const handleFacebookLogin = async () => {
-  if (!termosAceitos) {
-    alert("Você deve aceitar os termos e políticas para continuar.");
-    return;
-  }
-  try {
-    await signInWithFacebook();
-    // O restamento do fluxo do Facebook continua aqui...
-  } catch (error) {
-    console.error("Erro no login com Facebook:", error);
-  }
-};
+  const handleFacebookLogin = async () => {
+    if (!termosAceitos) {
+      alert("Você deve aceitar os termos e políticas para continuar.");
+      return;
+    }
+    try {
+      await signInWithFacebook();
+      // O restamento do fluxo do Facebook continua aqui...
+    } catch (error) {
+      console.error("Erro no login com Facebook:", error);
+    }
+  };
 
 
   // ALTERADO: Lógica de envio do formulário de cadastro
@@ -138,89 +138,90 @@ const handleFacebookLogin = async () => {
   };
 
 
-/*
- useEffect(() => {
-    // Só executa se estivermos aguardando verificação
+  /*
+   useEffect(() => {
+      // Só executa se estivermos aguardando verificação
+      if (!aguardandoVerificacao) return;
+  
+      // Inicia um "poller" que vai checar o status do usuário a cada 5 segundos
+      const intervalId = setInterval(async () => {
+        try {
+          const statusResponse = await fetch(`http://localhost:5000/api/users/me?email=${emailParaVerificar}`);
+          const userData = await statusResponse.json();
+  
+          // Se o backend confirmar que o usuário foi verificado...
+          if (userData && userData.isVerified) {
+            clearInterval(intervalId); // Para de verificar
+  
+            // ...agora fazemos o login para obter o token
+            const loginResponse = await fetch("http://localhost:5000/api/users/login", {
+              method: "POST",
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: formData.email, senha: formData.senha }),
+            });
+            
+            const loginData = await loginResponse.json();
+  
+            if (!loginResponse.ok) {
+              alert(loginData.message || "Erro ao fazer login após verificação.");
+              setAguardandoVerificacao(false); // Volta para a tela de cadastro
+              return;
+            }
+  
+            // Login bem-sucedido, salva os dados e navega
+            localStorage.setItem("userName", loginData.user.nome);
+            localStorage.setItem("userEmail", loginData.user.email);
+            localStorage.setItem("imagemPerfil", loginData.user.imagemPerfil);
+            localStorage.setItem("id", loginData.user._id);
+            localStorage.setItem("token", loginData.token);
+  
+            navigate("/Home");
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error("Erro ao verificar status do usuário:", error);
+        }
+      }, 5000); // Verifica a cada 5 segundos
+  
+      // Função de limpeza: para o intervalo se o componente for desmontado
+      return () => clearInterval(intervalId);
+    }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate]);
+  
+  */
+
+  // NOVO: Efeito que verifica o status do e-mail em intervalos regulares
+  useEffect(() => {
     if (!aguardandoVerificacao) return;
 
-    // Inicia um "poller" que vai checar o status do usuário a cada 5 segundos
     const intervalId = setInterval(async () => {
       try {
         const statusResponse = await fetch(`http://localhost:5000/api/users/me?email=${emailParaVerificar}`);
         const userData = await statusResponse.json();
 
-        // Se o backend confirmar que o usuário foi verificado...
         if (userData && userData.isVerified) {
-          clearInterval(intervalId); // Para de verificar
+          clearInterval(intervalId);
 
-          // ...agora fazemos o login para obter o token
-          const loginResponse = await fetch("http://localhost:5000/api/users/login", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: formData.email, senha: formData.senha }),
-          });
-          
-          const loginData = await loginResponse.json();
-
-          if (!loginResponse.ok) {
-            alert(loginData.message || "Erro ao fazer login após verificação.");
-            setAguardandoVerificacao(false); // Volta para a tela de cadastro
-            return;
+          // USANDO O MÉTODO LOGIN DO AUTHCONTEXT
+          try {
+            await login(formData.email, formData.senha);
+            localStorage.setItem("userName", userData.nome);
+            localStorage.setItem("userEmail", userData.email);
+            localStorage.setItem("token", userData.token);
+            localStorage.setItem("userRole", "admin");
+            localStorage.setItem("imagemPerfil", userData.imagemPerfil || "");
+            navigate("/Home");
+          } catch (error) {
+            alert("Erro ao fazer login após verificação.");
+            setAguardandoVerificacao(false);
           }
-
-          // Login bem-sucedido, salva os dados e navega
-          localStorage.setItem("userName", loginData.user.nome);
-          localStorage.setItem("userEmail", loginData.user.email);
-          localStorage.setItem("imagemPerfil", loginData.user.imagemPerfil);
-          localStorage.setItem("id", loginData.user._id);
-          localStorage.setItem("token", loginData.token);
-
-          navigate("/Home");
-          window.location.reload();
         }
       } catch (error) {
         console.error("Erro ao verificar status do usuário:", error);
       }
-    }, 5000); // Verifica a cada 5 segundos
+    }, 5000);
 
-    // Função de limpeza: para o intervalo se o componente for desmontado
     return () => clearInterval(intervalId);
-  }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate]);
-
-*/
-
-  // NOVO: Efeito que verifica o status do e-mail em intervalos regulares
- useEffect(() => {
-  if (!aguardandoVerificacao) return;
-
-  const intervalId = setInterval(async () => {
-    try {
-      const statusResponse = await fetch(`http://localhost:5000/api/users/me?email=${emailParaVerificar}`);
-      const userData = await statusResponse.json();
-
-      if (userData && userData.isVerified) {
-        clearInterval(intervalId);
-        
-        // USANDO O MÉTODO LOGIN DO AUTHCONTEXT
-        try {
-          await login(formData.email, formData.senha);
-          localStorage.setItem("userName", userData.nome);
-          localStorage.setItem("userEmail", userData.email);
-          localStorage.setItem("token",userData.token);
-          localStorage.setItem("imagemPerfil", userData.imagemPerfil || "");
-          navigate("/Home");
-        } catch (error) {
-          alert("Erro ao fazer login após verificação.");
-          setAguardandoVerificacao(false);
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao verificar status do usuário:", error);
-    }
-  }, 5000);
-
-  return () => clearInterval(intervalId);
-}, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate, login]);
+  }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate, login]);
 
 
 
@@ -255,7 +256,7 @@ const handleFacebookLogin = async () => {
       <div className="login-content">
         <div className="logo-section">
           <Link to='/Home' title="Voltar para Home">
-           <img src={logo} alt="Logo" className="logo-image" />
+            <img src={logo} alt="Logo" className="logo-image" />
           </Link>
         </div>
 
@@ -294,9 +295,9 @@ const handleFacebookLogin = async () => {
           />
           <div className="login-container-error">
             {errors.email ? (
-               <p className="error">{errors.email}</p>
+              <p className="error">{errors.email}</p>
             ) : (
-               <span className="password-hint">Email deve estar em formato válido e conter pelo menos 10 caracteres.</span>
+              <span className="password-hint">Email deve estar em formato válido e conter pelo menos 10 caracteres.</span>
             )}
           </div>
 
@@ -313,9 +314,9 @@ const handleFacebookLogin = async () => {
           />
           <div className="login-container-error">
             {errors.senha ? (
-               <p className="error">{errors.senha}</p>
+              <p className="error">{errors.senha}</p>
             ) : (
-               <span className="password-hint">A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.</span>
+              <span className="password-hint">A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.</span>
             )}
           </div>
 
@@ -369,10 +370,10 @@ const handleFacebookLogin = async () => {
           <p className="ou">ou</p>
 
           <div className="social-login">
-              
-                 <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleLogin} />
-              
-           
+
+            <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleLogin} />
+
+
             <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookLogin} />
           </div>
 

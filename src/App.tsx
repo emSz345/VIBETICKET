@@ -59,13 +59,13 @@ function AppRoutes() {
       {/* ================================================================== */}
 
       <Route element={<ProtectedRoute />}>
-          <Route path="/CriarEventos" element={<CriarEventos />} />
-          <Route path="/carrinho" element={<Carrinho />} />
+        <Route path="/CriarEventos" element={<CriarEventos />} />
+        <Route path="/carrinho" element={<Carrinho />} />
       </Route>
 
 
       <Route element={<LayoutWithHeader />}>
-        
+
         {/* --- Rotas Públicas (acessíveis a todos) --- */}
         <Route path="/home" element={<Home />} />
         <Route path="/categorias" element={<Categorias />} />
@@ -78,17 +78,18 @@ function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<Perfil />} /> {/* O Perfil pode pegar os dados do useAuth() internamente */}
           <Route path="/meus-ingressos" element={<MeusIngressos />} />
-          
+
         </Route>
 
         {/* --- Rotas de Admin (só para usuários logados E que são admin) --- */}
-        <Route element={<AdminRoute />}>
-          <Route path="/painel" element={<Painel />} />
-          <Route path="/aprovados" element={<Aprovados />} />
-          <Route path="/rejeitados" element={<Rejeitados />} />
-        </Route>
-
       </Route>
+
+      <Route element={<AdminRoute />}>
+        <Route path="/painel" element={<Painel />} />
+        <Route path="/aprovados" element={<Aprovados />} />
+        <Route path="/rejeitados" element={<Rejeitados />} />
+      </Route>
+
 
       {/* ================================================================== */}
       {/* Grupo de rotas QUE NÃO TÊM a Navbar (tela cheia) */}
@@ -107,13 +108,13 @@ function AppRoutes() {
 // COMPONENTE PRINCIPAL APP (permanece o mesmo)
 // ==================================================================
 function App() {
-    return (
-        <Router>
-            <AuthProvider>
-                <AppRoutes />
-            </AuthProvider>
-        </Router>
-    );
+  return (
+    <Router>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </Router>
+  );
 }
 
 export default App;
