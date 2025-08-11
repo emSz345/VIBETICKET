@@ -20,12 +20,12 @@ function Home() {
       <header>
         <NavBar3 />
       </header>
-      
+
       <main className='main'>
         <Carrossel />
-        
+
         <Cidades />
-        
+
         {/* Banner incorporado diretamente */}
         <div className="banner">
           <div className="banner-content">
@@ -63,10 +63,10 @@ function Home() {
           <h3 className='title-show'>Jazz</h3>
           <Jazz />
         </section>
-
+        
         <Bolinhas />
       </main>
-      
+
       <Rodape />
     </div>
   )

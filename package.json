@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "firebase": "^11.4.0",
+    "framer-motion": "^12.23.12",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.483.0",
     "mongoose": "^8.12.1",

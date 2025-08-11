@@ -60,7 +60,6 @@ function AppRoutes() {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/CriarEventos" element={<CriarEventos />} />
-        <Route path="/carrinho" element={<Carrinho />} />
       </Route>
 
 
