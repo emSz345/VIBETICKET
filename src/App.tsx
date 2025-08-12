@@ -72,7 +72,7 @@ function AppRoutes() {
         <Route path="/termos" element={<Termos />} />
         <Route path="/duvidas" element={<Duvidas />} />
         <Route path="/carrinho" element={<Carrinho />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        
         {/* --- Rotas Protegidas (só para usuários logados) --- */}
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<Perfil />} /> {/* O Perfil pode pegar os dados do useAuth() internamente */}
@@ -94,6 +94,7 @@ function AppRoutes() {
       {/* Grupo de rotas QUE NÃO TÊM a Navbar (tela cheia) */}
       {/* ================================================================== */}
       <Route path="/login" element={<Login />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/cadastro" element={<Cadastro />} />
 
       {/* Redirecionamentos e rotas de fallback */}

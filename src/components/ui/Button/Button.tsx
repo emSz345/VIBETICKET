@@ -3,25 +3,30 @@ import "./Button.css";
 
 interface ButtonProps {
   text: string;
-  color: string
+  color: string;
   onClick: () => void;
+  loading?: boolean;
+  disabled?: boolean; 
 }
 
-const Button: React.FC<ButtonProps> = ({ text, onClick, color }) => {
+const Button: React.FC<ButtonProps> = ({ text, onClick, color, loading = false, disabled = false }) => {
+  const className = color === "Red" ? "red-button" : "custom-button";
 
-  if (color === "Red") {
-    return (
-      <button className="red-button" onClick={onClick}>
-        {text}
-      </button>
-    );
-  } else if (color === "Blue") {
-    return (
-      <button className="custom-button" onClick={onClick}>
-        {text}
-      </button>
-    );
-  }
+  return (
+    <button
+      className={className}
+      onClick={onClick}
+      disabled={disabled || loading}
+    >
+      {loading ? (
+        <span className="btn-loading">
+          <span className="spinner"></span> Carregando...
+        </span>
+      ) : (
+        text
+      )}
+    </button>
+  );
 };
 
 export default Button;

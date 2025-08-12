@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from "react";
 import EventoCard from "../../components/sections/Adm/EventoCard/EventoCard";
 import { Evento } from "../../types/evento";
+import { FaSignOutAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 
 import logo from "../../assets/logo.png";
 import "../../styles/Painel.css";
 
+//////////////////////////////////////////////////
+
+
+
 ////////////////////////////////////////////////////////
 
-const email = localStorage.getItem('userEmail');
+const email = localStorage.getItem('userName');
 
 // Adicionando 'reanalise' ao tipo de status//////////////////////////
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "reanalise";
@@ -15,6 +23,7 @@ type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "reanalise";
 const Painel: React.FC = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [status, setStatusFilter] = useState<EventoStatus>("em_analise");
+  const [usuarioLogado, setUsuarioLogado] = useState(false);
 
   // Função para buscar os eventos com base no status selecionado
   const fetchEventosByStatus = (status: EventoStatus) => {
@@ -48,16 +57,32 @@ const Painel: React.FC = () => {
   // Nova função para definir o status de reanálise
   const handleReanalise = (id: string) => updateEventoStatus(id, "reanalise");
 
+  const voltar = (): void => {
+    navigate("/")
+    window.location.reload();
+   }
+  
+    const navigate = useNavigate();
+
   return (
     <div className="painel-wrapper">
       <aside className="painel-sidebar">
         <div className="painel-sidebar-top">
           <div className="painel-container-logo">
-            <img src={logo} alt="Logo" className="painel-logo" />
+            <Link to="/Home" aria-label="Página inicial">
+              <img src={logo} alt="Logo" className="painel-logo"/>
+            </Link>
           </div>
         </div>
-        <div className="painel-sidebar-footer">
-          <p className="painel-link-sair">Sair</p>
+        <div className="">
+          <button className="btn-logout" onClick={() => {
+                    localStorage.clear();
+                    setUsuarioLogado(false);
+                    navigate('/');
+                    window.location.reload();
+                  }}>
+                    <FaSignOutAlt /><p>Sair</p>
+                  </button>
         </div>
       </aside>
 

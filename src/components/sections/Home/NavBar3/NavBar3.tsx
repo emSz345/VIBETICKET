@@ -15,6 +15,7 @@ import {
   FaClipboardList,
   FaHeadphones,
   FaSignOutAlt,
+  FaUserShield,
 } from 'react-icons/fa';
 
 export default function NavBar3() {
@@ -24,20 +25,24 @@ export default function NavBar3() {
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [emailUsuario, setEmailUsuario] = useState('');
   const [imagemPerfil, setImagemPerfil] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const nome = localStorage.getItem('userName');
     const email = localStorage.getItem('userEmail');
     const imagem = localStorage.getItem('imagemPerfil');
+    const adminStatus = localStorage.getItem('isAdmin');
 
     if (token && nome && email) {
       setUsuarioLogado(true);
       setNomeUsuario(nome);
       setEmailUsuario(email);
       setImagemPerfil(imagem || '');
+      setIsAdmin(adminStatus === 'true');
     } else {
       setUsuarioLogado(false);
+      setIsAdmin(false);
     }
   }, []);
 
@@ -109,11 +114,18 @@ export default function NavBar3() {
                   <button onClick={() => voltar()}>          <FaHome />         <span>Home</span></button>
                   <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
                   <button onClick={() => navigate('/perfil')}>    <FaUserCircle />   <span>Minha conta</span></button>
+                  {isAdmin && ( 
+                    <button onClick={() => navigate('/Painel')}>
+                      <FaUserShield />
+                      <span>Painel de Admin</span>
+                    </button>
+                  )}
                   <button onClick={() => navigate('/favoritos')}> <FaClipboardList />        <span>Gerenciar eventos</span></button>
                   <button onClick={() => navigate('/duvidas')}>   <FaHeadphones />   <span>Central de Duvidas</span></button>
                   <button className="logout-btn" onClick={() => {
                     localStorage.clear();
                     setUsuarioLogado(false);
+                    setIsAdmin(false);
                     navigate('/');
                     window.location.reload();
                   }}>

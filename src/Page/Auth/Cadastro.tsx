@@ -1,3 +1,5 @@
+
+
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithGoogle, signInWithFacebook } from "../../services/firebase";
@@ -9,6 +11,8 @@ import TermosContent from '../../Page/Public/TermosContent';
 
 import "../../styles/Login.css";
 import logo from "../../assets/logo.png";
+import logo1 from "../../assets/logo-blue1.png"
+
 import googleIcon from "../../assets/logo-google.png";
 import facebookIcon from "../../assets/logo-facebook.png";
 
@@ -32,6 +36,8 @@ const Cadastro: React.FC = () => {
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  const [loading, setLoading] = useState(false);
 
   // NOVO: Estados para controlar o fluxo de verificação
   const [aguardandoVerificacao, setAguardandoVerificacao] = useState(false);
@@ -98,9 +104,14 @@ const Cadastro: React.FC = () => {
 
 
   // ALTERADO: Lógica de envio do formulário de cadastro
+  // adiciona estado para loading
+
+
+  // altera seu handleSubmitLocal para controlar loading
   const handleSubmitLocal = async () => {
     if (!validate()) return;
 
+    setLoading(true); // começa o loading
     const { nome, email, senha } = formData;
     const formDataToSend = new FormData();
     formDataToSend.append("nome", nome);
@@ -120,22 +131,22 @@ const Cadastro: React.FC = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Exibe a mensagem de erro do backend (ex: "E-mail já em uso")
         alert(data.message || "Erro ao registrar no servidor.");
         return;
       }
 
-      // Se o cadastro foi bem-sucedido (status 201), iniciamos o modo de espera
       if (response.status === 201) {
-        setEmailParaVerificar(email); // Guarda o e-mail para a verificação
-        setAguardandoVerificacao(true); // Ativa a tela de "Aguardando verificação"
+        setEmailParaVerificar(email);
+        setAguardandoVerificacao(true);
       }
-
     } catch (error) {
       alert("Erro de conexão com o servidor.");
       console.error(error);
+    } finally {
+      setLoading(false); // encerra o loading
     }
   };
+
 
 
   /*
@@ -230,17 +241,17 @@ const Cadastro: React.FC = () => {
     return (
       <div className="login-container">
         <div className="form-section" style={{ textAlign: 'center' }}>
-          <img src={logo} alt="Logo" className="logo-image" style={{ marginBottom: '2rem' }} />
+          <img src={logo1} alt="Logo" className="logo-image" style={{ marginBottom: '2rem' }} />
           <h2 className="login-bemvido">Quase lá!</h2>
           <p style={{ fontSize: '1.1rem', color: '#666', lineHeight: '1.6' }}>
             Enviamos um link de verificação para o seu e-mail: <br />
-            <strong>{emailParaVerificar}</strong>
+            <strong style={{ color: "#0969fb", }}>{emailParaVerificar}</strong>
           </p>
           <p style={{ marginTop: '1.5rem' }}>
             Por favor, clique no link para ativar sua conta. <br />
             Assim que você verificar, faremos seu login automaticamente.
           </p>
-          <div className="loader" style={{ margin: '2rem auto' }}></div>
+          <div className="loader" style={{ margin: '2rem auto', color: "#0969fb" }}></div>
           <p style={{ fontSize: '0.9rem', color: '#999' }}>
             Não recebeu? Verifique sua caixa de spam.
           </p>
@@ -320,7 +331,8 @@ const Cadastro: React.FC = () => {
             )}
           </div>
 
-          {/* --- CONFIRMAR SENHA --- */}
+
+          {/* CONFIRMAR SENHA */}
           <h3 className="login-title">Confirmar senha</h3>
           <Input
             type="password"
@@ -339,6 +351,8 @@ const Cadastro: React.FC = () => {
             {errors.confirmSenha && <p className="error">{errors.confirmSenha}</p>}
           </div>
 
+
+          {/* TERMOS */}
           <div className="radio-container">
             <label className="termos-label">
               <input
@@ -365,7 +379,13 @@ const Cadastro: React.FC = () => {
             )}
           </div>
 
-          <Button color="Blue" text="criar minha conta" onClick={handleSubmitLocal} />
+          <Button
+            color="Blue"
+            text="criar minha conta"
+            onClick={handleSubmitLocal}
+            loading={loading}
+            disabled={loading}
+          />
 
           <p className="ou">ou</p>
 

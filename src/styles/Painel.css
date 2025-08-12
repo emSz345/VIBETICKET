@@ -32,13 +32,6 @@ body {
     max-width: 180px;
 }
 
-.painel-link-sair {
-    margin-top: 30px;
-    cursor: pointer;
-    color: #e74c3c;
-    font-weight: bold;
-}
-
 /* Main Content */
 .painel-main {
     flex-grow: 1;
@@ -114,3 +107,72 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
 }
+
+/* -------------------btn-logout-------------------- */
+.btn-logout {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+  
+  .btn-logout {
+    --primary-color: #111;
+    --hovered-color: #c84747;
+    position: relative;
+    display: flex;
+    font-weight: 600;
+    font-size: 20px;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .btn-logout p {
+    margin: 0;
+    position: relative;
+    font-size: 20px;
+    color: var(--primary-color);
+  }
+  
+  .btn-logout::after {
+    position: absolute;
+    content: "";
+    width: 0;
+    left: 0;
+    bottom: -7px;
+    background: var(--hovered-color);
+    height: 2px;
+    transition: 0.3s ease-out;
+  }
+  
+  .btn-logout p::before {
+    position: absolute;
+    content: "Sair";
+    width: 0%;
+    inset: 0;
+    color: var(--hovered-color);
+    overflow: hidden;
+    transition: 0.3s ease-out;
+  }
+  
+  .btn-logout:hover::after {
+    width: 100%;
+  }
+  
+  .btn-logout:hover p::before {
+    width: 100%;
+  }
+  
+  .btn-logout:hover svg {
+    transform: translateX(4px);
+    color: var(--hovered-color);
+  }
+  
+  .btn-logout svg {
+    color: var(--primary-color);
+    transition: 0.2s;
+    position: relative;
+    width: 15px;
+    transition-delay: 0.2s;
+  }

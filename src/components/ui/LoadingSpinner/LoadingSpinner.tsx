@@ -1,16 +1,11 @@
-import React from 'react';
-import './LoadingSpinner.css';
+// components/ui/LoadingSpinner/LoadingSpinner.tsx
+import React from "react";
+import styles from './LoadingSpinner.module.css'; // Note a importação correta
 
 const LoadingSpinner: React.FC = () => {
   return (
-    <div className="loading-spinner-container">
-      <div className="loading-spinner">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-      <p>Carregando...</p>
+    <div className={styles.loadingSpinnerContainer}>
+      <div className={styles.loadingSpinner}></div>
     </div>
   );
 };

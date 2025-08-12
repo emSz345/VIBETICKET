@@ -31,23 +31,30 @@ const Perfil = () => {
 
     // Usamos FormData porque estamos enviando um arquivo (imagem)
     const formData = new FormData();
+
+    if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(nome)) {
+      alert("Nome deve conter pelo menos 10 letras e nenhum número.")
+      return;
+    }
+
     formData.append("nome", nome);
-    
+
     // Só adiciona a senha ao formulário se o usuário digitou uma nova
     if (senha) {
       formData.append("senha", senha);
     }
-    
+
     // Só adiciona a imagem se o usuário selecionou uma nova
     if (imagem) {
       formData.append("imagemPerfil", imagem);
+
     }
 
     try {
       const response = await fetch(`http://localhost:5000/api/users/updateByEmail/${user.email}`, {
         method: "PUT",
         // Com FormData, o navegador define o 'Content-Type' correto automaticamente
-        body: formData, 
+        body: formData,
       });
 
       const data = await response.json();
@@ -55,8 +62,10 @@ const Perfil = () => {
       if (response.ok) {
         alert("Perfil atualizado com sucesso!");
         // ATUALIZA O ESTADO GLOBAL! A Navbar e outros componentes vão mudar instantaneamente.
-        updateUser(data.user); 
-        localStorage.setItem("userName",nome);
+        updateUser(data.user);
+        localStorage.setItem("userName", nome);
+        //atualizado []
+        localStorage.setItem("imagemPerfil", data.user.imagemPerfil || "")
         setEditando(false);
         setSenha(""); // Limpa o campo de senha
         setImagem(null); // Limpa a seleção de imagem
@@ -101,7 +110,7 @@ const Perfil = () => {
               <label htmlFor="upload-avatar" className="perfil-btn-alterar-foto">
                 Escolher Nova Foto
               </label>
-              <input id="upload-avatar" type="file" accept="image/*" onChange={handleImagemChange} style={{ display: "none" }}/>
+              <input id="upload-avatar" type="file" accept="image/*" onChange={handleImagemChange} style={{ display: "none" }} />
             </>
           )}
         </div>
@@ -119,7 +128,7 @@ const Perfil = () => {
 
         <div className="perfil-campo-edicao">
           <label>Nova Senha:</label>
-          <input type="password" disabled={!editando} value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Deixe em branco para não alterar"/>
+          <input type="password" disabled={!editando} value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Deixe em branco para não alterar" />
         </div>
 
         <button
