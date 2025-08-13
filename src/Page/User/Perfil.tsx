@@ -1,74 +1,72 @@
-// Page/User/Perfil.tsx
-
 import React, { useState, ChangeEvent, useEffect } from "react";
-import { FiEdit2, FiCheck } from "react-icons/fi";
-import { useAuth } from "../../Hook/AuthContext"; // Importa o hook de autenticação
+import { FiEdit2, FiCheck, FiUser, FiShoppingBag, FiCalendar, FiPhone, FiMapPin, FiMail, FiCamera } from "react-icons/fi";
+import { useAuth } from "../../Hook/AuthContext";
 import "../../styles/Perfil.css";
 
 const Perfil = () => {
-  // 1. DADOS VÊM DO CONTEXTO, NÃO DE PROPS
   const { user, isLoading, updateUser } = useAuth();
 
-  // 2. Estados locais para controlar o formulário
   const [editando, setEditando] = useState(false);
   const [nome, setNome] = useState("");
-  const [senha, setSenha] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>("");
 
-  // 3. Popula o formulário com os dados do usuário quando o componente carrega
+  const [abaAtiva, setAbaAtiva] = useState<"comprador" | "organizador">("comprador");
+
+  const [comprador, setComprador] = useState({
+    nome: "",
+    cpf: "",
+    dataNascimento: "",
+    telefone: "",
+    endereco: ""
+  });
+
+  const [organizador, setOrganizador] = useState({
+    cnpjCpf: "",
+    razaoSocial: "",
+    nomeFantasia: "",
+    inscricaoMunicipal: "",
+    cpfSocio: "",
+    nomeCompleto: "",
+    dataNascimento: "",
+    telefone: "",
+    endereco: ""
+  });
+
   useEffect(() => {
     if (user) {
       setNome(user.nome);
-      // Constrói a URL completa da imagem de perfil
       setPreviewUrl(user.imagemPerfil ? `http://localhost:5000/uploads/${user.imagemPerfil}` : undefined);
     }
-  }, [user]); // Roda sempre que o objeto 'user' do contexto mudar
+  }, [user]);
 
-  // Função ÚNICA para salvar TODAS as alterações (dados e imagem)
   const handleSalvarAlteracoes = async () => {
     if (!user) return;
-
-    // Usamos FormData porque estamos enviando um arquivo (imagem)
     const formData = new FormData();
-
+    
     if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(nome)) {
-      alert("Nome deve conter pelo menos 10 letras e nenhum número.")
+      alert("Nome deve conter pelo menos 10 letras e nenhum número.");
       return;
     }
-
+    
     formData.append("nome", nome);
-
-    // Só adiciona a senha ao formulário se o usuário digitou uma nova
-    if (senha) {
-      formData.append("senha", senha);
-    }
-
-    // Só adiciona a imagem se o usuário selecionou uma nova
-    if (imagem) {
-      formData.append("imagemPerfil", imagem);
-
-    }
+    if (imagem) formData.append("imagemPerfil", imagem);
 
     try {
       const response = await fetch(`http://localhost:5000/api/users/updateByEmail/${user.email}`, {
         method: "PUT",
-        // Com FormData, o navegador define o 'Content-Type' correto automaticamente
         body: formData,
       });
-
+      
       const data = await response.json();
-
+      
       if (response.ok) {
         alert("Perfil atualizado com sucesso!");
-        // ATUALIZA O ESTADO GLOBAL! A Navbar e outros componentes vão mudar instantaneamente.
         updateUser(data.user);
         localStorage.setItem("userName", nome);
-        //atualizado []
-        localStorage.setItem("imagemPerfil", data.user.imagemPerfil || "")
+        localStorage.setItem("imagemPerfil", data.user.imagemPerfil || "");
         setEditando(false);
-        setSenha(""); // Limpa o campo de senha
-        setImagem(null); // Limpa a seleção de imagem
+        setImagem(null);
         window.location.reload();
       } else {
         alert("Erro ao atualizar perfil: " + data.message);
@@ -83,66 +81,286 @@ const Perfil = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImagem(file);
-      setPreviewUrl(URL.createObjectURL(file)); // Gera uma preview local da nova imagem
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
-  // Enquanto o contexto carrega os dados, mostramos uma mensagem
-  if (isLoading) {
-    return <div>Carregando perfil...</div>;
-  }
-
-  // Se por algum motivo não houver usuário logado
-  if (!user) {
-    return <div>Usuário não encontrado. Por favor, faça login.</div>;
-  }
+  if (isLoading) return <div className="perfil-loading">Carregando perfil...</div>;
+  if (!user) return <div className="perfil-error">Usuário não encontrado. Por favor, faça login.</div>;
 
   return (
-    <div className="perfil-scroll-container">
+    <div className="perfil-container">
+      <div className="perfil-header">
+        <h1>Meu Perfil</h1>
+        <p>Gerencie suas informações pessoais</p>
+      </div>
+
       <div className="perfil-content">
-        <h2>Meu Perfil</h2>
+        {/* Coluna Esquerda - Dados Pessoais */}
+        <div className="perfil-left">
+          <div className="perfil-card">
+            <div className="perfil-avatar-section">
+              <div className="perfil-avatar-wrapper">
+                <img 
+                  src={previewUrl || "https://via.placeholder.com/150"} 
+                  alt="Foto de perfil" 
+                  className="perfil-avatar" 
+                />
+                {editando && (
+                  <label htmlFor="upload-avatar" className="perfil-avatar-edit">
+                    <FiCamera />
+                    <input 
+                      id="upload-avatar" 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleImagemChange} 
+                      style={{ display: "none" }} 
+                    />
+                  </label>
+                )}
+              </div>
+              <h2>{nome || user.nome}</h2>
+              <p className="perfil-email">{user.email}</p>
+            </div>
 
-        <div className="perfil-avatar-section">
-          <img src={previewUrl} alt="Foto de perfil" className="perfil-avatar" />
-          {/* O botão de alterar foto só aparece se o modo de edição estiver ativo */}
-          {editando && (
-            <>
-              <label htmlFor="upload-avatar" className="perfil-btn-alterar-foto">
-                Escolher Nova Foto
+            <div className="perfil-form-group">
+              <label className="perfil-input-label">
+                <FiUser className="perfil-input-icon" />
+                <span>Nome completo</span>
               </label>
-              <input id="upload-avatar" type="file" accept="image/*" onChange={handleImagemChange} style={{ display: "none" }} />
-            </>
-          )}
+              <input 
+                type="text" 
+                className="perfil-input"
+                disabled={!editando} 
+                value={nome} 
+                onChange={(e) => setNome(e.target.value)} 
+              />
+            </div>
+
+            <div className="perfil-form-group">
+              <label className="perfil-input-label">
+                <FiMail className="perfil-input-icon" />
+                <span>Email</span>
+              </label>
+              <input 
+                type="email" 
+                className="perfil-input"
+                disabled 
+                value={user.email} 
+              />
+            </div>
+
+            <button 
+              className={`perfil-btn-primary ${editando ? 'perfil-btn-save' : ''}`} 
+              onClick={() => { if (editando) handleSalvarAlteracoes(); else setEditando(true); }}
+            >
+              {editando ? <FiCheck /> : <FiEdit2 />} 
+              {editando ? "Salvar alterações" : "Editar perfil"}
+            </button>
+          </div>
         </div>
 
-        <div className="perfil-campo-edicao">
-          <label>Nome:</label>
-          <input type="text" disabled={!editando} value={nome} onChange={(e) => setNome(e.target.value)} />
-        </div>
+        {/* Coluna Direita - Abas */}
+        <div className="perfil-right">
+          <div className="perfil-card">
+            <div className="perfil-tabs">
+              <button 
+                className={`perfil-tab ${abaAtiva === "comprador" ? "active" : ""}`}
+                onClick={() => setAbaAtiva("comprador")}
+              >
+                <FiUser className="perfil-tab-icon" />
+                Dados do Comprador
+              </button>
+              <button 
+                className={`perfil-tab ${abaAtiva === "organizador" ? "active" : ""}`}
+                onClick={() => setAbaAtiva("organizador")}
+              >
+                <FiShoppingBag className="perfil-tab-icon" />
+                Dados do Organizador
+              </button>
+            </div>
 
-        <div className="perfil-campo-edicao">
-          <label>Email:</label>
-          {/* O email não pode ser editado */}
-          <input type="email" disabled value={user.email} />
-        </div>
+            <div className="perfil-tab-content">
+              {abaAtiva === "comprador" && (
+                <div className="perfil-form-grid">
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiUser className="perfil-input-icon" />
+                      <span>Nome</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={comprador.nome} 
+                      onChange={(e) => setComprador({ ...comprador, nome: e.target.value })} 
+                    />
+                  </div>
 
-        <div className="perfil-campo-edicao">
-          <label>Nova Senha:</label>
-          <input type="password" disabled={!editando} value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Deixe em branco para não alterar" />
-        </div>
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiUser className="perfil-input-icon" />
+                      <span>CPF</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={comprador.cpf} 
+                      onChange={(e) => setComprador({ ...comprador, cpf: e.target.value })} 
+                    />
+                  </div>
 
-        <button
-          className="perfil-btn-editar"
-          onClick={() => {
-            if (editando) {
-              handleSalvarAlteracoes();
-            } else {
-              setEditando(true);
-            }
-          }}
-        >
-          {editando ? <FiCheck /> : <FiEdit2 />} {editando ? "Salvar Alterações" : "Editar Perfil"}
-        </button>
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiCalendar className="perfil-input-icon" />
+                      <span>Data de nascimento</span>
+                    </label>
+                    <input 
+                      type="date" 
+                      className="perfil-input"
+                      value={comprador.dataNascimento} 
+                      onChange={(e) => setComprador({ ...comprador, dataNascimento: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiPhone className="perfil-input-icon" />
+                      <span>Telefone</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={comprador.telefone} 
+                      onChange={(e) => setComprador({ ...comprador, telefone: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group full-width">
+                    <label className="perfil-input-label">
+                      <FiMapPin className="perfil-input-icon" />
+                      <span>Endereço</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={comprador.endereco} 
+                      onChange={(e) => setComprador({ ...comprador, endereco: e.target.value })} 
+                    />
+                  </div>
+                </div>
+              )}
+
+              {abaAtiva === "organizador" && (
+                <div className="perfil-form-grid">
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiUser className="perfil-input-icon" />
+                      <span>CNPJ/CPF</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={organizador.cnpjCpf} 
+                      onChange={(e) => setOrganizador({ ...organizador, cnpjCpf: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiUser className="perfil-input-icon" />
+                      <span>Razão Social</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={organizador.razaoSocial} 
+                      onChange={(e) => setOrganizador({ ...organizador, razaoSocial: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiUser className="perfil-input-icon" />
+                      <span>Nome Fantasia</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={organizador.nomeFantasia} 
+                      onChange={(e) => setOrganizador({ ...organizador, nomeFantasia: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiUser className="perfil-input-icon" />
+                      <span>Inscrição Municipal</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={organizador.inscricaoMunicipal} 
+                      onChange={(e) => setOrganizador({ ...organizador, inscricaoMunicipal: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiUser className="perfil-input-icon" />
+                      <span>CPF do Sócio/Representante</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={organizador.cpfSocio} 
+                      onChange={(e) => setOrganizador({ ...organizador, cpfSocio: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiUser className="perfil-input-icon" />
+                      <span>Nome Completo</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={organizador.nomeCompleto} 
+                      onChange={(e) => setOrganizador({ ...organizador, nomeCompleto: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiCalendar className="perfil-input-icon" />
+                      <span>Data de nascimento</span>
+                    </label>
+                    <input 
+                      type="date" 
+                      className="perfil-input"
+                      value={organizador.dataNascimento} 
+                      onChange={(e) => setOrganizador({ ...organizador, dataNascimento: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group">
+                    <label className="perfil-input-label">
+                      <FiPhone className="perfil-input-icon" />
+                      <span>Telefone</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={organizador.telefone} 
+                      onChange={(e) => setOrganizador({ ...organizador, telefone: e.target.value })} 
+                    />
+                  </div>
+
+                  <div className="perfil-form-group full-width">
+                    <label className="perfil-input-label">
+                      <FiMapPin className="perfil-input-icon" />
+                      <span>Endereço</span>
+                    </label>
+                    <input 
+                      className="perfil-input"
+                      value={organizador.endereco} 
+                      onChange={(e) => setOrganizador({ ...organizador, endereco: e.target.value })} 
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import Funk from '../../components/sections/Home/Shows/Funk/Funk';
 import Sertanejo from '../../components/sections/Home/Shows/Sertanejo/Sertanejo';
 import Eletonica from '../../components/sections/Home/Shows/Eletrônica/Eletrônica';
 import Jazz from '../../components/sections/Home/Shows/Jazz/Jazz';
+import ChatBot from '../../components/sections/Chatbot/Chatbot';
 import { MdOutlineContactSupport } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import help from '../../assets/help.png'; // Ajuste o caminho conforme necessário
@@ -63,7 +64,9 @@ function Home() {
           <h3 className='title-show'>Jazz</h3>
           <Jazz />
         </section>
-        
+        <div style={{ display: "flex", right: "20px", bottom: "30px", position: 'fixed', zIndex: '1000' }}>
+          <ChatBot />
+        </div>
         <Bolinhas />
       </main>
 

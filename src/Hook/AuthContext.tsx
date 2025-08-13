@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from 'react'; // 1. IMPORTAMOS O useMemo
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 
 
@@ -7,8 +7,15 @@ interface UserData {
   _id: string;
   nome: string;
   email: string;
-  isAdmin: boolean;
+  isAdmin: any;
   imagemPerfil?: string;
+}
+
+// Interface para os dados do login social
+interface SocialLoginData {
+  provider: 'google' | 'facebook';
+  userData: UserData;
+  token: string;
 }
 
 // Interface para o valor do nosso contexto
@@ -19,6 +26,7 @@ interface AuthContextType {
   login: (email: string, senha: string) => Promise<void>;
   logout: () => void;
   updateUser: (newUserData: UserData) => void;
+  socialLogin: (data: SocialLoginData) => void;
 }
 
 // Criação do contexto
@@ -73,19 +81,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const response = await axios.post("http://localhost:5000/api/users/login", { email, senha });
       const { token, user: userData } = response.data;
-    
-      //chaves antigas 
-     
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
-      
 
       setUser(userData);
       setIsAuthenticated(true);
 
       console.log("✅ [AuthContext] Estado atualizado! Autenticado:", true, "Usuário:", userData);
-      return userData; // Adicione este retorno
+      return userData;
     } catch (error) {
       console.error("Falha no login:", error);
       logout();
@@ -99,13 +103,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(false);
   };
 
+  // Função para login social
+  const socialLogin = (data: SocialLoginData) => {
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.userData)); // Alterado para userData
+
+    localStorage.setItem("userName", data.userData.nome);
+    localStorage.setItem("userEmail", data.userData.email);
+    localStorage.setItem("userRole", data.userData.isAdmin ? "admin" : "user");
+    localStorage.setItem("imagemPerfil", data.userData.imagemPerfil || "");
+    localStorage.setItem("isAdmin", data.userData.isAdmin);
+
+    setUser(data.userData); // Alterado para userData
+    setIsAuthenticated(true);
+  };
+
   const updateUser = (newUserData: UserData) => {
     setUser(newUserData);
     localStorage.setItem('user', JSON.stringify(newUserData));
   };
 
-  // 2. A VARIÁVEL `contextValue` AGORA É "MEMORIZADA"
-  // O React só vai recriar este objeto se um dos itens no array de dependências mudar.
+  // Memorizando o valor do contexto para evitar renderizações desnecessárias
   const contextValue = useMemo(() => ({
     isAuthenticated,
     user,
@@ -113,7 +131,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     login,
     logout,
     updateUser,
-  }), [isAuthenticated, user, isLoading]); // Array de dependências
+    socialLogin
+  }), [isAuthenticated, user, isLoading]);
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -123,4 +142,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Hook customizado para usar o contexto
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
+  }
+  return context;
+}

@@ -12,7 +12,6 @@ import TermosContent from '../../Page/Public/TermosContent';
 import "../../styles/Login.css";
 import logo from "../../assets/logo.png";
 import logo1 from "../../assets/logo-blue1.png"
-
 import googleIcon from "../../assets/logo-google.png";
 import facebookIcon from "../../assets/logo-facebook.png";
 
@@ -36,6 +35,7 @@ const Cadastro: React.FC = () => {
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const navigate = useNavigate();
   const { login } = useAuth();
+  const authContext = useAuth();
 
   const [loading, setLoading] = useState(false);
 
@@ -76,16 +76,61 @@ const Cadastro: React.FC = () => {
     setErrors({ ...errors, [name]: "" });
   };
 
+  const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
+    try {
+      // Envia dados para o backend
+      const response = await fetch("http://localhost:5000/api/users/social-login", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider,
+          userData: {
+            nome: userData.displayName || "Usuário",
+            email: userData.email,
+            imagemPerfil: userData.photoURL || ""
+          }
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Erro no login social");
+      }
+
+      // Usa o contexto de autenticação
+      authContext.socialLogin({
+        provider, // 'google' ou 'facebook'
+        userData: { // Mantém o nome userData
+          _id: data.user._id,
+          nome: data.user.nome,
+          email: data.user.email,
+          isAdmin: data.user.isAdmin || false,
+          imagemPerfil: data.user.imagemPerfil
+        },
+        token: data.token
+      });
+
+      navigate("/Home");
+    } catch (error) {
+      console.error("Erro no login social:", error);
+      alert("Erro ao fazer login com " + provider);
+    }
+  };
+
   const handleGoogleLogin = async () => {
     if (!termosAceitos) {
       alert("Você deve aceitar os termos e políticas para continuar.");
       return;
     }
     try {
-      await signInWithGoogle();
-      // O restante do fluxo do Google continua aqui...
+      setLoading(true);
+      const userData = await signInWithGoogle();
+      await handleSocialLogin('google', userData);
     } catch (error) {
       console.error("Erro no login com Google:", error);
+    } finally {
+      setLoading(false);
     }
   };
 

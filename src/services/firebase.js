@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import axios from "axios";
-import { getAuth, signInWithPopup, OAuthProvider, GoogleAuthProvider,FacebookAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword,signInWithCredential } from "firebase/auth";
+import { getAuth, signInWithPopup, OAuthProvider, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithCredential } from "firebase/auth";
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -21,37 +21,47 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const appleProvider = new OAuthProvider("apple.com");
 
+const createFormData = (data) => {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  return formData;
+};
+
+
 //  login com Google
 const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
     const uid = user.uid;
-
     const nome = user.displayName;
     const email = user.email;
-    const provedor = 'google';
 
-    await axios.post('http://localhost:5000/api/users/register', {
+    const formData = createFormData({
       nome,
       email,
-      senha: '', // vazio, pois é login social
-      provedor
+      senha: '',
+      confirmSenha: '',
+      provedor: 'google'
     });
 
-    console.log("Login com Google bem-sucedido!", user);
+    // Envia e aguarda a resposta do backend
+    const response = await axios.post('http://localhost:5000/api/users/register', formData);
+    const backendData = response.data; // Recebe os dados do backend
 
-    
-    const token = await user.getIdToken();
-    localStorage.setItem("firebaseToken", token);
-    localStorage.setItem("id",uid);
-    localStorage.setItem("email",email);
-    localStorage.setItem("userName", nome);
-
-    
+    // Retorna os dados necessários para o frontend
+    return {
+      uid,
+      email,
+      nome,
+      token: backendData.token, // Token gerado pelo backend
+      user: backendData.user // Dados completos do usuário
+    };
   } catch (error) {
     console.error("Erro ao realizar login com Google", error);
-    alert(`Erro ao realizar login com Google: ${error.message}`);
+    throw error;
   }
 };
 
@@ -62,7 +72,7 @@ const facebookProvider = new FacebookAuthProvider();
 const signInWithFacebook = () => {
   return new Promise((resolve, reject) => {
     if (!window.FB) {
-      
+
       const script = document.createElement("script");
       script.src = "https://connect.facebook.net/pt_BR/sdk.js";
       script.async = true;
@@ -115,10 +125,10 @@ function realizarLoginComFacebook(resolve, reject) {
           const token = await user.getIdToken();
           localStorage.setItem("firebaseToken", token);
           localStorage.setItem("userName", nome);
-          localStorage.setItem("email",email);
-          localStorage.setItem("id",uid)
+          localStorage.setItem("email", email);
+          localStorage.setItem("id", uid)
 
-          resolve(user); 
+          resolve(user);
         } catch (error) {
           console.error("Erro ao autenticar no Firebase:", error);
           reject(error);
@@ -143,4 +153,4 @@ const signInWithApple = async () => {
   }
 };
 
-export { auth, createUserWithEmailAndPassword,signInWithFacebook, signInWithEmailAndPassword, signInWithGoogle, signInWithApple };
+export { auth, createUserWithEmailAndPassword, signInWithFacebook, signInWithEmailAndPassword, signInWithGoogle, signInWithApple };
