@@ -9,6 +9,7 @@ import { FaQuestionCircle } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/layout/Header/AppHeader'
+import { GoAlertFill } from "react-icons/go";
 
 function CriarEventos() {
   const navigate = useNavigate();
@@ -427,6 +428,10 @@ function CriarEventos() {
       )}
 
       <div className="criar-form">
+        <div className="alerta-amarelo">
+          <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br/>
+           preencher suas informações pessoais. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
+        </div>
 
         {etapaAtual === 1 && (
           <div className="informacoes-basicas-container">

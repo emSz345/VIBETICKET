@@ -218,7 +218,7 @@ const Cadastro: React.FC = () => {
             localStorage.setItem("userName", userData.nome);
             localStorage.setItem("userEmail", userData.email);
             localStorage.setItem("token", userData.token);
-            localStorage.setItem("userRole", "admin");
+            localStorage.setItem("isAdmin", userData.isAdmin);
             localStorage.setItem("imagemPerfil", userData.imagemPerfil || "");
             navigate("/Home");
           } catch (error) {
