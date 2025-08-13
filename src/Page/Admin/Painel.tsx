@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import EventoCard from "../../components/sections/Adm/EventoCard/EventoCard";
 import { Evento } from "../../types/evento";
-import { FaSignOutAlt } from 'react-icons/fa';
+import { FaSignOutAlt, FaImages } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
@@ -60,9 +60,9 @@ const Painel: React.FC = () => {
   const voltar = (): void => {
     navigate("/")
     window.location.reload();
-   }
-  
-    const navigate = useNavigate();
+  }
+
+  const navigate = useNavigate();
 
   return (
     <div className="painel-wrapper">
@@ -70,19 +70,23 @@ const Painel: React.FC = () => {
         <div className="painel-sidebar-top">
           <div className="painel-container-logo">
             <Link to="/Home" aria-label="Página inicial">
-              <img src={logo} alt="Logo" className="painel-logo"/>
+              <img src={logo} alt="Logo" className="painel-logo" />
             </Link>
           </div>
         </div>
         <div className="">
-          <button className="btn-logout" onClick={() => {
-                    localStorage.clear();
-                    setUsuarioLogado(false);
-                    navigate('/');
-                    window.location.reload();
-                  }}>
-                    <FaSignOutAlt /><p>Sair</p>
-                  </button>
+          <Link to="/CarrosselAdm" className="btn-gerenciar-carrossel">
+            <FaImages />
+            <p>Gerenciar Carrossel</p>
+          </Link>
+          <button className="btn-gerenciar-carrossel" onClick={() => {
+            localStorage.clear();
+            setUsuarioLogado(false);
+            navigate('/');
+            window.location.reload();
+          }}>
+            <FaSignOutAlt /><p>Sair</p>
+          </button>
         </div>
       </aside>
 

@@ -23,7 +23,7 @@ import Perfil from './Page/User/Perfil';
 import Carrinho from './Page/User/Carrinho';
 import MeusIngressos from './Page/User/Meus-Ingressos';
 import Painel from './Page/Admin/Painel';
-import Aprovados from "./Page/Admin/Aprovados";
+import CarrosselAdm from "./Page/Admin/CarrosselAdm";
 import Rejeitados from "./Page/Admin/Rejeitados";
 import ResetPassword from './Page/Auth/ResetPassword';
 
@@ -85,7 +85,7 @@ function AppRoutes() {
 
       <Route element={<AdminRoute />}>
         <Route path="/painel" element={<Painel />} />
-        <Route path="/aprovados" element={<Aprovados />} />
+        <Route path="/CarrosselAdm" element={<CarrosselAdm />} />
         <Route path="/rejeitados" element={<Rejeitados />} />
       </Route>
 

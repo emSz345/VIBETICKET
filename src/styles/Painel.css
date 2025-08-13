@@ -107,72 +107,28 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
+/* -----------------------------gerenciar carrossel e logout--------------------------------- */
 
-/* -------------------btn-logout-------------------- */
-.btn-logout {
-  padding: 0;
-  margin: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.btn-logout {
-  --primary-color: #111;
-  --hovered-color: #c84747;
-  position: relative;
+.btn-gerenciar-carrossel {
   display: flex;
-  font-weight: 600;
-  font-size: 20px;
-  gap: 0.5rem;
   align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 20px;
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  text-decoration: none; /* Para usar com <Link> */
 }
 
-.btn-logout p {
+.btn-gerenciar-carrossel:hover {
+  background-color: #002c66; /* Cor de hover para manter o estilo */
+}
+
+.btn-gerenciar-carrossel p {
   margin: 0;
-  position: relative;
-  font-size: 20px;
-  color: var(--primary-color);
-}
-
-.btn-logout::after {
-  position: absolute;
-  content: "";
-  width: 0;
-  left: 0;
-  bottom: -7px;
-  background: var(--hovered-color);
-  height: 2px;
-  transition: 0.3s ease-out;
-}
-
-.btn-logout p::before {
-  position: absolute;
-  content: "Sair";
-  width: 0%;
-  inset: 0;
-  color: var(--hovered-color);
-  overflow: hidden;
-  transition: 0.3s ease-out;
-}
-
-.btn-logout:hover::after {
-  width: 100%;
-}
-
-.btn-logout:hover p::before {
-  width: 100%;
-}
-
-.btn-logout:hover svg {
-  transform: translateX(4px);
-  color: var(--hovered-color);
-}
-
-.btn-logout svg {
-  color: var(--primary-color);
-  transition: 0.2s;
-  position: relative;
-  width: 15px;
-  transition-delay: 0.2s;
 }

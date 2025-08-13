@@ -67,22 +67,6 @@ const Footer: React.FC = () => {
               <li className="footer-section-item"><Link to="/reembolsos" className="footer-link">Política de Reembolso</Link></li>
             </ul>
           </div>
-
-          {/* Seção 5 - Pagamentos e Newsletter */}
-          <div className="footer-section">
-            <h4 className="footer-section-title">Fique por dentro</h4>
-            <div className="footer-newsletter">
-              <p>Receba alertas sobre novos eventos</p>
-              <input
-                type="email"
-                placeholder="Seu melhor email"
-                className="footer-newsletter-input"
-              />
-              <button className="footer-newsletter-button">
-                Cadastrar
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Rodapé inferior */}
