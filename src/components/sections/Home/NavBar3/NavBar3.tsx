@@ -38,7 +38,8 @@ export default function NavBar3() {
       setUsuarioLogado(true);
       setNomeUsuario(nome);
       setEmailUsuario(email);
-      setImagemPerfil(imagem || '');
+      // --- CORREÇÃO AQUI: A URL da imagem é concatenada corretamente
+      setImagemPerfil(`http://localhost:5000${imagem}` || '');
       setIsAdmin(adminStatus === 'true');
     } else {
       setUsuarioLogado(false);
@@ -46,10 +47,10 @@ export default function NavBar3() {
     }
   }, []);
 
- const voltar = (): void => {
-  navigate("/")
-  window.location.reload();
- }
+  const voltar = (): void => {
+    navigate("/")
+    window.location.reload();
+  }
 
   const navigate = useNavigate();
 
@@ -63,7 +64,7 @@ export default function NavBar3() {
     <header className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
       {/* Logo */}
       <Link to="/Home" aria-label="Página inicial">
-        <img src={scrolled ? logoLight : logoLight} alt="Logo" className="app-header__logo"/>
+        <img src={scrolled ? logoLight : logoLight} alt="Logo" className="app-header__logo" />
       </Link>
 
       {/* Busca */}
@@ -91,7 +92,12 @@ export default function NavBar3() {
               <div className="user-info" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 {imagemPerfil ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: "10px", fontWeight: 1, border: "2px solid white", borderRadius: "20px", padding: "5px", cursor: "pointer" }}>
-                    <img src={`http://localhost:5000/uploads/${imagemPerfil}`} className="avatar" alt="Avatar" style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "50%", border: "2px solid var(--primary)" }} />
+                    <img
+                      src={imagemPerfil}
+                      className="avatar"
+                      alt="Avatar"
+                      style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "50%", border: "2px solid var(--primary)" }}
+                    />
                     <TfiMenu style={{ color: "#fff", fontSize: "24px" }} />
                   </div>
                 ) : (
@@ -104,24 +110,28 @@ export default function NavBar3() {
               {dropdownOpen && (
                 <div className="dropdown-menu">
                   <div className="dropdown-header">
-                    <img src={`http://localhost:5000/uploads/${imagemPerfil}`} className="avatar" alt="Avatar" />
+                    <img
+                      src={imagemPerfil}
+                      className="avatar"
+                      alt="Avatar"
+                    />
                     <div className="user-header">
                       <strong>{nomeUsuario}</strong>
                       <small>{emailUsuario}</small>
                     </div>
                   </div>
                   <hr />
-                  <button onClick={() => voltar()}>          <FaHome />         <span>Home</span></button>
+                  <button onClick={() => voltar()}> <FaHome /> <span>Home</span></button>
                   <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
-                  <button onClick={() => navigate('/perfil')}>    <FaUserCircle />   <span>Minha conta</span></button>
-                  {isAdmin && ( 
+                  <button onClick={() => navigate('/perfil')}> <FaUserCircle />  <span>Minha conta</span></button>
+                  {isAdmin && (
                     <button onClick={() => navigate('/Painel')}>
                       <FaUserShield />
                       <span>Painel de Admin</span>
                     </button>
                   )}
-                  <button onClick={() => navigate('/favoritos')}> <FaClipboardList />        <span>Gerenciar eventos</span></button>
-                  <button onClick={() => navigate('/duvidas')}>   <FaHeadphones />   <span>Central de Duvidas</span></button>
+                  <button onClick={() => navigate('/favoritos')}> <FaClipboardList /> <span>Gerenciar eventos</span></button>
+                  <button onClick={() => navigate('/duvidas')}> <FaHeadphones /> <span>Central de Duvidas</span></button>
                   <button className="logout-btn" onClick={() => {
                     localStorage.clear();
                     setUsuarioLogado(false);

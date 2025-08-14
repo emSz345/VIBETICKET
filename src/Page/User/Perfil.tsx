@@ -36,19 +36,20 @@ const Perfil = () => {
   useEffect(() => {
     if (user) {
       setNome(user.nome);
-      setPreviewUrl(user.imagemPerfil ? `http://localhost:5000/uploads/${user.imagemPerfil}` : undefined);
+      // --- CORREÇÃO AQUI: Usa o user.imagemPerfil diretamente, pois a API já retorna o caminho completo
+      setPreviewUrl(user.imagemPerfil ? `http://localhost:5000${user.imagemPerfil}` : undefined);
     }
   }, [user]);
 
   const handleSalvarAlteracoes = async () => {
     if (!user) return;
     const formData = new FormData();
-    
+
     if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(nome)) {
       alert("Nome deve conter pelo menos 10 letras e nenhum número.");
       return;
     }
-    
+
     formData.append("nome", nome);
     if (imagem) formData.append("imagemPerfil", imagem);
 
@@ -57,9 +58,9 @@ const Perfil = () => {
         method: "PUT",
         body: formData,
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         alert("Perfil atualizado com sucesso!");
         updateUser(data.user);
@@ -101,20 +102,20 @@ const Perfil = () => {
           <div className="perfil-card">
             <div className="perfil-avatar-section">
               <div className="perfil-avatar-wrapper">
-                <img 
-                  src={previewUrl || "https://via.placeholder.com/150"} 
-                  alt="Foto de perfil" 
-                  className="perfil-avatar" 
+                <img
+                  src={previewUrl || "https://via.placeholder.com/150"}
+                  alt="Foto de perfil"
+                  className="perfil-avatar"
                 />
                 {editando && (
                   <label htmlFor="upload-avatar" className="perfil-avatar-edit">
                     <FiCamera />
-                    <input 
-                      id="upload-avatar" 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={handleImagemChange} 
-                      style={{ display: "none" }} 
+                    <input
+                      id="upload-avatar"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImagemChange}
+                      style={{ display: "none" }}
                     />
                   </label>
                 )}
@@ -128,12 +129,12 @@ const Perfil = () => {
                 <FiUser className="perfil-input-icon" />
                 <span>Nome completo</span>
               </label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className="perfil-input"
-                disabled={!editando} 
-                value={nome} 
-                onChange={(e) => setNome(e.target.value)} 
+                disabled={!editando}
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
               />
             </div>
 
@@ -142,19 +143,19 @@ const Perfil = () => {
                 <FiMail className="perfil-input-icon" />
                 <span>Email</span>
               </label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 className="perfil-input"
-                disabled 
-                value={user.email} 
+                disabled
+                value={user.email}
               />
             </div>
 
-            <button 
-              className={`perfil-btn-primary ${editando ? 'perfil-btn-save' : ''}`} 
+            <button
+              className={`perfil-btn-primary ${editando ? 'perfil-btn-save' : ''}`}
               onClick={() => { if (editando) handleSalvarAlteracoes(); else setEditando(true); }}
             >
-              {editando ? <FiCheck /> : <FiEdit2 />} 
+              {editando ? <FiCheck /> : <FiEdit2 />}
               {editando ? "Salvar alterações" : "Editar perfil"}
             </button>
           </div>
@@ -164,14 +165,14 @@ const Perfil = () => {
         <div className="perfil-right">
           <div className="perfil-card">
             <div className="perfil-tabs">
-              <button 
+              <button
                 className={`perfil-tab ${abaAtiva === "comprador" ? "active" : ""}`}
                 onClick={() => setAbaAtiva("comprador")}
               >
                 <FiUser className="perfil-tab-icon" />
                 Dados do Comprador
               </button>
-              <button 
+              <button
                 className={`perfil-tab ${abaAtiva === "organizador" ? "active" : ""}`}
                 onClick={() => setAbaAtiva("organizador")}
               >
@@ -188,10 +189,10 @@ const Perfil = () => {
                       <FiUser className="perfil-input-icon" />
                       <span>Nome</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={comprador.nome} 
-                      onChange={(e) => setComprador({ ...comprador, nome: e.target.value })} 
+                      value={comprador.nome}
+                      onChange={(e) => setComprador({ ...comprador, nome: e.target.value })}
                     />
                   </div>
 
@@ -200,10 +201,10 @@ const Perfil = () => {
                       <FiUser className="perfil-input-icon" />
                       <span>CPF</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={comprador.cpf} 
-                      onChange={(e) => setComprador({ ...comprador, cpf: e.target.value })} 
+                      value={comprador.cpf}
+                      onChange={(e) => setComprador({ ...comprador, cpf: e.target.value })}
                     />
                   </div>
 
@@ -212,11 +213,11 @@ const Perfil = () => {
                       <FiCalendar className="perfil-input-icon" />
                       <span>Data de nascimento</span>
                     </label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       className="perfil-input"
-                      value={comprador.dataNascimento} 
-                      onChange={(e) => setComprador({ ...comprador, dataNascimento: e.target.value })} 
+                      value={comprador.dataNascimento}
+                      onChange={(e) => setComprador({ ...comprador, dataNascimento: e.target.value })}
                     />
                   </div>
 
@@ -225,10 +226,10 @@ const Perfil = () => {
                       <FiPhone className="perfil-input-icon" />
                       <span>Telefone</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={comprador.telefone} 
-                      onChange={(e) => setComprador({ ...comprador, telefone: e.target.value })} 
+                      value={comprador.telefone}
+                      onChange={(e) => setComprador({ ...comprador, telefone: e.target.value })}
                     />
                   </div>
 
@@ -237,10 +238,10 @@ const Perfil = () => {
                       <FiMapPin className="perfil-input-icon" />
                       <span>Endereço</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={comprador.endereco} 
-                      onChange={(e) => setComprador({ ...comprador, endereco: e.target.value })} 
+                      value={comprador.endereco}
+                      onChange={(e) => setComprador({ ...comprador, endereco: e.target.value })}
                     />
                   </div>
                 </div>
@@ -253,10 +254,10 @@ const Perfil = () => {
                       <FiUser className="perfil-input-icon" />
                       <span>CNPJ/CPF</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={organizador.cnpjCpf} 
-                      onChange={(e) => setOrganizador({ ...organizador, cnpjCpf: e.target.value })} 
+                      value={organizador.cnpjCpf}
+                      onChange={(e) => setOrganizador({ ...organizador, cnpjCpf: e.target.value })}
                     />
                   </div>
 
@@ -265,10 +266,10 @@ const Perfil = () => {
                       <FiUser className="perfil-input-icon" />
                       <span>Razão Social</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={organizador.razaoSocial} 
-                      onChange={(e) => setOrganizador({ ...organizador, razaoSocial: e.target.value })} 
+                      value={organizador.razaoSocial}
+                      onChange={(e) => setOrganizador({ ...organizador, razaoSocial: e.target.value })}
                     />
                   </div>
 
@@ -277,10 +278,10 @@ const Perfil = () => {
                       <FiUser className="perfil-input-icon" />
                       <span>Nome Fantasia</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={organizador.nomeFantasia} 
-                      onChange={(e) => setOrganizador({ ...organizador, nomeFantasia: e.target.value })} 
+                      value={organizador.nomeFantasia}
+                      onChange={(e) => setOrganizador({ ...organizador, nomeFantasia: e.target.value })}
                     />
                   </div>
 
@@ -289,10 +290,10 @@ const Perfil = () => {
                       <FiUser className="perfil-input-icon" />
                       <span>Inscrição Municipal</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={organizador.inscricaoMunicipal} 
-                      onChange={(e) => setOrganizador({ ...organizador, inscricaoMunicipal: e.target.value })} 
+                      value={organizador.inscricaoMunicipal}
+                      onChange={(e) => setOrganizador({ ...organizador, inscricaoMunicipal: e.target.value })}
                     />
                   </div>
 
@@ -301,10 +302,10 @@ const Perfil = () => {
                       <FiUser className="perfil-input-icon" />
                       <span>CPF do Sócio/Representante</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={organizador.cpfSocio} 
-                      onChange={(e) => setOrganizador({ ...organizador, cpfSocio: e.target.value })} 
+                      value={organizador.cpfSocio}
+                      onChange={(e) => setOrganizador({ ...organizador, cpfSocio: e.target.value })}
                     />
                   </div>
 
@@ -313,10 +314,10 @@ const Perfil = () => {
                       <FiUser className="perfil-input-icon" />
                       <span>Nome Completo</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={organizador.nomeCompleto} 
-                      onChange={(e) => setOrganizador({ ...organizador, nomeCompleto: e.target.value })} 
+                      value={organizador.nomeCompleto}
+                      onChange={(e) => setOrganizador({ ...organizador, nomeCompleto: e.target.value })}
                     />
                   </div>
 
@@ -325,11 +326,11 @@ const Perfil = () => {
                       <FiCalendar className="perfil-input-icon" />
                       <span>Data de nascimento</span>
                     </label>
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       className="perfil-input"
-                      value={organizador.dataNascimento} 
-                      onChange={(e) => setOrganizador({ ...organizador, dataNascimento: e.target.value })} 
+                      value={organizador.dataNascimento}
+                      onChange={(e) => setOrganizador({ ...organizador, dataNascimento: e.target.value })}
                     />
                   </div>
 
@@ -338,10 +339,10 @@ const Perfil = () => {
                       <FiPhone className="perfil-input-icon" />
                       <span>Telefone</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={organizador.telefone} 
-                      onChange={(e) => setOrganizador({ ...organizador, telefone: e.target.value })} 
+                      value={organizador.telefone}
+                      onChange={(e) => setOrganizador({ ...organizador, telefone: e.target.value })}
                     />
                   </div>
 
@@ -350,10 +351,10 @@ const Perfil = () => {
                       <FiMapPin className="perfil-input-icon" />
                       <span>Endereço</span>
                     </label>
-                    <input 
+                    <input
                       className="perfil-input"
-                      value={organizador.endereco} 
-                      onChange={(e) => setOrganizador({ ...organizador, endereco: e.target.value })} 
+                      value={organizador.endereco}
+                      onChange={(e) => setOrganizador({ ...organizador, endereco: e.target.value })}
                     />
                   </div>
                 </div>

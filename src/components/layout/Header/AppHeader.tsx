@@ -33,7 +33,8 @@ export default function AppHeader() {
       setUsuarioLogado(true);
       setNomeUsuario(nome);
       setEmailUsuario(email);
-      setImagemPerfil(imagem || '');
+      // --- CORREÇÃO AQUI: Monta a URL da imagem corretamente
+      setImagemPerfil(imagem ? `http://localhost:5000${imagem}` : '');
     } else {
       setUsuarioLogado(false);
     }
@@ -52,7 +53,7 @@ export default function AppHeader() {
       {/* Logo */}
 
       <Link to="/Home" aria-label="Página inicial">
-        <img src={scrolled ? logoLight : logoLight} alt="Logo" className="app-header__logo"/>
+        <img src={scrolled ? logoLight : logoLight} alt="Logo" className="app-header__logo" />
       </Link>
 
       {/* Ações do Usuário */}
@@ -65,7 +66,8 @@ export default function AppHeader() {
               <div className="user-menu__trigger" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 {imagemPerfil ? (
                   <div className="user-menu__avatar-container">
-                    <img src={`http://localhost:5000/uploads/${imagemPerfil}`} className="user-menu__avatar-image" alt="Avatar" />
+                    {/* CORREÇÃO AQUI */}
+                    <img src={imagemPerfil} className="user-menu__avatar-image" alt="Avatar" />
                     <TfiMenu className="user-menu__icon" />
                   </div>
                 ) : (
@@ -78,7 +80,8 @@ export default function AppHeader() {
               {dropdownOpen && (
                 <div className="user-menu__content">
                   <div className="user-menu__header">
-                    <img src={`http://localhost:5000/uploads/${imagemPerfil}`} className="user-menu__avatar-image" alt="Avatar" />
+                    {/* CORREÇÃO AQUI */}
+                    <img src={imagemPerfil} className="user-menu__avatar-image" alt="Avatar" />
                     <div className="user-menu__user-info">
                       <strong>{nomeUsuario}</strong>
                       <small>{emailUsuario}</small>

@@ -106,6 +106,7 @@ const Cadastro: React.FC = () => {
           nome: data.user.nome,
           email: data.user.email,
           isAdmin: data.user.isAdmin || false,
+          isVerified: data.user.isVerified,
           imagemPerfil: data.user.imagemPerfil
         },
         token: data.token
@@ -247,7 +248,15 @@ const Cadastro: React.FC = () => {
 
   // NOVO: Efeito que verifica o status do e-mail em intervalos regulares
   useEffect(() => {
-    if (!aguardandoVerificacao) return;
+    if (!aguardandoVerificacao || !emailParaVerificar) return;
+
+
+    const isSocialLogin = localStorage.getItem("isVerified") === "true";
+    if (isSocialLogin) {
+      setAguardandoVerificacao(false);
+       navigate("/Home"); 
+      return;
+    }
 
     const intervalId = setInterval(async () => {
       try {

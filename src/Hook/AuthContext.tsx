@@ -8,6 +8,7 @@ interface UserData {
   nome: string;
   email: string;
   isAdmin: any;
+  isVerified: boolean
   imagemPerfil?: string;
 }
 
@@ -105,6 +106,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Função para login social
   const socialLogin = (data: SocialLoginData) => {
+
+    
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.userData)); // Alterado para userData
 
@@ -113,7 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("userRole", data.userData.isAdmin ? "admin" : "user");
     localStorage.setItem("imagemPerfil", data.userData.imagemPerfil || "");
     localStorage.setItem("isAdmin", data.userData.isAdmin);
-
+    localStorage.setItem("isVerified", "true");
     setUser(data.userData); // Alterado para userData
     setIsAuthenticated(true);
   };
