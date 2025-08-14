@@ -48,7 +48,7 @@ const CarrosselAdm: React.FC = () => {
                   fetchCarrosselImages(); 
                   
               } else {
-                  alert('Erro ao adicionar imagem.');
+                 console.log("Erro ao adicionar imagem")
               }
           } catch (error) {
               console.error('Erro ao enviar imagem:', error);
@@ -67,9 +67,9 @@ const CarrosselAdm: React.FC = () => {
           if (response.ok) {
               // Após a remoção, busca a lista atualizada de imagens
               fetchCarrosselImages();
-              alert('Imagem removida com sucesso!');
+              
           } else {
-              alert('Erro ao remover imagem.');
+             
           }
       } catch (error) {
           console.error('Erro ao remover imagem:', error);
