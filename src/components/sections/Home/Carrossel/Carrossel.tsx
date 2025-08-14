@@ -4,6 +4,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/autoplay"; // Importe os estilos do autoplay
+import { MdViewCarousel } from "react-icons/md";
 
 // Importe o módulo Autoplay junto com os outros
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -52,10 +53,10 @@ const CarrosselEventos = () => {
                     ))}
                 </Swiper>
             ) : (
-                <div className="carrossel-placeholder">
-                    {/* Exibe uma mensagem ou imagem padrão enquanto não há imagens */}
-                    <p>Nenhuma imagem no carrossel.</p>
-                </div>
+                <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center"}}>
+                    <MdViewCarousel size={100} color="#696969" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}/>
+                    <p style={{ color: "#696969" }}>Nenhuma imagem no carrossel.</p>
+                 </div>
             )}
         </div>
     );

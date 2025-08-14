@@ -57,6 +57,8 @@ const CarrosselAdm: React.FC = () => {
       }
   };
 
+  
+
   // Função para remover uma imagem
   const handleRemoveImage = async (imageName: string) => {
       try {

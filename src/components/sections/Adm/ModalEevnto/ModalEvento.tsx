@@ -11,31 +11,63 @@ interface Props {
 
 const ModalEvento: React.FC<Props> = ({ evento, onClose, onAceitar, onRejeitar }) => {
     return (
-        <div className="modal-overlay">
-            <div className="modal-conteudo">
-                <button className="modal-fechar" onClick={onClose}>X</button>
-                <img src={evento.imagem} alt={evento.nome} className="modal-imagem" />
-                <h2>{evento.nome}</h2>
+        <div className="modal-evento-overlay">
+            <div className="modal-evento-conteudo">
+                <button className="modal-evento-fechar" onClick={onClose}>×</button>
 
-                <p><strong>Descrição:</strong> {evento.descricao}</p>
-                <p><strong>Categoria:</strong> {evento.categoria}</p>
-                <p><strong>Data de início:</strong> {evento.dataInicio}</p>
-                <p><strong>Hora do início:</strong> {evento.horaInicio}</p>
-                <p><strong>Hora do termino:</strong> {evento.horaTermino}</p>
-                <p><strong>Endereço completo:</strong> {evento.rua}</p>
-                <p><strong>Cidade:</strong> {evento.cidade}</p>
-                <p><strong>Estado:</strong> {evento.estado}</p>
-                <p><strong>Maps:</strong> <a href={evento.linkMaps} target="_blank" rel="noreferrer">{evento.linkMaps}</a></p>
-
-                {/* Dados do criador */}
-                <div className="modal-criador">
-                    <h3>Informações do Criador</h3>
-                    <p><strong>ID / Nome / Email:</strong> {evento.criadoPor}</p>
+                {/* Cabeçalho */}
+                <div className="modal-evento-header">
+                    <img src={evento.imagem} alt={evento.nome} className="modal-evento-imagem" />
+                    <h2 className="modal-evento-titulo">{evento.nome}</h2>
+                    <p className="modal-evento-data">{evento.dataInicio} • {evento.horaInicio}</p>
                 </div>
 
-                <div className="modal-botoes">
-                    <button className="btn-aceitar" onClick={() => onAceitar(evento._id)}>Aceitar</button>
-                    <button className="btn-rejeitar" onClick={() => onRejeitar(evento._id)}>Rejeitar</button>
+                {/* Lista de informações - UMA ABAIXO DA OUTRA */}
+                <div className="modal-evento-lista">
+                    <div className="modal-evento-item">
+                        <strong className="modal-evento-label">Descrição:</strong>
+                        <p className="modal-evento-texto">{evento.descricao}</p>
+                    </div>
+
+                    <div className="modal-evento-item">
+                        <strong className="modal-evento-label">Categoria:</strong>
+                        <span>{evento.categoria}</span>
+                    </div>
+
+                    <div className="modal-evento-item">
+                        <strong className="modal-evento-label">Data e Horário:</strong>
+                        <div>
+                            <p>Início: {evento.dataInicio} às {evento.horaInicio}</p>
+                            <p>Término: {evento.horaTermino}</p>
+                        </div>
+                    </div>
+
+                    <div className="modal-evento-item">
+                        <strong className="modal-evento-label">Localização:</strong>
+                        <div>
+                            <p>Endereço: {evento.rua}</p>
+                            <p>Cidade: {evento.cidade}</p>
+                            <p>Estado: {evento.estado}</p>
+                            <p>
+                                Mapa: <a href={evento.linkMaps} target="_blank" rel="noreferrer" className="modal-evento-link">Link do Google Maps</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="modal-evento-item">
+                        <strong className="modal-evento-label">Criador do Evento:</strong>
+                        <span>{evento.criadoPor}</span>
+                    </div>
+                </div>
+
+                {/* Botões */}
+                <div className="modal-evento-botoes">
+                    <button className="modal-evento-btn modal-evento-btn-rejeitar" onClick={() => onRejeitar(evento._id)}>
+                        Rejeitar
+                    </button>
+                    <button className="modal-evento-btn modal-evento-btn-aceitar" onClick={() => onAceitar(evento._id)}>
+                        Aceitar
+                    </button>
                 </div>
             </div>
         </div>
