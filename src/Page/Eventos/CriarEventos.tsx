@@ -429,8 +429,8 @@ function CriarEventos() {
 
       <div className="criar-form">
         <div className="alerta-amarelo">
-          <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br/>
-           preencher suas informações pessoais. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
+          <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
+          preencher suas informações pessoais. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
         </div>
 
         {etapaAtual === 1 && (
@@ -459,31 +459,33 @@ function CriarEventos() {
                 Imagem do evento <span className={getError('imagem') ? 'erro-asterisco' : ''}>*</span>
               </label>
               <div className="upload-imagem">
+                <input
+                  type="file"
+                  id="imagem-evento"
+                  className="input-file"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                />
+
                 {imagePreviewUrl ? (
                   <div className="image-preview-container">
                     <img src={imagePreviewUrl} alt="Preview do evento" className="image-preview" />
                     <p className="image-name">{image?.name}</p>
-                    <button className="remove-image-button" onClick={() => {
-                      setImage(null);
-                      setImagePreviewUrl(null);
-                      const inputElement = document.getElementById('imagem-evento') as HTMLInputElement;
-                      if (inputElement) inputElement.value = '';
-                    }}>
+                    <button
+                      className="remove-image-button"
+                      onClick={() => {
+                        setImage(null);
+                        setImagePreviewUrl(null);
+                      }}
+                    >
                       Remover Imagem
                     </button>
                   </div>
                 ) : (
-                  <>
+                  <label htmlFor="imagem-evento" className="upload-placeholder">
                     <MdAddPhotoAlternate size={55} />
-                    <p>Arraste ou clique para adicionar a imagem</p>
-                    <input
-                      type="file"
-                      id="imagem-evento"
-                      className="input-file"
-                      onChange={handleImageChange}
-                      accept="image/*"
-                    />
-                  </>
+                    <p>Clique para adicionar a imagem</p>
+                  </label>
                 )}
               </div>
               {getError('imagem') && <span className="mensagem-erro">{getError('imagem')}</span>}
