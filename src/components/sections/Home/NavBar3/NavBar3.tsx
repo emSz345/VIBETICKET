@@ -3,7 +3,7 @@ import { FaPlusCircle, FaShoppingCart, FaSearch } from 'react-icons/fa';
 import './NavBar3.css';
 import logoLight from '../../../../assets/logo.png';
 import { Link } from 'react-router-dom';
-
+import { useAuth } from '../../../../Hook/AuthContext';
 import { TfiMenu } from "react-icons/tfi";
 
 import { useNavigate } from 'react-router-dom';
@@ -20,32 +20,11 @@ import {
 
 export default function NavBar3() {
   const [scrolled, setScrolled] = useState(false);
-  const [usuarioLogado, setUsuarioLogado] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [nomeUsuario, setNomeUsuario] = useState('');
-  const [emailUsuario, setEmailUsuario] = useState('');
-  const [imagemPerfil, setImagemPerfil] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const nome = localStorage.getItem('userName');
-    const email = localStorage.getItem('userEmail');
-    const imagem = localStorage.getItem('imagemPerfil');
-    const adminStatus = localStorage.getItem('isAdmin');
 
-    if (token && nome && email) {
-      setUsuarioLogado(true);
-      setNomeUsuario(nome);
-      setEmailUsuario(email);
-      // --- CORREÇÃO AQUI: A URL da imagem é concatenada corretamente
-      setImagemPerfil(`http://localhost:5000${imagem}` || '');
-      setIsAdmin(adminStatus === 'true');
-    } else {
-      setUsuarioLogado(false);
-      setIsAdmin(false);
-    }
-  }, []);
+
 
   const voltar = (): void => {
     navigate("/")
@@ -85,15 +64,15 @@ export default function NavBar3() {
         </div>
 
         <div className="nav__auth">
-          {!usuarioLogado ? (
+          {!isAuthenticated ? (
             <button onClick={() => navigate('/Login')} className="nav_login_cadastro">Login / Cadastro</button>
           ) : (
             <div className="user-dropdown">
               <div className="user-info" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                {imagemPerfil ? (
+                {user?.imagemPerfil ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: "10px", fontWeight: 1, border: "2px solid white", borderRadius: "20px", padding: "5px", cursor: "pointer" }}>
                     <img
-                      src={imagemPerfil}
+                      src={`http://localhost:5000${user.imagemPerfil}`}
                       className="avatar"
                       alt="Avatar"
                       style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "50%", border: "2px solid var(--primary)" }}
@@ -102,7 +81,7 @@ export default function NavBar3() {
                   </div>
                 ) : (
                   <div className="avatar-placeholder">
-                    {nomeUsuario?.slice(0, 1).toUpperCase()}
+                    {user?.nome?.slice(0, 1).toUpperCase()}
                   </div>
                 )}
               </div>
@@ -110,21 +89,27 @@ export default function NavBar3() {
               {dropdownOpen && (
                 <div className="dropdown-menu">
                   <div className="dropdown-header">
-                    <img
-                      src={imagemPerfil}
-                      className="avatar"
-                      alt="Avatar"
-                    />
+                    {user?.imagemPerfil ? (
+                      <img
+                        src={`http://localhost:5000${user.imagemPerfil}`}
+                        className="avatar"
+                        alt="Avatar"
+                      />
+                    ) : (
+                      <div className="avatar-placeholder">
+                        {user?.nome?.slice(0, 1).toUpperCase()}
+                      </div>
+                    )}
                     <div className="user-header">
-                      <strong>{nomeUsuario}</strong>
-                      <small>{emailUsuario}</small>
+                      <strong>{user?.nome}</strong>
+                      <small>{user?.email}</small>
                     </div>
                   </div>
                   <hr />
                   <button onClick={() => voltar()}> <FaHome /> <span>Home</span></button>
                   <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
                   <button onClick={() => navigate('/perfil')}> <FaUserCircle />  <span>Minha conta</span></button>
-                  {isAdmin && (
+                  {user?.isAdmin === true && (
                     <button onClick={() => navigate('/Painel')}>
                       <FaUserShield />
                       <span>Painel de Admin</span>
@@ -134,8 +119,7 @@ export default function NavBar3() {
                   <button onClick={() => navigate('/duvidas')}> <FaHeadphones /> <span>Central de Duvidas</span></button>
                   <button className="logout-btn" onClick={() => {
                     localStorage.clear();
-                    setUsuarioLogado(false);
-                    setIsAdmin(false);
+                    logout();
                     navigate('/');
                     window.location.reload();
                   }}>

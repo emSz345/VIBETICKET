@@ -7,7 +7,7 @@ interface UserData {
   _id: string;
   nome: string;
   email: string;
-  isAdmin: any;
+  isAdmin: boolean;
   isVerified: boolean
   imagemPerfil?: string;
 }
@@ -60,10 +60,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const token = localStorage.getItem('token');
       const storedUserString = localStorage.getItem('user');
-
+      const isAdmin = localStorage.getItem('isAdmin') === 'true';
       if (token && storedUserString) {
         const storedUser = JSON.parse(storedUserString);
-        setUser(storedUser);
+        setUser({
+          ...storedUser,
+          isAdmin // Garanta que isAdmin é carregado corretamente
+        });
         setIsAuthenticated(true);
       }
     } catch (error) {
@@ -85,7 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
-
+      localStorage.setItem("isAdmin", userData.isAdmin.toString());
       setUser(userData);
       setIsAuthenticated(true);
 
@@ -107,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Função para login social
   const socialLogin = (data: SocialLoginData) => {
 
-    
+
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.userData)); // Alterado para userData
 
@@ -115,7 +118,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("userEmail", data.userData.email);
     localStorage.setItem("userRole", data.userData.isAdmin ? "admin" : "user");
     localStorage.setItem("imagemPerfil", data.userData.imagemPerfil || "");
-    localStorage.setItem("isAdmin", data.userData.isAdmin);
+    localStorage.setItem("isAdmin", data.userData.isAdmin.toString());
     localStorage.setItem("isVerified", "true");
     setUser(data.userData); // Alterado para userData
     setIsAuthenticated(true);

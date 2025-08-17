@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; // Import do axios é necessário para esta abordagem
-
+import { useAuth } from "../../Hook/AuthContext";
 // Imports do Firebase (para login social e reset de senha)
 import { auth, signInWithEmailAndPassword, signInWithGoogle, signInWithFacebook } from '../../services/firebase';
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -25,6 +25,9 @@ const Login: React.FC = () => {
   const [senhaError, setSenhaError] = useState<string>("");
   const modoLocal = true;
 
+  const authContext = useAuth();
+  const [socialLoading, setSocialLoading] = useState(false);
+  
   // --- Estados da Lógica de Bloqueio (do seu código original) ---
   const [falhas, setFalhas] = useState<number>(() => parseInt(localStorage.getItem("loginFalhas") || "0"));
   const [tentativas, setTentativas] = useState<number>(() => parseInt(localStorage.getItem("loginTentativas") || "0"));
@@ -172,9 +175,79 @@ const Login: React.FC = () => {
     }
   };
 
+
+    const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
+    try {
+
+ if (!userData.email) {
+      throw new Error("E-mail não disponível na conta social");
+    }
+
+      // Envia dados para o backend
+      const response = await fetch("http://localhost:5000/api/users/social-login", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider,
+          userData: {
+            nome: userData.displayName || "Usuário",
+            email: userData.email,
+            imagemPerfil: userData.photoURL || "",
+            isAdmin: userData.isAdmin || false
+          }
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Erro no login social");
+      }
+
+      // Usa o contexto de autenticação
+      await new Promise(resolve => {
+      authContext.socialLogin({
+        provider,
+        userData: data.user,
+        token: data.token
+      });
+      resolve(null);
+    });
+
+      navigate("/Home");
+    } catch (error) {
+      console.error("Erro no login social:", error);
+      alert("Erro ao fazer login com " + provider);
+    } finally {
+      setSocialLoading(false);
+    }
+  };
+
+
   // Funções de login social e reset de senha (do seu código original)
-  const handleGoogleSignIn = async () => { /* ... sua lógica original ... */ };
-  const handleFacebookSignIn = async () => { /* ... sua lógica original ... */ };
+  const handleGoogleSignIn = async () =>   {
+    try {
+      setSocialLoading(true);
+      const userData = await signInWithGoogle();
+      await handleSocialLogin('google', userData);
+    } catch (error) {
+      console.error("Erro no login com Google:", error);
+    } finally {
+      setSocialLoading(false);
+    }
+  };
+   const handleFacebookSignIn = async () => {
+    try {
+      setSocialLoading(true);
+      const userData = await signInWithFacebook();
+      await handleSocialLogin('facebook', userData);
+    } catch (error) {
+      console.error("Erro no login com Facebook:", error);
+      alert("Erro ao fazer login com Facebook");
+    } finally {
+      setSocialLoading(false);
+    }
+  };
   const handleReset = async () => {
     if (!email) {
       setEmailError("Digite seu e-mail para redefinir a senha");

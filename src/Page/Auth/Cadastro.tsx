@@ -87,7 +87,8 @@ const Cadastro: React.FC = () => {
           userData: {
             nome: userData.displayName || "Usuário",
             email: userData.email,
-            imagemPerfil: userData.photoURL || ""
+            imagemPerfil: userData.photoURL || "",
+            isAdmin: userData.isAdmin || false
           }
         })
       });
@@ -99,17 +100,13 @@ const Cadastro: React.FC = () => {
       }
 
       // Usa o contexto de autenticação
-      authContext.socialLogin({
-        provider, // 'google' ou 'facebook'
-        userData: { // Mantém o nome userData
-          _id: data.user._id,
-          nome: data.user.nome,
-          email: data.user.email,
-          isAdmin: data.user.isAdmin || false,
-          isVerified: data.user.isVerified,
-          imagemPerfil: data.user.imagemPerfil
-        },
-        token: data.token
+      await new Promise(resolve => {
+        authContext.socialLogin({
+          provider,
+          userData: data.user,
+          token: data.token
+        });
+        resolve(null);
       });
 
       navigate("/Home");
@@ -141,10 +138,29 @@ const Cadastro: React.FC = () => {
       return;
     }
     try {
-      await signInWithFacebook();
-      // O restamento do fluxo do Facebook continua aqui...
+      setLoading(true);
+      const result = await signInWithFacebook();
+
+      // Usa o contexto de autenticação
+      authContext.socialLogin({
+        provider: 'facebook',
+        userData: {
+          _id: result.user._id,
+          nome: result.user.nome,
+          email: result.user.email,
+          isAdmin: result.user.isAdmin || false,
+          isVerified: result.user.isVerified,
+          imagemPerfil: result.user.imagemPerfil
+        },
+        token: result.token
+      });
+      navigate("/Home");
+      window.location.reload();
     } catch (error) {
       console.error("Erro no login com Facebook:", error);
+      alert("Erro ao fazer login com Facebook");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -254,7 +270,7 @@ const Cadastro: React.FC = () => {
     const isSocialLogin = localStorage.getItem("isVerified") === "true";
     if (isSocialLogin) {
       setAguardandoVerificacao(false);
-       navigate("/Home"); 
+      navigate("/Home");
       return;
     }
 
@@ -272,7 +288,8 @@ const Cadastro: React.FC = () => {
             localStorage.setItem("userName", userData.nome);
             localStorage.setItem("userEmail", userData.email);
             localStorage.setItem("token", userData.token);
-            localStorage.setItem("isAdmin", userData.isAdmin);
+            localStorage.setItem("isAdmin", userData.isAdmin ? "true" : "false");
+            authContext.updateUser({ ...userData, isAdmin: userData.isAdmin });
             localStorage.setItem("imagemPerfil", userData.imagemPerfil || "");
             navigate("/Home");
           } catch (error) {

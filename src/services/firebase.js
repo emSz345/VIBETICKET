@@ -35,35 +35,24 @@ const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    const uid = user.uid;
-    const nome = user.displayName;
-    const email = user.email;
+    
+    if (!user.email) {
+      throw new Error("E-mail não disponível na conta Google");
+    }
 
-    const formData = createFormData({
-      nome,
-      email,
-      senha: '',
-      confirmSenha: '',
-      provedor: 'google'
-    });
-
-    // Envia e aguarda a resposta do backend
-    const response = await axios.post('http://localhost:5000/api/users/register', formData);
-    const backendData = response.data; // Recebe os dados do backend
-
-    // Retorna os dados necessários para o frontend
     return {
-      uid,
-      email,
-      nome,
-      token: backendData.token, // Token gerado pelo backend
-      user: backendData.user // Dados completos do usuário
+      displayName: user.displayName || user.email.split('@')[0],
+      email: user.email,
+      photoURL: user.photoURL || "",
+      uid: user.uid,
+       isAdmin: false // Adicione este campo
     };
   } catch (error) {
-    console.error("Erro ao realizar login com Google", error);
+    console.error("Erro no login com Google:", error);
     throw error;
   }
 };
+
 
 const facebookProvider = new FacebookAuthProvider();
 
@@ -105,30 +94,29 @@ function realizarLoginComFacebook(resolve, reject) {
         try {
           const result = await signInWithCredential(auth, credential);
           const user = result.user;
-          const uid = user.uid;
+         
 
-          const nome = user.displayName || "Usuário";
-          const email = user.email;
-          const provedor = "facebook";
+         
 
           // Envia os dados pro backend
-          await axios.post("http://localhost:5000/api/users/register", {
-            nome,
-            email,
-            senha: "PROTEGIDO", // senha em branco (login social)
-            provedor
+          const response = await axios.post(
+            "http://localhost:5000/api/users/social-login",
+            {
+              provider: 'facebook',
+              userData: {
+                nome: user.displayName || "Usuário",
+                email: user.email,
+                imagemPerfil: user.photoURL || "",
+                 isAdmin: false // Adicione este campo
+              }
+            }
+          );
+
+          const backendData = response.data;
+          resolve({
+            token: backendData.token,
+            user: backendData.user
           });
-
-          console.log("Login com Facebook bem-sucedido!");
-
-          //salva o token no navegador 
-          const token = await user.getIdToken();
-          localStorage.setItem("firebaseToken", token);
-          localStorage.setItem("userName", nome);
-          localStorage.setItem("email", email);
-          localStorage.setItem("id", uid)
-
-          resolve(user);
         } catch (error) {
           console.error("Erro ao autenticar no Firebase:", error);
           reject(error);
