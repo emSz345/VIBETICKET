@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './AppHeader.css'; // <-- ATUALIZE O NOME DO ARQUIVO CSS AQUI
 import logoLight from '../../../../src/assets/logo.png';
 
-
+import { useAuth } from '../../../Hook/AuthContext';
 import { TfiMenu } from "react-icons/tfi";
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -20,8 +20,30 @@ export default function AppHeader() {
   const [usuarioLogado, setUsuarioLogado] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [nomeUsuario, setNomeUsuario] = useState('');
+   const { user, isAuthenticated, logout } = useAuth();
   const [emailUsuario, setEmailUsuario] = useState('');
   const [imagemPerfil, setImagemPerfil] = useState('');
+
+
+  const getProfileImageUrl = () => {
+    if (!user?.imagemPerfil) {
+      return 'http://localhost:5000/uploads/blank_profile.png';
+    }
+
+    // Se já é uma URL completa (http ou https)
+    if (/^https?:\/\//.test(user.imagemPerfil)) {
+      return user.imagemPerfil;
+    }
+
+    // Se começa com /uploads (caminho relativo)
+    if (user.imagemPerfil.startsWith('/uploads')) {
+      return `http://localhost:5000${user.imagemPerfil}`;
+    }
+
+    // Padrão para imagens locais
+    return `http://localhost:5000/uploads/${user.imagemPerfil}`;
+  };
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -67,7 +89,7 @@ export default function AppHeader() {
                 {imagemPerfil ? (
                   <div className="user-menu__avatar-container">
                     {/* CORREÇÃO AQUI */}
-                    <img src={imagemPerfil} className="user-menu__avatar-image" alt="Avatar" />
+                    <img src={getProfileImageUrl()} className="user-menu__avatar-image" alt="Avatar" />
                     <TfiMenu className="user-menu__icon" />
                   </div>
                 ) : (
@@ -81,7 +103,7 @@ export default function AppHeader() {
                 <div className="user-menu__content">
                   <div className="user-menu__header">
                     {/* CORREÇÃO AQUI */}
-                    <img src={imagemPerfil} className="user-menu__avatar-image" alt="Avatar" />
+                    <img src={getProfileImageUrl()} className="user-menu__avatar-image" alt="Avatar" />
                     <div className="user-menu__user-info">
                       <strong>{nomeUsuario}</strong>
                       <small>{emailUsuario}</small>

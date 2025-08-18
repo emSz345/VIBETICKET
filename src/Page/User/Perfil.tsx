@@ -33,11 +33,27 @@ const Perfil = () => {
     endereco: ""
   });
 
+  const getImagemPerfilUrl = (imagemPerfil?: string) => {
+    if (!imagemPerfil) return "https://via.placeholder.com/150";
+
+    // Se for uma URL completa (começa com http)
+    if (imagemPerfil.startsWith('http')) {
+      return imagemPerfil;
+    }
+
+    return `http://localhost:5000${imagemPerfil}`;
+  };
+
   useEffect(() => {
     if (user) {
       setNome(user.nome);
-      // --- CORREÇÃO AQUI: Usa o user.imagemPerfil diretamente, pois a API já retorna o caminho completo
-      setPreviewUrl(user.imagemPerfil ? `http://localhost:5000${user.imagemPerfil}` : undefined);
+
+      // Se a imagem começar com http, usa diretamente
+      if (user.imagemPerfil?.startsWith('http')) {
+        setPreviewUrl(user.imagemPerfil);
+      } else {
+        setPreviewUrl(user.imagemPerfil ? `http://localhost:5000${user.imagemPerfil}` : undefined);
+      }
     }
   }, [user]);
 
@@ -66,6 +82,7 @@ const Perfil = () => {
         updateUser(data.user);
         localStorage.setItem("userName", nome);
         localStorage.setItem("imagemPerfil", data.user.imagemPerfil || "");
+        localStorage.setItem("hasLocalImage", "true");
         setEditando(false);
         setImagem(null);
         window.location.reload();
@@ -103,9 +120,10 @@ const Perfil = () => {
             <div className="perfil-avatar-section">
               <div className="perfil-avatar-wrapper">
                 <img
-                  src={previewUrl || "https://via.placeholder.com/150"}
+                  src={previewUrl || getImagemPerfilUrl(user?.imagemPerfil)}
                   alt="Foto de perfil"
                   className="perfil-avatar"
+                  loading="eager"
                 />
                 {editando && (
                   <label htmlFor="upload-avatar" className="perfil-avatar-edit">

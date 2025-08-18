@@ -24,12 +24,30 @@ export default function NavBar3() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
 
-
-
   const voltar = (): void => {
     navigate("/")
     window.location.reload();
   }
+
+ const getProfileImageUrl = () => {
+    if (!user?.imagemPerfil) {
+      return 'http://localhost:5000/uploads/blank_profile.png';
+    }
+
+    // Se já é uma URL completa (http ou https)
+    if (/^https?:\/\//.test(user.imagemPerfil)) {
+      return user.imagemPerfil;
+    }
+
+    // Se começa com /uploads (caminho relativo)
+    if (user.imagemPerfil.startsWith('/uploads')) {
+      return `http://localhost:5000${user.imagemPerfil}`;
+    }
+
+    // Padrão para imagens locais
+    return `http://localhost:5000/uploads/${user.imagemPerfil}`;
+  };
+
 
   const navigate = useNavigate();
 
@@ -72,16 +90,16 @@ export default function NavBar3() {
                 {user?.imagemPerfil ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: "10px", fontWeight: 1, border: "2px solid white", borderRadius: "20px", padding: "5px", cursor: "pointer" }}>
                     <img
-                      src={`http://localhost:5000${user.imagemPerfil}`}
+                       src={getProfileImageUrl()}
                       className="avatar"
                       alt="Avatar"
                       style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "50%", border: "2px solid var(--primary)" }}
+                       loading="eager"
                     />
                     <TfiMenu style={{ color: "#fff", fontSize: "24px" }} />
                   </div>
                 ) : (
                   <div className="avatar-placeholder">
-                    {user?.nome?.slice(0, 1).toUpperCase()}
                   </div>
                 )}
               </div>
@@ -91,9 +109,10 @@ export default function NavBar3() {
                   <div className="dropdown-header">
                     {user?.imagemPerfil ? (
                       <img
-                        src={`http://localhost:5000${user.imagemPerfil}`}
+                        src={getProfileImageUrl()}
                         className="avatar"
                         alt="Avatar"
+                        loading="eager"
                       />
                     ) : (
                       <div className="avatar-placeholder">

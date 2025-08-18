@@ -110,6 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Função para login social
   const socialLogin = (data: SocialLoginData) => {
 
+    const existingLocalImage = localStorage.getItem('hasLocalImage');
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.userData)); // Alterado para userData
@@ -117,7 +118,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("userName", data.userData.nome);
     localStorage.setItem("userEmail", data.userData.email);
     localStorage.setItem("userRole", data.userData.isAdmin ? "admin" : "user");
-    localStorage.setItem("imagemPerfil", data.userData.imagemPerfil || "");
+    if (!existingLocalImage) {
+      localStorage.setItem("imagemPerfil", data.userData.imagemPerfil || "");
+    }
     localStorage.setItem("isAdmin", data.userData.isAdmin.toString());
     localStorage.setItem("isVerified", "true");
     setUser(data.userData); // Alterado para userData
