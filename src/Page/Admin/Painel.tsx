@@ -4,6 +4,7 @@ import { Evento } from "../../types/evento";
 import { FaSignOutAlt, FaImages } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { useAuth } from "../../Hook/AuthContext";
 
 
 import logo from "../../assets/logo.png";
@@ -15,12 +16,13 @@ import "../../styles/Painel.css";
 
 ////////////////////////////////////////////////////////
 
-const email = localStorage.getItem('userName');
 
 // Adicionando 'reanalise' ao tipo de status//////////////////////////
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "reanalise";
 
 const Painel: React.FC = () => {
+  const {user} = useAuth();
+const email = user?.nome || '';
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [status, setStatusFilter] = useState<EventoStatus>("em_analise");
   const [usuarioLogado, setUsuarioLogado] = useState(false);

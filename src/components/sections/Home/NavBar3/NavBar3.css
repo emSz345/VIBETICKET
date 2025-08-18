@@ -4,16 +4,14 @@
   --white: #fff;
   --gray-light: #f2f2f2;
   --gray-border: #ccc;
-  --header-height: 80px;
-  --header-height-scrolled: 64px;
+  --header-height: 120px;
+  --header-height-scrolled: 80px;
   --transition-speed: 0.25s;
   --border-radius: 8px;
   --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -28,10 +26,8 @@ body {
 
 .nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 120px;
+  inset: 0 0 auto 0;
+  height: var(--header-height);
   background: var(--primary);
   display: flex;
   align-items: center;
@@ -43,21 +39,23 @@ body {
 }
 
 .nav--scrolled {
-  height: 80px;
+  height: var(--header-height-scrolled);
   background: rgba(16, 25, 44, 0.55);
   backdrop-filter: blur(12px);
   box-shadow: 0 1px 5px rgb(0 0 0 / 0.15);
 }
 
-.nav__logo {
+/* logo usado no teu TSX */
+.app-header__logo {
   width: 140px;
   cursor: pointer;
   user-select: none;
 }
+.nav--scrolled .app-header__logo { width: 120px; }
 
-.nav--scrolled .nav__logo {
-  width: 120px;
-}
+/* (mantive a classe caso ainda exista em outros pontos) */
+.nav__logo { width: 140px; cursor: pointer; user-select: none; }
+.nav--scrolled .nav__logo { width: 120px; }
 
 .nav__search {
   max-width: 450px;
@@ -67,10 +65,9 @@ body {
   background: var(--white);
   padding: 1px 14px;
   border-radius: var(--border-radius);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   transition: box-shadow var(--transition-speed);
 }
-
 .nav__search input {
   width: 100%;
   border: none;
@@ -103,12 +100,11 @@ body {
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s, box-shadow 0.2s;
 }
-
 .nav__cta:hover,
 .nav__cta:focus-visible {
   background-color: #fff;
   color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
   outline: none;
 }
 
@@ -119,14 +115,10 @@ body {
   display: flex;
   align-items: center;
 }
-
-.cart-icon:hover {
-  transform: scale(1.1);
-  color: #dbe9ff;
-}
+.cart-icon:hover { transform: scale(1.1); color: #dbe9ff; }
 
 /* ============================ */
-/* BOTÃO LOGIN / CADASTRO      */
+/* LOGIN / CADASTRO            */
 /* ============================ */
 
 .nav__auth > button {
@@ -143,16 +135,18 @@ body {
   align-items: center;
   gap: 8px;
 }
-
 .nav__auth > button:hover {
   background: #fff;
   color: var(--primary);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(255,255,255,0.25);
 }
 
 /* ============================ */
 /* DROPDOWN MENU               */
 /* ============================ */
+
+.user-dropdown { position: relative; } /* ancora o absolute */
+.user-info { cursor: pointer; }
 
 .dropdown-menu {
   position: absolute;
@@ -161,7 +155,7 @@ body {
   background: #fff;
   color: #333;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   padding: 14px 12px;
   min-width: 240px;
   z-index: 10000;
@@ -172,14 +166,8 @@ body {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .dropdown-header,
@@ -190,12 +178,22 @@ body {
   margin-bottom: 4px;
 }
 
-.dropdown-header .avatar,
-.dropdown-container-parte-cima .avatar {
+.avatar {
   width: 42px;
   height: 42px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid var(--primary);
+}
+.avatar-placeholder {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #e6efff;
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
   border: 2px solid var(--primary);
 }
 
@@ -205,16 +203,8 @@ body {
   align-items: flex-start;
   font-size: 14px;
 }
-
-.user-header strong {
-  color: #333;
-  font-size: 15px;
-}
-
-.user-header small {
-  color: #777;
-  font-size: 12px;
-}
+.user-header strong { color: #333; font-size: 15px; }
+.user-header small  { color: #777; font-size: 12px; }
 
 .dropdown-menu button {
   display: flex;
@@ -229,16 +219,12 @@ body {
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
-
 .dropdown-menu button:hover {
   background-color: #f0f2f5;
   color: var(--primary);
 }
 
-.logout-btn {
-  color: #d63636;
-}
-
+.logout-btn { color: #d63636; }
 .logout-btn:hover {
   background-color: #ffe6e6;
   color: #b22222;
@@ -249,75 +235,211 @@ body {
 /* ============================ */
 
 .nav--scrolled .nav__search {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.4);
   box-shadow: none;
 }
-
-.nav--scrolled .nav__search svg {
-  color: #fff;
-}
-
-.nav--scrolled .nav__search input {
-  color: #fff;
-}
-
-.nav--scrolled .nav__search input::placeholder {
-  color: #dbe9ff;
-}
+.nav--scrolled .nav__search svg { color: #fff; }
+.nav--scrolled .nav__search input { color: #fff; }
+.nav--scrolled .nav__search input::placeholder { color: #dbe9ff; }
 
 .nav--scrolled .nav__cta {
   background: #fff;
   color: var(--primary);
   border: 2px solid #fff;
 }
-
-.nav--scrolled .nav__cta:hover {
-  background: #dbe9ff;
-  color: #074bb5;
-}
-
-.nav--scrolled .cart-icon {
-  color: #dbe9ff;
-}
+.nav--scrolled .nav__cta:hover { background: #dbe9ff; color: #074bb5; }
+.nav--scrolled .cart-icon { color: #dbe9ff; }
 
 .nav--scrolled .nav__auth .nav_login_cadastro {
   background: transparent;
   color: #fff;
   border: 2px solid #fff;
 }
-
 .nav--scrolled .nav__auth button {
   background: transparent;
   color: #000;
-  
 }
-
 .nav--scrolled .nav__auth button:hover {
   background: #fff;
   color: var(--primary);
 }
 
+/* Adicione estas regras ao seu arquivo CSS */
+
+/* Overlay quando menu mobile está aberto */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Melhorias no menu mobile */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 85%;
+  max-width: 300px;
+  height: 100dvh;
+  background: #fff;
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 0;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 11000;
+  overflow-y: auto;
+}
+
+.mobile-menu.open {
+  right: 0;
+}
+
+.mobile-menu button {
+  background: none;
+  border: none;
+  font-size: 15px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.mobile-menu button:hover {
+  background-color: #f5f5f5;
+}
+
+.mobile-menu .logout-btn {
+  color: #d63636;
+  margin-top: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+/* Header do menu mobile */
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 12px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 8px;
+}
+
+.mobile-menu-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--primary);
+}
+
+.mobile-menu-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
 /* ============================ */
-/* RESPONSIVIDADE              */
+/* HELPERS P/ MOBILE TOGGLE    */
+/* ============================ */
+
+.hide-mobile { display: flex; }
+.show-mobile { display: none; }
+
+/* ============================ */
+/* MOBILE (<= 768px)           */
 /* ============================ */
 
 @media (max-width: 768px) {
-  .nav {
-    gap: 16px;
-    padding: 0 16px;
+  .nav { gap: 16px; padding: 0 16px; }
+
+  /* esconder partes de desktop qdo usar .hide-mobile */
+  .hide-mobile { display: none !important; }
+  .show-mobile { display: block !important; }
+
+  /* já escondias a busca — mantive */
+  .nav__search { display: none; }
+
+  .nav__cta { padding: 6px 14px; font-size: 14px; }
+  .nav__auth { font-size: 0.85rem; }
+
+  /* Ícone do menu (hambúrguer/fechar) */
+  .mobile-menu-icon {
+    margin-left: auto;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    height: 40px;
   }
 
-  .nav__search {
-    display: none;
+  /* Off-canvas */
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 78%;
+    max-width: 360px;
+    height: 100dvh;
+    background: #fff;
+    color: #333;
+    box-shadow: -2px 0 16px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 88px 20px 20px;
+    transition: right 0.3s ease-in-out;
+    z-index: 11000; /* acima da navbar e dropdown */
+    overflow-y: auto;
   }
+  .mobile-menu.open { right: 0; }
 
-  .nav__cta {
-    padding: 6px 14px;
-    font-size: 14px;
+  .mobile-menu button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #333;
   }
+  .mobile-menu button:hover { background: #f4f6fb; color: var(--primary); }
 
-  .nav__auth {
-    font-size: 0.85rem;
-  }
+  .mobile-menu .logout-btn { color: #d63636; }
+  .mobile-menu .logout-btn:hover { background: #ffe6e6; color: #b22222; }
 }
+
+/* ============================ */
+/* (Opcional) Suavizar saída   */
+/* ============================ */
+
+.dropdown-menu.closing {
+  animation: fadeOut 0.18s ease-in forwards;
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(8px); }
+}
+

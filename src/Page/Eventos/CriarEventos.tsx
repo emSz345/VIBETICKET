@@ -54,6 +54,7 @@ function CriarEventos() {
   // Etapa 6
   const [querDoar, setQuerDoar] = useState<boolean | null>(null);
   const [valorDoacao, setValorDoacao] = useState('');
+  const [termosAceitos, setTermosAceitos] = useState(false);
 
   // Outros estados
   const [modalAberto, setModalAberto] = useState(false);
@@ -927,6 +928,22 @@ function CriarEventos() {
                 {getError('valorDoacao') && <span className="mensagem-erro">{getError('valorDoacao')}</span>}
               </div>
             )}
+            <div className="termos-container">
+              <div className="checkbox-container">
+                <input
+                  type="checkbox"
+                  id="termos-aceitos"
+                  checked={termosAceitos}
+                  onChange={(e) => setTermosAceitos(e.target.checked)}
+                />
+                <label htmlFor="termos-aceitos">
+                  Eu li e concordo com os{' '}
+                  <a href="/Termos" target="_blank" rel="noopener noreferrer">
+                    Termos e Condições para a criação de eventos
+                  </a>.
+                </label>
+              </div>
+            </div>
           </div>
         )}
 
@@ -942,7 +959,11 @@ function CriarEventos() {
             </button>
           )}
           {etapaAtual === 6 && (
-            <button className="criar-btn-enviar" onClick={handleEnviarAnalise} disabled={isCooldown}>
+            <button
+              className="criar-btn-enviar"
+              onClick={handleEnviarAnalise}
+              disabled={isCooldown || !termosAceitos}
+            >
               {isCooldown
                 ? `Aguarde... (${formatTime(cooldownTimeLeft || 0)})`
                 : 'Enviar para Análise'}

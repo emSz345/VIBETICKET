@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { FaPlusCircle, FaShoppingCart, FaSearch } from 'react-icons/fa';
+import React, { useEffect, useState, useRef } from 'react';
+import { FaPlusCircle, FaShoppingCart, FaSearch, FaBars, FaTimes } from 'react-icons/fa';
 import './NavBar3.css';
 import logoLight from '../../../../assets/logo.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../Hook/AuthContext';
 import { TfiMenu } from "react-icons/tfi";
-
-import { useNavigate } from 'react-router-dom';
 
 import {
   FaHome,
@@ -22,34 +20,29 @@ export default function NavBar3() {
   const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
+  const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const voltar = (): void => {
-    navigate("/")
+    navigate("/");
     window.location.reload();
-  }
+  };
 
- const getProfileImageUrl = () => {
+  const getProfileImageUrl = () => {
     if (!user?.imagemPerfil) {
       return 'http://localhost:5000/uploads/blank_profile.png';
     }
-
-    // Se já é uma URL completa (http ou https)
     if (/^https?:\/\//.test(user.imagemPerfil)) {
       return user.imagemPerfil;
     }
-
-    // Se começa com /uploads (caminho relativo)
     if (user.imagemPerfil.startsWith('/uploads')) {
       return `http://localhost:5000${user.imagemPerfil}`;
     }
-
-    // Padrão para imagens locais
     return `http://localhost:5000/uploads/${user.imagemPerfil}`;
   };
-
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -57,21 +50,37 @@ export default function NavBar3() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Fecha dropdown quando clicar fora
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <header className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
       {/* Logo */}
       <Link to="/Home" aria-label="Página inicial">
-        <img src={scrolled ? logoLight : logoLight} alt="Logo" className="app-header__logo" />
+        <img src={logoLight} alt="Logo" className="app-header__logo" />
       </Link>
 
-      {/* Busca */}
-      <div className="nav__search">
+      {/* Busca (desktop apenas) */}
+      <div className="nav__search hide-mobile">
         <FaSearch aria-hidden />
         <input type="text" placeholder="Buscar eventos, artistas..." />
       </div>
 
-      {/* Ações */}
-      <div className="nav__actions">
+      {/* Ações (desktop) */}
+      <div className="nav__actions hide-mobile">
         <button className="nav__cta" onClick={() => navigate("/CriarEventos")}>
           <FaPlusCircle size={20} />
           CRIE SEU EVENTO
@@ -83,29 +92,51 @@ export default function NavBar3() {
 
         <div className="nav__auth">
           {!isAuthenticated ? (
-            <button onClick={() => navigate('/Login')} className="nav_login_cadastro">Login / Cadastro</button>
+            <button onClick={() => navigate('/Login')} className="nav_login_cadastro">
+              Login / Cadastro
+            </button>
           ) : (
             <div className="user-dropdown">
-              <div className="user-info" onClick={() => setDropdownOpen(!dropdownOpen)}>
+              {/* Trigger */}
+              <div
+                ref={triggerRef}
+                className="user-info"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
                 {user?.imagemPerfil ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: "10px", fontWeight: 1, border: "2px solid white", borderRadius: "20px", padding: "5px", cursor: "pointer" }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: "10px",
+                    border: "2px solid white",
+                    borderRadius: "20px",
+                    padding: "5px",
+                    cursor: "pointer"
+                  }}>
                     <img
-                       src={getProfileImageUrl()}
+                      src={getProfileImageUrl()}
                       className="avatar"
                       alt="Avatar"
-                      style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "50%", border: "2px solid var(--primary)" }}
-                       loading="eager"
+                      style={{
+                        width: "42px",
+                        height: "42px",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                        border: "2px solid var(--primary)"
+                      }}
+                      loading="eager"
                     />
                     <TfiMenu style={{ color: "#fff", fontSize: "24px" }} />
                   </div>
                 ) : (
                   <div className="avatar-placeholder">
+                    {user?.nome?.slice(0, 1).toUpperCase()}
                   </div>
                 )}
               </div>
 
               {dropdownOpen && (
-                <div className="dropdown-menu">
+                <div ref={menuRef} className="dropdown-menu">
                   <div className="dropdown-header">
                     {user?.imagemPerfil ? (
                       <img
@@ -125,34 +156,112 @@ export default function NavBar3() {
                     </div>
                   </div>
                   <hr />
-                  <button onClick={() => voltar()}> <FaHome /> <span>Home</span></button>
+                  <button onClick={() => voltar()}><FaHome /> <span>Home</span></button>
                   <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
-                  <button onClick={() => navigate('/perfil')}> <FaUserCircle />  <span>Minha conta</span></button>
+                  <button onClick={() => navigate('/perfil')}><FaUserCircle /><span>Minha conta</span></button>
                   {user?.isAdmin === true && (
                     <button onClick={() => navigate('/Painel')}>
                       <FaUserShield />
                       <span>Painel de Admin</span>
                     </button>
                   )}
-                  <button onClick={() => navigate('/favoritos')}> <FaClipboardList /> <span>Gerenciar eventos</span></button>
-                  <button onClick={() => navigate('/duvidas')}> <FaHeadphones /> <span>Central de Duvidas</span></button>
-                  <button className="logout-btn" onClick={() => {
-                    localStorage.clear();
-                    logout();
-                    navigate('/');
-                    window.location.reload();
-                  }}>
+                  <button onClick={() => navigate('/Meus-eventos')}><FaClipboardList /><span>Meus eventos</span></button>
+                  <button onClick={() => navigate('/duvidas')}><FaHeadphones /><span>Central de Duvidas</span></button>
+                  <button
+                    className="logout-btn"
+                    onClick={() => {
+                      localStorage.clear();
+                      logout();
+                      navigate('/');
+                      window.location.reload();
+                    }}
+                  >
                     <FaSignOutAlt /><span>Sair</span>
                   </button>
                 </div>
               )}
-
             </div>
           )}
         </div>
-
       </div>
 
+      <div className="mobile-menu-icon show-mobile" onClick={() => setMobileOpen(!mobileOpen)}>
+        {mobileOpen ? <FaTimes size={26} color="#fff" /> : <FaBars size={26} color="#fff" />}
+      </div>
+
+      {/* MOBILE MENU (off-canvas) */}
+      {mobileOpen && (
+        <div className="mobile-menu-overlay open" onClick={() => setMobileOpen(false)} />
+      )}
+
+      <div className={`mobile-menu ${mobileOpen ? "open" : ""}`}>
+        {isAuthenticated && (
+          <div className="user-info-mobile">
+            <img
+              src={getProfileImageUrl()}
+              className="avatar"
+              alt="Avatar"
+              style={{ width: "50px", height: "50px" }}
+            />
+            <div style={{ display: 'flex', flexDirection: 'column'}}>
+              <strong>{user?.nome}</strong>
+              <small>{user?.email}</small>
+            </div>
+          </div>
+        )}
+
+        <button onClick={() => { navigate('/'); setMobileOpen(false); }}>
+          <FaHome /> Home
+        </button>
+
+        {isAuthenticated && (
+          <>
+            <button onClick={() => { navigate('/meus-ingressos'); setMobileOpen(false); }}>
+              <FaTicketAlt /> Meus ingressos
+            </button>
+            <button onClick={() => { navigate('/perfil'); setMobileOpen(false); }}>
+              <FaUserCircle /> Minha conta
+            </button>
+            {user?.isAdmin && (
+              <button onClick={() => { navigate('/Painel'); setMobileOpen(false); }}>
+                <FaUserShield /> Painel Admin
+              </button>
+            )}
+            <button onClick={() => { navigate('/Meus-eventos'); setMobileOpen(false); }}>
+              <FaClipboardList /> Meus eventos
+            </button>
+          </>
+        )}
+
+        <button onClick={() => { navigate('/duvidas'); setMobileOpen(false); }}>
+          <FaHeadphones /> Central de Dúvidas
+        </button>
+        <button onClick={() => { navigate('/CriarEventos'); setMobileOpen(false); }}>
+          <FaPlusCircle /> Criar Evento
+        </button>
+        <button onClick={() => { navigate('/Carrinho'); setMobileOpen(false); }}>
+          <FaShoppingCart /> Carrinho
+        </button>
+
+        {!isAuthenticated ? (
+          <button onClick={() => { navigate('/Login'); setMobileOpen(false); }}>
+            Login / Cadastro
+          </button>
+        ) : (
+          <button
+            className="logout-btn"
+            onClick={() => {
+              logout();
+              navigate('/');
+              setMobileOpen(false);
+              window.location.reload();
+            }}
+          >
+            <FaSignOutAlt /> Sair
+          </button>
+        )}
+      </div>
     </header>
   );
 }
+
