@@ -4,7 +4,6 @@ import { Evento } from "../../types/evento";
 import { FaSignOutAlt, FaImages } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { useAuth } from "../../Hook/AuthContext";
 
 
 import logo from "../../assets/logo.png";
@@ -16,20 +15,19 @@ import "../../styles/Painel.css";
 
 ////////////////////////////////////////////////////////
 
+const email = localStorage.getItem('userName');
 
 // Adicionando 'reanalise' ao tipo de status//////////////////////////
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "reanalise";
 
 const Painel: React.FC = () => {
-  const {user} = useAuth();
-const email = user?.nome || '';
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [status, setStatusFilter] = useState<EventoStatus>("em_analise");
   const [usuarioLogado, setUsuarioLogado] = useState(false);
 
   // Função para buscar os eventos com base no status selecionado
   const fetchEventosByStatus = (status: EventoStatus) => {
-    fetch(`http://localhost:5000/api/eventos/listar/${status}`)
+    fetch(`http://localhost:5000/api/listar/${status}`)
       .then((res) => res.json())
       .then((data) => setEventos(data))
       .catch((err) => console.error(`Erro ao buscar eventos ${status}:`, err));
@@ -43,7 +41,7 @@ const email = user?.nome || '';
   // Função para atualizar o status de um evento
   const updateEventoStatus = async (id: string, newStatus: EventoStatus) => {
     try {
-      await fetch(`http://localhost:5000/api/eventos/atualizar-status/${id}`, {
+      await fetch(`http://localhost:5000/api/atualizar-status/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),

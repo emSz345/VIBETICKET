@@ -343,3 +343,140 @@
       max-height: calc(60vh - 120px);
     }
   }
+
+  .eventos-lista {
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.eventos-titulo {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #007bff;
+}
+
+.evento-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 8px 0;
+ 
+}
+
+.evento-nome {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.evento-info {
+  font-size: 0.9em;
+  color: #666;
+  margin: 3px 0;
+}
+
+.evento-preco {
+  font-weight: bold;
+  color: #28a745;
+  margin-top: 5px;
+}
+
+
+/* Estilos para quando não há eventos */
+.navibe-evento-sem-resultado {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  color: #6c757d;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.navibe-evento-sem-resultado strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+/* Sugestões de busca */
+.navibe-sugestoes-busca {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navibe-sugestao-titulo {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 5px;
+}
+
+.navibe-sugestao-btn {
+  background: #ffffff;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: all 0.2s;
+  text-align: left;
+  width: fit-content;
+}
+
+.navibe-sugestao-btn:hover {
+  background: #007bff;
+  color: white;
+}
+
+/* Melhorar a lista de eventos */
+.navibe-eventos-lista {
+  margin-top: 15px;
+}
+
+.navibe-eventos-titulo {
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #007bff;
+  font-size: 1.1em;
+}
+
+.navibe-evento-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+  border-left: 4px solid #007bff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.navibe-evento-nome {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #212529;
+  font-size: 1em;
+}
+
+.navibe-evento-info {
+  font-size: 0.85em;
+  color: #6c757d;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.navibe-evento-preco {
+  font-weight: bold;
+  color: #28a745;
+  margin-top: 8px;
+  font-size: 0.9em;
+}
+
+
+
+
+/* Estilos para quando não há eventos */

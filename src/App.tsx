@@ -68,7 +68,7 @@ function AppRoutes() {
         {/* --- Rotas Públicas (acessíveis a todos) --- */}
         <Route path="/home" element={<Home />} />
         <Route path="/categorias" element={<Categorias />} />
-        <Route path="/detalhes/:id" element={<Detalhes />} />
+        <Route path="/evento/:id" element={<Detalhes />} />
         <Route path="/termos" element={<Termos />} />
         <Route path="/duvidas" element={<Duvidas />} />
         <Route path="/carrinho" element={<Carrinho />} />
