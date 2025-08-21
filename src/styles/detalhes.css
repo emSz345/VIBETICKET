@@ -45,7 +45,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 40px;
   max-width: 1200px;
   margin: 0 auto;
@@ -327,6 +327,12 @@ body {
   border-radius: var(--borda-arredondada);
   overflow: hidden;
   box-shadow: var(--sombra-media);
+}
+
+.detalhes-descricao {
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
+  white-space: pre-wrap; 
 }
 
 .detalhes-mapa {

@@ -103,6 +103,7 @@ const Login: React.FC = () => {
     if (name === "senha") setSenha(value);
   };
 
+  const apiUrl = process.env.REACT_APP_API_URL;
   // --- AQUI ESTÁ A CORREÇÃO ---
   // A sua função 'handleSubmit' já estava correta. Nós apenas a renomeamos para 'handleLocalLogin'
   // para que o botão 'Entrar' no seu JSX a chame corretamente. A outra função foi removida.
@@ -130,7 +131,7 @@ const Login: React.FC = () => {
     }
     try {
       if (modoLocal) {
-        const response = await axios.post("http://localhost:5000/api/users/login", {
+        const response = await axios.post(`${apiUrl}/api/users/login`, {
           email,
           senha,
         });
@@ -151,7 +152,7 @@ const Login: React.FC = () => {
         const token = await user.getIdToken();
         const uid = user.uid;
         localStorage.setItem("firebaseToken", token);
-        const response = await axios.get(`http://localhost:5000/api/users/me?email=${user.email}`);
+        const response = await axios.get(`${apiUrl}/api/users/me?email=${user.email}`);
         localStorage.setItem("userName", response.data.nome || user.email);
         localStorage.setItem("id", uid);
         navigate("/Home");
@@ -184,7 +185,7 @@ const Login: React.FC = () => {
     }
 
       // Envia dados para o backend
-      const response = await fetch("http://localhost:5000/api/users/social-login", {
+      const response = await fetch(`${apiUrl}/api/users/social-login`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -261,7 +262,7 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/users/forgot-password", {
+      const response = await axios.post(`${apiUrl}/api/users/forgot-password`, {
         email
       });
 

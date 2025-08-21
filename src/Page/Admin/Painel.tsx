@@ -15,6 +15,8 @@ import "../../styles/Painel.css";
 
 ////////////////////////////////////////////////////////
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const email = localStorage.getItem('userName');
 
 // Adicionando 'reanalise' ao tipo de status//////////////////////////
@@ -27,7 +29,7 @@ const Painel: React.FC = () => {
 
   // Função para buscar os eventos com base no status selecionado
   const fetchEventosByStatus = (status: EventoStatus) => {
-    fetch(`http://localhost:5000/api/listar/${status}`)
+    fetch(`${apiUrl}/api/listar/${status}`)
       .then((res) => res.json())
       .then((data) => setEventos(data))
       .catch((err) => console.error(`Erro ao buscar eventos ${status}:`, err));
@@ -41,7 +43,7 @@ const Painel: React.FC = () => {
   // Função para atualizar o status de um evento
   const updateEventoStatus = async (id: string, newStatus: EventoStatus) => {
     try {
-      await fetch(`http://localhost:5000/api/atualizar-status/${id}`, {
+      await fetch(`${apiUrl}/api/atualizar-status/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -133,7 +135,7 @@ const Painel: React.FC = () => {
               key={evento._id}
               evento={{
                 ...evento,
-                imagem: `http://localhost:5000/uploads/${evento.imagem}`,
+                imagem: `${apiUrl}/uploads/${evento.imagem}`,
               }}
               onAceitar={handleAceitar}
               onRejeitar={handleRejeitar}

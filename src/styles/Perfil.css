@@ -1,257 +1,139 @@
-/* Estilos Gerais */
-.perfil-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 30px 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-  }
-  
-  .perfil-header {
-    margin-bottom: 30px;
-    text-align: center;
-  }
-  
-  .perfil-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 8px;
-  }
-  
-  .perfil-header p {
-    color: #7f8c8d;
-    font-size: 16px;
-  }
-  
-  .perfil-content {
-    display: flex;
-    gap: 30px;
-  }
-  
-  /* Card Estilo */
-  .perfil-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    padding: 25px;
-    margin-bottom: 20px;
-  }
-  
-  /* Coluna Esquerda */
-  .perfil-left {
-    flex: 1;
-    min-width: 350px;
-  }
-  
-  .perfil-avatar-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 25px;
-  }
-  
-  .perfil-avatar-wrapper {
-    position: relative;
-    margin-bottom: 15px;
-  }
-  
-  .perfil-avatar {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #f1f5f9;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .perfil-avatar-edit {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background: #3b82f6;
-    color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .perfil-avatar-edit:hover {
-    background: #2563eb;
-    transform: scale(1.1);
-  }
-  
-  .perfil-email {
-    color: #64748b;
-    font-size: 14px;
-    margin-top: 5px;
-  }
-  
-  .perfil-form-group {
-    margin-bottom: 20px;
-  }
-  
-  .perfil-input-label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #475569;
-  }
-  
-  .perfil-input-icon {
-    margin-right: 10px;
-    color: #64748b;
-  }
-  
-  .perfil-input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: all 0.2s;
-    background-color: #f8fafc;
-  }
-  
-  .perfil-input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-    background-color: white;
-  }
-  
-  .perfil-input:disabled {
-    background-color: #f1f5f9;
-    color: #64748b;
-  }
-  
-  /* Botões */
-  .perfil-btn-primary {
-    width: 100%;
-    padding: 12px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .perfil-btn-primary:hover {
-    background: #2563eb;
-  }
-  
-  .perfil-btn-save {
-    background: #10b981;
-  }
-  
-  .perfil-btn-save:hover {
-    background: #059669;
-  }
-  
-  /* Coluna Direita */
-  .perfil-right {
-    flex: 2;
-  }
-  
-  .perfil-tabs {
-    display: flex;
-    border-bottom: 1px solid #e2e8f0;
-    margin-bottom: 20px;
-  }
-  
-  .perfil-tab {
-    padding: 12px 20px;
-    background: none;
-    border: none;
-    font-size: 14px;
-    font-weight: 500;
-    color: #64748b;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-    transition: all 0.2s;
-  }
-  
-  .perfil-tab:hover {
-    color: #3b82f6;
-  }
-  
-  .perfil-tab.active {
-    color: #3b82f6;
-  }
-  
-  .perfil-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #3b82f6;
-  }
-  
-  .perfil-tab-icon {
-    font-size: 16px;
-  }
-  
-  .perfil-tab-content {
-    padding: 5px;
-  }
-  
-  .perfil-form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-  
-  .full-width {
-    grid-column: span 2;
-  }
-  
-  /* Estados de loading e erro */
-  .perfil-loading,
-  .perfil-error {
-    text-align: center;
-    padding: 40px;
-    font-size: 16px;
-    color: #64748b;
-  }
-  
-  .perfil-error {
-    color: #ef4444;
-  }
-  
-  /* Responsividade */
-  @media (max-width: 992px) {
-    .perfil-content {
-      flex-direction: column;
-    }
-    
-    .perfil-left {
-      min-width: auto;
-    }
-    
-    .perfil-form-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .full-width {
-      grid-column: span 1;
-    }
-  }
+
+
+
+
+:root{
+  --primary:#0969fb;
+  --primary-dark:#0756cc;
+  --bg:#f9fbfd;
+  --text:#333;
+  --muted:#64748b;
+  --card:#ffffff;
+  --input-bg:#f8fafc;
+  --border:#e2e8f0;
+  --shadow:0 4px 20px rgba(0,0,0,0.08);
+}
+
+body{ background:var(--bg); }
+
+/* Container geral */
+.perfil-container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:30px 20px;
+  color:var(--text);
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.perfil-header{ margin-bottom:30px; text-align:center; }
+.perfil-header h1{ font-size:28px; font-weight:600; color:#2c3e50; margin-bottom:8px; }
+.perfil-header p{ color:var(--muted); font-size:16px; }
+
+/* Layout 2 colunas */
+.perfil-content{ display:flex; gap:30px; }
+.perfil-left{ flex:1; min-width:350px; }
+.perfil-right{ flex:2; }
+
+/* Card */
+.perfil-card{
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:25px;
+  margin-bottom:20px;
+}
+
+/* Avatar */
+.perfil-avatar-section{
+  display:flex; flex-direction:column; align-items:center; margin-bottom:25px;
+}
+.perfil-avatar-wrapper{ position:relative; margin-bottom:15px; }
+.perfil-avatar{
+  width:150px; height:150px; border-radius:50%; object-fit:cover;
+  border:4px solid #f1f5f9; box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+.perfil-avatar-edit{
+  position:absolute; bottom:10px; right:10px;
+  background:var(--primary); color:#fff; width:36px; height:36px;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:.2s;
+}
+.perfil-avatar-edit:hover{ background:var(--primary-dark); transform:scale(1.1); }
+.perfil-email{ color:var(--muted); font-size:14px; margin-top:5px; }
+
+/* Inputs */
+.perfil-form-group{ margin-bottom:20px; }
+.perfil-input-label{
+  display:flex; align-items:center; margin-bottom:8px;
+  font-size:14px; font-weight:500; color:#475569;
+}
+.perfil-input-icon{ margin-right:10px; color:var(--muted); }
+
+.perfil-input{
+  width:100%; padding:12px 15px; font-size:14px;
+  border:1px solid var(--border); border-radius:8px;
+  background:var(--input-bg); transition:.2s;
+}
+.perfil-input:focus{
+  outline:none; border-color:var(--primary);
+  box-shadow:0 0 0 2px rgba(9,105,251,.2); background:#fff;
+}
+.perfil-input:disabled{ background:#f1f5f9; color:var(--muted); }
+
+/* Botões */
+.perfil-btn-primary{
+  width:100%; padding:12px; border:none; border-radius:8px;
+  background:var(--primary); color:#fff; font-size:14px; font-weight:600;
+  display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; transition:.2s;
+}
+.perfil-btn-primary:hover{ background:var(--primary-dark); }
+.perfil-btn-save{ background:#10b981; }
+.perfil-btn-save:hover{ background:#059669; }
+
+/* Tabs */
+.perfil-tabs{ display:flex; border-bottom:1px solid var(--border); margin-bottom:20px; }
+.perfil-tab{
+  padding:12px 20px; background:none; border:none; font-size:14px; font-weight:500;
+  color:var(--muted); cursor:pointer; display:flex; align-items:center; gap:8px;
+  position:relative; transition:.2s;
+}
+.perfil-tab:hover{ color:var(--primary); }
+.perfil-tab.active{ color:var(--primary); }
+.perfil-tab.active::after{
+  content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--primary);
+}
+.perfil-tab-icon{ font-size:16px; }
+.perfil-tab-content{ padding:5px; }
+
+/* Grid */
+.perfil-form-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+.full-width{ grid-column:span 2; }
+
+/* Radio CPF/CNPJ (estilo pill) */
+.perfil-radio-group{ display:flex; gap:10px; flex-wrap:wrap; }
+.perfil-radio-pill{
+  position:relative; display:inline-flex; align-items:center; cursor:pointer;
+}
+.perfil-radio-pill input{ position:absolute; opacity:0; pointer-events:none; }
+.perfil-radio-pill span{
+  padding:8px 14px; border:1px solid var(--border); border-radius:999px;
+  background:#fff; color:#334155; font-size:14px; transition:.2s;
+}
+.perfil-radio-pill input:checked + span{
+  background:var(--primary); color:#fff; border-color:var(--primary);
+  box-shadow:0 0 0 2px rgba(9,105,251,.15);
+}
+
+/* Estados */
+.perfil-loading, .perfil-error{
+  text-align:center; padding:40px; font-size:16px; color:var(--muted);
+}
+.perfil-error{ color:#ef4444; }
+
+/* Responsivo */
+@media (max-width: 992px){
+  .perfil-content{ flex-direction:column; }
+  .perfil-left{ min-width:auto; }
+  .perfil-form-grid{ grid-template-columns:1fr; }
+  .full-width{ grid-column:span 1; }
+}

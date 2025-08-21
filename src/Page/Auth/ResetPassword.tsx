@@ -5,6 +5,8 @@ import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
 import "../../styles/ResetPassword.css";
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const ResetPassword: React.FC = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,7 +22,7 @@ const ResetPassword: React.FC = () => {
         const verifyToken = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/api/users/verify-reset-token/${token}`
+                    `${apiUrl}/api/users/verify-reset-token/${token}`
                 );
                 
                 if (response.data.valid) {
@@ -65,7 +67,7 @@ const ResetPassword: React.FC = () => {
         setSubmitting(true); // inicia loading do botão
         try {
             await axios.post(
-                "http://localhost:5000/api/users/reset-password",
+                `${apiUrl}/api/users/reset-password`,
                 { token, newPassword }
             );
             

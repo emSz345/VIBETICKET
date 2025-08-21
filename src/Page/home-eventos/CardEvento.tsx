@@ -9,7 +9,10 @@ interface CardEventoProps {
 
 const CardEvento: React.FC<CardEventoProps> = ({ evento }) => {
     // Certifique-se de que a propriedade `evento.imagem` contém um valor válido
-    const imageUrl = `http://localhost:5000/uploads/${evento.imagem}`;
+
+    const apiUrl = process.env.REACT_APP_API_URL;
+
+    const imageUrl = `${apiUrl}/uploads/${evento.imagem}`;
 
     return (
         <Link 

@@ -6,6 +6,8 @@ import { FaArrowLeft, FaUpload, FaTrashAlt } from 'react-icons/fa';
 import { IoMdClose } from "react-icons/io";
 import '../../styles/CarrosselAdm.css'; // Vamos criar este arquivo de estilo
 
+
+const apiUrl = process.env.REACT_APP_API_URL;
 // Supondo que as imagens do carrossel sejam do tipo string (URLs)
 const CarrosselAdm: React.FC = () => {
   // Agora o estado vai armazenar as URLs das imagens que vêm do backend
@@ -15,10 +17,10 @@ const CarrosselAdm: React.FC = () => {
   // Função para buscar as imagens existentes no backend
   const fetchCarrosselImages = async () => {
       try {
-          const response = await fetch('http://localhost:5000/api/carrossel'); // Endpoint para buscar imagens
+          const response = await fetch(`${apiUrl}/api/carrossel`); // Endpoint para buscar imagens
           if (response.ok) {
               const data = await response.json();
-              setImages(data.map((img: string) => `http://localhost:5000/uploads/carrossel/${img}`));
+              setImages(data.map((img: string) => `${apiUrl}/uploads/carrossel/${img}`));
           }
       } catch (error) {
           console.error('Erro ao buscar imagens do carrossel:', error);
@@ -38,7 +40,7 @@ const CarrosselAdm: React.FC = () => {
           formData.append('image', file);
 
           try {
-              const response = await fetch('http://localhost:5000/api/carrossel/upload', {
+              const response = await fetch(`${apiUrl}/api/carrossel/upload`, {
                   method: 'POST',
                   body: formData,
               });
@@ -62,7 +64,7 @@ const CarrosselAdm: React.FC = () => {
   // Função para remover uma imagem
   const handleRemoveImage = async (imageName: string) => {
       try {
-          const response = await fetch(`http://localhost:5000/api/carrossel/delete/${imageName}`, {
+          const response = await fetch(`${apiUrl}/api/carrossel/delete/${imageName}`, {
               method: 'DELETE',
           });
 

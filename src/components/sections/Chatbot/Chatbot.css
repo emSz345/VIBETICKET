@@ -76,8 +76,9 @@
 }
 
 .chatbot-avatar {
-    width: 36px;
-    height: 36px;
+    width: 46px;
+    height: 46px;
+    
     background: white;
     border-radius: 50%;
     display: flex;

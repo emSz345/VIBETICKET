@@ -21,6 +21,12 @@ const Perfil = () => {
     endereco: ""
   });
 
+  // Toggle CPF/CNPJ para organizador
+  const [tipoPessoa, setTipoPessoa] = useState<"cpf" | "cnpj">("cpf");
+  const docLabel = tipoPessoa === "cpf" ? "CPF" : "CNPJ";
+  const docPlaceholder = tipoPessoa === "cpf" ? "000.000.000-00" : "00.000.000/0000-00";
+  const docMaxLength = tipoPessoa === "cpf" ? 14 : 18;
+
   const [organizador, setOrganizador] = useState({
     cnpjCpf: "",
     razaoSocial: "",
@@ -33,21 +39,35 @@ const Perfil = () => {
     endereco: ""
   });
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+  // Ao mudar para CPF, limpa campos que só fazem sentido para CNPJ
+  useEffect(() => {
+    if (tipoPessoa === "cpf") {
+      setOrganizador((prev) => ({
+        ...prev,
+        razaoSocial: "",
+        nomeFantasia: "",
+        inscricaoMunicipal: "",
+        cpfSocio: ""
+      }));
+    }
+  }, [tipoPessoa]);
+
   const getImagemPerfilUrl = (imagemPerfil?: string) => {
-  if (!imagemPerfil) return "http://localhost:5000/uploads/blank_profile.png";
-  
-  // Se for uma URL completa (começa com http)
-  if (imagemPerfil.startsWith('http')) {
-    return imagemPerfil;
-  }
-  
-  // Se começa com /uploads
-  if (imagemPerfil.startsWith('/uploads')) {
-    return `http://localhost:5000${imagemPerfil}`;
-  }
-  
-  return `http://localhost:5000/uploads/${imagemPerfil}`;
-};
+    if (!imagemPerfil) return "http://localhost:5000/uploads/blank_profile.png";
+    
+    // Se for uma URL completa (começa com http)
+    if (imagemPerfil.startsWith('http')) {
+      return imagemPerfil;
+    }
+    
+    // Se começa com /uploads
+    if (imagemPerfil.startsWith('/uploads')) {
+      return `http://localhost:5000${imagemPerfil}`;
+    }
+    
+    return `http://localhost:5000/uploads/${imagemPerfil}`;
+  };
 
   useEffect(() => {
     if (user) {
@@ -272,66 +292,109 @@ const Perfil = () => {
 
               {abaAtiva === "organizador" && (
                 <div className="perfil-form-grid">
+                  {/* Toggle CPF/CNPJ */}
+                  <div className="perfil-form-group full-width">
+                    <div className="perfil-input-label" style={{ marginBottom: 10 }}>
+                      <FiUser className="perfil-input-icon" />
+                      <span>Tipo de documento</span>
+                    </div>
+                    <div className="perfil-radio-group" role="radiogroup" aria-label="Tipo de documento">
+                      <label className="perfil-radio-pill">
+                        <input
+                          type="radio"
+                          name="tipoPessoa"
+                          value="cpf"
+                          checked={tipoPessoa === "cpf"}
+                          onChange={() => setTipoPessoa("cpf")}
+                        />
+                        <span>CPF</span>
+                      </label>
+                      <label className="perfil-radio-pill">
+                        <input
+                          type="radio"
+                          name="tipoPessoa"
+                          value="cnpj"
+                          checked={tipoPessoa === "cnpj"}
+                          onChange={() => setTipoPessoa("cnpj")}
+                        />
+                        <span>CNPJ</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* CPF / CNPJ */}
                   <div className="perfil-form-group">
                     <label className="perfil-input-label">
                       <FiUser className="perfil-input-icon" />
-                      <span>CNPJ/CPF</span>
+                      <span>{docLabel}</span>
                     </label>
                     <input
                       className="perfil-input"
+                      placeholder={docPlaceholder}
+                      inputMode="numeric"
+                      maxLength={docMaxLength}
                       value={organizador.cnpjCpf}
                       onChange={(e) => setOrganizador({ ...organizador, cnpjCpf: e.target.value })}
                     />
                   </div>
 
-                  <div className="perfil-form-group">
-                    <label className="perfil-input-label">
-                      <FiUser className="perfil-input-icon" />
-                      <span>Razão Social</span>
-                    </label>
-                    <input
-                      className="perfil-input"
-                      value={organizador.razaoSocial}
-                      onChange={(e) => setOrganizador({ ...organizador, razaoSocial: e.target.value })}
-                    />
-                  </div>
+                  {/* Só aparece no CNPJ */}
+                  {tipoPessoa === "cnpj" && (
+                    <>
+                      <div className="perfil-form-group">
+                        <label className="perfil-input-label">
+                          <FiUser className="perfil-input-icon" />
+                          <span>Razão Social</span>
+                        </label>
+                        <input
+                          className="perfil-input"
+                          value={organizador.razaoSocial}
+                          onChange={(e) => setOrganizador({ ...organizador, razaoSocial: e.target.value })}
+                        />
+                      </div>
 
-                  <div className="perfil-form-group">
-                    <label className="perfil-input-label">
-                      <FiUser className="perfil-input-icon" />
-                      <span>Nome Fantasia</span>
-                    </label>
-                    <input
-                      className="perfil-input"
-                      value={organizador.nomeFantasia}
-                      onChange={(e) => setOrganizador({ ...organizador, nomeFantasia: e.target.value })}
-                    />
-                  </div>
+                      <div className="perfil-form-group">
+                        <label className="perfil-input-label">
+                          <FiUser className="perfil-input-icon" />
+                          <span>Nome Fantasia</span>
+                        </label>
+                        <input
+                          className="perfil-input"
+                          value={organizador.nomeFantasia}
+                          onChange={(e) => setOrganizador({ ...organizador, nomeFantasia: e.target.value })}
+                        />
+                      </div>
 
-                  <div className="perfil-form-group">
-                    <label className="perfil-input-label">
-                      <FiUser className="perfil-input-icon" />
-                      <span>Inscrição Municipal</span>
-                    </label>
-                    <input
-                      className="perfil-input"
-                      value={organizador.inscricaoMunicipal}
-                      onChange={(e) => setOrganizador({ ...organizador, inscricaoMunicipal: e.target.value })}
-                    />
-                  </div>
+                      <div className="perfil-form-group">
+                        <label className="perfil-input-label">
+                          <FiUser className="perfil-input-icon" />
+                          <span>Inscrição Municipal</span>
+                        </label>
+                        <input
+                          className="perfil-input"
+                          value={organizador.inscricaoMunicipal}
+                          onChange={(e) => setOrganizador({ ...organizador, inscricaoMunicipal: e.target.value })}
+                        />
+                      </div>
 
-                  <div className="perfil-form-group">
-                    <label className="perfil-input-label">
-                      <FiUser className="perfil-input-icon" />
-                      <span>CPF do Sócio/Representante</span>
-                    </label>
-                    <input
-                      className="perfil-input"
-                      value={organizador.cpfSocio}
-                      onChange={(e) => setOrganizador({ ...organizador, cpfSocio: e.target.value })}
-                    />
-                  </div>
+                      <div className="perfil-form-group">
+                        <label className="perfil-input-label">
+                          <FiUser className="perfil-input-icon" />
+                          <span>CPF do Sócio/Representante</span>
+                        </label>
+                        <input
+                          className="perfil-input"
+                          placeholder="000.000.000-00"
+                          inputMode="numeric"
+                          maxLength={14}
+                          value={organizador.cpfSocio}
+                          onChange={(e) => setOrganizador({ ...organizador, cpfSocio: e.target.value })}
+                        />
+                      </div>
+                    </>
+                  )}
 
+                  {/* Campos comuns para CPF e CNPJ */}
                   <div className="perfil-form-group">
                     <label className="perfil-input-label">
                       <FiUser className="perfil-input-icon" />

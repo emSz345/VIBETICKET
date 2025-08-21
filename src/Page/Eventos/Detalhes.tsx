@@ -22,6 +22,8 @@ interface TicketType {
 }
 
 const Detalhes: React.FC = () => {
+    const apiUrl = process.env.REACT_APP_API_URL;
+
     const { id } = useParams<{ id: string }>();
     const { state } = useLocation();
 
@@ -33,7 +35,7 @@ const Detalhes: React.FC = () => {
 
         const buscarEventoPorId = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/eventos/${id}`);
+                const response = await fetch(`${apiUrl}/api/eventos/${id}`);
                 if (!response.ok) {
                     throw new Error('Evento não encontrado');
                 }
@@ -131,7 +133,7 @@ const Detalhes: React.FC = () => {
         );
     }
 
-    const imageUrl = `http://localhost:5000/uploads/${evento.imagem}`;
+    const imageUrl = `${apiUrl}/uploads/${evento.imagem}`;
 
     // Políticas padrão caso não existam no evento
     const politicasPadrao = [

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import CardEvento from './CardEvento'; 
+import { MdEventBusy } from "react-icons/md";
 import { Evento } from './evento'; // Verifique o caminho da sua interface
 
 interface ListaEventosProps {
@@ -20,7 +21,10 @@ const ListaEventos: React.FC<ListaEventosProps> = ({ eventos, titulo }) => {
             <CardEvento key={evento._id} evento={evento} />
           ))
         ) : (
-          <p>Nenhum evento de {titulo} disponível no momento.</p>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <MdEventBusy size={65} color="#696969" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}/>
+            <p style={{ color: "#696969" }}>Nenhum evento de {titulo} disponível no momento.</p>
+          </div>
         )}
       </div>
     </section>

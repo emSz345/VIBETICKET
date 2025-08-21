@@ -13,6 +13,8 @@ import { GoAlertFill } from "react-icons/go";
 import { FaTrashAlt } from "react-icons/fa";
 
 function CriarEventos() {
+
+  const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
   const [etapaAtual, setEtapaAtual] = useState(1);
@@ -354,7 +356,7 @@ function CriarEventos() {
     formData.append("criadoPor", userId);
 
     try {
-      const response = await fetch('http://localhost:5000/api/criar', {
+      const response = await fetch(`${apiUrl}/api/criar`, {
         method: 'POST',
         headers: {
           // O token ainda pode ser útil para uma rota autenticada

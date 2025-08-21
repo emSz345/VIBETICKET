@@ -37,6 +37,8 @@ const Cadastro: React.FC = () => {
   const { login } = useAuth();
   const authContext = useAuth();
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const [loading, setLoading] = useState(false);
 
   // NOVO: Estados para controlar o fluxo de verificação
@@ -79,7 +81,7 @@ const Cadastro: React.FC = () => {
   const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
     try {
       // Envia dados para o backend
-      const response = await fetch("http://localhost:5000/api/users/social-login", {
+      const response = await fetch(`${apiUrl}/api/users/social-login`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -185,7 +187,7 @@ const Cadastro: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/register", {
+      const response = await fetch(`${apiUrl}/api/users/register`, {
         method: "POST",
         body: formDataToSend,
       });
@@ -276,7 +278,7 @@ const Cadastro: React.FC = () => {
 
     const intervalId = setInterval(async () => {
       try {
-        const statusResponse = await fetch(`http://localhost:5000/api/users/me?email=${emailParaVerificar}`);
+        const statusResponse = await fetch(`${apiUrl}/api/users/me?email=${emailParaVerificar}`);
         const userData = await statusResponse.json();
 
         if (userData && userData.isVerified) {

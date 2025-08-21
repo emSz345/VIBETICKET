@@ -5,6 +5,9 @@ import { FaComments, FaTimes, FaMicrophone, FaPaperPlane } from "react-icons/fa"
 import { BsEmojiSmile } from "react-icons/bs";
 import axios from "axios";
 
+import logoChatBot from "../../../assets/logo-chatbot.png"
+import logoChatBot1 from "../../../assets/logo-chatBot-with.png"
+
 interface Evento {
   _id: string;
   nome: string;
@@ -103,12 +106,7 @@ const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<Mensagem[]>([
     {
       from: "bot",
-      text: "E aí! 🎧 Bora subir essa vibe hoje?",
-      eventos: []
-    },
-    {
-      from: "bot",
-      text: "Eu sou seu assistente da NaVibe! 🚀",
+      text: "E aí! Bora subir essa vibe hoje?",
       eventos: []
     },
   ]);
@@ -257,7 +255,7 @@ const ChatBot: React.FC = () => {
       {/* Balão de mensagem acima do botão */}
       {!isOpen && showBalloon && (
         <div className="chatbot-message-floating">
-          Tem alguma dúvida? <br /> Vem conhecer a LitVive!!!
+          Tem alguma dúvida? <br /> Vem conhecer a Vibe Bot!!!
           <span className="chatbot-arrow"></span>
         </div>
       )}
@@ -269,8 +267,9 @@ const ChatBot: React.FC = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         aria-label="Abrir chat"
-      >
-        {isOpen ? <FaTimes /> : <FaComments />}
+        
+      >                         {/* ALTERADO */}
+        {isOpen ? <FaTimes /> : <img src={logoChatBot} title="Foto Chatbot" style={{ height: "55px", width: "55px", }} />}
         {!isOpen && (
           <motion.span
             className="pulse-dot"
@@ -291,9 +290,12 @@ const ChatBot: React.FC = () => {
             transition={{ duration: 0.3 }}
           >
             <div className="chatbot-header">
-              <div className="chatbot-avatar">🎧</div>
+              {/* ALTERADO */}
+              <div className="chatbot-avatar">
+                <img src={logoChatBot1} alt="" className="chatbot-avatar"/>
+              </div>
               <div className="chatbot-header-info">
-                <span>NaVibe Bot</span>
+                <span>Vibe Bot</span>
                 <small>{isTyping ? "Digitando..." : "Online"}</small>
               </div>
             </div>
@@ -382,10 +384,8 @@ const ChatBot: React.FC = () => {
               <ComandosRapidos onComandoClick={sendMessage} />
             )}
 
+            {/* ALTERADO */}
             <div className="chatbot-input">
-              <button className="emoji-button">
-                <BsEmojiSmile />
-              </button>
               <input
                 type="text"
                 placeholder="Digite sua mensagem..."
@@ -393,9 +393,6 @@ const ChatBot: React.FC = () => {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
               />
-              <button className="voice-button">
-                <FaMicrophone />
-              </button>
               <button
                 className="send-button"
                 onClick={(e) => sendMessage()}
