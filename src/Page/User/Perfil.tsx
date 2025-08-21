@@ -34,15 +34,20 @@ const Perfil = () => {
   });
 
   const getImagemPerfilUrl = (imagemPerfil?: string) => {
-    if (!imagemPerfil) return "https://via.placeholder.com/150";
-
-    // Se for uma URL completa (começa com http)
-    if (imagemPerfil.startsWith('http')) {
-      return imagemPerfil;
-    }
-
+  if (!imagemPerfil) return "http://localhost:5000/uploads/blank_profile.png";
+  
+  // Se for uma URL completa (começa com http)
+  if (imagemPerfil.startsWith('http')) {
+    return imagemPerfil;
+  }
+  
+  // Se começa com /uploads
+  if (imagemPerfil.startsWith('/uploads')) {
     return `http://localhost:5000${imagemPerfil}`;
-  };
+  }
+  
+  return `http://localhost:5000/uploads/${imagemPerfil}`;
+};
 
   useEffect(() => {
     if (user) {

@@ -24,12 +24,81 @@ interface Mensagem {
   intent?: string;
   confidence?: number;
   eventos?: Evento[];
-  localizacao?: string; // ← Adicione esta linha
+  categorias?: string[];
+  localizacao?: string;
+  showCommands?: boolean; // ← Adicione esta linha
 }
+
+interface CategoriasListaProps {
+  categorias: string[];
+  onCategoriaClick: (categoria: string) => void;
+}
+
+interface Comando {
+  texto: string;
+  acao: string;
+  icone: string;
+}
+
+const ComandosRapidos: React.FC<{ onComandoClick: (comando: string) => void }> = ({ onComandoClick }) => {
+  const comandos: Comando[] = [
+    { texto: "Eventos de Rock", acao: "Eventos de rock", icone: "🎸" },
+    { texto: "Eventos em SP", acao: "Eventos em São Paulo", icone: "🏙️" },
+    { texto: "Próximos eventos", acao: "Próximos eventos", icone: "📅" },
+    { texto: "Categorias", acao: "Quais categorias têm?", icone: "🎵" },
+    { texto: "Ajuda", acao: "Preciso de ajuda", icone: "❓" }
+  ];
+
+  return (
+    <div className="comandos-rapidos">
+      <div className="comandos-titulo">💡 Comandos rápidos:</div>
+      <div className="comandos-grid">
+        {comandos.map((comando, index) => (
+          <button
+            key={index}
+            className="comando-btn"
+            onClick={() => onComandoClick(comando.acao)}
+            title={comando.acao}
+          >
+            <span className="comando-icone">{comando.icone}</span>
+            {comando.texto}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const CategoriasLista: React.FC<CategoriasListaProps> = ({
+  categorias,
+  onCategoriaClick
+}) => {
+  if (!categorias || categorias.length === 0) return null;
+
+  return (
+    <div className="categorias-lista">
+      <div className="categorias-titulo">🎵 Categorias disponíveis:</div>
+      <div className="categorias-grid">
+        {categorias.map((categoria, index) => (
+          <button
+            key={index}
+            className="categoria-btn"
+            onClick={() => onCategoriaClick(categoria)}
+          >
+            {categoria}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 
 
 const ChatBot: React.FC = () => {
+  const [showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [categorias, setCategorias] = useState<string[]>([]);
   const [showBalloon, setShowBalloon] = useState(true);
   const [messages, setMessages] = useState<Mensagem[]>([
     {
@@ -52,6 +121,16 @@ const ChatBot: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    // Mostra comandos após 3 segundos se não houver interação
+    if (isOpen && messages.length <= 2) {
+      const timer = setTimeout(() => {
+        setShowCommands(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, messages.length]);
+
   // Balão reaparece a cada 1 minuto e dura 5s
   useEffect(() => {
     if (!isOpen) {
@@ -73,41 +152,61 @@ const ChatBot: React.FC = () => {
     if (!isOpen) setShowBalloon(false);
   };
 
-  const sendMessage = async () => {
-    if (!inputValue.trim()) return;
+  const sendMessage = async (messageText?: string) => {
+    const textToSend = messageText || inputValue;
+    if (!textToSend.trim()) return;
 
-    const newMessage: Mensagem = { from: "user", text: inputValue, eventos: [] };
+    const newMessage: Mensagem = { from: "user", text: textToSend, eventos: [] };
     setMessages([...messages, newMessage]);
     setInputValue("");
     setIsTyping(true);
+    setShowCommands(false);
 
     try {
+
+      let messageToSend = textToSend;
+
+      if (categorias && categorias.length > 0 && categorias.includes(textToSend)) {
+      messageToSend = `Quero eventos de ${textToSend}`;
+    }
+
       const response = await axios.post('http://localhost:5000/api/witai/chat', {
-        message: inputValue
+        message: messageToSend
       });
 
+
+
       if (response.data.success) {
+        // Verifique se a resposta tem a estrutura correta
+        const botReply = response.data.reply;
         const botMessage: Mensagem = {
           from: "bot",
-          text: response.data.reply,
+          text: typeof botReply === 'object' ? botReply.text : botReply,
           intent: response.data.intent,
           confidence: response.data.confidence,
-          eventos: response.data.eventos || []
+          eventos: response.data.eventos || [],
+          categorias: response.data.categorias || [],
+          showCommands: typeof botReply === 'object' ? botReply.showCommands : false
         };
 
+        if (response.data.categorias && response.data.categorias.length > 0) {
+        setCategorias(response.data.categorias);
+      }
+
         setMessages((prev) => [...prev, botMessage]);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          { from: "bot", text: response.data.error || "Ops, tive um probleminha aqui. Pode repetir?", eventos: [] },
-        ]);
+        setShowCommands(typeof botReply === 'object' ? botReply.showCommands : false);
       }
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
       setMessages((prev) => [
         ...prev,
-        { from: "bot", text: "Estou com dificuldades técnicas. Tente novamente em instantes! 🛠️", eventos: [] },
+        {
+          from: "bot",
+          text: "Estou com dificuldades técnicas. Tente novamente em instantes! 🛠️",
+          showCommands: true
+        },
       ]);
+      setShowCommands(true);
     } finally {
       setIsTyping(false);
     }
@@ -210,6 +309,17 @@ const ChatBot: React.FC = () => {
                   transition={{ duration: 0.2 }}
                 >
                   {msg.text}
+
+                  {msg.categorias && msg.categorias.length > 0 && (
+                    <CategoriasLista
+                      categorias={msg.categorias}
+                      onCategoriaClick={(categoria) => {
+                        setInputValue(categoria);
+                        sendMessage(categoria);
+                      }}
+                    />
+                  )}
+
                   {msg.eventos && msg.eventos.length > 0 ? (
                     <EventosLista eventos={msg.eventos} />
                   ) : msg.intent?.includes('evento') && (
@@ -268,6 +378,10 @@ const ChatBot: React.FC = () => {
               <div ref={messagesEndRef} />
             </div>
 
+            {showCommands && (
+              <ComandosRapidos onComandoClick={sendMessage} />
+            )}
+
             <div className="chatbot-input">
               <button className="emoji-button">
                 <BsEmojiSmile />
@@ -284,7 +398,7 @@ const ChatBot: React.FC = () => {
               </button>
               <button
                 className="send-button"
-                onClick={sendMessage}
+                onClick={(e) => sendMessage()}
                 disabled={!inputValue.trim()}
               >
                 <FaPaperPlane />

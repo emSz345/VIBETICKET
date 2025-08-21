@@ -10,6 +10,7 @@ import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
 import AppHeader from '../../components/layout/Header/AppHeader'
 import { GoAlertFill } from "react-icons/go";
+import { FaTrashAlt } from "react-icons/fa";
 
 function CriarEventos() {
   const navigate = useNavigate();
@@ -439,7 +440,7 @@ function CriarEventos() {
             <div className="criar-Informaçao">
               <h2>1. Informações básicas</h2>
             </div>
-            <p style={{ margin: 10 }}>(*) Todos que tiver isso na frente é obrigatória!!!</p>
+            <p style={{ margin: 10, color: "red" }}>(*) Todos os campos que contém asterisco são obrigatórios!!!</p>
             <div className="campo">
               <label htmlFor="nome-evento">
                 Nome do evento <span className={getError('nomeEvento') ? 'erro-asterisco' : ''}>*</span>
@@ -479,7 +480,7 @@ function CriarEventos() {
                         setImagePreviewUrl(null);
                       }}
                     >
-                      Remover Imagem
+                      <FaTrashAlt />
                     </button>
                   </div>
                 ) : (

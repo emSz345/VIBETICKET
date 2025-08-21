@@ -17,12 +17,11 @@ import {
 // Renomeado para AppHeader para maior clareza
 export default function AppHeader() {
   const [scrolled, setScrolled] = useState(false);
-  const [usuarioLogado, setUsuarioLogado] = useState(false);
+  
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [nomeUsuario, setNomeUsuario] = useState('');
+  
    const { user, isAuthenticated, logout } = useAuth();
-  const [emailUsuario, setEmailUsuario] = useState('');
-  const [imagemPerfil, setImagemPerfil] = useState('');
+  
 
 
   const getProfileImageUrl = () => {
@@ -44,23 +43,9 @@ export default function AppHeader() {
     return `http://localhost:5000/uploads/${user.imagemPerfil}`;
   };
 
+ 
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const nome = localStorage.getItem('userName');
-    const email = localStorage.getItem('userEmail');
-    const imagem = localStorage.getItem('imagemPerfil');
-
-    if (token && nome && email) {
-      setUsuarioLogado(true);
-      setNomeUsuario(nome);
-      setEmailUsuario(email);
-      // --- CORREÇÃO AQUI: Monta a URL da imagem corretamente
-      setImagemPerfil(imagem ? `http://localhost:5000${imagem}` : '');
-    } else {
-      setUsuarioLogado(false);
-    }
-  }, []);
+ 
 
   const navigate = useNavigate();
 
@@ -81,12 +66,12 @@ export default function AppHeader() {
       {/* Ações do Usuário */}
       <div className="app-header__actions">
         <div className="app-header__auth">
-          {!usuarioLogado ? (
+          {!isAuthenticated ? (
             <button onClick={() => navigate('/Login')} className="app-header__login-button">Login / Cadastro</button>
           ) : (
             <div className="user-menu">
               <div className="user-menu__trigger" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                {imagemPerfil ? (
+                {user?.imagemPerfil ? (
                   <div className="user-menu__avatar-container">
                     {/* CORREÇÃO AQUI */}
                     <img src={getProfileImageUrl()} className="user-menu__avatar-image" alt="Avatar" />
@@ -94,7 +79,7 @@ export default function AppHeader() {
                   </div>
                 ) : (
                   <div className="user-menu__avatar-placeholder">
-                    {nomeUsuario?.slice(0, 1).toUpperCase()}
+                    {user?.nome?.slice(0, 1).toUpperCase()}
                   </div>
                 )}
               </div>
@@ -105,8 +90,8 @@ export default function AppHeader() {
                     {/* CORREÇÃO AQUI */}
                     <img src={getProfileImageUrl()} className="user-menu__avatar-image" alt="Avatar" />
                     <div className="user-menu__user-info">
-                      <strong>{nomeUsuario}</strong>
-                      <small>{emailUsuario}</small>
+                      <strong>{user?.nome}</strong>
+                      <small>{user?.email}</small>
                     </div>
                   </div>
                   <hr />
@@ -116,8 +101,7 @@ export default function AppHeader() {
                   <button onClick={() => navigate('/favoritos')}><FaClipboardList /><span>Gerenciar eventos</span></button>
                   <button onClick={() => navigate('/duvidas')}><FaHeadphones /><span>Central de Duvidas</span></button>
                   <button className="user-menu__logout-button" onClick={() => {
-                    localStorage.clear();
-                    setUsuarioLogado(false);
+                    logout()
                     navigate('/');
                   }}>
                     <FaSignOutAlt /><span>Sair</span>

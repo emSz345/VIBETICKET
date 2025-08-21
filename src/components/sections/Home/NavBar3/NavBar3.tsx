@@ -31,18 +31,24 @@ export default function NavBar3() {
     window.location.reload();
   };
 
-  const getProfileImageUrl = () => {
-    if (!user?.imagemPerfil) {
-      return 'http://localhost:5000/uploads/blank_profile.png';
-    }
-    if (/^https?:\/\//.test(user.imagemPerfil)) {
-      return user.imagemPerfil;
-    }
-    if (user.imagemPerfil.startsWith('/uploads')) {
-      return `http://localhost:5000${user.imagemPerfil}`;
-    }
-    return `http://localhost:5000/uploads/${user.imagemPerfil}`;
-  };
+ const getProfileImageUrl = () => {
+  if (!user?.imagemPerfil) {
+    return 'http://localhost:5000/uploads/blank_profile.png';
+  }
+  
+  // Se já é uma URL completa (http ou https)
+  if (/^https?:\/\//.test(user.imagemPerfil)) {
+    return user.imagemPerfil;
+  }
+  
+  // Se começa com /uploads (caminho relativo)
+  if (user.imagemPerfil.startsWith('/uploads')) {
+    return `http://localhost:5000${user.imagemPerfil}`;
+  }
+  
+  // Padrão para imagens locais
+  return `http://localhost:5000/uploads/${user.imagemPerfil}`;
+};
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
