@@ -9,6 +9,38 @@ body {
     color: #333;
 }
 
+.loading, .error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.loading {
+  color: #0969fb;
+}
+
+.error {
+  color: #e74c3c;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.error button {
+  background-color: #0969fb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.error button:hover {
+  background-color: #0756cc;
+}
+
 /* Layout principal */
 .meus-ingressos-container {
     display: flex;

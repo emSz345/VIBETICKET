@@ -20,7 +20,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const email = localStorage.getItem('userName');
 
 // Adicionando 'reanalise' ao tipo de status//////////////////////////
-type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "reanalise";
+type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
 
 const Painel: React.FC = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -29,7 +29,7 @@ const Painel: React.FC = () => {
 
   // Função para buscar os eventos com base no status selecionado
   const fetchEventosByStatus = (status: EventoStatus) => {
-    fetch(`${apiUrl}/api/listar/${status}`)
+    fetch(`${apiUrl}/api/eventos/listar/${status}`)
       .then((res) => res.json())
       .then((data) => setEventos(data))
       .catch((err) => console.error(`Erro ao buscar eventos ${status}:`, err));
@@ -41,23 +41,31 @@ const Painel: React.FC = () => {
   }, [status]);
 
   // Função para atualizar o status de um evento
-  const updateEventoStatus = async (id: string, newStatus: EventoStatus) => {
-    try {
-      await fetch(`${apiUrl}/api/atualizar-status/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      setEventos((prevEventos) => prevEventos.filter((evento) => evento._id !== id));
-    } catch (err) {
-      console.error("Erro ao atualizar status do evento:", err);
-    }
-  };
+  const updateEventoStatus = async (id: string, newStatus: EventoStatus, motivo?: { titulo: string, descricao: string }) => {
+  try {
+    const body = motivo
+      ? JSON.stringify({ status: newStatus, motivo })
+      : JSON.stringify({ status: newStatus });
+
+    await fetch(`${apiUrl}/api/eventos/atualizar-status/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: body,
+    });
+
+    // Atualiza a lista mantendo apenas os eventos que não foram modificados
+    // OU os eventos que ainda estão no status atual do filtro
+    setEventos((prevEventos) => prevEventos.filter((evento) => evento._id !== id));
+    
+  } catch (err) {
+    console.error("Erro ao atualizar status do evento:", err);
+  }
+};
 
   const handleAceitar = (id: string) => updateEventoStatus(id, "aprovado");
-  const handleRejeitar = (id: string) => updateEventoStatus(id, "rejeitado");
-  // Nova função para definir o status de reanálise
-  const handleReanalise = (id: string) => updateEventoStatus(id, "reanalise");
+  const handleRejeitar = (id: string, motivo: { titulo: string, descricao: string }) =>
+    updateEventoStatus(id, "rejeitado", motivo);
+  const handleReanalise = (id: string) => updateEventoStatus(id, "em_reanalise");
 
   const voltar = (): void => {
     navigate("/")
@@ -117,8 +125,8 @@ const Painel: React.FC = () => {
               Rejeitados
             </button>
             <button
-              className={`tab-button ${status === "reanalise" ? "active" : ""}`}
-              onClick={() => setStatusFilter("reanalise")}
+              className={`tab-button ${status === "em_reanalise" ? "active" : ""}`}
+              onClick={() => setStatusFilter("em_reanalise")}
             >
               Em Reanálise
             </button>

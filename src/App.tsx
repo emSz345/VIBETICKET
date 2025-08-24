@@ -7,6 +7,7 @@ import './App.css';
 import Cadastro from "./Page/Auth/Cadastro";
 import Login from './Page/Auth/Login';
 import MeusEventos from './Page/User/Meus-eventos';
+import EditarEvento from './Page/User/EditarEvento';
 
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
 import AdminRoute from './Hook/RotaDoAdm';
@@ -61,6 +62,7 @@ function AppRoutes() {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/CriarEventos" element={<CriarEventos />} />
+         <Route path="/editar-evento/:id" element={<EditarEvento />} />
       </Route>
 
 
@@ -79,6 +81,7 @@ function AppRoutes() {
           <Route path="/perfil" element={<Perfil />} /> {/* O Perfil pode pegar os dados do useAuth() internamente */}
           <Route path="/meus-ingressos" element={<MeusIngressos />} />
            <Route path="/meus-eventos" element={<MeusEventos />} />
+           
         </Route>
 
         {/* --- Rotas de Admin (só para usuários logados E que são admin) --- */}

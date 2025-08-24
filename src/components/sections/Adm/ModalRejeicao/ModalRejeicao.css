@@ -1,0 +1,112 @@
+.modal-rejeicao-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-rejeicao-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal-rejeicao-content h2 {
+    margin: 0 0 1rem 0;
+    color: #dc3545;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.modal-rejeicao-subtitle {
+    margin: 0 0 1.5rem 0;
+    color: #666;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.modal-rejeicao-input-group {
+    margin-bottom: 1.5rem;
+}
+
+.modal-rejeicao-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.modal-rejeicao-input,
+.modal-rejeicao-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.modal-rejeicao-input:focus,
+.modal-rejeicao-textarea:focus {
+    outline: none;
+    border-color: #0969fb;
+}
+
+.modal-rejeicao-textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+}
+
+.modal-rejeicao-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.modal-rejeicao-btn-cancelar {
+    padding: 0.75rem 1.5rem;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.modal-rejeicao-btn-cancelar:hover {
+    background-color: #5a6268;
+}
+
+.modal-rejeicao-btn-confirmar {
+    padding: 0.75rem 1.5rem;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.modal-rejeicao-btn-confirmar:hover:not(:disabled) {
+    background-color: #c82333;
+}
+
+.modal-rejeicao-btn-confirmar:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}

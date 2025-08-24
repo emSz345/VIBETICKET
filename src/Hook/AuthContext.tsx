@@ -83,12 +83,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, senha: string) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/users/login", { email, senha });
+      const apiUrl = process.env.REACT_APP_API_URL;
+      const response = await axios.post(`${apiUrl}/api/users/login`, { email, senha });
       const { token, user: userData } = response.data;
+
+      
+
+      if (!token) {
+        throw new Error('Token não recebido do servidor');
+      }
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("isAdmin", userData.isAdmin.toString());
+      localStorage.setItem("isAuthenticated", "true"); // Adicione esta linha
       setUser(userData);
       setIsAuthenticated(true);
 

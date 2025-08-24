@@ -20,7 +20,7 @@ function Home() {
     const buscarEventos = async () => {
       try {
         // Altere esta linha para incluir o status "aprovado"
-        const response = await fetch('http://localhost:5000/api/listar/aprovado');
+         const response = await fetch('http://localhost:5000/api/eventos/aprovados');
         const data: Evento[] = await response.json();
 
         // O filtro não é mais necessário, pois a API já retorna os eventos aprovados

@@ -2,14 +2,14 @@ import React from "react";
 import { Evento } from "../../../../types/evento";
 import "./ModalEvento.css";
 
-interface Props {
+interface ModalEventoProps {
     evento: Evento;
     onClose: () => void;
-    onAceitar: (id: string) => void;
-    onRejeitar: (id: string) => void;
+    onAceitar: () => void;
+    onRejeitar: () => void; // Agora apenas abre o modal de rejeição
 }
 
-const ModalEvento: React.FC<Props> = ({ evento, onClose, onAceitar, onRejeitar }) => {
+const ModalEvento: React.FC<ModalEventoProps> = ({ evento, onClose, onAceitar, onRejeitar }) => {
     return (
         <div className="modal-evento-overlay">
             <div className="modal-evento-conteudo">
@@ -62,10 +62,10 @@ const ModalEvento: React.FC<Props> = ({ evento, onClose, onAceitar, onRejeitar }
 
                 {/* Botões */}
                 <div className="modal-evento-botoes">
-                    <button className="modal-evento-btn modal-evento-btn-rejeitar" onClick={() => onRejeitar(evento._id)}>
+                    <button className="modal-evento-btn modal-evento-btn-rejeitar" onClick={onRejeitar}>
                         Rejeitar
                     </button>
-                    <button className="modal-evento-btn modal-evento-btn-aceitar" onClick={() => onAceitar(evento._id)}>
+                    <button className="modal-evento-btn modal-evento-btn-aceitar" onClick={onAceitar}>
                         Aceitar
                     </button>
                 </div>
