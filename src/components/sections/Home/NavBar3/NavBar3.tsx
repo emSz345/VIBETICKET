@@ -26,6 +26,8 @@ export default function NavBar3() {
   const triggerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const voltar = (): void => {
     navigate("/");
     window.location.reload();
@@ -33,7 +35,7 @@ export default function NavBar3() {
 
  const getProfileImageUrl = () => {
   if (!user?.imagemPerfil) {
-    return 'http://localhost:5000/uploads/blank_profile.png';
+    return `${apiUrl}/uploads/blank_profile.png`;
   }
   
   // Se já é uma URL completa (http ou https)
@@ -43,11 +45,11 @@ export default function NavBar3() {
   
   // Se começa com /uploads (caminho relativo)
   if (user.imagemPerfil.startsWith('/uploads')) {
-    return `http://localhost:5000${user.imagemPerfil}`;
+    return `${apiUrl}/${user.imagemPerfil}`;
   }
   
   // Padrão para imagens locais
-  return `http://localhost:5000/uploads/${user.imagemPerfil}`;
+  return `${apiUrl}/uploads/${user.imagemPerfil}`;
 };
 
   useEffect(() => {

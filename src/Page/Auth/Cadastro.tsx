@@ -59,7 +59,7 @@ const Cadastro: React.FC = () => {
     if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(formData.nome)) {
       newErrors.nome = "Nome deve conter pelo menos 10 letras e nenhum número.";
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) || formData.email.length < 10) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Email deve estar em formato válido e conter pelo menos 10 caracteres.";
     }
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{6,}$/.test(formData.senha)) {

@@ -17,6 +17,8 @@ import {
 // Renomeado para AppHeader para maior clareza
 export default function AppHeader() {
   const [scrolled, setScrolled] = useState(false);
+
+  const apiUrl = process.env.REACT_APP_API_URL;
   
   const [dropdownOpen, setDropdownOpen] = useState(false);
   
@@ -26,7 +28,7 @@ export default function AppHeader() {
 
   const getProfileImageUrl = () => {
     if (!user?.imagemPerfil) {
-      return 'http://localhost:5000/uploads/blank_profile.png';
+      return `${apiUrl}/uploads/blank_profile.png`;
     }
 
     // Se já é uma URL completa (http ou https)
@@ -36,11 +38,11 @@ export default function AppHeader() {
 
     // Se começa com /uploads (caminho relativo)
     if (user.imagemPerfil.startsWith('/uploads')) {
-      return `http://localhost:5000${user.imagemPerfil}`;
+      return `${apiUrl}/${user.imagemPerfil}`;
     }
 
     // Padrão para imagens locais
-    return `http://localhost:5000/uploads/${user.imagemPerfil}`;
+    return `${apiUrl}/uploads/${user.imagemPerfil}`;
   };
 
  

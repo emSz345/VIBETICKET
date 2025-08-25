@@ -7,7 +7,7 @@ import {
 } from "react-icons/fa";
 import { IoTicket } from "react-icons/io5";
 import { FiMinus, FiPlus } from "react-icons/fi";
-import { Evento } from '../home-eventos/evento';
+import { Evento } from '../../components/sections/Home/home-eventos/evento';
 
 // Adicionei 'politicas' à interface Evento
 interface EventoComPoliticas extends Evento {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import '../../styles/CardEvento.css';
+import '../../../../styles/CardEvento.css'
 import { Evento } from './evento';
 
 interface CardEventoProps {

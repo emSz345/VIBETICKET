@@ -21,6 +21,8 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const appleProvider = new OAuthProvider("apple.com");
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const createFormData = (data) => {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
@@ -100,7 +102,7 @@ function realizarLoginComFacebook(resolve, reject) {
 
           // Envia os dados pro backend
           const response = await axios.post(
-            "http://localhost:5000/api/users/social-login",
+            `${apiUrl}/api/users/social-login`,
             {
               provider: 'facebook',
               userData: {

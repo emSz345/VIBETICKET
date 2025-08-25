@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, useEffect } from "react";
 import { FiEdit2, FiCheck, FiUser, FiShoppingBag, FiCalendar, FiPhone, FiMapPin, FiMail, FiCamera } from "react-icons/fi";
 import { useAuth } from "../../Hook/AuthContext";
 import "../../styles/Perfil.css";
+import { AirVent } from "lucide-react";
 
 const Perfil = () => {
   const { user, isLoading, updateUser } = useAuth();
@@ -54,7 +55,7 @@ const Perfil = () => {
   }, [tipoPessoa]);
 
   const getImagemPerfilUrl = (imagemPerfil?: string) => {
-    if (!imagemPerfil) return "http://localhost:5000/uploads/blank_profile.png";
+    if (!imagemPerfil) return `${apiUrl}/uploads/blank_profile.png`;
     
     // Se for uma URL completa (começa com http)
     if (imagemPerfil.startsWith('http')) {
@@ -63,10 +64,10 @@ const Perfil = () => {
     
     // Se começa com /uploads
     if (imagemPerfil.startsWith('/uploads')) {
-      return `http://localhost:5000${imagemPerfil}`;
+      return `${apiUrl}/${imagemPerfil}`;
     }
     
-    return `http://localhost:5000/uploads/${imagemPerfil}`;
+    return `${apiUrl}/uploads/${imagemPerfil}`;
   };
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const Perfil = () => {
       if (user.imagemPerfil?.startsWith('http')) {
         setPreviewUrl(user.imagemPerfil);
       } else {
-        setPreviewUrl(user.imagemPerfil ? `http://localhost:5000${user.imagemPerfil}` : undefined);
+        setPreviewUrl(user.imagemPerfil ? `${apiUrl}/${user.imagemPerfil}` : undefined);
       }
     }
   }, [user]);
@@ -95,7 +96,7 @@ const Perfil = () => {
     if (imagem) formData.append("imagemPerfil", imagem);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/users/updateByEmail/${user.email}`, {
+      const response = await fetch(`${apiUrl}/api/users/updateByEmail/${user.email}`, {
         method: "PUT",
         body: formData,
       });

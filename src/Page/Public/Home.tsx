@@ -9,18 +9,20 @@ import ChatBot from '../../components/sections/Chatbot/Chatbot';
 import { Link } from 'react-router-dom';
 import help from '../../assets/help.png';
 
-import ListaEventos from '../home-eventos/ListaEventos';
-import { Evento } from '../home-eventos/evento'; // Verifique o caminho da sua interface
+import ListaEventos from '../../components/sections/Home/home-eventos/ListaEventos';
+import { Evento } from '../../components/sections/Home/home-eventos/evento'; // Verifique o caminho da sua interface
 
 function Home() {
   // Tipa o estado como um array da interface Evento
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const [eventosAprovados, setEventosAprovados] = useState<Evento[]>([]);
 
   useEffect(() => {
     const buscarEventos = async () => {
       try {
         // Altere esta linha para incluir o status "aprovado"
-         const response = await fetch('http://localhost:5000/api/eventos/aprovados');
+         const response = await fetch(`${apiUrl}/api/eventos/aprovados`);
         const data: Evento[] = await response.json();
 
         // O filtro não é mais necessário, pois a API já retorna os eventos aprovados

@@ -13,15 +13,17 @@ import "./Carrossel.css";
 const CarrosselEventos = () => {
     const [imagens, setImagens] = useState<string[]>([]);
 
+    const apiUrl = process.env.REACT_APP_API_URL;
+
     useEffect(() => {
         // Função para buscar as imagens do carrossel no backend
         const fetchImagensCarrossel = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/carrossel'); // Endpoint para buscar imagens
+                const response = await fetch(`${apiUrl}/api/carrossel`); // Endpoint para buscar imagens
                 if (response.ok) {
                     const data: string[] = await response.json();
                     // Constrói a URL completa da imagem para o frontend
-                    setImagens(data.map((img: string) => `http://localhost:5000/uploads/carrossel/${img}`));
+                    setImagens(data.map((img: string) => `${apiUrl}/uploads/carrossel/${img}`));
                 }
             } catch (error) {
                 console.error('Erro ao buscar imagens do carrossel:', error);
