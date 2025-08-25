@@ -182,11 +182,9 @@ const MeusEventos = () => {
           <button className="meus-ingressos-nav-btn meus-ingressos-active">
             <MdEvent /> Meus Eventos
           </button>
-          <button className="meus-ingressos-nav-btn">
-            <Link to="/CriarEventos">
-              <FaPlus /> Crie seu evento
-            </Link>
-          </button>
+          <Link to="/CriarEventos" className="meus-ingressos-nav-btn">
+            <FaPlus /> Crie seu evento
+          </Link>
         </nav>
       </aside>
 
@@ -195,11 +193,9 @@ const MeusEventos = () => {
         {/* Header */}
         <header className="meus-ingressos-header">
           <h2>Meus Eventos</h2>
-          <button className="meus-ingressos-btn-criar">
-            <Link to="/CriarEventos" >
-              <FaPlus /> Crie seu evento
-            </Link>
-          </button>
+          <Link to="/CriarEventos" className="meus-ingressos-btn-criar">
+            <FaPlus /> Crie seu evento
+          </Link>
         </header>
 
         {/* Cards de resumo */}

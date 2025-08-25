@@ -1,5 +1,6 @@
 import React from "react";
-import { FaFacebook, FaInstagram, FaTwitter, FaWhatsapp, FaCreditCard } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaWhatsapp, FaCreditCard } from "react-icons/fa";
+import { FaXTwitter } from 'react-icons/fa6';
 import { Link } from "react-router-dom";
 import "./Footer.css";
 import logo from '../../../assets/logo.png';
@@ -16,7 +17,7 @@ const Footer: React.FC = () => {
           <div className="footer-social-container">
             <a href="#" className="footer-social-link"><FaFacebook /></a>
             <a href="#" className="footer-social-link"><FaInstagram /></a>
-            <a href="#" className="footer-social-link"><FaTwitter /></a>
+            <a href="#" className="footer-social-link"><FaXTwitter /></a>
             <a href="#" className="footer-social-link"><FaWhatsapp /></a>
           </div>
         </div>
@@ -43,7 +44,18 @@ const Footer: React.FC = () => {
               <li className="footer-section-item"><Link to="/eventos/rio-de-janeiro" className="footer-link">Rio de Janeiro</Link></li>
               <li className="footer-section-item"><Link to="/eventos/minas-gerais" className="footer-link">Minas Gerais</Link></li>
               <li className="footer-section-item"><Link to="/eventos/parana" className="footer-link">Paraná</Link></li>
-              <li className="footer-section-item"><Link to="/eventos" className="footer-link footer-link-highlight">Ver todos os estados →</Link></li>
+              <li className="footer-section-item"><a
+                href="#estados"
+                className="footer-link footer-link-highlight"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const element = document.getElementById('estados');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}> Ver todos os estados →
+              </a>
+              </li>
             </ul>
           </div>
 
@@ -72,13 +84,6 @@ const Footer: React.FC = () => {
         {/* Rodapé inferior */}
         <div className="footer-bottom">
           <p className="footer-copyright">© {new Date().getFullYear()} NaVibe. Todos os direitos reservados.</p>
-          <div className="footer-bottom-links">
-            <Link to="/termos" className="footer-bottom-link">Termos</Link>
-            <span className="footer-bottom-separator">|</span>
-            <Link to="/privacidade" className="footer-bottom-link">Privacidade</Link>
-            <span className="footer-bottom-separator">|</span>
-            <Link to="/contato" className="footer-bottom-link">Contato</Link>
-          </div>
         </div>
       </div>
     </footer>

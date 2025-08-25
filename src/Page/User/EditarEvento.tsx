@@ -127,8 +127,8 @@ const EditarEvento = () => {
         setDataInicio(data.dataInicio);
         setHoraInicio(data.horaInicio);
         setHoraTermino(data.horaTermino);
-        setDataFimVendas(data.dataFim || data.dataFimVendas || '');
-        setDataInicioVendas(data.dataInicio || data.dataInicioVendas);
+        setDataFimVendas(data.dataFimVendas);
+        setDataInicioVendas(data.dataInicioVendas);
         setValorIngressoInteira(data.valorIngressoInteira?.toString() || '');
         setValorIngressoMeia(data.valorIngressoMeia?.toString() || '');
         setQuantidadeInteira(data.quantidadeInteira?.toString() || '');

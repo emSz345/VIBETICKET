@@ -8,7 +8,7 @@ function Termos() {
         <h2>Termos de Uso</h2>
         <div className="termos-introducao">
           <p>
-            Bem-vindo à B4Y. Ao utilizar nossos serviços, você concorda com estes Termos de Uso.
+            Bem-vindo à NaVibe. Ao utilizar nossos serviços, você concorda com estes Termos de Uso.
             Caso não concorde, pedimos que não utilize a plataforma.
           </p>
         </div>

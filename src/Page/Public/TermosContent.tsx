@@ -11,13 +11,13 @@ interface TermosProps {
     return (
       <div>
         <div className="container-title">
-          <h3>Termos de uso da plataforma <span>B4Y</span></h3>
+          <h3>Termos de uso da plataforma <span>NaVibe</span></h3>
         </div>
         <div className="termos-container">
   
           <div className="termos-texto">
             <p>
-              Bem-vindo à B4Y. Ao utilizar nossos serviços, você concorda com estes Termos de Uso. Caso não concorde, pedimos que não utilize a plataforma.
+              Bem-vindo à NaVibe. Ao utilizar nossos serviços, você concorda com estes Termos de Uso. Caso não concorde, pedimos que não utilize a plataforma.
             </p>
           </div>
   

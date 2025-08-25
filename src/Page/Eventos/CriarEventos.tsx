@@ -356,7 +356,7 @@ function CriarEventos() {
     formData.append("criadoPor", userId);
 
     try {
-      const response = await fetch(`${apiUrl}/api/criar`, {
+      const response = await fetch(`${apiUrl}/api/eventos/criar`, {
         method: 'POST',
         headers: {
           // O token ainda pode ser útil para uma rota autenticada

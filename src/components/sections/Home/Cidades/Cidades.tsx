@@ -86,7 +86,7 @@ const Cidades: React.FC = () => {
   }, []);
 
   return (
-    <div className="cidades-container">
+   <div className="cidades-container" id="estados">
       <h3 className="cidades-title">Estados com mais shows</h3>
       <div className="cidades-grid" ref={containerRef}>
         {[...cidades].map((cidade, i) => (
