@@ -25,7 +25,7 @@ type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
 const Painel: React.FC = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [status, setStatusFilter] = useState<EventoStatus>("em_analise");
-  const [usuarioLogado, setUsuarioLogado] = useState(false);
+  const [_, setUsuarioLogado] = useState(false);
 
   // Função para buscar os eventos com base no status selecionado
   const fetchEventosByStatus = (status: EventoStatus) => {
@@ -66,11 +66,6 @@ const Painel: React.FC = () => {
   const handleRejeitar = (id: string, motivo: { titulo: string, descricao: string }) =>
     updateEventoStatus(id, "rejeitado", motivo);
   const handleReanalise = (id: string) => updateEventoStatus(id, "em_reanalise");
-
-  const voltar = (): void => {
-    navigate("/")
-    window.location.reload();
-  }
 
   const navigate = useNavigate();
 

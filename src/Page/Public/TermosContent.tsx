@@ -1,4 +1,3 @@
-import Footer from "../../components/layout/Footer/Footer";
 import '../../styles/Termos.css'
 import Button from "../../components/ui/Button/Button";
 

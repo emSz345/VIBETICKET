@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import axios from 'axios';
-
 
 // Interface para os dados do usuário
 interface UserData {
@@ -8,7 +7,7 @@ interface UserData {
   nome: string;
   email: string;
   isAdmin: boolean;
-  isVerified: boolean
+  isVerified: boolean;
   imagemPerfil?: string;
 }
 
@@ -80,14 +79,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   // --- Funções de manipulação de estado ---
+  
+  // Envolve a função logout com useCallback
+  const logout = useCallback(() => {
+    localStorage.clear();
+    setUser(null);
+    setIsAuthenticated(false);
+  }, [setUser, setIsAuthenticated]);
 
-  const login = async (email: string, senha: string) => {
+  // Envolve a função login com useCallback
+  const login = useCallback(async (email: string, senha: string) => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
       const response = await axios.post(`${apiUrl}/api/users/login`, { email, senha });
       const { token, user: userData } = response.data;
-
-      
 
       if (!token) {
         throw new Error('Token não recebido do servidor');
@@ -96,33 +101,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("isAdmin", userData.isAdmin.toString());
-      localStorage.setItem("isAuthenticated", "true"); // Adicione esta linha
+      localStorage.setItem("isAuthenticated", "true");
       setUser(userData);
       setIsAuthenticated(true);
 
       console.log("✅ [AuthContext] Estado atualizado! Autenticado:", true, "Usuário:", userData);
-      return userData;
     } catch (error) {
       console.error("Falha no login:", error);
-      logout();
+      // Chama o logout diretamente sem a necessidade de envolver
+      // em useCallback, pois será um valor constante
+      logout(); 
       throw error;
     }
-  };
+  }, [logout, setUser, setIsAuthenticated]);
 
-  const logout = () => {
-    localStorage.clear();
-    setUser(null);
-    setIsAuthenticated(false);
-  };
-
-  // Função para login social
-  const socialLogin = (data: SocialLoginData) => {
-
+  // Envolve a função socialLogin com useCallback
+  const socialLogin = useCallback((data: SocialLoginData) => {
     const existingLocalImage = localStorage.getItem('hasLocalImage');
 
     localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.userData)); // Alterado para userData
-
+    localStorage.setItem("user", JSON.stringify(data.userData));
     localStorage.setItem("userName", data.userData.nome);
     localStorage.setItem("userEmail", data.userData.email);
     localStorage.setItem("userRole", data.userData.isAdmin ? "admin" : "user");
@@ -131,14 +129,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     localStorage.setItem("isAdmin", data.userData.isAdmin.toString());
     localStorage.setItem("isVerified", "true");
-    setUser(data.userData); // Alterado para userData
+    setUser(data.userData);
     setIsAuthenticated(true);
-  };
+  }, [setUser, setIsAuthenticated]);
 
-  const updateUser = (newUserData: UserData) => {
+  // Envolve a função updateUser com useCallback
+  const updateUser = useCallback((newUserData: UserData) => {
     setUser(newUserData);
     localStorage.setItem('user', JSON.stringify(newUserData));
-  };
+  }, [setUser]);
 
   // Memorizando o valor do contexto para evitar renderizações desnecessárias
   const contextValue = useMemo(() => ({
@@ -149,7 +148,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     logout,
     updateUser,
     socialLogin
-  }), [isAuthenticated, user, isLoading]);
+  }), [isAuthenticated, user, isLoading, login, logout, updateUser, socialLogin]);
 
   return (
     <AuthContext.Provider value={contextValue}>

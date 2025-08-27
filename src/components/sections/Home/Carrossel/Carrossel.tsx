@@ -29,9 +29,9 @@ const CarrosselEventos = () => {
                 console.error('Erro ao buscar imagens do carrossel:', error);
             }
         };
-
+    
         fetchImagensCarrossel();
-    }, []);
+    }, [apiUrl]); // 'apiUrl' foi adicionada aqui
 
     return (
         <div className="carrossel-container">

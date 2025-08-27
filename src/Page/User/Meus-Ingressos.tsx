@@ -1,7 +1,6 @@
 import React from 'react';
 import { IngressoCard } from '../../components/sections/User/IngressoCard/IngresseCard';
 import '../../styles/Meus-Ingressos.css';
-import { Link } from 'react-router-dom';
 
 import { Ingresso } from '../../types/Ingresso';
 

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaUpload, FaTrashAlt } from 'react-icons/fa';
-import { IoMdClose } from "react-icons/io";
 import '../../styles/CarrosselAdm.css'; // Vamos criar este arquivo de estilo
 
 

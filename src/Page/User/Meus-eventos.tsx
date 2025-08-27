@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "../../styles/MeusEventos.css";
-import { FaEye, FaPencilAlt, FaPlus, FaCog } from "react-icons/fa";
+import { FaEye, FaPencilAlt, FaPlus } from "react-icons/fa";
 import { IoTrashBin } from "react-icons/io5";
-import { MdEvent, MdDashboard } from "react-icons/md";
-import { useAuth } from "../../Hook/AuthContext";
+import { MdEvent } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
 
 
@@ -18,46 +17,16 @@ const MeusEventos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { user } = useAuth(); // Use o hook de autenticação
+  // A variável 'useAuth' foi removida pois não era utilizada.
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  // Adicione no início do componente para debug
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-
-    console.log('🔐 Token no localStorage:', token);
-    console.log('👤 User no localStorage:', user ? JSON.parse(user) : 'Nenhum usuário');
-
-    if (!token) {
-      console.error('❌ Nenhum token encontrado!');
-    }
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-
-    console.log('🔍 Verificação inicial - Token:', token);
-    console.log('🔍 Verificação inicial - User:', user);
-
-    if (!token) {
-      console.error('❌ Token não encontrado! Redirecionando para login...');
-      navigate('/login');
-      return;
-    }
-
-    fetchMeusEventos();
-  }, [navigate]);
-
-  // Função para buscar eventos do usuário logado
-  const fetchMeusEventos = async () => {
+  // Usa useCallback para memorizar a função de busca de eventos
+  const fetchMeusEventos = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
       const token = localStorage.getItem('token');
-      console.log('🔐 Token sendo enviado:', token);
 
       if (!token) {
         setError('Usuário não autenticado. Faça login novamente.');
@@ -72,29 +41,10 @@ const MeusEventos = () => {
         }
       });
 
-      console.log('📊 Status da resposta:', response.status);
-      console.log('📊 Headers da resposta:', Object.fromEntries(response.headers.entries()));
-
-      if (response.status === 401) {
-        setError('Sessão expirada. Faça login novamente.');
+      if (response.status === 401 || response.status === 403) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.reload();
-        return;
-      }
-
-      if (response.status === 403) {
-        const errorData = await response.json();
-        console.log('❌ Erro 403 detalhado:', errorData);
-
-        if (errorData.message.includes('Token')) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          navigate('/login');
-          return;
-        }
-
-        setError('Acesso negado. Token pode estar inválido.');
+        navigate('/login');
         return;
       }
 
@@ -110,16 +60,15 @@ const MeusEventos = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [apiUrl, navigate]); // Adiciona navigate e apiUrl como dependências
 
+  // Efeito para buscar eventos quando o componente é montado
   useEffect(() => {
-    console.log('Token no localStorage:', localStorage.getItem('token'));
-    console.log('User no localStorage:', localStorage.getItem('user'));
     fetchMeusEventos();
-  }, []);
+  }, [fetchMeusEventos]); // Adiciona fetchMeusEventos como dependência
 
-  // Função para deletar evento
-  const handleDeleteEvento = async (eventoId: string) => {
+  // Usa useCallback para memorizar a função de deletar evento
+  const handleDeleteEvento = useCallback(async (eventoId: string) => {
     if (!window.confirm('Tem certeza que deseja deletar este evento?')) {
       return;
     }
@@ -138,16 +87,13 @@ const MeusEventos = () => {
         throw new Error(errorData.message || 'Erro ao deletar evento');
       }
 
-      // Atualiza a lista após deletar
-      setEventos(eventos.filter(evento => evento._id !== eventoId));
+      setEventos(prevEventos => prevEventos.filter(evento => evento._id !== eventoId));
       alert('Evento deletado com sucesso!');
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Erro ao deletar evento');
       console.error('Erro ao deletar evento:', err);
     }
-  };
-
-  console.log('Estado atual:', { loading, error, eventos: eventos.length });
+  }, [apiUrl, setEventos]); // Adiciona apiUrl e setEventos como dependências
 
   if (loading) {
     return (
@@ -259,7 +205,7 @@ const MeusEventos = () => {
                 <td className={`meus-ingressos-status meus-ingressos-status--${evento.status}`}>
                   {evento.status === "em_analise" ? "Em Análise" :
                     evento.status === "aprovado" ? "Aprovado" :
-                      evento.status === "rejeitado" ? "Rejeitado" : "Em Reanálise"}
+                    evento.status === "rejeitado" ? "Rejeitado" : "Em Reanálise"}
                 </td>
               </tr>
             ))}

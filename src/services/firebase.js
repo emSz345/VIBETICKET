@@ -15,22 +15,12 @@ const firebaseConfig = {
 };
 
 // Inicializa o Firebase
-const FB = window.FB;
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const appleProvider = new OAuthProvider("apple.com");
 
 const apiUrl = process.env.REACT_APP_API_URL;
-
-const createFormData = (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    formData.append(key, value);
-  });
-  return formData;
-};
-
 
 //  login com Google
 const signInWithGoogle = async () => {
@@ -54,10 +44,6 @@ const signInWithGoogle = async () => {
     throw error;
   }
 };
-
-
-const facebookProvider = new FacebookAuthProvider();
-
 
 //ERRO
 const signInWithFacebook = () => {

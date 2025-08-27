@@ -30,7 +30,7 @@ const Cadastro: React.FC = () => {
     confirmSenha: "",
   });
   const [termosAceitos, setTermosAceitos] = useState(false);
-  const [imagemPerfil, setImagemPerfil] = useState<File | null>(null);
+  const [imagemPerfil, _] = useState<File | null>(null);
   const [mostrarTermos, setMostrarTermos] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const navigate = useNavigate();
@@ -305,7 +305,7 @@ const Cadastro: React.FC = () => {
     }, 5000);
 
     return () => clearInterval(intervalId);
-  }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate, login]);
+  }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate, login, apiUrl, authContext]);
 
 
 

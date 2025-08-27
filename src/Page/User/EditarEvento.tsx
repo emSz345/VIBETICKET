@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/CriarEventos.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSave, FaQuestionCircle } from 'react-icons/fa';
+import { FaQuestionCircle } from 'react-icons/fa';
 import { MdAddPhotoAlternate } from 'react-icons/md';
 import { GoAlertFill } from "react-icons/go";
 import { FaTrashAlt } from "react-icons/fa";
-import { useAuth } from '../../Hook/AuthContext';
 import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
 import { ImExit } from "react-icons/im";
@@ -43,7 +42,6 @@ type Evento = {
 const EditarEvento = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const apiUrl = process.env.REACT_APP_API_URL;
   
   const [etapaAtual, setEtapaAtual] = useState(1);
@@ -400,7 +398,7 @@ const EditarEvento = () => {
       throw new Error(errorData.message || `Erro do servidor: ${response.status}`);
     }
 
-    const responseData = await response.json();
+    const _ = await response.json();
     alert('Evento atualizado com sucesso e enviado para reanálise!');
     navigate('/meus-eventos');
 

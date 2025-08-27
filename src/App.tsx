@@ -12,7 +12,7 @@ import EditarEvento from './Page/User/EditarEvento';
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
 import AdminRoute from './Hook/RotaDoAdm';
 import ProtectedRoute from './Hook/RotaProtegida';
-import { AuthProvider, useAuth } from './Hook/AuthContext'; // Hook que já corrigimos
+import { AuthProvider } from './Hook/AuthContext'; // Hook que já corrigimos
 
 // ... (seus outros imports de páginas permanecem os mesmos) ...
 import CarrosselAdm from './Page/Admin/CarrosselAdm';
@@ -50,8 +50,7 @@ function LayoutWithHeader() {
 // ==================================================================
 function AppRoutes() {
   // 1. REMOVEMOS O useEffect e o checkAuth daqui.
-  // O nosso novo AuthContext já faz isso internamente e de forma mais eficiente.
-  const { user } = useAuth(); // Pegamos o 'user' para passar para as rotas que precisam.
+  // O nosso novo AuthContext já faz isso internamente e de forma mais eficiente. // Pegamos o 'user' para passar para as rotas que precisam.
 
   return (
     <Routes>

@@ -32,7 +32,7 @@ const Detalhes: React.FC = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-
+    
         const buscarEventoPorId = async () => {
             try {
                 const response = await fetch(`${apiUrl}/api/eventos/publico/${id}`);
@@ -48,13 +48,13 @@ const Detalhes: React.FC = () => {
                 setIsLoading(false);
             }
         };
-
+    
         if (!evento && id) {
             buscarEventoPorId();
         } else {
             setIsLoading(false);
         }
-    }, [id, evento, state]);
+    }, [id, evento, state, apiUrl]);
 
     const LIMITE_MAXIMO_INGRESSOS = 8;
     const [activeTab, setActiveTab] = useState<'descricao' | 'politicas'>('descricao');

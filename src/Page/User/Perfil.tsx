@@ -1,8 +1,7 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
-import { FiEdit2, FiCheck, FiUser, FiShoppingBag, FiCalendar, FiPhone, FiMapPin, FiMail, FiCamera } from "react-icons/fi";
+import { FiEdit2, FiCheck, FiUser, FiShoppingBag, FiCalendar, FiPhone, FiMail, FiCamera } from "react-icons/fi";
 import { useAuth } from "../../Hook/AuthContext";
 import "../../styles/Perfil.css";
-import { AirVent } from "lucide-react";
 
 const Perfil = () => {
   const { user, isLoading, updateUser } = useAuth();
@@ -71,7 +70,7 @@ const Perfil = () => {
         setPreviewUrl(user.imagemPerfil ? `${apiUrl}${user.imagemPerfil}` : undefined);
       }
     }
-  }, [user]);
+  }, [user, setPreviewUrl, apiUrl]);
 
   const handleSalvarAlteracoes = async () => {
     if (!user) return;

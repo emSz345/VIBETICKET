@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Chatbot.css";
-import { FaComments, FaTimes, FaMicrophone, FaPaperPlane } from "react-icons/fa";
-import { BsEmojiSmile } from "react-icons/bs";
+import { FaTimes, FaPaperPlane } from "react-icons/fa";
 import axios from "axios";
-
 import logoChatBot from "../../../assets/logo-chatbot.png";
 import logoChatBot1 from "../../../assets/logo-chatBot-with.png";
 
@@ -159,11 +157,12 @@ const CategoriasLista: React.FC<CategoriasListaProps> = ({
 };
 
 const ChatBot: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(true);
+  // Estados do componente
+  const [isEnabled, _] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>({});
   const [showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [categorias, setCategorias] = useState<string[]>([]);
+  const [_categorias, setCategorias] = useState<string[]>([]);
   const [showBalloon, setShowBalloon] = useState(true);
   const [messages, setMessages] = useState<Mensagem[]>([
     {
@@ -175,96 +174,25 @@ const ChatBot: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Gerar ID único para o usuário
   const userId = useRef('user-' + Math.random().toString(36).substr(2, 9));
 
-  // Função para remover conteúdo de pensamento interno
-  // Função para remover conteúdo de pensamento interno
-  // Função para remover conteúdo duplicado e pensamento interno
-  // Função mais agressiva para limpar respostas duplicadas
-  const limparRespostaBot = (texto: string): string => {
+
+  // Use o useCallback para memorizar a função e evitar recriações desnecessárias.
+  // Como a função não usa nenhuma variável externa, o array de dependências é vazio.
+  const limparRespostaBot = useCallback((texto: string): string => {
     if (!texto) return texto;
 
     let limpo = texto;
-
-    // Remove qualquer tag <think>...</think> ou </think>
     limpo = limpo.replace(/<\/?think[^>]*>/gi, '');
-
-    // Remove linhas com raciocínio
     limpo = limpo.replace(/^(Racioc[ií]nio|Pensamento|Thought|Reasoning).*$/gim, '');
-
-    // Remove qualquer sobra depois de <think ou reasoning
     const idx = limpo.search(/<think|<\/think>|reasoning|pensamento|thought/i);
     if (idx !== -1) {
       limpo = limpo.substring(0, idx);
     }
-
     return limpo.trim();
-  };
+  }, []);
 
-
-  // Calcular similaridade entre duas strings
-
-
-  // Auto-scroll quando mensagens mudam
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  useEffect(() => {
-    if (isOpen && isEnabled && messages.length <= 2) {
-      const timer = setTimeout(() => {
-        setShowCommands(true);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, messages.length, isEnabled]);
-
-  // Balão reaparece a cada 1 minuto e dura 5s
-  useEffect(() => {
-    if (!isOpen && isEnabled) {
-      const showBalloonNow = () => {
-        setShowBalloon(true);
-        setTimeout(() => setShowBalloon(false), 5000);
-      };
-
-      showBalloonNow();
-
-      const interval = setInterval(showBalloonNow, 60000);
-
-      return () => clearInterval(interval);
-    }
-  }, [isOpen, isEnabled]);
-
-  const toggleChat = () => {
-    if (!isEnabled) return;
-    setIsOpen(!isOpen);
-    if (!isOpen) setShowBalloon(false);
-  };
-
-  // Função para buscar eventos com filtros
-  const buscarEventosComFiltros = async (filtros: FiltroEstado): Promise<Evento[]> => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/huggingface/chat', {
-        message: `Buscar eventos de ${filtros.categoria} com filtros`,
-        state: filtros
-      }, {
-        headers: {
-          'User-ID': userId.current
-        }
-      });
-
-      return response.data.eventos || [];
-    } catch (error) {
-      console.error("Erro ao buscar eventos com filtros:", error);
-      return [];
-    }
-  };
-
-  // Função auxiliar para determinar o conteúdo da mensagem
-  const getMessageContent = (msg: Mensagem) => {
-    // Prioridade 1: Eventos encontrados
+  const getMessageContent = useCallback((msg: Mensagem) => {
     if (msg.eventos && msg.eventos.length > 0) {
       return {
         showText: true,
@@ -273,8 +201,6 @@ const ChatBot: React.FC = () => {
         showNoResults: false
       };
     }
-
-    // Prioridade 2: Categorias (apenas quando não há eventos)
     if (msg.categorias && msg.categorias.length > 0) {
       return {
         showText: true,
@@ -283,8 +209,6 @@ const ChatBot: React.FC = () => {
         showNoResults: false
       };
     }
-
-    // Prioridade 3: Sem resultados para busca de eventos
     if (msg.intent?.includes('evento')) {
       return {
         showText: true,
@@ -293,15 +217,13 @@ const ChatBot: React.FC = () => {
         showNoResults: true
       };
     }
-
-    // Padrão: mostrar apenas texto
     return {
       showText: true,
       showEvents: false,
       showCategories: false,
       showNoResults: false
     };
-  };
+  }, []);
 
   interface HuggingFaceResponse {
     success: boolean;
@@ -317,9 +239,9 @@ const ChatBot: React.FC = () => {
     categorias?: string[];
   }
 
-  const sendMessage = async (messageText?: string) => {
+  // Envolve a função sendMessage com useCallback para evitar recriação desnecessária
+  const sendMessage = useCallback(async (messageText?: string) => {
     if (!isEnabled) return;
-
     const textToSend = messageText || inputValue;
     if (!textToSend.trim()) return;
 
@@ -346,11 +268,8 @@ const ChatBot: React.FC = () => {
       });
 
       const responseData: HuggingFaceResponse = response.data;
-
       if (responseData.success) {
         const botReply = responseData.reply;
-
-        // LIMPAR A RESPOSTA DO BOT
         const textoLimpo = limparRespostaBot(botReply.text || "");
 
         const botMessage: Mensagem = {
@@ -364,20 +283,16 @@ const ChatBot: React.FC = () => {
           state: botReply.state,
         };
 
-        // Atualizar estado do filtro se fornecido
         if (botReply.state) {
           setFiltroEstado(botReply.state);
         }
-
         setMessages(prev => [...prev, botMessage]);
         setShowCommands(botReply.showCommands || false);
 
-        // Atualizar categorias se for o caso
         if (responseData.categorias && responseData.categorias.length > 0) {
           setCategorias(responseData.categorias);
         }
       } else {
-        // Tratar erro da API
         const errorMessage: Mensagem = {
           from: "bot",
           text: "Desculpe, tive um problema ao processar sua mensagem. Podemos tentar novamente?",
@@ -397,6 +312,13 @@ const ChatBot: React.FC = () => {
       setShowCommands(true);
     } finally {
       setIsTyping(false);
+    }
+  }, [isEnabled, inputValue, filtroEstado, setCategorias, setFiltroEstado, limparRespostaBot]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
   };
 
@@ -433,7 +355,7 @@ const ChatBot: React.FC = () => {
             </div>
             {evento.valorIngressoInteira && evento.valorIngressoInteira > 0 && (
               <div className="chatbot-evento-preco">
-                💰 R$ {evento.valorIngressoInteira.toFixed(2)}
+                � R$ {evento.valorIngressoInteira.toFixed(2)}
               </div>
             )}
           </div>
@@ -442,11 +364,58 @@ const ChatBot: React.FC = () => {
     );
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+  const buscarEventosComFiltros = useCallback(async (filtros: FiltroEstado): Promise<Evento[]> => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/huggingface/chat', {
+        message: `Buscar eventos de ${filtros.categoria} com filtros`,
+        state: filtros
+      }, {
+        headers: {
+          'User-ID': userId.current
+        }
+      });
+      return response.data.eventos || [];
+    } catch (error) {
+      console.error("Erro ao buscar eventos com filtros:", error);
+      return [];
     }
+  }, [userId]);
+
+  // Efeito para auto-scroll quando mensagens mudam
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Efeito para mostrar comandos iniciais
+  useEffect(() => {
+    if (isOpen && isEnabled && messages.length <= 2) {
+      const timer = setTimeout(() => {
+        setShowCommands(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, messages.length, isEnabled]);
+
+  // Efeito para o balão de mensagem e busca de eventos
+  useEffect(() => {
+    if (!isOpen && isEnabled) {
+      const showBalloonNow = () => {
+        setShowBalloon(true);
+        setTimeout(() => setShowBalloon(false), 5000);
+      };
+
+      showBalloonNow();
+      buscarEventosComFiltros({});
+      const interval = setInterval(showBalloonNow, 60000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isOpen, isEnabled, buscarEventosComFiltros]);
+
+  const toggleChat = () => {
+    if (!isEnabled) return;
+    setIsOpen(!isOpen);
+    if (!isOpen) setShowBalloon(false);
   };
 
   return (
@@ -468,7 +437,7 @@ const ChatBot: React.FC = () => {
         aria-label={isEnabled ? "Abrir chat" : "Chat desabilitado"}
         style={{ opacity: isEnabled ? 1 : 0.5 }}
       >
-        {isOpen ? <FaTimes /> : <img src={logoChatBot} title="Foto Chatbot" style={{ height: "55px", width: "55px" }} />}
+        {isOpen ? <FaTimes /> : <img src={logoChatBot} title="Foto Chatbot" alt="" style={{ height: "55px", width: "55px" }} />}
         {!isOpen && isEnabled && (
           <motion.span
             className="pulse-dot"
@@ -554,7 +523,6 @@ const ChatBot: React.FC = () => {
                             🎪 Experimente buscar por <strong>cidade</strong>, <strong>categoria</strong> ou ver todos os eventos!
                           </>
                         )}
-
                         <div className="navibe-sugestoes-busca">
                           <span className="navibe-sugestao-titulo">💡 Sugestões:</span>
                           <button

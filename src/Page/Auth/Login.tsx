@@ -4,7 +4,6 @@ import axios from "axios"; // Import do axios é necessário para esta abordagem
 import { useAuth } from "../../Hook/AuthContext";
 // Imports do Firebase (para login social e reset de senha)
 import { auth, signInWithEmailAndPassword, signInWithGoogle, signInWithFacebook } from '../../services/firebase';
-import { sendPasswordResetEmail } from "firebase/auth";
 
 // Seus componentes de UI e assets
 import Input from "../../components/ui/Input/Input";
@@ -26,19 +25,15 @@ const Login: React.FC = () => {
   const modoLocal = true;
 
   const authContext = useAuth();
-  const [socialLoading, setSocialLoading] = useState(false);
+  const [_, setSocialLoading] = useState(false);
 
   // --- Estados da Lógica de Bloqueio (do seu código original) ---
-  const [falhas, setFalhas] = useState<number>(() => parseInt(localStorage.getItem("loginFalhas") || "0"));
-  const [tentativas, setTentativas] = useState<number>(() => parseInt(localStorage.getItem("loginTentativas") || "0"));
+  const [_falhas, setFalhas] = useState<number>(() => parseInt(localStorage.getItem("loginFalhas") || "0"));
+  const [_tentativas, setTentativas] = useState<number>(() => parseInt(localStorage.getItem("loginTentativas") || "0"));
   const [bloqueado, setBloqueado] = useState<boolean>(false);
   const [tempoRestante, setTempoRestante] = useState<number>(0);
 
   // --- Estados para Alertas de Login Social (do seu código original) ---
-  const [showGoogleAlert, setShowGoogleAlert] = useState(false);
-  const [showFacebookAlert, setShowFacebookAlert] = useState<boolean>(false);
-  const [googleError, setGoogleError] = useState<string | null>(null);
-  const [facebookError, setFacebookError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -262,10 +257,11 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/api/users/forgot-password`, {
+      // Apenas aguarde a requisição, sem atribuir a uma variável
+      await axios.post(`${apiUrl}/api/users/forgot-password`, {
         email
       });
-
+    
       alert("E-mail de redefinição enviado com sucesso! Verifique sua caixa de entrada.");
     } catch (error: any) {
       console.error("Erro ao solicitar redefinição de senha:", error);

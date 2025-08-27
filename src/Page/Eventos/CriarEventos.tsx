@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import '../../styles/CriarEventos.css';
-import { NumericFormat } from 'react-number-format';
 import { MdAddPhotoAlternate } from 'react-icons/md';
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
@@ -8,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { FaQuestionCircle } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
-import AppHeader from '../../components/layout/Header/AppHeader'
 import { GoAlertFill } from "react-icons/go";
 import { FaTrashAlt } from "react-icons/fa";
 
@@ -65,8 +63,6 @@ function CriarEventos() {
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownTimeLeft, setCooldownTimeLeft] = useState<number | null>(null);
 
-  const [valorTotalInteira, setValorTotalInteira] = useState('');
-  const [valorTotalMeia, setValorTotalMeia] = useState('');
 
   // FUNÇÕES HANDLERS
   const handleAbrirModal = () => {

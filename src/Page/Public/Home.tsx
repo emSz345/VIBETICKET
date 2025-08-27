@@ -6,7 +6,6 @@ import Cidades from '../../components/sections/Home/Cidades/Cidades';
 import Rodape from '../../components/layout/Footer/Footer';
 import NavBar3 from '../../components/sections/Home/NavBar3/NavBar3';
 import ChatBot from '../../components/sections/Chatbot/Chatbot';
-import { Link } from 'react-router-dom';
 import help from '../../assets/help.png';
 
 import ListaEventos from '../../components/sections/Home/home-eventos/ListaEventos';
@@ -27,7 +26,7 @@ function Home() {
       }
     };
     buscarEventos();
-  }, []);
+  }, [apiUrl]);
 
   const eventosFunk = eventosAprovados.filter(evento => evento.categoria === 'Funk');
   const eventosSertanejo = eventosAprovados.filter(evento => evento.categoria === 'Sertanejo');

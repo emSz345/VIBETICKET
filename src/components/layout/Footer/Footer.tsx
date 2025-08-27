@@ -1,5 +1,5 @@
 import React from "react";
-import { FaFacebook, FaInstagram, FaWhatsapp, FaCreditCard } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FaXTwitter } from 'react-icons/fa6';
 import { Link } from "react-router-dom";
 import "./Footer.css";
@@ -15,10 +15,10 @@ const Footer: React.FC = () => {
             <img src={logo} alt="Logo NaVibe" className="footer-logo" />
           </div>
           <div className="footer-social-container">
-            <a href="#" className="footer-social-link"><FaFacebook /></a>
-            <a href="#" className="footer-social-link"><FaInstagram /></a>
-            <a href="#" className="footer-social-link"><FaXTwitter /></a>
-            <a href="#" className="footer-social-link"><FaWhatsapp /></a>
+            <button className="footer-social-link"><FaFacebook /></button>
+            <button className="footer-social-link"><FaInstagram /></button>
+            <button className="footer-social-link"><FaXTwitter /></button>
+            <button className="footer-social-link"><FaWhatsapp /></button>
           </div>
         </div>
 
