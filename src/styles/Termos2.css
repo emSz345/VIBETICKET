@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - [altura do seu header] - [altura do seu footer]); /* Ajuste as alturas do header e footer */
+    min-height: calc(100vh - 80px - 50px); /* Ajuste as alturas do header e footer */
     background-color: #f4f4f4;
     padding: 40px;
   }
@@ -83,4 +83,5 @@
     .termos-separador {
       margin: 20px 0;
     }
+
   }
