@@ -35,7 +35,7 @@ const Detalhes: React.FC = () => {
 
         const buscarEventoPorId = async () => {
             try {
-                const response = await fetch(`${apiUrl}/api/eventos/${id}`);
+                const response = await fetch(`${apiUrl}/api/eventos/publico/${id}`);
                 if (!response.ok) {
                     throw new Error('Evento não encontrado');
                 }

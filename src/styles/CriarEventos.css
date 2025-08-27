@@ -583,3 +583,8 @@
     font-weight: bold;
     text-decoration: underline;
   }
+
+  .campo-valor-final {
+    background-color: #f0f0f0; /* Cor de fundo para indicar que é só leitura */
+    cursor: default; /* Altera o cursor para indicar que não é editável */
+  }

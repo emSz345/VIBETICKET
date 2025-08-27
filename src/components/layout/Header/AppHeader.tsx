@@ -38,7 +38,7 @@ export default function AppHeader() {
 
     // Se começa com /uploads (caminho relativo)
     if (user.imagemPerfil.startsWith('/uploads')) {
-      return `${apiUrl}/${user.imagemPerfil}`;
+      return `${apiUrl}${user.imagemPerfil}`;
     }
 
     // Padrão para imagens locais

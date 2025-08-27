@@ -65,6 +65,8 @@ function CriarEventos() {
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownTimeLeft, setCooldownTimeLeft] = useState<number | null>(null);
 
+  const [valorTotalInteira, setValorTotalInteira] = useState('');
+  const [valorTotalMeia, setValorTotalMeia] = useState('');
 
   // FUNÇÕES HANDLERS
   const handleAbrirModal = () => {
@@ -511,6 +513,7 @@ function CriarEventos() {
                 <option value="Funk">Funk</option>
                 <option value="Rap">Rap</option>
                 <option value="Jazz">Jazz</option>
+                <option value="Sertanejo">Sertanejo</option>
                 <option value="Eletônica">Eletônica</option>
               </select>
               {getError('categoriaEvento') && <span className="mensagem-erro">{getError('categoriaEvento')}</span>}
@@ -759,6 +762,7 @@ function CriarEventos() {
                   <label>
                     Valor do Ingresso Inteira (R$) <span className={getError('valorInteira') ? 'erro-asterisco' : ''}>*</span>
                   </label>
+                  {/* Campo principal de ingresso inteira */}
                   <input
                     type="text"
                     placeholder="R$ 0,00"
@@ -777,6 +781,8 @@ function CriarEventos() {
                     className={getError('valorInteira') ? 'erro-campo' : ''}
                   />
                   {getError('valorInteira') && <span className="mensagem-erro">{getError('valorInteira')}</span>}
+                  {/* Texto que mostra o valor final com a taxa */}
+                  <small>Valor final para o comprador com 10% de taxa: R$ {(parseFloat(valorIngressoInteira.replace(',', '.')) * 1.1).toFixed(2).replace('.', ',')}</small>
                 </div>
 
                 <div className="campo">
@@ -804,6 +810,7 @@ function CriarEventos() {
                     <label>
                       Valor do Ingresso Meia (R$) <span className={getError('valorMeia') ? 'erro-asterisco' : ''}>*</span>
                     </label>
+                    {/* Campo principal de ingresso meia */}
                     <input
                       type="text"
                       placeholder="R$ 0,00"
@@ -822,6 +829,8 @@ function CriarEventos() {
                       className={getError('valorMeia') ? 'erro-campo' : ''}
                     />
                     {getError('valorMeia') && <span className="mensagem-erro">{getError('valorMeia')}</span>}
+                    {/* Texto que mostra o valor final com a taxa */}
+                    <small>Valor final para o comprador com 10% de taxa: R$ {(parseFloat(valorIngressoMeia.replace(',', '.')) * 1.1).toFixed(2).replace('.', ',')}</small>
                   </div>
                 )}
               </div>

@@ -45,7 +45,7 @@ export default function NavBar3() {
   
   // Se começa com /uploads (caminho relativo)
   if (user.imagemPerfil.startsWith('/uploads')) {
-    return `${apiUrl}/${user.imagemPerfil}`;
+    return `${apiUrl}${user.imagemPerfil}`;
   }
   
   // Padrão para imagens locais
@@ -164,7 +164,7 @@ export default function NavBar3() {
                     </div>
                   </div>
                   <hr />
-                  <button onClick={() => voltar()}><FaHome /> <span>Home</span></button>
+                  <button onClick={() => voltar()}><FaHome /> <span>Início</span></button>
                   <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
                   <button onClick={() => navigate('/perfil')}><FaUserCircle /><span>Minha conta</span></button>
                   {user?.isAdmin === true && (
@@ -219,7 +219,7 @@ export default function NavBar3() {
         )}
 
         <button onClick={() => { navigate('/'); setMobileOpen(false); }}>
-          <FaHome /> Home
+          <FaHome /> Início
         </button>
 
         {isAuthenticated && (

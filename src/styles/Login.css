@@ -1,3 +1,4 @@
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap");
 
 /* ========================
@@ -81,15 +82,31 @@ input {
 /* ========================
    ERROS
 ======================== */
+
 .login-container-error {
   display: flex;
-  margin: -20px 0 20px 5px;
+  margin: -15px 0 5px 5px;
+  height: 18px;
 }
 
+/* Esconde o container quando não tem conteúdo */
+.login-container-error:empty {
+  display: none;
+}
+
+/* Estilos específicos para mensagens de erro e hint */
 .login-container-error .error {
   font-size: 12px;
   color: red;
+  margin: 0;
 }
+
+.login-container-error .password-hint {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+
 
 /* ========================
    LINKS E TERMOS
@@ -113,7 +130,7 @@ input {
 
 .link,
 .crie-conta {
-  color: #007bff;
+  color: #0969fb;
   text-decoration: none;
 }
 
@@ -124,6 +141,12 @@ input {
 .crie-conta:hover {
   color: rgb(206, 51, 24);
   opacity: 0.6;
+}
+
+
+.login-recuperar-senha {
+  display: flex;
+  justify-content: right;
 }
 
 /* ========================
@@ -302,7 +325,7 @@ input {
 ======================== */
 .loader {
   border: 5px solid #f3f3f3;
-  border-top: 5px solid #007bff;
+  border-top: 5px solid #0969fb;
   border-radius: 50%;
   width: 40px;
   height: 40px;

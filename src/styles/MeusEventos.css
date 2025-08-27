@@ -119,7 +119,7 @@ body {
 /* Cards de resumo */
 .meus-ingressos-resumo {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     margin-bottom: 25px;
 }
@@ -152,7 +152,7 @@ body {
     border-left: 5px solid #f1c40f;
 }
 
-.meus-ingressos-card--negado {
+.meus-ingressos-card--rejeitado {
     border-left: 5px solid #e74c3c;
 }
 
@@ -215,7 +215,7 @@ body {
     color: #2ecc71;
 }
 
-.meus-ingressos-status--negado {
+.meus-ingressos-status--rejeitado {
     color: #e74c3c;
 }
 
@@ -223,6 +223,9 @@ body {
     color: #f1c40f;
 }
 
+.meus-ingressos-card--em_reanalise {
+    border-left: 5px solid #00aaff;
+}
 /* Responsivo */
 @media (max-width: 900px) {
     .meus-ingressos-resumo {

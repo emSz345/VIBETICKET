@@ -437,8 +437,8 @@ const Cadastro: React.FC = () => {
                   if (e.target.checked) setMostrarTermos(true);
                 }}
               />
-              <span>
-                Eu concordo com os <span className="link">termos & políticas</span>
+              <span className="link">
+                Eu concordo com os termos & políticas
               </span>
             </label>
 
@@ -454,7 +454,7 @@ const Cadastro: React.FC = () => {
 
           <Button
             color="Blue"
-            text="criar minha conta"
+            text="Criar minha conta"
             onClick={handleSubmitLocal}
             loading={loading}
             disabled={loading}

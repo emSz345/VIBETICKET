@@ -159,7 +159,7 @@ input, textarea {
 
 input:focus, textarea:focus {
     outline: none;
-    border-color: #00b3b3;
+    
     box-shadow: 0 0 10px rgba(0, 179, 179, 0.3);
 }
 
@@ -169,7 +169,7 @@ textarea {
 }
 
 button.duvidas-btn-enviar-suporte {
-    background-color: #00b3b3;
+   
     color: #fff;
     padding: 12px 25px;
     font-size: 1.1rem;
@@ -180,9 +180,7 @@ button.duvidas-btn-enviar-suporte {
     transition: background-color 0.3s ease;
 }
 
-button.duvidas-btn-enviar-suporte:hover {
-    background-color: #009999;
-}
+
 
 .duvidas-sucesso-enviado {
     background-color: #e2f7e2;

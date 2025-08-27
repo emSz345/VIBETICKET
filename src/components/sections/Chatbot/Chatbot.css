@@ -78,7 +78,6 @@
 .chatbot-avatar {
     width: 46px;
     height: 46px;
-    
     background: white;
     border-radius: 50%;
     display: flex;
@@ -91,13 +90,13 @@
 
 .chatbot-messages {
     flex: 1;
-    padding: 16px;
+    padding: 12px;
     background: #fafafa;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     overflow-y: auto;
-    max-height: 360px;
+    max-height: 320px;
     scrollbar-width: thin;
     scrollbar-color: var(--primary) transparent;
 }
@@ -135,6 +134,15 @@
     border-bottom-right-radius: 4px;
 }
 
+.message-text-content {
+    white-space: pre-line;
+    line-height: 1.4;
+}
+
+.chatbot-message.bot strong {
+    font-weight: 600;
+}
+
 .typing-indicator {
     background: #e0e0e0;
     color: #333;
@@ -162,82 +170,78 @@
 }
 
 @keyframes typingAnimation {
-
-    0%,
-    60%,
-    100% {
+    0%, 60%, 100% {
         transform: translateY(0);
     }
-
     30% {
         transform: translateY(-4px);
     }
 }
 
 .chatbot-eventos-lista {
-  margin-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  padding-top: 12px;
+    margin-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding-top: 12px;
 }
 
 .chatbot-eventos-titulo {
-  font-weight: bold;
-  margin-bottom: 12px;
-  font-size: 1em;
-  opacity: 0.9;
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1em;
+    opacity: 0.9;
 }
 
 .chatbot-evento-card {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
-  padding: 12px;
-  margin: 10px 0;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
 .chatbot-evento-card:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .chatbot-evento-nome {
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: white;
-  font-size: 0.95em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: white;
+    font-size: 0.95em;
 }
 
 .chatbot-evento-info {
-  font-size: 0.8em;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 4px 0;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .chatbot-evento-preco {
-  font-weight: bold;
-  color: #4cd964;
-  margin-top: 8px;
-  font-size: 0.85em;
+    font-weight: bold;
+    color: #4cd964;
+    margin-top: 8px;
+    font-size: 0.85em;
 }
 
 .chatbot-input {
     display: flex;
     border-top: 1px solid var(--gray-border);
     align-items: center;
-    padding: 6px;
+    padding: 8px 12px;
     background: white;
 }
 
 .chatbot-input input {
     flex: 1;
-    padding: 10px;
+    padding: 10px 12px;
     border: none;
     outline: none;
     font-size: 14px;
@@ -279,7 +283,6 @@
     cursor: not-allowed;
 }
 
-/* Balão acima do botão */
 .chatbot-message-floating {
     position: fixed;
     bottom: 35px;
@@ -313,309 +316,406 @@
         opacity: 0;
         transform: translateX(10px);
     }
-
     to {
         opacity: 1;
         transform: translateX(0);
     }
 }
 
-/* Adicione estas media queries ao final do seu CSS existente */
-
-/* Para tablets e telas menores */
-@media (max-width: 768px) {
-    .chatbot-container {
-      width: 300px;
-      max-height: 70vh; /* Usa altura da viewport */
-      bottom: 80px;
-      right: 10px;
-    }
-    
-    .chatbot-messages {
-      max-height: calc(70vh - 120px); /* Ajusta baseado no container */
-    }
-    
-    .chatbot-button {
-      right: 10px;
-      bottom: 10px;
-    }
-    
-    .chatbot-message-floating {
-      right: 80px;
-      max-width: 180px;
-    }
-  }
-  
-  /* Para celulares pequenos */
-  @media (max-width: 480px) {
-    .chatbot-container {
-      width: calc(100% - 20px); /* Ocupa quase toda a largura */
-      right: 10px;
-      left: 10px;
-      max-height: 80vh;
-      bottom: 70px;
-    }
-    
-    .chatbot-messages {
-      max-height: calc(80vh - 120px);
-      padding: 12px;
-    }
-    
-    .chatbot-message {
-      max-width: 90%; /* Mais espaço para mensagens */
-      font-size: 15px; /* Texto um pouco maior */
-    }
-    
-    .chatbot-input input {
-      font-size: 15px;
-    }
-    
-    .chatbot-message-floating {
-      right: auto;
-      left: 20px;
-      bottom: 60px;
-      max-width: calc(100% - 100px);
-    }
-    
-    .chatbot-arrow {
-      right: auto;
-      left: -8px;
-      border-left: none;
-      border-right: 8px solid white;
-      box-shadow: -2px 0px 4px rgba(0, 0, 0, 0.1);
-    }
-  }
-  
-  /* Ajustes para quando o teclado virtual estiver aberto em mobile */
-  @media (max-height: 500px) {
-    .chatbot-container {
-      max-height: 60vh;
-      bottom: 10px;
-    }
-    
-    .chatbot-messages {
-      max-height: calc(60vh - 120px);
-    }
-  }
-
-  .eventos-lista {
-  margin-top: 10px;
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-}
-
-.eventos-titulo {
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #007bff;
-}
-
-.evento-card {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 8px 0;
- 
-}
-
-.evento-nome {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.evento-info {
-  font-size: 0.9em;
-  color: #666;
-  margin: 3px 0;
-}
-
-.evento-preco {
-  font-weight: bold;
-  color: #28a745;
-  margin-top: 5px;
-}
-
-
-/* Estilos para quando não há eventos */
-.navibe-evento-sem-resultado {
-  margin-top: 15px;
-  padding: 15px;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  color: #6c757d;
-  font-size: 0.9em;
-  line-height: 1.5;
-}
-
-.navibe-evento-sem-resultado strong {
-  color: #495057;
-  font-weight: 600;
-}
-
-/* Sugestões de busca */
-.navibe-sugestoes-busca {
-  margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.navibe-sugestao-titulo {
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 5px;
-}
-
-.navibe-sugestao-btn {
-  background: #ffffff;
-  border: 1px solid #007bff;
-  color: #007bff;
-  padding: 6px 12px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.8em;
-  transition: all 0.2s;
-  text-align: left;
-  width: fit-content;
-}
-
-.navibe-sugestao-btn:hover {
-  background: #007bff;
-  color: white;
-}
-
-/* Melhorar a lista de eventos */
-.navibe-eventos-lista {
-  margin-top: 15px;
-}
-
-.navibe-eventos-titulo {
-  font-weight: bold;
-  margin-bottom: 12px;
-  color: #007bff;
-  font-size: 1.1em;
-}
-
-.navibe-evento-card {
-  background: #ffffff;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 10px 0;
-  border-left: 4px solid #007bff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.navibe-evento-nome {
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #212529;
-  font-size: 1em;
-}
-
-.navibe-evento-info {
-  font-size: 0.85em;
-  color: #6c757d;
-  margin: 4px 0;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.navibe-evento-preco {
-  font-weight: bold;
-  color: #28a745;
-  margin-top: 8px;
-  font-size: 0.9em;
-}
-
+/* COMANDOS RÁPIDOS - ESTILOS OTIMIZADOS */
 .comandos-rapidos {
-  padding: 10px;
-  border-top: 1px solid #eee;
-  background: #f8f9fa;
+    padding: 8px 12px;
+    border-top: 1px solid #eee;
+    background: #f8f9fa;
+    max-height: 180px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+    transition: max-height 0.3s ease;
+}
+
+.comandos-rapidos::-webkit-scrollbar {
+    width: 4px;
+}
+
+.comandos-rapidos::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 2px;
 }
 
 .comandos-titulo {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 8px;
-  text-align: center;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .comandos-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
 }
 
 .comando-btn {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  padding: 8px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: all 0.2s;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    padding: 6px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 32px;
+    text-align: center;
 }
 
 .comando-btn:hover {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .comando-icone {
-  font-size: 14px;
-  flex-shrink: 0;
+    font-size: 12px;
+    flex-shrink: 0;
 }
 
+/* Cores específicas para cada tipo de comando */
+.comando-btn[data-tipo="social"] {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.comando-btn[data-tipo="social"]:hover {
+    background: #28a745;
+    color: white;
+}
+
+.comando-btn[data-tipo="ajuda"] {
+    border-color: #ffc107;
+    color: #ffc107;
+}
+
+.comando-btn[data-tipo="ajuda"]:hover {
+    background: #ffc107;
+    color: #000;
+}
+
+.comando-btn[data-tipo="sistema"] {
+    border-color: #6f42c1;
+    color: #6f42c1;
+}
+
+.comando-btn[data-tipo="sistema"]:hover {
+    background: #6f42c1;
+    color: white;
+}
+
+.comando-btn[data-tipo="evento"] {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.comando-btn[data-tipo="evento"]:hover {
+    background: #007bff;
+    color: white;
+}
+
+.comandos-toggle {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.comandos-toggle:hover {
+    color: var(--primary);
+}
+
+/* CATEGORIAS */
 .categorias-lista {
-  margin-top: 15px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .categorias-titulo {
-  font-weight: bold;
-  margin-bottom: 10px;
-  font-size: 0.9em;
-  opacity: 0.9;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    opacity: 0.9;
 }
 
 .categorias-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
 }
 
 .categoria-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 6px 10px;
-  border-radius: 15px;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .categoria-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
 }
 
+/* ESTILOS PARA SEM EVENTOS */
+.navibe-evento-sem-resultado {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
 
+.navibe-evento-sem-resultado strong {
+    color: #495057;
+    font-weight: 600;
+}
 
+.navibe-sugestoes-busca {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
-/* Estilos para quando não há eventos */
+.navibe-sugestao-titulo {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.navibe-sugestao-btn {
+    background: #ffffff;
+    border: 1px solid #007bff;
+    color: #007bff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.2s;
+    text-align: left;
+    width: fit-content;
+}
+
+.navibe-sugestao-btn:hover {
+    background: #007bff;
+    color: white;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .chatbot-container {
+        width: 300px;
+        max-height: 70vh;
+        bottom: 80px;
+        right: 10px;
+    }
+    
+    .chatbot-messages {
+        max-height: calc(70vh - 140px);
+    }
+    
+    .chatbot-button {
+        right: 10px;
+        bottom: 10px;
+    }
+    
+    .chatbot-message-floating {
+        right: 80px;
+        max-width: 180px;
+    }
+    
+    .comandos-rapidos {
+        max-height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chatbot-container {
+        width: calc(100% - 20px);
+        right: 10px;
+        left: 10px;
+        max-height: 80vh;
+        bottom: 70px;
+    }
+    
+    .chatbot-messages {
+        max-height: calc(80vh - 140px);
+        padding: 10px;
+    }
+    
+    .chatbot-message {
+        max-width: 90%;
+        font-size: 14px;
+    }
+    
+    .chatbot-input input {
+        font-size: 14px;
+    }
+    
+    .chatbot-message-floating {
+        right: auto;
+        left: 20px;
+        bottom: 60px;
+        max-width: calc(100% - 100px);
+    }
+    
+    .chatbot-arrow {
+        right: auto;
+        left: -8px;
+        border-left: none;
+        border-right: 8px solid white;
+        box-shadow: -2px 0px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .comandos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+    }
+    
+    .comando-btn {
+        padding: 5px 6px;
+        font-size: 10px;
+        min-height: 28px;
+    }
+    
+    .comando-icone {
+        font-size: 11px;
+    }
+    
+    .comandos-rapidos {
+        padding: 6px 8px;
+        max-height: 150px;
+    }
+}
+
+@media (max-height: 600px) {
+    .chatbot-container {
+        max-height: 400px;
+    }
+    
+    .chatbot-messages {
+        max-height: 220px;
+    }
+    
+    .comandos-rapidos {
+        max-height: 130px;
+    }
+}
+
+@media (max-height: 500px) {
+    .chatbot-container {
+        max-height: 300px;
+        bottom: 10px;
+    }
+    
+    .chatbot-messages {
+        max-height: 160px;
+    }
+    
+    .comandos-rapidos {
+        max-height: 100px;
+    }
+}
+
+/* Ajuste para quando os comandos estão visíveis */
+.chatbot-container:has(.comandos-rapidos) .chatbot-messages {
+    max-height: 280px;
+}
+
+@media (max-width: 480px) {
+    .chatbot-container:has(.comandos-rapidos) .chatbot-messages {
+        max-height: 200px;
+    }
+}
+
+/* Melhorias de acessibilidade */
+.comando-btn:focus,
+.categoria-btn:focus,
+.chatbot-input input:focus,
+.chatbot-input button:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Animações suaves */
+.chatbot-container,
+.chatbot-message,
+.comando-btn,
+.categoria-btn {
+    transition: all 0.3s ease;
+}
+
+/* Loading states */
+.chatbot-input button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .chatbot-message.bot {
+        background: #000;
+        color: #fff;
+    }
+    
+    .chatbot-message.user {
+        background: #ccc;
+        color: #000;
+    }
+    
+    .comando-btn {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .chatbot-container,
+    .chatbot-message,
+    .comando-btn,
+    .categoria-btn,
+    .typing-indicator .dot {
+        transition: none;
+        animation: none;
+    }
+    
+    .chatbot-message-floating {
+        animation: none;
+    }
+}

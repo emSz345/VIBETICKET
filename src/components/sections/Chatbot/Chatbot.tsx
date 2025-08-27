@@ -5,8 +5,8 @@ import { FaComments, FaTimes, FaMicrophone, FaPaperPlane } from "react-icons/fa"
 import { BsEmojiSmile } from "react-icons/bs";
 import axios from "axios";
 
-import logoChatBot from "../../../assets/logo-chatbot.png"
-import logoChatBot1 from "../../../assets/logo-chatBot-with.png"
+import logoChatBot from "../../../assets/logo-chatbot.png";
+import logoChatBot1 from "../../../assets/logo-chatBot-with.png";
 
 interface Evento {
   _id: string;
@@ -48,37 +48,88 @@ interface CategoriasListaProps {
   onCategoriaClick: (categoria: string) => void;
 }
 
-interface Comando {
+interface ComandoRapido {
   texto: string;
   acao: string;
   icone: string;
+  tipo: 'evento' | 'ajuda' | 'sistema' | 'social';
 }
 
 const ComandosRapidos: React.FC<{ onComandoClick: (comando: string) => void }> = ({ onComandoClick }) => {
-  const comandos: Comando[] = [
-    { texto: "Eventos de Rock", acao: "Eventos de rock", icone: "🎸" },
-    { texto: "Eventos em SP", acao: "Eventos em São Paulo", icone: "🏙️" },
-    { texto: "Próximos eventos", acao: "Próximos eventos", icone: "📅" },
-    { texto: "Categorias", acao: "Quais categorias têm?", icone: "🎵" },
-    { texto: "Ajuda", acao: "Preciso de ajuda", icone: "❓" }
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const comandos: ComandoRapido[] = [
+    // SAUDAÇÕES E SOCIAIS
+    { texto: "Dizer olá", acao: "Oi, tudo bem?", icone: "👋", tipo: 'social' },
+    { texto: "Agradecer", acao: "Obrigado!", icone: "🙏", tipo: 'social' },
+
+    // AJUDA DO SISTEMA
+    { texto: "Como usar?", acao: "Como funciona?", icone: "❓", tipo: 'ajuda' },
+    { texto: "Sobre", acao: "Quem é você?", icone: "🎪", tipo: 'sistema' },
+    { texto: "Comprar ingresso", acao: "Como comprar ingressos?", icone: "🎫", tipo: 'evento' },
+    { texto: "Meu carrinho", acao: "Como funciona o carrinho?", icone: "🛒", tipo: 'evento' },
+    { texto: "Criar evento", acao: "Como criar um evento?", icone: "🎪", tipo: 'evento' },
+    { texto: "Meu perfil", acao: "Como editar meu perfil?", icone: "👤", tipo: 'sistema' },
+
+    // EVENTOS (mantenha apenas os essenciais)
+    { texto: "Rock", acao: "Eventos de rock", icone: "🎸", tipo: 'evento' },
+    { texto: "São Paulo", acao: "Eventos em SP", icone: "🏙️", tipo: 'evento' },
+    { texto: "Próximos", acao: "Próximos eventos", icone: "📅", tipo: 'evento' },
+    { texto: "Categorias", acao: "Quais categorias?", icone: "🎵", tipo: 'evento' }
   ];
+
+  // Comandos principais (sempre visíveis)
+  const comandosPrincipais = comandos.slice(0, 4);
+  // Comandos secundários (expandíveis)
+  const comandosSecundarios = comandos.slice(4);
 
   return (
     <div className="comandos-rapidos">
-      <div className="comandos-titulo">💡 Comandos rápidos:</div>
+      <div className="comandos-titulo">💡 Comandos rápidos</div>
+
+      {/* Comandos principais */}
       <div className="comandos-grid">
-        {comandos.map((comando, index) => (
+        {comandosPrincipais.map((comando, index) => (
           <button
             key={index}
             className="comando-btn"
             onClick={() => onComandoClick(comando.acao)}
             title={comando.acao}
+            data-tipo={comando.tipo}
           >
             <span className="comando-icone">{comando.icone}</span>
             {comando.texto}
           </button>
         ))}
       </div>
+
+      {/* Comandos expandíveis */}
+      {isExpanded && (
+        <>
+          <div className="comandos-grid">
+            {comandosSecundarios.map((comando, index) => (
+              <button
+                key={index}
+                className="comando-btn"
+                onClick={() => onComandoClick(comando.acao)}
+                title={comando.acao}
+                data-tipo={comando.tipo}
+              >
+                <span className="comando-icone">{comando.icone}</span>
+                {comando.texto}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Botão toggle */}
+      <button
+        className="comandos-toggle"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        {isExpanded ? '▲ Menos opções' : '▼ Mais opções'}
+      </button>
     </div>
   );
 };
@@ -108,7 +159,7 @@ const CategoriasLista: React.FC<CategoriasListaProps> = ({
 };
 
 const ChatBot: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false); // Chatbot desabilitado por padrão
+  const [isEnabled, setIsEnabled] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>({});
   const [showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -117,7 +168,7 @@ const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<Mensagem[]>([
     {
       from: "bot",
-      text: "E aí! Bora subir essa vibe hoje?",
+      text: "E aí! 👋 Bora subir essa vibe hoje? Sou o Vibe Bot e posso te ajudar a encontrar os melhores eventos! 🎵",
       eventos: []
     },
   ]);
@@ -125,13 +176,43 @@ const ChatBot: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Gerar ID único para o usuário
+  const userId = useRef('user-' + Math.random().toString(36).substr(2, 9));
+
+  // Função para remover conteúdo de pensamento interno
+  // Função para remover conteúdo de pensamento interno
+  // Função para remover conteúdo duplicado e pensamento interno
+  // Função mais agressiva para limpar respostas duplicadas
+  const limparRespostaBot = (texto: string): string => {
+    if (!texto) return texto;
+
+    let limpo = texto;
+
+    // Remove qualquer tag <think>...</think> ou </think>
+    limpo = limpo.replace(/<\/?think[^>]*>/gi, '');
+
+    // Remove linhas com raciocínio
+    limpo = limpo.replace(/^(Racioc[ií]nio|Pensamento|Thought|Reasoning).*$/gim, '');
+
+    // Remove qualquer sobra depois de <think ou reasoning
+    const idx = limpo.search(/<think|<\/think>|reasoning|pensamento|thought/i);
+    if (idx !== -1) {
+      limpo = limpo.substring(0, idx);
+    }
+
+    return limpo.trim();
+  };
+
+
+  // Calcular similaridade entre duas strings
+
+
   // Auto-scroll quando mensagens mudam
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    // Mostra comandos após 3 segundos se não houver interação
     if (isOpen && isEnabled && messages.length <= 2) {
       const timer = setTimeout(() => {
         setShowCommands(true);
@@ -157,7 +238,7 @@ const ChatBot: React.FC = () => {
   }, [isOpen, isEnabled]);
 
   const toggleChat = () => {
-    if (!isEnabled) return; // Não faz nada se desabilitado
+    if (!isEnabled) return;
     setIsOpen(!isOpen);
     if (!isOpen) setShowBalloon(false);
   };
@@ -165,10 +246,13 @@ const ChatBot: React.FC = () => {
   // Função para buscar eventos com filtros
   const buscarEventosComFiltros = async (filtros: FiltroEstado): Promise<Evento[]> => {
     try {
-      // Usar a mesma rota de chat do Wit.ai que já está configurada para processar filtros
-      const response = await axios.post('http://localhost:5000/api/witai/chat', {
+      const response = await axios.post('http://localhost:5000/api/huggingface/chat', {
         message: `Buscar eventos de ${filtros.categoria} com filtros`,
         state: filtros
+      }, {
+        headers: {
+          'User-ID': userId.current
+        }
       });
 
       return response.data.eventos || [];
@@ -219,9 +303,23 @@ const ChatBot: React.FC = () => {
     };
   };
 
+  interface HuggingFaceResponse {
+    success: boolean;
+    reply: {
+      text: string;
+      intent?: string;
+      confidence?: number;
+      eventos?: Evento[];
+      categorias?: string[];
+      showCommands?: boolean;
+      state?: FiltroEstado;
+    };
+    categorias?: string[];
+  }
+
   const sendMessage = async (messageText?: string) => {
-    if (!isEnabled) return; // Não envia mensagens se desabilitado
-    
+    if (!isEnabled) return;
+
     const textToSend = messageText || inputValue;
     if (!textToSend.trim()) return;
 
@@ -238,59 +336,55 @@ const ChatBot: React.FC = () => {
     setShowCommands(false);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/witai/chat', {
+      const response = await axios.post('http://localhost:5000/api/huggingface/chat', {
         message: textToSend,
         state: filtroEstado
+      }, {
+        headers: {
+          'User-ID': userId.current
+        }
       });
 
-      console.log('Resposta COMPLETA do backend:', response.data);
+      const responseData: HuggingFaceResponse = response.data;
 
-      if (response.data.success) {
-        const botReply = response.data.reply;
-        
-        // CORREÇÃO: Priorizar eventos da resposta corretamente
-        const eventosRecebidos = 
-          response.data.eventos || 
-          botReply?.eventos || 
-          (response.data.reply && response.data.reply.eventos) || 
-          [];
+      if (responseData.success) {
+        const botReply = responseData.reply;
 
-        console.log('Eventos recebidos da API:', eventosRecebidos);
+        // LIMPAR A RESPOSTA DO BOT
+        const textoLimpo = limparRespostaBot(botReply.text || "");
 
         const botMessage: Mensagem = {
           from: "bot",
-          text: botReply?.text || "",
-          intent: response.data.intent,
-          confidence: response.data.confidence,
-          eventos: eventosRecebidos,
-          categorias: botReply?.categorias || response.data.categorias || [],
-          showCommands: botReply?.showCommands,
-          state: botReply?.state,
-          localizacao: botReply?.localizacao
+          text: textoLimpo,
+          intent: botReply.intent,
+          confidence: botReply.confidence,
+          eventos: botReply.eventos || [],
+          categorias: botReply.categorias || [],
+          showCommands: botReply.showCommands,
+          state: botReply.state,
         };
 
-        console.log('Mensagem do bot com eventos:', botMessage.eventos);
-
         // Atualizar estado do filtro se fornecido
-        if (botReply?.state) {
+        if (botReply.state) {
           setFiltroEstado(botReply.state);
-
-          // Se terminou a coleta de filtros, garantir que eventos são exibidos
-          if (!botReply.state.waitingForFilter && botReply.state.categoria && eventosRecebidos.length === 0) {
-            // Buscar eventos com os filtros coletados
-            const eventosFiltrados = await buscarEventosComFiltros(botReply.state);
-            botMessage.eventos = eventosFiltrados;
-            console.log('Eventos filtrados após coleta completa:', eventosFiltrados);
-          }
         }
 
         setMessages(prev => [...prev, botMessage]);
-        setShowCommands(botReply?.showCommands || false);
+        setShowCommands(botReply.showCommands || false);
 
         // Atualizar categorias se for o caso
-        if (response.data.categorias && response.data.categorias.length > 0) {
-          setCategorias(response.data.categorias);
+        if (responseData.categorias && responseData.categorias.length > 0) {
+          setCategorias(responseData.categorias);
         }
+      } else {
+        // Tratar erro da API
+        const errorMessage: Mensagem = {
+          from: "bot",
+          text: "Desculpe, tive um problema ao processar sua mensagem. Podemos tentar novamente?",
+          showCommands: true
+        };
+        setMessages(prev => [...prev, errorMessage]);
+        setShowCommands(true);
       }
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
@@ -313,9 +407,7 @@ const ChatBot: React.FC = () => {
   const EventosLista: React.FC<{ eventos: Evento[] }> = ({ eventos }) => {
     if (!eventos || eventos.length === 0) return null;
 
-    // Função para abrir a tela do evento
     const abrirDetalhesEvento = (eventoId: string) => {
-      // Navega para a página de detalhes do evento
       window.open(`/evento/${eventoId}`, '_blank');
     };
 
@@ -398,7 +490,7 @@ const ChatBot: React.FC = () => {
           >
             <div className="chatbot-header">
               <div className="chatbot-avatar">
-                <img src={logoChatBot1} alt="Vibe Bot" className="chatbot-avatar" />
+                <img src={logoChatBot1} alt="Vibe Bot" style={{ width: "46px", height: "46px", borderRadius: "50%" }} />
               </div>
               <div className="chatbot-header-info">
                 <span>Vibe Bot</span>
@@ -409,7 +501,7 @@ const ChatBot: React.FC = () => {
             <div className="chatbot-messages">
               {messages.map((msg, index) => {
                 const content = getMessageContent(msg);
-                
+
                 return (
                   <motion.div
                     key={index}
@@ -419,7 +511,16 @@ const ChatBot: React.FC = () => {
                     transition={{ duration: 0.2 }}
                   >
                     {/* Texto da mensagem */}
-                    {content.showText && msg.text}
+                    {content.showText && (
+                      <div className="message-text-content">
+                        {msg.text.split('\n').map((line, i) => (
+                          <React.Fragment key={i}>
+                            {line}
+                            {i < msg.text.split('\n').length - 1 && <br />}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Eventos encontrados */}
                     {content.showEvents && msg.eventos && msg.eventos.length > 0 && (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import '../../../../styles/CardEvento.css'
 import { Evento } from './evento';
 
@@ -10,15 +10,16 @@ interface CardEventoProps {
 const CardEvento: React.FC<CardEventoProps> = ({ evento }) => {
     // Certifique-se de que a propriedade `evento.imagem` contém um valor válido
 
+
     const apiUrl = process.env.REACT_APP_API_URL;
 
     const imageUrl = `${apiUrl}/uploads/${evento.imagem}`;
 
     return (
-        <Link 
+        <Link
             // Acessa a rota com o ID do evento na URL e passa o objeto completo no `state`
             to={{ pathname: `/evento/${evento._id}` }}
-            state={evento} 
+            state={evento}
             className="card-evento-link"
         >
             <div className="card-evento">

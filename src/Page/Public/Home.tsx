@@ -10,23 +10,17 @@ import { Link } from 'react-router-dom';
 import help from '../../assets/help.png';
 
 import ListaEventos from '../../components/sections/Home/home-eventos/ListaEventos';
-import { Evento } from '../../components/sections/Home/home-eventos/evento'; // Verifique o caminho da sua interface
+import { Evento } from '../../components/sections/Home/home-eventos/evento'; 
 
 function Home() {
-  // Tipa o estado como um array da interface Evento
   const apiUrl = process.env.REACT_APP_API_URL;
-
   const [eventosAprovados, setEventosAprovados] = useState<Evento[]>([]);
 
   useEffect(() => {
     const buscarEventos = async () => {
       try {
-        // Altere esta linha para incluir o status "aprovado"
-         const response = await fetch(`${apiUrl}/api/eventos/aprovados`);
+        const response = await fetch(`${apiUrl}/api/eventos/aprovados`);
         const data: Evento[] = await response.json();
-
-        // O filtro não é mais necessário, pois a API já retorna os eventos aprovados
-        // const eventosFiltrados = data.filter(evento => evento.status === 'aprovado');
         setEventosAprovados(data);
       } catch (error) {
         console.error("Erro ao buscar eventos:", error);
@@ -40,6 +34,9 @@ function Home() {
   const eventosRock = eventosAprovados.filter(evento => evento.categoria === 'Rock');
   const eventosEletronica = eventosAprovados.filter(evento => evento.categoria === 'Eletrônica');
   const eventosJazz = eventosAprovados.filter(evento => evento.categoria === 'Jazz');
+  const eventosPop = eventosAprovados.filter(evento => evento.categoria === 'pop');
+  const eventosRap = eventosAprovados.filter(evento => evento.categoria === 'Rap');
+
 
   return (
     <div className='container'>
@@ -60,11 +57,14 @@ function Home() {
             </div>
           </div>
         </div>
-        <ListaEventos eventos={eventosFunk} titulo="Funk" />
-        <ListaEventos eventos={eventosSertanejo} titulo="Sertanejo" />
-        <ListaEventos eventos={eventosRock} titulo="Rock" />
-        <ListaEventos eventos={eventosEletronica} titulo="Eletrônica" />
-        <ListaEventos eventos={eventosJazz} titulo="Jazz" />
+        
+        {eventosFunk.length > 0 && <ListaEventos eventos={eventosFunk} titulo="Funk" />}
+        {eventosSertanejo.length > 0 && <ListaEventos eventos={eventosSertanejo} titulo="Sertanejo" />}
+        {eventosRock.length > 0 && <ListaEventos eventos={eventosRock} titulo="Rock" />}
+        {eventosEletronica.length > 0 && <ListaEventos eventos={eventosEletronica} titulo="Eletrônica" />}
+        {eventosJazz.length > 0 && <ListaEventos eventos={eventosJazz} titulo="Jazz" />}
+        {eventosPop.length > 0 && <ListaEventos eventos={eventosPop} titulo="Pop" />}
+        {eventosRap.length > 0 && <ListaEventos eventos={eventosRap} titulo="Rap" />}
 
         <div style={{ display: "flex", right: "20px", bottom: "30px", position: 'fixed', zIndex: '1000' }}>
           <ChatBot />

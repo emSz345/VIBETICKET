@@ -27,7 +27,7 @@ const Login: React.FC = () => {
 
   const authContext = useAuth();
   const [socialLoading, setSocialLoading] = useState(false);
-  
+
   // --- Estados da Lógica de Bloqueio (do seu código original) ---
   const [falhas, setFalhas] = useState<number>(() => parseInt(localStorage.getItem("loginFalhas") || "0"));
   const [tentativas, setTentativas] = useState<number>(() => parseInt(localStorage.getItem("loginTentativas") || "0"));
@@ -177,12 +177,12 @@ const Login: React.FC = () => {
   };
 
 
-    const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
+  const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
     try {
 
- if (!userData.email) {
-      throw new Error("E-mail não disponível na conta social");
-    }
+      if (!userData.email) {
+        throw new Error("E-mail não disponível na conta social");
+      }
 
       // Envia dados para o backend
       const response = await fetch(`${apiUrl}/api/users/social-login`, {
@@ -207,13 +207,13 @@ const Login: React.FC = () => {
 
       // Usa o contexto de autenticação
       await new Promise(resolve => {
-      authContext.socialLogin({
-        provider,
-        userData: data.user,
-        token: data.token
+        authContext.socialLogin({
+          provider,
+          userData: data.user,
+          token: data.token
+        });
+        resolve(null);
       });
-      resolve(null);
-    });
 
       navigate("/Home");
     } catch (error) {
@@ -226,7 +226,7 @@ const Login: React.FC = () => {
 
 
   // Funções de login social e reset de senha (do seu código original)
-  const handleGoogleSignIn = async () =>   {
+  const handleGoogleSignIn = async () => {
     try {
       setSocialLoading(true);
       const userData = await signInWithGoogle();
@@ -237,7 +237,7 @@ const Login: React.FC = () => {
       setSocialLoading(false);
     }
   };
-   const handleFacebookSignIn = async () => {
+  const handleFacebookSignIn = async () => {
     try {
       setSocialLoading(true);
       const userData = await signInWithFacebook();
@@ -287,26 +287,64 @@ const Login: React.FC = () => {
           </Link>
         </div>
         <div className="form-section">
-          {/* O seu JSX completo está preservado e o botão "Entrar" já chama a função correta */}
+
           <h2 className="login-bemvido">Bem-vindo</h2>
+
           <h3 className="login-title">Email</h3>
-          <Input type="email" name="email" placeholder="example@gmail.com" value={email} onChange={handleChange} />
-          <div className="login-container-error">{emailError && <p className="error">{emailError}</p>}</div>
+          <Input
+            type="email"
+            name="email"
+            placeholder="example@gmail.com"
+            value={email}
+            onChange={handleChange}
+          />
+
+          <div className="login-container-error">
+            {emailError && <p className="error"> {emailError} </p>}
+          </div>
+
           <h3 className="login-title">Senha</h3>
-          <Input type="password" name="senha" placeholder="Digite sua senha" value={senha} onChange={handleChange} />
-          <div className="login-container-error">{senhaError && <p className="error">{senhaError}</p>}</div>
-          <div className="login-recuperar-senha"><p>Esqueceu sua senha? <a className="redefinir" href="#" onClick={handleReset}>Clique aqui!</a></p></div>
+
+          <Input
+            type="password"
+            name="senha"
+            placeholder="Digite sua senha"
+            value={senha}
+            onChange={handleChange}
+          />
+
+          <div className="login-container-error">
+            {senhaError && <p className="error"> {senhaError} </p>} </div>
+          <div className="login-recuperar-senha">
+            <a style={{
+              textDecoration: 'none',
+              fontFamily: "sans-serif",
+              color: "#0969fb",
+              fontWeight: "bolder",
+              cursor: "pointer"
+            }}
+              href="Redefinir-minha-senha" onClick={handleReset}>Esqueci minha senha!</a>
+          </div>
+
           <br />
-          <Button text="Entrar" color="Blue" onClick={handleLocalLogin} />
+
+          <Button
+            text="Entrar"
+            color="Blue"
+            onClick={handleLocalLogin}
+          />
+
           <p className="ou">ou</p>
+
           <div className="social-login">
             <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} />
             <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookSignIn} />
           </div>
+
           <p>Ainda não tem uma conta? <Link to="/Cadastro" className="crie-conta">Crie uma!</Link></p>
+
         </div>
       </div>
-      {/* Seus alertas de login social estão preservados */}
     </div>
   );
 };

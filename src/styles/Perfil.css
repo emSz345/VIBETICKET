@@ -137,3 +137,91 @@ body{ background:var(--bg); }
   .perfil-form-grid{ grid-template-columns:1fr; }
   .full-width{ grid-column:span 1; }
 }
+
+/* Cabeçalho Secundário */
+.perfil-header-secondary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.perfil-header-secondary h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: #2c3e50;
+}
+.perfil-tab-icon {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+/* Grid */
+.perfil-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.full-width {
+  grid-column: span 2;
+}
+
+/* Radio CPF/CNPJ (estilo pill) */
+.perfil-radio-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.perfil-radio-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.perfil-radio-pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.perfil-radio-pill span {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  color: #334155;
+  font-size: 14px;
+  transition: .2s;
+}
+.perfil-radio-pill input:checked + span {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(9, 105, 251, .15);
+}
+
+/* Estados */
+.perfil-loading, .perfil-error {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: var(--muted);
+}
+.perfil-error {
+  color: #ef4444;
+}
+
+/* Responsivo */
+@media (max-width: 992px) {
+  .perfil-content {
+      flex-direction: column;
+  }
+  .perfil-left {
+      min-width: auto;
+  }
+  .perfil-form-grid {
+      grid-template-columns: 1fr;
+  }
+  .full-width {
+      grid-column: span 1;
+  }
+}
