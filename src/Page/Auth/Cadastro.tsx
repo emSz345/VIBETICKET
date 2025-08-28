@@ -57,10 +57,10 @@ const Cadastro: React.FC = () => {
     }
     // ... (suas outras validações continuam iguais)
     if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(formData.nome)) {
-      newErrors.nome = "Nome deve conter pelo menos 10 letras e nenhum número.";
+      newErrors.nome = "É nescessário inserir o seu nome completo.";
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email deve estar em formato válido e conter pelo menos 10 caracteres.";
+      newErrors.email = "Email deve estar em formato válido.";
     }
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{6,}$/.test(formData.senha)) {
       newErrors.senha = "A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.";
@@ -362,7 +362,7 @@ const Cadastro: React.FC = () => {
             {errors.nome ? (
               <p className="error">{errors.nome}</p>
             ) : (
-              <span className="password-hint">Nome deve conter pelo menos 10 letras e nenhum número.</span>
+              <span className="password-hint">É nescessário inserir o seu nome completo.</span>
             )}
           </div>
 
@@ -381,7 +381,7 @@ const Cadastro: React.FC = () => {
             {errors.email ? (
               <p className="error">{errors.email}</p>
             ) : (
-              <span className="password-hint">Email deve estar em formato válido e conter pelo menos 10 caracteres.</span>
+              <span className="password-hint">Email deve estar em formato válido.</span>
             )}
           </div>
 

@@ -132,3 +132,102 @@ body {
 .btn-gerenciar-carrossel p {
   margin: 0;
 }
+
+@media (max-width: 1024px) {
+  .painel-wrapper {
+    flex-direction: column;
+  }
+
+  .painel-sidebar {
+    width: 100%;
+    padding: 15px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .painel-container-logo {
+    margin-bottom: 0;
+  }
+
+  .painel-logo {
+    max-width: 120px;
+  }
+
+  .painel-sidebar>div {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn-gerenciar-carrossel {
+    width: auto;
+    padding: 10px 15px;
+  }
+
+  .btn-gerenciar-carrossel p {
+    display: none;
+  }
+
+  .painel-main {
+    padding: 15px;
+  }
+
+  .painel-main-header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .header-center {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tab-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .header-right {
+    text-align: center;
+  }
+
+  .painel-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+/* Para telas menores que 768px */
+@media (max-width: 768px) {
+  .painel-sidebar {
+    padding: 10px;
+  }
+
+  .painel-logo {
+    max-width: 100px;
+  }
+
+  .btn-gerenciar-carrossel {
+    padding: 8px 12px;
+  }
+
+  .header-center {
+    gap: 5px;
+  }
+
+  .tab-button {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}
+
+/* Melhorias de toque para dispositivos móveis */
+@media (hover: none) and (pointer: coarse) {
+
+  .tab-button,
+  .btn-gerenciar-carrossel {
+    min-height: 44px;
+    /* Tamanho mínimo para toque */
+  }
+}

@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Chatbot.css";
+import { useNavigate } from "react-router-dom";
 import { FaTimes, FaPaperPlane } from "react-icons/fa";
 import axios from "axios";
+
 import logoChatBot from "../../../assets/logo-chatbot.png";
 import logoChatBot1 from "../../../assets/logo-chatBot-with.png";
 
@@ -157,8 +159,7 @@ const CategoriasLista: React.FC<CategoriasListaProps> = ({
 };
 
 const ChatBot: React.FC = () => {
-  // Estados do componente
-  const [isEnabled, _] = useState(true);
+  const [isEnabled, _setIsEnabled] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>({});
   const [showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -174,25 +175,49 @@ const ChatBot: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Gerar ID único para o usuário
   const userId = useRef('user-' + Math.random().toString(36).substr(2, 9));
 
+  // Auto-scroll quando mensagens mudam
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-  // Use o useCallback para memorizar a função e evitar recriações desnecessárias.
-  // Como a função não usa nenhuma variável externa, o array de dependências é vazio.
-  const limparRespostaBot = useCallback((texto: string): string => {
-    if (!texto) return texto;
-
-    let limpo = texto;
-    limpo = limpo.replace(/<\/?think[^>]*>/gi, '');
-    limpo = limpo.replace(/^(Racioc[ií]nio|Pensamento|Thought|Reasoning).*$/gim, '');
-    const idx = limpo.search(/<think|<\/think>|reasoning|pensamento|thought/i);
-    if (idx !== -1) {
-      limpo = limpo.substring(0, idx);
+  useEffect(() => {
+    if (isOpen && isEnabled && messages.length <= 2) {
+      const timer = setTimeout(() => {
+        setShowCommands(true);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-    return limpo.trim();
-  }, []);
+  }, [isOpen, messages.length, isEnabled]);
 
-  const getMessageContent = useCallback((msg: Mensagem) => {
+  // Balão reaparece a cada 1 minuto e dura 5s
+  useEffect(() => {
+    if (!isOpen && isEnabled) {
+      const showBalloonNow = () => {
+        setShowBalloon(true);
+        setTimeout(() => setShowBalloon(false), 5000);
+      };
+
+      showBalloonNow();
+
+      const interval = setInterval(showBalloonNow, 60000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isOpen, isEnabled]);
+
+  const toggleChat = () => {
+    if (!isEnabled) return;
+    setIsOpen(!isOpen);
+    if (!isOpen) setShowBalloon(false);
+  };  
+
+  // Função auxiliar para determinar o conteúdo da mensagem
+  const getMessageContent = (msg: Mensagem) => {
+    // Prioridade 1: Eventos encontrados
     if (msg.eventos && msg.eventos.length > 0) {
       return {
         showText: true,
@@ -201,6 +226,8 @@ const ChatBot: React.FC = () => {
         showNoResults: false
       };
     }
+
+    // Prioridade 2: Categorias (apenas quando não há eventos)
     if (msg.categorias && msg.categorias.length > 0) {
       return {
         showText: true,
@@ -209,6 +236,8 @@ const ChatBot: React.FC = () => {
         showNoResults: false
       };
     }
+
+    // Prioridade 3: Sem resultados para busca de eventos
     if (msg.intent?.includes('evento')) {
       return {
         showText: true,
@@ -217,13 +246,15 @@ const ChatBot: React.FC = () => {
         showNoResults: true
       };
     }
+
+    // Padrão: mostrar apenas texto
     return {
       showText: true,
       showEvents: false,
       showCategories: false,
       showNoResults: false
     };
-  }, []);
+  };
 
   interface HuggingFaceResponse {
     success: boolean;
@@ -234,14 +265,18 @@ const ChatBot: React.FC = () => {
       eventos?: Evento[];
       categorias?: string[];
       showCommands?: boolean;
-      state?: FiltroEstado;
+      state?: FiltroEstado & {
+        navegarPara?: string;
+      };
     };
     categorias?: string[];
   }
 
-  // Envolve a função sendMessage com useCallback para evitar recriação desnecessária
-  const sendMessage = useCallback(async (messageText?: string) => {
+  const navigate = useNavigate();
+
+  const sendMessage = async (messageText?: string) => {
     if (!isEnabled) return;
+
     const textToSend = messageText || inputValue;
     if (!textToSend.trim()) return;
 
@@ -268,13 +303,38 @@ const ChatBot: React.FC = () => {
       });
 
       const responseData: HuggingFaceResponse = response.data;
+
+      // PRIMEIRO verificar se há navegação
+      if (responseData.reply.state?.navegarPara) {
+        const destino = responseData.reply.state.navegarPara;
+        const nomeDestino = destino.replace('/', '').replace('-', ' ');
+
+        // Mostrar mensagem de confirmação
+        const mensagemNavegacao: Mensagem = {
+          from: "bot",
+          text: `Te levando para ${nomeDestino}... 🚀`,
+          showCommands: false
+        };
+
+        setMessages(prev => [...prev, mensagemNavegacao]);
+
+        // Fechar o chat e navegar
+        setTimeout(() => {
+          setIsOpen(false);
+          navigate(destino);
+        }, 1000);
+
+        setIsTyping(false);
+        return;
+      }
+
+      // SE NÃO HOUVER NAVEGAÇÃO, processar a resposta normal
       if (responseData.success) {
         const botReply = responseData.reply;
-        const textoLimpo = limparRespostaBot(botReply.text || "");
 
         const botMessage: Mensagem = {
           from: "bot",
-          text: textoLimpo,
+          text: botReply.text || "",
           intent: botReply.intent,
           confidence: botReply.confidence,
           eventos: botReply.eventos || [],
@@ -286,6 +346,7 @@ const ChatBot: React.FC = () => {
         if (botReply.state) {
           setFiltroEstado(botReply.state);
         }
+
         setMessages(prev => [...prev, botMessage]);
         setShowCommands(botReply.showCommands || false);
 
@@ -312,13 +373,6 @@ const ChatBot: React.FC = () => {
       setShowCommands(true);
     } finally {
       setIsTyping(false);
-    }
-  }, [isEnabled, inputValue, filtroEstado, setCategorias, setFiltroEstado, limparRespostaBot]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
     }
   };
 
@@ -355,7 +409,7 @@ const ChatBot: React.FC = () => {
             </div>
             {evento.valorIngressoInteira && evento.valorIngressoInteira > 0 && (
               <div className="chatbot-evento-preco">
-                � R$ {evento.valorIngressoInteira.toFixed(2)}
+                💰 R$ {evento.valorIngressoInteira.toFixed(2)}
               </div>
             )}
           </div>
@@ -364,58 +418,11 @@ const ChatBot: React.FC = () => {
     );
   };
 
-  const buscarEventosComFiltros = useCallback(async (filtros: FiltroEstado): Promise<Evento[]> => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/huggingface/chat', {
-        message: `Buscar eventos de ${filtros.categoria} com filtros`,
-        state: filtros
-      }, {
-        headers: {
-          'User-ID': userId.current
-        }
-      });
-      return response.data.eventos || [];
-    } catch (error) {
-      console.error("Erro ao buscar eventos com filtros:", error);
-      return [];
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
-  }, [userId]);
-
-  // Efeito para auto-scroll quando mensagens mudam
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  // Efeito para mostrar comandos iniciais
-  useEffect(() => {
-    if (isOpen && isEnabled && messages.length <= 2) {
-      const timer = setTimeout(() => {
-        setShowCommands(true);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, messages.length, isEnabled]);
-
-  // Efeito para o balão de mensagem e busca de eventos
-  useEffect(() => {
-    if (!isOpen && isEnabled) {
-      const showBalloonNow = () => {
-        setShowBalloon(true);
-        setTimeout(() => setShowBalloon(false), 5000);
-      };
-
-      showBalloonNow();
-      buscarEventosComFiltros({});
-      const interval = setInterval(showBalloonNow, 60000);
-
-      return () => clearInterval(interval);
-    }
-  }, [isOpen, isEnabled, buscarEventosComFiltros]);
-
-  const toggleChat = () => {
-    if (!isEnabled) return;
-    setIsOpen(!isOpen);
-    if (!isOpen) setShowBalloon(false);
   };
 
   return (
@@ -437,7 +444,7 @@ const ChatBot: React.FC = () => {
         aria-label={isEnabled ? "Abrir chat" : "Chat desabilitado"}
         style={{ opacity: isEnabled ? 1 : 0.5 }}
       >
-        {isOpen ? <FaTimes /> : <img src={logoChatBot} title="Foto Chatbot" alt="" style={{ height: "55px", width: "55px" }} />}
+        {isOpen ? <FaTimes /> : <img src={logoChatBot} alt="logoChat" title="Foto Chatbot" style={{ height: "55px", width: "55px" }} />}
         {!isOpen && isEnabled && (
           <motion.span
             className="pulse-dot"
@@ -476,10 +483,10 @@ const ChatBot: React.FC = () => {
                     key={index}
                     className={`chatbot-message ${msg.from === "bot" ? "bot" : "user"}`}
                     initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    animate={{opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    {/* Texto da mensagem */}
+                    
                     {content.showText && (
                       <div className="message-text-content">
                         {msg.text.split('\n').map((line, i) => (
@@ -523,6 +530,7 @@ const ChatBot: React.FC = () => {
                             🎪 Experimente buscar por <strong>cidade</strong>, <strong>categoria</strong> ou ver todos os eventos!
                           </>
                         )}
+
                         <div className="navibe-sugestoes-busca">
                           <span className="navibe-sugestao-titulo">💡 Sugestões:</span>
                           <button
