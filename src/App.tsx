@@ -72,7 +72,6 @@ function AppRoutes() {
         <Route path="/categorias" element={<Categorias />} />
         <Route path="/evento/:id" element={<Detalhes />} />
         <Route path="/termos" element={<Termos />} />
-        <Route path="/duvidas" element={<Duvidas />} />
         <Route path="/carrinho" element={<Carrinho />} />
         
         {/* --- Rotas Protegidas (só para usuários logados) --- */}
@@ -96,6 +95,7 @@ function AppRoutes() {
       {/* ================================================================== */}
       {/* Grupo de rotas QUE NÃO TÊM a Navbar (tela cheia) */}
       {/* ================================================================== */}
+      <Route path="/duvidas" element={<Duvidas />} />
       <Route path="/login" element={<Login />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/cadastro" element={<Cadastro />} />

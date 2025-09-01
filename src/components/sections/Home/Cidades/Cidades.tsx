@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Importar hook de navegação
 import sp from "../../../../assets/estados/estado-sp.jpg";
 import rj from "../../../../assets/estados/estados-rj.jpg";
 import mg from "../../../../assets/estados/estado-mg.jpg";
@@ -13,26 +14,33 @@ import "./Cidades.css";
 interface Cidade {
   nome: string;
   img: string;
+  id: string;
 }
 
 const Cidades: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>(0);
   const isPausedRef = useRef(false);
-  const directionRef = useRef(1); // 1 = direita, -1 = esquerda
+  const directionRef = useRef(1);
   const scrollSpeed = 2.5;
+  const navigate = useNavigate(); // Hook para navegação
 
   const cidades: Cidade[] = [
-    { nome: "São Paulo", img: sp },
-    { nome: "Rio de Janeiro", img: rj },
-    { nome: "Maranhão", img: mrn },
-    { nome: "Minas Gerais", img: mg },
-    { nome: "Pará", img: pr },
-    { nome: "Paraná", img: prn },
-    { nome: "Santa Catarina", img: sc },
-    { nome: "Rio Grande do Sul", img: rgs },
-    { nome: "Brasilia", img: df },
+    { nome: "São Paulo", img: sp, id: "sp" },
+    { nome: "Rio de Janeiro", img: rj, id: "rj" },
+    { nome: "Maranhão", img: mrn, id: "ma" },
+    { nome: "Minas Gerais", img: mg, id: "mg" },
+    { nome: "Pará", img: pr, id: "pa" },
+    { nome: "Paraná", img: prn, id: "pr" },
+    { nome: "Santa Catarina", img: sc, id: "sc" },
+    { nome: "Rio Grande do Sul", img: rgs, id: "rs" },
+    { nome: "Brasilia", img: df, id: "df" },
   ];
+
+  // Função para lidar com o clique -> sempre manda para /categorias
+  const handleEstadoClick = () => {
+    navigate("/categorias");
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -58,12 +66,12 @@ const Cidades: React.FC = () => {
       if (!isPausedRef.current && container) {
         const { scrollLeft, scrollWidth, clientWidth } = container;
         const maxScroll = scrollWidth - clientWidth;
-        const threshold = 50; // Margem para começar a inverter antes de chegar no final
+        const threshold = 50;
 
         if (scrollLeft >= maxScroll - threshold) {
-          directionRef.current = -1; // Inverte para esquerda
+          directionRef.current = -1;
         } else if (scrollLeft <= threshold) {
-          directionRef.current = 1; // Inverte para direita
+          directionRef.current = 1;
         }
 
         container.scrollLeft += scrollSpeed * directionRef.current;
@@ -71,7 +79,6 @@ const Cidades: React.FC = () => {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Inicia com um pequeno delay para evitar conflitos com o render inicial
     const startDelay = setTimeout(() => {
       animationRef.current = requestAnimationFrame(animate);
     }, 100);
@@ -86,11 +93,22 @@ const Cidades: React.FC = () => {
   }, []);
 
   return (
-   <div className="cidades-container" id="estados">
+    <div className="cidades-container" id="estados">
       <h3 className="cidades-title">Estados com mais shows</h3>
       <div className="cidades-grid" ref={containerRef}>
-        {[...cidades].map((cidade, i) => (
-          <div key={`${cidade.nome}-${i}`} className="cidade-card">
+        {cidades.map((cidade, i) => (
+          <div 
+            key={`${cidade.nome}-${i}`} 
+            className="cidade-card"
+            onClick={handleEstadoClick} // Sempre manda para /categorias
+            role="button"
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleEstadoClick();
+              }
+            }}
+          >
             <img src={cidade.img} alt={cidade.nome} loading="lazy" />
             <div className="estado-overlay"></div>
             <div className="texto-sobre-imagem">{cidade.nome}</div>
