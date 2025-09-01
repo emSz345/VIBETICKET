@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import EventoCard from "../../components/sections/Adm/EventoCard/EventoCard";
 import { Evento } from "../../types/evento";
-import { FaSignOutAlt, FaImages } from 'react-icons/fa';
+import { FaSignOutAlt, FaImages, FaUserPlus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
@@ -83,6 +83,10 @@ const Painel: React.FC = () => {
           <Link to="/CarrosselAdm" className="btn-gerenciar-carrossel">
             <FaImages />
             <p>Gerenciar Carrossel</p>
+          </Link>
+          <Link to="/AdicionarAdm" className="btn-gerenciar-carrossel">
+              <FaUserPlus />
+              <p>Adicionar Admin</p>
           </Link>
           <button className="btn-gerenciar-carrossel" onClick={() => {
             localStorage.clear();

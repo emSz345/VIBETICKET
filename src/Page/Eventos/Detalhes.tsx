@@ -8,6 +8,11 @@ import {
 import { IoTicket } from "react-icons/io5";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { Evento } from '../../components/sections/Home/home-eventos/evento';
+import { CarrinhoService } from '../../services/carrinhoService';
+import { CarrinhoItem } from "../../types/carrinho";
+
+
+
 
 // Adicionei 'politicas' à interface Evento
 interface EventoComPoliticas extends Evento {
@@ -21,6 +26,10 @@ interface TicketType {
     descricao?: string;
 }
 
+// Detalhes.tsx - Atualize o useEffect que inicializa tiposIngresso
+
+
+
 const Detalhes: React.FC = () => {
     const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -32,7 +41,7 @@ const Detalhes: React.FC = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    
+
         const buscarEventoPorId = async () => {
             try {
                 const response = await fetch(`${apiUrl}/api/eventos/publico/${id}`);
@@ -48,7 +57,7 @@ const Detalhes: React.FC = () => {
                 setIsLoading(false);
             }
         };
-    
+
         if (!evento && id) {
             buscarEventoPorId();
         } else {
@@ -56,66 +65,189 @@ const Detalhes: React.FC = () => {
         }
     }, [id, evento, state, apiUrl]);
 
+    // Detalhes.tsx - Atualize o useEffect que inicializa tiposIngresso
+    useEffect(() => {
+        if (evento) {
+            const valorInteira = Number(evento.valorIngressoInteira) || 0;
+            const valorMeia = Number(evento.valorIngressoMeia) || 0;
+
+            const ingressos: TicketType[] = [
+                {
+                    tipo: "Inteira",
+                    valor: valorInteira,
+                    quantidade: 0,
+                    descricao: "Ingresso padrão para todos os públicos"
+                }
+            ];
+
+            // Verifica se tem meia e se o valor é maior que 0
+            if (evento.temMeia && valorMeia > 0) {
+                ingressos.push({
+                    tipo: "Meia",
+                    valor: valorMeia,
+                    quantidade: 0,
+                    descricao: "Para estudantes, idosos e pessoas com deficiência (com documentação)"
+                });
+            }
+
+            setTiposIngresso(ingressos);
+        }
+    }, [evento]);
+
     const LIMITE_MAXIMO_INGRESSOS = 8;
     const [activeTab, setActiveTab] = useState<'descricao' | 'politicas'>('descricao');
 
-    const [tiposIngresso, setTiposIngresso] = useState<TicketType[]>(() => {
-        if (!evento) return [];
+    const [tiposIngresso, setTiposIngresso] = useState<TicketType[]>();
 
-        const valorInteira = Number(evento.valorIngressoInteira) || 0;
-        const valorMeia = Number(evento.valorIngressoMeia) || 0;
+    useEffect(() => {
+        window.scrollTo(0, 0);
 
-        const ingressos: TicketType[] = [
-            {
-                tipo: "Inteira",
-                valor: valorInteira,
-                quantidade: 0,
-                descricao: "Ingresso padrão para todos os públicos"
+        const buscarEventoPorId = async () => {
+            try {
+                const response = await fetch(`${apiUrl}/api/eventos/publico/${id}`);
+                if (!response.ok) {
+                    throw new Error('Evento não encontrado');
+                }
+                const data: EventoComPoliticas = await response.json();
+                setEvento(data);
+
+                // Adicione a lógica de inicialização de ingressos aqui
+                const valorInteira = Number(data.valorIngressoInteira) || 0;
+                const valorMeia = Number(data.valorIngressoMeia) || 0;
+
+                const ingressos: TicketType[] = [
+                    {
+                        tipo: "Inteira",
+                        valor: valorInteira,
+                        quantidade: 0,
+                        descricao: "Ingresso padrão para todos os públicos"
+                    }
+                ];
+
+                if (data.temMeia && valorMeia > 0) {
+                    ingressos.push({
+                        tipo: "Meia",
+                        valor: valorMeia,
+                        quantidade: 0,
+                        descricao: "Para estudantes, idosos e pessoas com deficiência (com documentação)"
+                    });
+                }
+
+                setTiposIngresso(ingressos);
+
+            } catch (error) {
+                console.error("Erro ao buscar evento:", error);
+                setEvento(null);
+            } finally {
+                setIsLoading(false);
             }
-        ];
+        };
 
-        if (evento.temMeia) {
-            ingressos.push({
-                tipo: "Meia",
-                valor: valorMeia,
-                quantidade: 0,
-                descricao: "Para estudantes, idosos e pessoas com deficiência (com documentação)"
-            });
+        if (id) {
+            buscarEventoPorId();
+        } else {
+            setIsLoading(false);
         }
+    }, [id, apiUrl]);
 
-        return ingressos;
-    });
+    // Remova este useEffect duplicado, pois a lógica já foi movida para cima
+    // useEffect(() => {
+    //     if (evento) {
+    //         // ... (código que agora está no useEffect de cima)
+    //     }
+    // }, [evento]);
+
+
 
     const aumentarQuantidade = (index: number) => {
-        setTiposIngresso(prev =>
-            prev.map((ingresso, i) =>
+        setTiposIngresso(prev => {
+            // Use `|| []` para garantir que `prev` é um array
+            return (prev || []).map((ingresso, i) =>
                 i === index && ingresso.quantidade < LIMITE_MAXIMO_INGRESSOS
                     ? { ...ingresso, quantidade: ingresso.quantidade + 1 }
                     : ingresso
-            )
-        );
+            );
+        });
     };
 
     const diminuirQuantidade = (index: number) => {
-        setTiposIngresso(prev =>
-            prev.map((ingresso, i) =>
+        setTiposIngresso(prev => {
+            // Use `|| []` para garantir que `prev` é um array
+            return (prev || []).map((ingresso, i) =>
                 i === index && ingresso.quantidade > 0
                     ? { ...ingresso, quantidade: ingresso.quantidade - 1 }
                     : ingresso
-            )
-        );
+            );
+        });
     };
 
-    const adicionarAoCarrinho = (ingresso: TicketType) => {
-        if (ingresso.quantidade > 0) {
+    const adicionarAoCarrinho = async (ingresso: TicketType) => {
+        if (ingresso.quantidade === 0) {
+            alert("Selecione pelo menos um ingresso.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/api/eventos/verificar-estoque/${evento?._id}`);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Erro na resposta da API:', errorText);
+                alert('Não foi possível verificar a disponibilidade de ingressos. Tente novamente.');
+                return;
+            }
+
+            const estoque = await response.json();
+
+            // Encontra o item no carrinho (se existir)
+            const itensDoCarrinho = CarrinhoService.getCarrinho();
+            const itemExistente = itensDoCarrinho.find((item: CarrinhoItem) =>
+                item.eventoId === evento?._id && item.tipoIngresso === ingresso.tipo
+            );
+
+            const quantidadeNoCarrinho = itemExistente ? itemExistente.quantidade : 0;
+            const totalSolicitado = ingresso.quantidade + quantidadeNoCarrinho;
+
+            let estoqueDisponivel = 0;
+            if (ingresso.tipo === 'Inteira') {
+                estoqueDisponivel = estoque.quantidadeInteira;
+            } else if (ingresso.tipo === 'Meia') {
+                estoqueDisponivel = estoque.quantidadeMeia;
+            }
+
+            if (totalSolicitado > estoqueDisponivel) {
+                alert(`Desculpe, não há ingressos ${ingresso.tipo} suficientes disponíveis.`);
+                return;
+            }
+
+            const novoItem: CarrinhoItem = {
+                id: `${evento?._id}-${ingresso.tipo}`,
+                eventoId: evento?._id || '',
+                nomeEvento: evento?.nome || '',
+                tipoIngresso: ingresso.tipo,
+                preco: ingresso.valor,
+                // Se o item já existe, atualize a quantidade. Caso contrário, use a quantidade nova.
+                quantidade: itemExistente ? itemExistente.quantidade + ingresso.quantidade : ingresso.quantidade,
+                imagem: evento?.imagem || '',
+                dataEvento: evento?.dataInicio || '',
+                localEvento: `${evento?.rua}, ${evento?.numero}, ${evento?.bairro} - ${evento?.cidade}, ${evento?.estado}`
+            };
+
+            // Use uma função para adicionar ou atualizar o item
+            CarrinhoService.adicionarOuAtualizarItem(novoItem);
+
             alert(`${ingresso.quantidade} ingresso(s) ${ingresso.tipo} adicionado(s) ao carrinho!`);
-        } else {
-            alert("Selecione pelo menos um ingresso");
+
+        } catch (error) {
+            console.error('Erro ao verificar estoque:', error);
+            alert('Erro ao verificar disponibilidade de ingressos');
         }
     };
 
+
     const calcularTotal = () => {
-        return tiposIngresso.reduce((total, ingresso) => {
+        // Use `tiposIngresso || []`
+        return (tiposIngresso || []).reduce((total, ingresso) => {
             return total + (ingresso.valor * ingresso.quantidade);
         }, 0).toFixed(2);
     };
@@ -145,6 +277,29 @@ const Detalhes: React.FC = () => {
 
     const politicasDoEvento = evento.politicas && evento.politicas.length > 0 ? evento.politicas : politicasPadrao;
 
+    const compartilharEvento = async () => {
+        const url = window.location.href;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: evento?.nome || "Evento",
+                    text: "Confere esse evento incrível!",
+                    url: url,
+                });
+
+                console.log("Compartilhado com sucesso!");
+            } catch (err) {
+                console.error("Erro ao compartilhar:", err);
+            }
+        } else {
+            // fallback se navegador não suporta
+            navigator.clipboard.writeText(url);
+            alert("Link copiado para a área de transferência!");
+        }
+    };
+
+
     return (
         <>
             <div className="detalhes-container">
@@ -162,9 +317,10 @@ const Detalhes: React.FC = () => {
                                     <span>{evento.rua}, {evento.numero}, {evento.bairro} - {evento.cidade}, {evento.estado}</span>
                                 </div>
                             </div>
-                            <button className="share-button">
+                            <button className="share-button" onClick={compartilharEvento}>
                                 <FaShareAlt /> Compartilhar
                             </button>
+
                         </div>
                         {evento.imagem && (
                             <img src={imageUrl} alt={evento.nome} className="detalhes-imagem-evento" />
@@ -178,7 +334,7 @@ const Detalhes: React.FC = () => {
                             <IoTicket /> Escolha seus ingressos
                         </h3>
                         <div className="detalhes-ingressos-tipos">
-                            {tiposIngresso.map((ingresso, index) => (
+                            {tiposIngresso?.map((ingresso, index) => (
                                 <div key={index} className="detalhes-ingresso-card">
                                     <div className="ingresso-header">
                                         <span className="tipo"><IoTicket /> {ingresso.tipo}</span>

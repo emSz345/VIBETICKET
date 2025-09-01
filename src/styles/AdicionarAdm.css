@@ -1,0 +1,128 @@
+/* src/styles/PromoverAdmin.css */
+
+/* Container principal da página */
+.promover-admin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f0f2f5; /* Fundo cinza claro */
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo do cabeçalho */
+.promover-admin-header {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+/* Botão de voltar */
+.back-button {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.back-button:hover {
+    color: #007bff;
+}
+
+.promover-admin-header h2 {
+    color: #333;
+    font-weight: 600;
+    font-size: 1.8rem;
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* Formulário e seu conteúdo */
+.promover-admin-form {
+    background: #fff;
+    padding: 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.promover-admin-form p {
+    margin-bottom: 2rem;
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Grupo de campo (label + input) */
+.form-group {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+    color: #444;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Garante que o padding não afete a largura total */
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Botão de envio */
+.submit-button {
+    width: 100%;
+    padding: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+.submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Mensagens de feedback */
+.error-message {
+    color: #dc3545; /* Vermelho escuro */
+    margin-top: 1.5rem;
+    font-weight: 500;
+}
+
+.success-message {
+    color: #28a745; /* Verde escuro */
+    margin-top: 1.5rem;
+    font-weight: 500;
+}

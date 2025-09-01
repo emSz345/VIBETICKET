@@ -48,7 +48,7 @@ function CriarEventos() {
   const [valorIngressoMeia, setValorIngressoMeia] = useState('');
   const [quantidadeInteira, setQuantidadeInteira] = useState('');
   const [quantidadeMeia, setQuantidadeMeia] = useState('');
-  const [temMeia, setTemMeia] = useState('false');
+  const [temMeia, setTemMeia] = useState(false);
   const [dataFimVendas, setDataFimVendas] = useState('');
   const [dataInicioVendas, setDataInicioVendas] = useState('');
 
@@ -238,7 +238,7 @@ function CriarEventos() {
         if (!quantidadeInteira || parseInt(quantidadeInteira) <= 0) {
           novosErros.quantidadeInteira = 'A quantidade de ingressos inteiros é obrigatória e deve ser maior que zero.';
         }
-        if (temMeia === 'sim') {
+        if (temMeia) {
           if (!valorIngressoMeia || parseFloat(valorIngressoMeia.replace(',', '.')) <= 0) {
             novosErros.valorMeia = 'O valor do ingresso meia é obrigatório se houver meia-entrada.';
           }
@@ -343,10 +343,10 @@ function CriarEventos() {
     formData.append("dataFimVendas", dataFimVendas);
     formData.append("dataInicioVendas", dataInicioVendas);
     formData.append("valorIngressoInteira", valorIngressoInteira);
-    formData.append("valorIngressoMeia", temMeia === 'sim' ? valorIngressoMeia : '0');
+    formData.append("valorIngressoMeia", temMeia ? valorIngressoMeia : '0');
     formData.append("quantidadeInteira", quantidadeInteira);
-    formData.append("quantidadeMeia", temMeia === 'sim' ? quantidadeMeia : '0');
-    formData.append("temMeia", temMeia);
+    formData.append("quantidadeMeia", temMeia ? quantidadeMeia : '0');
+    formData.append("temMeia", temMeia ? 'true' : 'false');
     formData.append("querDoar", String(querDoar));
     formData.append("valorDoacao", querDoar ? valorDoacao : '0');
 
@@ -504,13 +504,13 @@ function CriarEventos() {
                 className={getError('categoriaEvento') ? 'erro-campo' : ''}
               >
                 <option value="">Selecione uma categoria</option>
-                <option value="show">Rock</option>
+                <option value="Rock">Rock</option>
                 <option value="pop">Pop</option>
                 <option value="Funk">Funk</option>
                 <option value="Rap">Rap</option>
                 <option value="Jazz">Jazz</option>
                 <option value="Sertanejo">Sertanejo</option>
-                <option value="Eletônica">Eletônica</option>
+                <option value="Eletrônica">Eletrônica</option>
               </select>
               {getError('categoriaEvento') && <span className="mensagem-erro">{getError('categoriaEvento')}</span>}
             </div>
@@ -785,10 +785,11 @@ function CriarEventos() {
                   <label>
                     Haverá ingresso meia?
                     <select
-                      value={temMeia}
+                      value={temMeia ? 'sim' : 'nao'}
                       onChange={(e) => {
-                        setTemMeia(e.target.value);
-                        if (e.target.value === 'nao') {
+                        const isMeia = e.target.value === 'sim';
+                        setTemMeia(isMeia);
+                        if (!isMeia) {
                           setValorIngressoMeia('');
                           setQuantidadeMeia('');
                         }
@@ -801,7 +802,7 @@ function CriarEventos() {
                   </label>
                 </div>
 
-                {temMeia === 'sim' && (
+                {temMeia && (
                   <div className="campo">
                     <label>
                       Valor do Ingresso Meia (R$) <span className={getError('valorMeia') ? 'erro-asterisco' : ''}>*</span>
@@ -846,7 +847,7 @@ function CriarEventos() {
                   {getError('quantidadeInteira') && <span className="mensagem-erro">{getError('quantidadeInteira')}</span>}
                 </div>
 
-                {temMeia === 'sim' && (
+                {temMeia && (
                   <div className="campo">
                     <label>
                       Quantidade Meia <span className={getError('quantidadeMeia') ? 'erro-asterisco' : ''}>*</span>

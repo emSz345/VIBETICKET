@@ -3,65 +3,46 @@ import { useNavigate } from 'react-router-dom';
 import { FiTrash2, FiPlus, FiMinus, FiArrowLeft, FiCheck } from 'react-icons/fi';
 import AppHeader from '../../components/layout/Header/AppHeader';
 import "../../styles/Carrinho.css";
-
-interface CarrinhoItem {
-  id: string;
-  nomeEvento: string;
-  tipoIngresso: string;
-  preco: number;
-  quantidade: number;
-  imagem: string;
-  dataEvento: string;
-  localEvento: string;
-}
+import { CarrinhoItem } from '../../types/carrinho';
+import { CarrinhoService } from '../../services/carrinhoService';
 
 const Carrinho = () => {
-  const [carrinho, setCarrinho] = useState<CarrinhoItem[]>([
-    {
-      id: '1',
-      nomeEvento: 'Show do Artista X',
-      tipoIngresso: 'Inteira',
-      preco: 100,
-      quantidade: 1,
-      imagem: 'https://via.placeholder.com/150',
-      dataEvento: '25/12/2023 - 20h',
-      localEvento: 'Arena Show - São Paulo/SP'
-    },
-    {
-      id: '2',
-      nomeEvento: 'Festival de Verão',
-      tipoIngresso: 'Meia',
-      preco: 50,
-      quantidade: 2,
-      imagem: 'https://via.placeholder.com/150',
-      dataEvento: '15/01/2024 - 18h',
-      localEvento: 'Praia Grande - Santos/SP'
-    },
-  ]);
+  const [carrinho, setCarrinho] = useState<CarrinhoItem[]>(() => {
+    return CarrinhoService.getCarrinho();
+  });
 
   const [carrinhoShowSuccess, setCarrinhoShowSuccess] = useState(false);
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const carrinhoAumentarQuantidade = (id: string) => {
-    setCarrinho(prev =>
-      prev.map(item =>
+    setCarrinho(prev => {
+      const novoCarrinho = prev.map(item =>
         item.id === id ? { ...item, quantidade: item.quantidade + 1 } : item
-      )
-    );
+      );
+      localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
+      return novoCarrinho;
+    });
   };
 
   const carrinhoDiminuirQuantidade = (id: string) => {
-    setCarrinho(prev =>
-      prev.map(item =>
-        item.id === id && item.quantidade > 1
-          ? { ...item, quantidade: item.quantidade - 1 }
+    setCarrinho(prev => {
+      const novoCarrinho = prev.map(item =>
+        item.id === id && item.quantidade > 1 
+          ? { ...item, quantidade: item.quantidade - 1 } 
           : item
-      )
-    );
+      );
+      localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
+      return novoCarrinho;
+    });
   };
 
   const carrinhoRemoverItem = (id: string) => {
-    setCarrinho(prev => prev.filter(item => item.id !== id));
+    setCarrinho(prev => {
+      const novoCarrinho = prev.filter(item => item.id !== id);
+      localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
+      return novoCarrinho;
+    });
   };
 
   const carrinhoCalcularSubtotal = () => {
@@ -76,17 +57,57 @@ const Carrinho = () => {
     return carrinhoCalcularSubtotal() + carrinhoCalcularTaxas();
   };
 
-  const carrinhoFinalizarCompra = () => {
+  const carrinhoFinalizarCompra = async () => {
     if (carrinho.length === 0) {
       alert("Seu carrinho está vazio!");
       return;
     }
-    
-    setCarrinhoShowSuccess(true);
-    setTimeout(() => {
-      setCarrinhoShowSuccess(false);
-      navigate('/checkout');
-    }, 2000);
+
+    for (const item of carrinho) {
+    const disponivel = await CarrinhoService.verificarDisponibilidade(item);
+    if (!disponivel) {
+      alert(`Desculpe, não há ingressos ${item.tipoIngresso} suficientes para ${item.nomeEvento}`);
+      return;
+    }
+  }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/api/compras`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          itens: carrinho,
+          total: carrinhoCalcularTotal()
+        })
+      });
+
+      if (response.ok) {
+        setCarrinhoShowSuccess(true);
+        CarrinhoService.limparCarrinho();
+        setTimeout(() => {
+          setCarrinhoShowSuccess(false);
+          navigate('/meus-ingressos');
+        }, 2000);
+      } else {
+        const errorData = await response.json();
+        alert(`Erro ao finalizar compra: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+      alert('Erro ao finalizar compra');
+    }
+  };
+
+  // Corrigir URLs das imagens
+  const getImageUrl = (imagem: string) => {
+    if (imagem.startsWith('http')) {
+      return imagem;
+    }
+    return `${apiUrl}/uploads/${imagem}`;
   };
 
   return (
@@ -94,12 +115,12 @@ const Carrinho = () => {
       <AppHeader />
       <div className="carrinho-container">
         <h1 className="carrinho-titulo">Seu Carrinho</h1>
-        
+
         {carrinho.length === 0 ? (
           <div className="carrinho-vazio">
             <h2 className="carrinho-vazio-titulo">Seu carrinho está vazio</h2>
             <p className="carrinho-vazio-texto">Parece que você ainda não adicionou nenhum ingresso ao carrinho.</p>
-            <button 
+            <button
               className="carrinho-btn-voltar"
               onClick={() => navigate('/eventos')}
             >
@@ -112,9 +133,9 @@ const Carrinho = () => {
               {carrinho.map((item) => (
                 <div key={item.id} className="carrinho-item">
                   <div className="carrinho-item-imagem">
-                    <img src={item.imagem} alt={item.nomeEvento} />
+                    <img src={getImageUrl(item.imagem)} alt={item.nomeEvento} />
                   </div>
-                  
+
                   <div className="carrinho-item-info">
                     <h3 className="carrinho-item-nome">{item.nomeEvento}</h3>
                     <p className="carrinho-item-meta">
@@ -125,13 +146,13 @@ const Carrinho = () => {
                       <span>{item.tipoIngresso}</span>
                     </div>
                   </div>
-                  
+
                   <div className="carrinho-item-preco">
                     R$ {item.preco.toFixed(2)}
                   </div>
-                  
+
                   <div className="carrinho-item-quantidade">
-                    <button 
+                    <button
                       className="carrinho-item-quantidade-btn"
                       onClick={() => carrinhoDiminuirQuantidade(item.id)}
                       disabled={item.quantidade <= 1}
@@ -139,19 +160,19 @@ const Carrinho = () => {
                       <FiMinus />
                     </button>
                     <span className="carrinho-item-quantidade-valor">{item.quantidade}</span>
-                    <button 
+                    <button
                       className="carrinho-item-quantidade-btn"
                       onClick={() => carrinhoAumentarQuantidade(item.id)}
                     >
                       <FiPlus />
                     </button>
                   </div>
-                  
+
                   <div className="carrinho-item-subtotal">
                     R$ {(item.preco * item.quantidade).toFixed(2)}
                   </div>
-                  
-                  <button 
+
+                  <button
                     className="carrinho-item-remover"
                     onClick={() => carrinhoRemoverItem(item.id)}
                     aria-label="Remover item"
@@ -161,36 +182,36 @@ const Carrinho = () => {
                 </div>
               ))}
             </div>
-            
+
             <div className="carrinho-resumo">
               <div className="carrinho-resumo-detalhes">
                 <h3 className="carrinho-resumo-titulo">Resumo do Pedido</h3>
-                
+
                 <div className="carrinho-resumo-linha">
                   <span className="carrinho-resumo-label">Subtotal ({carrinho.reduce((acc, item) => acc + item.quantidade, 0)} itens)</span>
                   <span className="carrinho-resumo-valor">R$ {carrinhoCalcularSubtotal().toFixed(2)}</span>
                 </div>
-                
+
                 <div className="carrinho-resumo-linha">
                   <span className="carrinho-resumo-label">Taxa de serviço</span>
                   <span className="carrinho-resumo-valor">R$ {carrinhoCalcularTaxas().toFixed(2)}</span>
                 </div>
-                
+
                 <div className="carrinho-resumo-total">
                   <span className="carrinho-resumo-total-label">Total</span>
                   <span className="carrinho-resumo-total-valor">R$ {carrinhoCalcularTotal().toFixed(2)}</span>
                 </div>
               </div>
-              
+
               <div className="carrinho-resumo-acoes">
-                <button 
+                <button
                   className="carrinho-btn-continuar"
                   onClick={() => navigate('/eventos')}
                 >
                   <FiArrowLeft /> Continuar Comprando
                 </button>
-                
-                <button 
+
+                <button
                   className="carrinho-btn-finalizar"
                   onClick={carrinhoFinalizarCompra}
                 >
@@ -200,7 +221,7 @@ const Carrinho = () => {
             </div>
           </>
         )}
-        
+
         {carrinhoShowSuccess && (
           <div className="carrinho-sucesso">
             <div className="carrinho-sucesso-conteudo">
