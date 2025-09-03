@@ -52,7 +52,8 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 24px;
     font-weight: 600;
-    margin: 0; /* remove margem padrão */
+    margin: 0;
+    /* remove margem padrão */
 }
 
 .meus-ingressos-titulo-pagina {
@@ -75,4 +76,75 @@
     font-size: 1.125rem;
     color: #6b7280;
     margin-top: 60px;
+}
+
+/* ============================ */
+/* AJUSTES APENAS PARA MOBILE   */
+/* ============================ */
+@media (max-width: 768px) {
+    .pagina-meus-ingressos {
+        max-width: 100%;
+        padding: 100px 16px 30px;
+    }
+
+    .meus-ingressos-titulo-pagina {
+        font-size: 1.75rem;
+        margin-bottom: 24px;
+        padding: 0 10px;
+    }
+
+    .meus-ingressos-lista-ingressos {
+        gap: 16px;
+    }
+
+    .meus-ingressos-mensagem-vazia {
+        font-size: 1rem;
+        margin-top: 40px;
+        padding: 0 15px;
+    }
+
+    /* Header específico para mobile */
+    .meus-ingressos-duvidas-header {
+        padding: 12px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+    .meus-ingressos-duvidas-header-logo {
+        height: 80px;
+    }
+
+    .meus-ingressos-duvidas-hr {
+        height: 50px;
+    }
+
+    .meus-ingressos-duvidas-title {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagina-meus-ingressos {
+        padding: 90px 12px 20px;
+    }
+
+    .meus-ingressos-titulo-pagina {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .meus-ingressos-duvidas-header-logo {
+        height: 70px;
+    }
+
+    .meus-ingressos-duvidas-title {
+        font-size: 16px;
+    }
+
+    .meus-ingressos-mensagem-vazia {
+        font-size: 0.95rem;
+        margin-top: 30px;
+    }
 }

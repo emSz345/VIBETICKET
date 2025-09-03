@@ -33,24 +33,24 @@ export default function NavBar3() {
     window.location.reload();
   };
 
- const getProfileImageUrl = () => {
-  if (!user?.imagemPerfil) {
-    return `${apiUrl}/uploads/blank_profile.png`;
-  }
-  
-  // Se já é uma URL completa (http ou https)
-  if (/^https?:\/\//.test(user.imagemPerfil)) {
-    return user.imagemPerfil;
-  }
-  
-  // Se começa com /uploads (caminho relativo)
-  if (user.imagemPerfil.startsWith('/uploads')) {
-    return `${apiUrl}${user.imagemPerfil}`;
-  }
-  
-  // Padrão para imagens locais
-  return `${apiUrl}/uploads/${user.imagemPerfil}`;
-};
+  const getProfileImageUrl = () => {
+    if (!user?.imagemPerfil) {
+      return `${apiUrl}/uploads/blank_profile.png`;
+    }
+
+    // Se já é uma URL completa (http ou https)
+    if (/^https?:\/\//.test(user.imagemPerfil)) {
+      return user.imagemPerfil;
+    }
+
+    // Se começa com /uploads (caminho relativo)
+    if (user.imagemPerfil.startsWith('/uploads')) {
+      return `${apiUrl}${user.imagemPerfil}`;
+    }
+
+    // Padrão para imagens locais
+    return `${apiUrl}/uploads/${user.imagemPerfil}`;
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -201,8 +201,15 @@ export default function NavBar3() {
       {mobileOpen && (
         <div className="mobile-menu-overlay open" onClick={() => setMobileOpen(false)} />
       )}
-
       <div className={`mobile-menu ${mobileOpen ? "open" : ""}`}>
+        {/* Cabeçalho com "MENU" na esquerda e "X" na direita */}
+        <div className="mobile-menu-header">
+          <h3>Menu</h3>
+          <div className="mobile-menu-close" onClick={() => setMobileOpen(false)}>
+            <FaTimes size={20} />
+          </div>
+        </div>
+
         {isAuthenticated && (
           <div className="user-info-mobile">
             <img
@@ -211,7 +218,7 @@ export default function NavBar3() {
               alt="Avatar"
               style={{ width: "50px", height: "50px" }}
             />
-            <div style={{ display: 'flex', flexDirection: 'column'}}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <strong>{user?.nome}</strong>
               <small>{user?.email}</small>
             </div>
@@ -272,4 +279,3 @@ export default function NavBar3() {
     </header>
   );
 }
-

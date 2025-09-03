@@ -7,18 +7,21 @@ const Perfil = () => {
   const { user, isLoading, updateUser } = useAuth();
 
   const [editando, setEditando] = useState(false);
+  const [editandoDadosAdicionais, setEditandoDadosAdicionais] = useState(false); // Novo estado
   const [nome, setNome] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>("");
 
-  // Alterna entre CPF e CNPJ
+  const [_hasPerfilSaved, setHasPerfilSaved] = useState(false);
+
   const [tipoPessoa, setTipoPessoa] = useState<"cpf" | "cnpj">("cpf");
   const docLabel = tipoPessoa === "cpf" ? "CPF" : "CNPJ";
   const docPlaceholder = tipoPessoa === "cpf" ? "000.000.000-00" : "00.000.000/0000-00";
   const docMaxLength = tipoPessoa === "cpf" ? 14 : 18;
 
   const [dadosPessoais, setDadosPessoais] = useState({
-    cpfCnpj: "",
+    cpf: "",
+    cnpj: "",
     nomeCompleto: "",
     dataNascimento: "",
     telefone: "",
@@ -34,53 +37,82 @@ const Perfil = () => {
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  // Limpa campos específicos ao alternar tipo de documento
-  useEffect(() => {
-    if (tipoPessoa === "cpf") {
-      setDadosOrganizacao({
-        razaoSocial: "",
-        nomeFantasia: "",
-        inscricaoMunicipal: "",
-        cpfSocio: ""
-      });
-    }
-  }, [tipoPessoa]);
+  const formatCpf = (value: string) => {
+    if (!value) return "";
+    value = value.replace(/\D/g, "");
+    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+    value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    return value;
+  };
+
+  const formatCnpj = (value: string) => {
+    if (!value) return "";
+    value = value.replace(/\D/g, "");
+    value = value.replace(/^(\d{2})(\d)/, "$1.$2");
+    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+    value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
+    value = value.replace(/(\d{4})(\d)/, "$1-$2");
+    return value;
+  };
 
   const getImagemPerfilUrl = (imagemPerfil?: string) => {
     if (!imagemPerfil) return `${apiUrl}/uploads/blank_profile.png`;
-
     if (imagemPerfil.startsWith('http')) {
       return imagemPerfil;
     }
-
     if (imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${imagemPerfil}`;
     }
-
     return `${apiUrl}/uploads/${imagemPerfil}`;
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && user._id) {
       setNome(user.nome);
-
       if (user.imagemPerfil?.startsWith('http')) {
         setPreviewUrl(user.imagemPerfil);
       } else {
         setPreviewUrl(user.imagemPerfil ? `${apiUrl}${user.imagemPerfil}` : undefined);
       }
+
+      const fetchPerfilData = async () => {
+        try {
+          const response = await fetch(`${apiUrl}/api/perfil/${user._id}`);
+          if (response.ok) {
+            const perfilData = await response.json();
+            setHasPerfilSaved(true);
+            setTipoPessoa(perfilData.tipoPessoa);
+
+            const dataNascimentoFormatada = perfilData.dadosPessoais.dataNascimento
+              ? new Date(perfilData.dadosPessoais.dataNascimento).toISOString().slice(0, 10)
+              : "";
+
+            setDadosPessoais({
+              ...perfilData.dadosPessoais,
+              dataNascimento: dataNascimentoFormatada,
+              cpf: formatCpf(perfilData.dadosPessoais.cpf || ""),
+              cnpj: formatCnpj(perfilData.dadosPessoais.cnpj || "")
+            });
+
+            setDadosOrganizacao(perfilData.dadosOrganizacao);
+            setEditandoDadosAdicionais(false); // Inicia com o modo de edição desabilitado
+          } else {
+            // Se não houver dados, o modo de edição fica ativado para o primeiro cadastro
+            setEditandoDadosAdicionais(true);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados de perfil:", error);
+          setEditandoDadosAdicionais(true); // Se houver erro, permite a edição
+        }
+      };
+      fetchPerfilData();
     }
   }, [user, setPreviewUrl, apiUrl]);
 
-  const handleSalvarAlteracoes = async () => {
+  const handleSalvarLogin = async () => {
     if (!user) return;
     const formData = new FormData();
-
-    if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(nome)) {
-      alert("Nome deve conter pelo menos 10 letras e nenhum número.");
-      return;
-    }
-
     formData.append("nome", nome);
     if (imagem) formData.append("imagemPerfil", imagem);
 
@@ -90,23 +122,70 @@ const Perfil = () => {
         body: formData,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("Perfil atualizado com sucesso!");
-        updateUser(data.user);
-        localStorage.setItem("userName", nome);
-        localStorage.setItem("imagemPerfil", data.user.imagemPerfil || "");
-        localStorage.setItem("hasLocalImage", "true");
-        setEditando(false);
-        setImagem(null);
-        window.location.reload();
-      } else {
-        alert("Erro ao atualizar perfil: " + data.message);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error("Erro ao atualizar perfil: " + errorData.message);
       }
+
+      const data = await response.json();
+      updateUser(data.user);
+      localStorage.setItem("userName", nome);
+      localStorage.setItem("imagemPerfil", data.user.imagemPerfil || "");
+
+      alert("Nome e foto de perfil atualizados com sucesso!");
+      setEditando(false);
+      setImagem(null);
+      window.location.reload();
     } catch (error) {
-      console.error(error);
-      alert("Ocorreu um erro na comunicação com o servidor.");
+      console.error("Erro ao atualizar os dados de login:", error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Ocorreu um erro desconhecido ao atualizar os dados de login.");
+      }
+    }
+  };
+
+  const handleSalvarDadosAdicionais = async () => {
+    if (!user || !user._id) {
+      alert("ID de usuário não encontrado.");
+      return;
+    }
+
+    const dadosParaSalvar = {
+      tipoPessoa,
+      dadosPessoais: {
+        ...dadosPessoais,
+        cpf: dadosPessoais.cpf.replace(/\D/g, ""),
+        cnpj: dadosPessoais.cnpj.replace(/\D/g, "")
+      },
+      dadosOrganizacao
+    };
+
+    try {
+      const response = await fetch(`${apiUrl}/api/perfil/salvar/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dadosParaSalvar),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error("Erro ao salvar dados de perfil: " + errorData.message);
+      }
+
+      alert("Dados pessoais atualizados com sucesso!");
+      setEditandoDadosAdicionais(false); // Desabilita a edição após salvar
+      window.location.reload();
+    } catch (error) {
+      console.error("Erro ao salvar os dados de perfil:", error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Ocorreu um erro desconhecido ao salvar os dados de perfil.");
+      }
     }
   };
 
@@ -129,7 +208,6 @@ const Perfil = () => {
       </div>
 
       <div className="perfil-content">
-        {/* Coluna Esquerda - Dados Pessoais */}
         <div className="perfil-left">
           <div className="perfil-card">
             <div className="perfil-avatar-section">
@@ -186,25 +264,23 @@ const Perfil = () => {
 
             <button
               className={`perfil-btn-primary ${editando ? 'perfil-btn-save' : ''}`}
-              onClick={() => { if (editando) handleSalvarAlteracoes(); else setEditando(true); }}
+              onClick={() => { if (editando) handleSalvarLogin(); else setEditando(true); }}
             >
               {editando ? <FiCheck /> : <FiEdit2 />}
-              {editando ? "Salvar alterações" : "Editar perfil"}
+              {editando ? "Salvar login" : "Editar perfil"}
             </button>
           </div>
         </div>
 
-        {/* Coluna Direita - Dados do Organizador */}
         <div className="perfil-right">
           <div className="perfil-card">
             <div className="perfil-header-secondary">
               <FiShoppingBag className="perfil-tab-icon" />
-              <h3>Dados do Pessoais</h3>
+              <h3>Dados Pessoais</h3>
             </div>
 
             <div className="perfil-tab-content">
               <div className="perfil-form-grid">
-                {/* Toggle CPF/CNPJ */}
                 <div className="perfil-form-group full-width">
                   <div className="perfil-input-label" style={{ marginBottom: 10 }}>
                     <FiUser className="perfil-input-icon" />
@@ -218,6 +294,7 @@ const Perfil = () => {
                         value="cpf"
                         checked={tipoPessoa === "cpf"}
                         onChange={() => setTipoPessoa("cpf")}
+                        disabled={!editandoDadosAdicionais} // Bloqueia a troca de tipo
                       />
                       <span>CPF</span>
                     </label>
@@ -228,13 +305,13 @@ const Perfil = () => {
                         value="cnpj"
                         checked={tipoPessoa === "cnpj"}
                         onChange={() => setTipoPessoa("cnpj")}
+                        disabled={!editandoDadosAdicionais} // Bloqueia a troca de tipo
                       />
                       <span>CNPJ</span>
                     </label>
                   </div>
                 </div>
 
-                {/* CPF / CNPJ */}
                 <div className="perfil-form-group">
                   <label className="perfil-input-label">
                     <FiUser className="perfil-input-icon" />
@@ -245,12 +322,18 @@ const Perfil = () => {
                     placeholder={docPlaceholder}
                     inputMode="numeric"
                     maxLength={docMaxLength}
-                    value={dadosPessoais.cpfCnpj}
-                    onChange={(e) => setDadosPessoais({ ...dadosPessoais, cpfCnpj: e.target.value })}
+                    value={tipoPessoa === "cpf" ? dadosPessoais.cpf : dadosPessoais.cnpj}
+                    onChange={(e) => {
+                      const formattedValue = tipoPessoa === "cpf" ? formatCpf(e.target.value) : formatCnpj(e.target.value);
+                      setDadosPessoais({
+                        ...dadosPessoais,
+                        [tipoPessoa]: formattedValue
+                      });
+                    }}
+                    disabled={!editandoDadosAdicionais} // Bloqueia o campo
                   />
                 </div>
 
-                {/* Campos específicos para CNPJ */}
                 {tipoPessoa === "cnpj" && (
                   <>
                     <div className="perfil-form-group">
@@ -262,9 +345,9 @@ const Perfil = () => {
                         className="perfil-input"
                         value={dadosOrganizacao.razaoSocial}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, razaoSocial: e.target.value })}
+                        disabled={!editandoDadosAdicionais} // Bloqueia o campo
                       />
                     </div>
-
                     <div className="perfil-form-group">
                       <label className="perfil-input-label">
                         <FiUser className="perfil-input-icon" />
@@ -274,9 +357,9 @@ const Perfil = () => {
                         className="perfil-input"
                         value={dadosOrganizacao.nomeFantasia}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, nomeFantasia: e.target.value })}
+                        disabled={!editandoDadosAdicionais} // Bloqueia o campo
                       />
                     </div>
-
                     <div className="perfil-form-group">
                       <label className="perfil-input-label">
                         <FiUser className="perfil-input-icon" />
@@ -286,9 +369,9 @@ const Perfil = () => {
                         className="perfil-input"
                         value={dadosOrganizacao.inscricaoMunicipal}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, inscricaoMunicipal: e.target.value })}
+                        disabled={!editandoDadosAdicionais} // Bloqueia o campo
                       />
                     </div>
-
                     <div className="perfil-form-group">
                       <label className="perfil-input-label">
                         <FiUser className="perfil-input-icon" />
@@ -301,25 +384,23 @@ const Perfil = () => {
                         maxLength={14}
                         value={dadosOrganizacao.cpfSocio}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, cpfSocio: e.target.value })}
+                        disabled={!editandoDadosAdicionais} // Bloqueia o campo
                       />
                     </div>
                   </>
                 )}
-                {/* Campos comuns para CPF e CNPJ */}
-                {tipoPessoa === "cnpj" && (
-                  <div className="perfil-form-group">
-                    <label className="perfil-input-label">
-                      <FiUser className="perfil-input-icon" />
-                      <span>Nome Completo</span>
-                    </label>
-                    <input
-                      className="perfil-input"
-                      value={dadosPessoais.nomeCompleto}
-                      onChange={(e) => setDadosPessoais({ ...dadosPessoais, nomeCompleto: e.target.value })}
-                    />
-                  </div>
-                )}
-
+                <div className="perfil-form-group">
+                  <label className="perfil-input-label">
+                    <FiUser className="perfil-input-icon" />
+                    <span>Nome Completo</span>
+                  </label>
+                  <input
+                    className="perfil-input"
+                    value={dadosPessoais.nomeCompleto}
+                    onChange={(e) => setDadosPessoais({ ...dadosPessoais, nomeCompleto: e.target.value })}
+                    disabled={!editandoDadosAdicionais} // Bloqueia o campo
+                  />
+                </div>
                 <div className="perfil-form-group">
                   <label className="perfil-input-label">
                     <FiCalendar className="perfil-input-icon" />
@@ -330,9 +411,9 @@ const Perfil = () => {
                     className="perfil-input"
                     value={dadosPessoais.dataNascimento}
                     onChange={(e) => setDadosPessoais({ ...dadosPessoais, dataNascimento: e.target.value })}
+                    disabled={!editandoDadosAdicionais} // Bloqueia o campo
                   />
                 </div>
-
                 <div className="perfil-form-group">
                   <label className="perfil-input-label">
                     <FiPhone className="perfil-input-icon" />
@@ -342,10 +423,26 @@ const Perfil = () => {
                     className="perfil-input"
                     value={dadosPessoais.telefone}
                     onChange={(e) => setDadosPessoais({ ...dadosPessoais, telefone: e.target.value })}
+                    disabled={!editandoDadosAdicionais} // Bloqueia o campo
                   />
                 </div>
               </div>
             </div>
+
+            <button
+              className={`perfil-btn-primary ${editandoDadosAdicionais ? 'perfil-btn-save' : ''}`}
+              onClick={() => {
+                if (editandoDadosAdicionais) {
+                  handleSalvarDadosAdicionais();
+                } else {
+                  setEditandoDadosAdicionais(true);
+                }
+              }}
+              style={{ marginTop: '20px' }}
+            >
+              {editandoDadosAdicionais ? <FiCheck /> : <FiEdit2 />}
+              {editandoDadosAdicionais ? "Salvar Dados Pessoais" : "Editar Dados Pessoais"}
+            </button>
           </div>
         </div>
       </div>

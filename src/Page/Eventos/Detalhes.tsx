@@ -1,22 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useParams, Link } from "react-router-dom";
-import "../../styles/detalhes.css";
+import "../../styles/detalhes.css"; // Certifique-se de que este caminho está correto
 import Footer from "../../components/layout/Footer/Footer";
 import {
-    FaCalendarAlt, FaMapMarkerAlt, FaShareAlt
+    FaCalendarAlt, FaMapMarkerAlt, FaShareAlt,
+    FaUserCircle, FaEnvelope
 } from "react-icons/fa";
-import { IoTicket } from "react-icons/io5";
+import { IoTicket, IoTime } from "react-icons/io5";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { Evento } from '../../components/sections/Home/home-eventos/evento';
 import { CarrinhoService } from '../../services/carrinhoService';
 import { CarrinhoItem } from "../../types/carrinho";
 
+// Interface para os dados do criador obtidos da rota de users
+interface CriadorUsuario {
+    email: string;
+    imagemPerfil: string;
+    nome: string;
+}
 
+// Interface para os dados do criador obtidos da rota de perfil
+interface CriadorPerfil {
+    dadosOrganizacao?: {
+        nomeFantasia: string;
+    };
+    dadosPessoais?: {
+        telefone: string;
+    };
+}
 
-
-// Adicionei 'politicas' à interface Evento
-interface EventoComPoliticas extends Evento {
-    politicas: string[]; // Alterado para array de strings
+// Interface do evento com o ID do criador corrigido
+interface EventoComCriador extends Evento {
+    criadoPor: string;
+    politicas: string[];
 }
 
 interface TicketType {
@@ -26,117 +42,82 @@ interface TicketType {
     descricao?: string;
 }
 
-// Detalhes.tsx - Atualize o useEffect que inicializa tiposIngresso
-
-
-
 const Detalhes: React.FC = () => {
     const apiUrl = process.env.REACT_APP_API_URL;
-
     const { id } = useParams<{ id: string }>();
     const { state } = useLocation();
 
-    const [evento, setEvento] = useState<EventoComPoliticas | null>(state as EventoComPoliticas || null);
+    // Estados do componente
+    const [evento, setEvento] = useState<EventoComCriador | null>(state as EventoComCriador || null);
+    const [criadorUsuario, setCriadorUsuario] = useState<CriadorUsuario | null>(null);
+    const [criadorPerfil, setCriadorPerfil] = useState<CriadorPerfil | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-
-        const buscarEventoPorId = async () => {
-            try {
-                const response = await fetch(`${apiUrl}/api/eventos/publico/${id}`);
-                if (!response.ok) {
-                    throw new Error('Evento não encontrado');
-                }
-                const data: EventoComPoliticas = await response.json();
-                setEvento(data);
-            } catch (error) {
-                console.error("Erro ao buscar evento:", error);
-                setEvento(null);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (!evento && id) {
-            buscarEventoPorId();
-        } else {
-            setIsLoading(false);
-        }
-    }, [id, evento, state, apiUrl]);
-
-    // Detalhes.tsx - Atualize o useEffect que inicializa tiposIngresso
-    useEffect(() => {
-        if (evento) {
-            const valorInteira = Number(evento.valorIngressoInteira) || 0;
-            const valorMeia = Number(evento.valorIngressoMeia) || 0;
-
-            const ingressos: TicketType[] = [
-                {
-                    tipo: "Inteira",
-                    valor: valorInteira,
-                    quantidade: 0,
-                    descricao: "Ingresso padrão para todos os públicos"
-                }
-            ];
-
-            // Verifica se tem meia e se o valor é maior que 0
-            if (evento.temMeia && valorMeia > 0) {
-                ingressos.push({
-                    tipo: "Meia",
-                    valor: valorMeia,
-                    quantidade: 0,
-                    descricao: "Para estudantes, idosos e pessoas com deficiência (com documentação)"
-                });
-            }
-
-            setTiposIngresso(ingressos);
-        }
-    }, [evento]);
-
-    const LIMITE_MAXIMO_INGRESSOS = 8;
+    const [tiposIngresso, setTiposIngresso] = useState<TicketType[] | undefined>(undefined);
     const [activeTab, setActiveTab] = useState<'descricao' | 'politicas'>('descricao');
+    const [showSuccessModal, setShowSuccessModal] = useState(false); // Novo estado para a modal
 
-    const [tiposIngresso, setTiposIngresso] = useState<TicketType[]>();
+    // Função para obter a URL da imagem de perfil do criador
+    const getCriadorImagemUrl = (imagemPerfil?: string) => {
+        if (imagemPerfil) {
+            if (imagemPerfil.startsWith('http')) {
+                return imagemPerfil;
+            }
+            return `${apiUrl}/uploads/${imagemPerfil}`;
+        }
+        return `${apiUrl}/uploads/blank_profile.png`;
+    };
 
+    // Efeito principal: busca os dados do evento, do usuário e do perfil
     useEffect(() => {
         window.scrollTo(0, 0);
 
-        const buscarEventoPorId = async () => {
+        const buscarDados = async () => {
+            setIsLoading(true);
             try {
-                const response = await fetch(`${apiUrl}/api/eventos/publico/${id}`);
-                if (!response.ok) {
+                const eventoResponse = await fetch(`${apiUrl}/api/eventos/publico/${id}`);
+                if (!eventoResponse.ok) {
                     throw new Error('Evento não encontrado');
                 }
-                const data: EventoComPoliticas = await response.json();
-                setEvento(data);
+                const eventoData: EventoComCriador = await eventoResponse.json();
+                setEvento(eventoData);
 
-                // Adicione a lógica de inicialização de ingressos aqui
-                const valorInteira = Number(data.valorIngressoInteira) || 0;
-                const valorMeia = Number(data.valorIngressoMeia) || 0;
-
+                const valorInteira = Number(eventoData.valorIngressoInteira) || 0;
+                const valorMeia = Number(eventoData.valorIngressoMeia) || 0;
                 const ingressos: TicketType[] = [
-                    {
-                        tipo: "Inteira",
-                        valor: valorInteira,
-                        quantidade: 0,
-                        descricao: "Ingresso padrão para todos os públicos"
-                    }
+                    { tipo: "Inteira", valor: valorInteira, quantidade: 0, descricao: "Ingresso padrão para todos os públicos" }
                 ];
-
-                if (data.temMeia && valorMeia > 0) {
-                    ingressos.push({
-                        tipo: "Meia",
-                        valor: valorMeia,
-                        quantidade: 0,
-                        descricao: "Para estudantes, idosos e pessoas com deficiência (com documentação)"
-                    });
+                if (eventoData.temMeia && valorMeia > 0) {
+                    ingressos.push({ tipo: "Meia", valor: valorMeia, quantidade: 0, descricao: "Para estudantes, idosos e pessoas com deficiência (com documentação)" });
                 }
-
                 setTiposIngresso(ingressos);
 
+                if (eventoData.criadoPor) {
+                    const criadorId = eventoData.criadoPor;
+
+                    const [userRes, perfilRes] = await Promise.allSettled([
+                        fetch(`${apiUrl}/api/users/${criadorId}`),
+                        fetch(`${apiUrl}/api/perfil/${criadorId}`)
+                    ]);
+
+                    if (userRes.status === 'fulfilled' && userRes.value.ok) {
+                        const userData: CriadorUsuario = await userRes.value.json();
+                        setCriadorUsuario(userData);
+                    } else {
+                        console.error('Erro ao buscar dados do usuário. Verifique se o ID está correto ou se a rota está funcionando.');
+                    }
+
+                    if (perfilRes.status === 'fulfilled' && perfilRes.value.ok) {
+                        const perfilData: CriadorPerfil = await perfilRes.value.json();
+                        setCriadorPerfil(perfilData);
+                    } else {
+                        console.error('Erro ao buscar dados de perfil. Verifique a rota ou o formato dos dados.');
+                    }
+                } else {
+                    console.error("ID do criador não encontrado no objeto do evento.");
+                }
+
             } catch (error) {
-                console.error("Erro ao buscar evento:", error);
+                console.error("Erro ao buscar dados:", error);
                 setEvento(null);
             } finally {
                 setIsLoading(false);
@@ -144,26 +125,17 @@ const Detalhes: React.FC = () => {
         };
 
         if (id) {
-            buscarEventoPorId();
+            buscarDados();
         } else {
             setIsLoading(false);
         }
     }, [id, apiUrl]);
 
-    // Remova este useEffect duplicado, pois a lógica já foi movida para cima
-    // useEffect(() => {
-    //     if (evento) {
-    //         // ... (código que agora está no useEffect de cima)
-    //     }
-    // }, [evento]);
-
-
-
+    // Funções de manipulação de ingressos e carrinho
     const aumentarQuantidade = (index: number) => {
         setTiposIngresso(prev => {
-            // Use `|| []` para garantir que `prev` é um array
             return (prev || []).map((ingresso, i) =>
-                i === index && ingresso.quantidade < LIMITE_MAXIMO_INGRESSOS
+                i === index && ingresso.quantidade < 8 // Limite de 8 ingressos
                     ? { ...ingresso, quantidade: ingresso.quantidade + 1 }
                     : ingresso
             );
@@ -172,7 +144,6 @@ const Detalhes: React.FC = () => {
 
     const diminuirQuantidade = (index: number) => {
         setTiposIngresso(prev => {
-            // Use `|| []` para garantir que `prev` é um array
             return (prev || []).map((ingresso, i) =>
                 i === index && ingresso.quantidade > 0
                     ? { ...ingresso, quantidade: ingresso.quantidade - 1 }
@@ -189,7 +160,6 @@ const Detalhes: React.FC = () => {
 
         try {
             const response = await fetch(`${apiUrl}/api/eventos/verificar-estoque/${evento?._id}`);
-
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('Erro na resposta da API:', errorText);
@@ -198,8 +168,6 @@ const Detalhes: React.FC = () => {
             }
 
             const estoque = await response.json();
-
-            // Encontra o item no carrinho (se existir)
             const itensDoCarrinho = CarrinhoService.getCarrinho();
             const itemExistente = itensDoCarrinho.find((item: CarrinhoItem) =>
                 item.eventoId === evento?._id && item.tipoIngresso === ingresso.tipo
@@ -226,17 +194,19 @@ const Detalhes: React.FC = () => {
                 nomeEvento: evento?.nome || '',
                 tipoIngresso: ingresso.tipo,
                 preco: ingresso.valor,
-                // Se o item já existe, atualize a quantidade. Caso contrário, use a quantidade nova.
-                quantidade: itemExistente ? itemExistente.quantidade + ingresso.quantidade : ingresso.quantidade,
+                quantidade: ingresso.quantidade,
                 imagem: evento?.imagem || '',
                 dataEvento: evento?.dataInicio || '',
                 localEvento: `${evento?.rua}, ${evento?.numero}, ${evento?.bairro} - ${evento?.cidade}, ${evento?.estado}`
             };
 
-            // Use uma função para adicionar ou atualizar o item
             CarrinhoService.adicionarOuAtualizarItem(novoItem);
 
-            alert(`${ingresso.quantidade} ingresso(s) ${ingresso.tipo} adicionado(s) ao carrinho!`);
+            // Ativa a modal de sucesso
+            setShowSuccessModal(true);
+            setTimeout(() => {
+                setShowSuccessModal(false);
+            }, 3000); // Esconde a modal após 3 segundos
 
         } catch (error) {
             console.error('Erro ao verificar estoque:', error);
@@ -244,9 +214,7 @@ const Detalhes: React.FC = () => {
         }
     };
 
-
     const calcularTotal = () => {
-        // Use `tiposIngresso || []`
         return (tiposIngresso || []).reduce((total, ingresso) => {
             return total + (ingresso.valor * ingresso.quantidade);
         }, 0).toFixed(2);
@@ -266,20 +234,16 @@ const Detalhes: React.FC = () => {
     }
 
     const imageUrl = `${apiUrl}/uploads/${evento.imagem}`;
-
-    // Políticas padrão caso não existam no evento
     const politicasPadrao = [
         "Reembolsos serão aceitos até 48 horas antes do evento",
         "É obrigatório apresentar um documento de identificação com foto na entrada",
         "O evento não se responsabiliza por objetos perdidos",
         "Proibida a entrada de menores de 18 anos, salvo com autorização judicial"
     ];
-
     const politicasDoEvento = evento.politicas && evento.politicas.length > 0 ? evento.politicas : politicasPadrao;
 
     const compartilharEvento = async () => {
         const url = window.location.href;
-
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -287,18 +251,15 @@ const Detalhes: React.FC = () => {
                     text: "Confere esse evento incrível!",
                     url: url,
                 });
-
                 console.log("Compartilhado com sucesso!");
             } catch (err) {
                 console.error("Erro ao compartilhar:", err);
             }
         } else {
-            // fallback se navegador não suporta
             navigator.clipboard.writeText(url);
             alert("Link copiado para a área de transferência!");
         }
     };
-
 
     return (
         <>
@@ -313,6 +274,10 @@ const Detalhes: React.FC = () => {
                                     <span>{evento.dataInicio}</span>
                                 </div>
                                 <div className="detalhes-info-linha">
+                                    <span className="detalhes-label"><IoTime /> Hora:</span>
+                                    <span>{evento.horaInicio} - {evento.horaTermino}</span>
+                                </div>
+                                <div className="detalhes-info-linha">
                                     <span className="detalhes-label"><FaMapMarkerAlt /> Local:</span>
                                     <span>{evento.rua}, {evento.numero}, {evento.bairro} - {evento.cidade}, {evento.estado}</span>
                                 </div>
@@ -320,7 +285,6 @@ const Detalhes: React.FC = () => {
                             <button className="share-button" onClick={compartilharEvento}>
                                 <FaShareAlt /> Compartilhar
                             </button>
-
                         </div>
                         {evento.imagem && (
                             <img src={imageUrl} alt={evento.nome} className="detalhes-imagem-evento" />
@@ -345,7 +309,7 @@ const Detalhes: React.FC = () => {
                                         <div className="ingresso-selector">
                                             <button onClick={() => diminuirQuantidade(index)} disabled={ingresso.quantidade === 0}><FiMinus /></button>
                                             <span>{ingresso.quantidade}</span>
-                                            <button onClick={() => aumentarQuantidade(index)} disabled={ingresso.quantidade >= LIMITE_MAXIMO_INGRESSOS}><FiPlus /></button>
+                                            <button onClick={() => aumentarQuantidade(index)} disabled={ingresso.quantidade >= 8}><FiPlus /></button>
                                         </div>
                                         <button className="detalhes-btn-comprar" onClick={() => adicionarAoCarrinho(ingresso)} disabled={ingresso.quantidade === 0}>
                                             Adicionar ao Carrinho
@@ -408,7 +372,51 @@ const Detalhes: React.FC = () => {
                         ></iframe>
                     </div>
                 </div>
+
+                {/* Bloco do criador agora utiliza os dados combinados */}
+                {(criadorUsuario || criadorPerfil) ? (
+                    <div className="organizador-container">
+                        <h3 className="organizador-titulo">
+                            <FaUserCircle /> Informações do Organizador
+                        </h3>
+                        <div className="organizador-conteudo">
+                            <img
+                                src={getCriadorImagemUrl(criadorUsuario?.imagemPerfil)}
+                                alt="Foto do Criador"
+                                className="organizador-avatar"
+                            />
+                            <div className="organizador-info">
+                                {criadorUsuario?.email && (
+                                    <p className="organizador-contato">
+                                        <FaEnvelope /> {criadorUsuario.email}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="organizador-container organizador-erro">
+                        <h3 className="organizador-titulo">
+                            Informações do Criador Não Encontradas
+                        </h3>
+                        <p className="organizador-mensagem">
+                            Não foi possível carregar os dados do criador do evento.
+                            Isso pode ocorrer se o usuário não tiver um perfil completo
+                            ou se houver um problema de conexão.
+                        </p>
+                    </div>
+                )}
             </div>
+
+            {showSuccessModal && (
+                <div className="success-modal">
+                    <div className="success-modal-content">
+                        <span className="modal-icon">&#10004;</span>
+                        <p className="modal-message">Ingressos adicionados ao carrinho!</p>
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </>
     );

@@ -16,10 +16,14 @@ const Carrinho = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const carrinhoAumentarQuantidade = (id: string) => {
+    const limiteIngressos = 8;
     setCarrinho(prev => {
-      const novoCarrinho = prev.map(item =>
-        item.id === id ? { ...item, quantidade: item.quantidade + 1 } : item
-      );
+      const novoCarrinho = prev.map(item => {
+        if (item.id === id && item.quantidade < limiteIngressos) {
+          return { ...item, quantidade: item.quantidade + 1 };
+        }
+        return item;
+      });
       localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
       return novoCarrinho;
     });
