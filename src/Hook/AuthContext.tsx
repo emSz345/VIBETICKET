@@ -27,6 +27,7 @@ interface AuthContextType {
   logout: () => void;
   updateUser: (newUserData: UserData) => void;
   socialLogin: (data: SocialLoginData) => void;
+  updateUserProfileImage: (newImageUrl: string) => void; // Nova função
 }
 
 // Criação do contexto
@@ -108,8 +109,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("✅ [AuthContext] Estado atualizado! Autenticado:", true, "Usuário:", userData);
     } catch (error) {
       console.error("Falha no login:", error);
-      // Chama o logout diretamente sem a necessidade de envolver
-      // em useCallback, pois será um valor constante
       logout(); 
       throw error;
     }
@@ -139,6 +138,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem('user', JSON.stringify(newUserData));
   }, [setUser]);
 
+  // Nova função para atualizar apenas a imagem de perfil
+  const updateUserProfileImage = useCallback((newImageUrl: string) => {
+    setUser(prevUser => {
+      if (!prevUser) return prevUser;
+      
+      const updatedUser = {
+        ...prevUser,
+        imagemPerfil: newImageUrl
+      };
+      
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  }, [setUser]);
+
   // Memorizando o valor do contexto para evitar renderizações desnecessárias
   const contextValue = useMemo(() => ({
     isAuthenticated,
@@ -147,8 +161,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     login,
     logout,
     updateUser,
-    socialLogin
-  }), [isAuthenticated, user, isLoading, login, logout, updateUser, socialLogin]);
+    socialLogin,
+    updateUserProfileImage // Nova função adicionada ao contexto
+  }), [
+    isAuthenticated, 
+    user, 
+    isLoading, 
+    login, 
+    logout, 
+    updateUser, 
+    socialLogin, 
+    updateUserProfileImage
+  ]);
 
   return (
     <AuthContext.Provider value={contextValue}>

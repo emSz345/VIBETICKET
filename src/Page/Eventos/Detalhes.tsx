@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useParams, Link } from "react-router-dom";
-import "../../styles/detalhes.css"; // Certifique-se de que este caminho está correto
+import "../../styles/detalhes.css";
 import Footer from "../../components/layout/Footer/Footer";
 import {
     FaCalendarAlt, FaMapMarkerAlt, FaShareAlt,
-    FaUserCircle, FaEnvelope
+    FaUserCircle, FaEnvelope, FaPhone
 } from "react-icons/fa";
-import { IoTicket, IoTime } from "react-icons/io5";
+import { IoTicket } from "react-icons/io5";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { Evento } from '../../components/sections/Home/home-eventos/evento';
 import { CarrinhoService } from '../../services/carrinhoService';
 import { CarrinhoItem } from "../../types/carrinho";
+import { useAuth } from "../../Hook/AuthContext";
 
 // Interface para os dados do criador obtidos da rota de users
 interface CriadorUsuario {
@@ -29,9 +30,17 @@ interface CriadorPerfil {
     };
 }
 
+// Interface do criador populado
+interface CriadorPopulado {
+    _id: string;
+    nome: string;
+    email: string;
+    imagemPerfil?: string;
+}
+
 // Interface do evento com o ID do criador corrigido
-interface EventoComCriador extends Evento {
-    criadoPor: string;
+interface EventoComCriador extends Omit<Evento, 'criadoPor'> {
+    criadoPor: string | CriadorPopulado;
     politicas: string[];
 }
 
@@ -46,6 +55,7 @@ const Detalhes: React.FC = () => {
     const apiUrl = process.env.REACT_APP_API_URL;
     const { id } = useParams<{ id: string }>();
     const { state } = useLocation();
+    const { user: currentUser } = useAuth();
 
     // Estados do componente
     const [evento, setEvento] = useState<EventoComCriador | null>(state as EventoComCriador || null);
@@ -54,18 +64,77 @@ const Detalhes: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [tiposIngresso, setTiposIngresso] = useState<TicketType[] | undefined>(undefined);
     const [activeTab, setActiveTab] = useState<'descricao' | 'politicas'>('descricao');
-    const [showSuccessModal, setShowSuccessModal] = useState(false); // Novo estado para a modal
 
     // Função para obter a URL da imagem de perfil do criador
-    const getCriadorImagemUrl = (imagemPerfil?: string) => {
-        if (imagemPerfil) {
-            if (imagemPerfil.startsWith('http')) {
-                return imagemPerfil;
+    const getImagemPerfilUrl = (imagemPerfil?: string) => {
+    if (!imagemPerfil) return `${apiUrl}/uploads/blank_profile.png`;
+    
+    // Se for uma URL completa
+    if (imagemPerfil.startsWith('http')) {
+        return imagemPerfil;
+    }
+    
+    // Se for um caminho relativo que começa com /uploads/perfil-img
+    if (imagemPerfil.startsWith('/uploads/perfil-img')) {
+        return `${apiUrl}${imagemPerfil}`;
+    }
+    
+    // Se for um caminho relativo que começa com /uploads
+    if (imagemPerfil.startsWith('/uploads')) {
+        return `${apiUrl}${imagemPerfil}`;
+    }
+    
+    // Se for apenas o nome do arquivo, assume que está em /uploads/perfil-img/
+    if (imagemPerfil.includes('/')) {
+        return `${apiUrl}/${imagemPerfil}`;
+    }
+    
+    // Padrão: assume que está em /uploads/perfil-img/
+    return `${apiUrl}/uploads/perfil-img/${imagemPerfil}`;
+};
+
+    // Efeito para forçar atualização da imagem quando o componente montar ou o usuário mudar
+    useEffect(() => {
+        const forceUpdateImage = async () => {
+            if (!evento?.criadoPor || !currentUser) return;
+            
+            try {
+                const criadorId = typeof evento.criadoPor === 'string' 
+                    ? evento.criadoPor 
+                    : (evento.criadoPor as CriadorPopulado)._id;
+                
+                if (criadorId === currentUser._id) {
+                    console.log('Forçando atualização da imagem do criador...');
+                    
+                    // Busca os dados mais recentes do usuário
+                    const response = await fetch(`${apiUrl}/api/users/${currentUser._id}`);
+                    if (response.ok) {
+                        const latestUserData = await response.json();
+                        
+                        if (criadorUsuario) {
+                            setCriadorUsuario({
+                                ...criadorUsuario,
+                                imagemPerfil: latestUserData.imagemPerfil || criadorUsuario.imagemPerfil
+                            });
+                        } else if (evento.criadoPor && typeof evento.criadoPor === 'object') {
+                            const criadorPopulado = evento.criadoPor as CriadorPopulado;
+                            setCriadorUsuario({
+                                nome: criadorPopulado.nome,
+                                email: criadorPopulado.email,
+                                imagemPerfil: latestUserData.imagemPerfil || criadorPopulado.imagemPerfil || ''
+                            });
+                        }
+                        console.log('Imagem atualizada com sucesso');
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao forçar atualização da imagem:', error);
             }
-            return `${apiUrl}/uploads/${imagemPerfil}`;
-        }
-        return `${apiUrl}/uploads/blank_profile.png`;
-    };
+        };
+
+        const timer = setTimeout(forceUpdateImage, 500);
+        return () => clearTimeout(timer);
+    }, [currentUser, evento?.criadoPor, apiUrl, criadorUsuario]);
 
     // Efeito principal: busca os dados do evento, do usuário e do perfil
     useEffect(() => {
@@ -74,13 +143,67 @@ const Detalhes: React.FC = () => {
         const buscarDados = async () => {
             setIsLoading(true);
             try {
+                // Requisição 1: Busca os dados do evento com informações do criador populadas
                 const eventoResponse = await fetch(`${apiUrl}/api/eventos/publico/${id}`);
                 if (!eventoResponse.ok) {
                     throw new Error('Evento não encontrado');
                 }
                 const eventoData: EventoComCriador = await eventoResponse.json();
                 setEvento(eventoData);
+                console.log('Dados do evento carregados:', eventoData);
 
+                // Verificar se o criador já está populado na resposta do evento
+                if (eventoData.criadoPor && typeof eventoData.criadoPor === 'object') {
+                    // O criador já está populado com dados do usuário
+                    const criadorPopulado = eventoData.criadoPor as CriadorPopulado;
+                    const criadorData = {
+                        nome: criadorPopulado.nome,
+                        email: criadorPopulado.email,
+                        imagemPerfil: criadorPopulado.imagemPerfil || ''
+                    };
+                    setCriadorUsuario(criadorData);
+                    console.log('Dados do criador já populados:', criadorPopulado);
+
+                    // Verifica se é o usuário atual e atualiza a imagem se necessário
+                    if (currentUser && criadorPopulado._id === currentUser._id) {
+                        setCriadorUsuario({
+                            ...criadorData,
+                            imagemPerfil: currentUser.imagemPerfil || criadorData.imagemPerfil
+                        });
+                    }
+                } else if (eventoData.criadoPor) {
+                    // Buscar dados do criador separadamente (fallback)
+                    console.log(`Buscando dados do criador com ID: ${eventoData.criadoPor}`);
+                    
+                    const [userRes, perfilRes] = await Promise.allSettled([
+                        fetch(`${apiUrl}/api/users/${eventoData.criadoPor}`),
+                        fetch(`${apiUrl}/api/perfil/${eventoData.criadoPor}`)
+                    ]);
+
+                    if (userRes.status === 'fulfilled' && userRes.value.ok) {
+                        const userData: CriadorUsuario = await userRes.value.json();
+                        
+                        // Verifica se é o usuário atual e atualiza a imagem
+                        let imagemFinal = userData.imagemPerfil;
+                        if (currentUser && eventoData.criadoPor === currentUser._id) {
+                            imagemFinal = currentUser.imagemPerfil || userData.imagemPerfil;
+                        }
+                        
+                        setCriadorUsuario({
+                            ...userData,
+                            imagemPerfil: imagemFinal
+                        });
+                        console.log('Dados do usuário carregados:', userData);
+                    }
+
+                    if (perfilRes.status === 'fulfilled' && perfilRes.value.ok) {
+                        const perfilData: CriadorPerfil = await perfilRes.value.json();
+                        setCriadorPerfil(perfilData);
+                        console.log('Dados de perfil carregados:', perfilData);
+                    }
+                }
+
+                // Lógica para inicializar os tipos de ingressos
                 const valorInteira = Number(eventoData.valorIngressoInteira) || 0;
                 const valorMeia = Number(eventoData.valorIngressoMeia) || 0;
                 const ingressos: TicketType[] = [
@@ -90,31 +213,6 @@ const Detalhes: React.FC = () => {
                     ingressos.push({ tipo: "Meia", valor: valorMeia, quantidade: 0, descricao: "Para estudantes, idosos e pessoas com deficiência (com documentação)" });
                 }
                 setTiposIngresso(ingressos);
-
-                if (eventoData.criadoPor) {
-                    const criadorId = eventoData.criadoPor;
-
-                    const [userRes, perfilRes] = await Promise.allSettled([
-                        fetch(`${apiUrl}/api/users/${criadorId}`),
-                        fetch(`${apiUrl}/api/perfil/${criadorId}`)
-                    ]);
-
-                    if (userRes.status === 'fulfilled' && userRes.value.ok) {
-                        const userData: CriadorUsuario = await userRes.value.json();
-                        setCriadorUsuario(userData);
-                    } else {
-                        console.error('Erro ao buscar dados do usuário. Verifique se o ID está correto ou se a rota está funcionando.');
-                    }
-
-                    if (perfilRes.status === 'fulfilled' && perfilRes.value.ok) {
-                        const perfilData: CriadorPerfil = await perfilRes.value.json();
-                        setCriadorPerfil(perfilData);
-                    } else {
-                        console.error('Erro ao buscar dados de perfil. Verifique a rota ou o formato dos dados.');
-                    }
-                } else {
-                    console.error("ID do criador não encontrado no objeto do evento.");
-                }
 
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);
@@ -129,13 +227,13 @@ const Detalhes: React.FC = () => {
         } else {
             setIsLoading(false);
         }
-    }, [id, apiUrl]);
+    }, [id, apiUrl, currentUser]);
 
     // Funções de manipulação de ingressos e carrinho
     const aumentarQuantidade = (index: number) => {
         setTiposIngresso(prev => {
             return (prev || []).map((ingresso, i) =>
-                i === index && ingresso.quantidade < 8 // Limite de 8 ingressos
+                i === index && ingresso.quantidade < 8
                     ? { ...ingresso, quantidade: ingresso.quantidade + 1 }
                     : ingresso
             );
@@ -194,20 +292,14 @@ const Detalhes: React.FC = () => {
                 nomeEvento: evento?.nome || '',
                 tipoIngresso: ingresso.tipo,
                 preco: ingresso.valor,
-                quantidade: ingresso.quantidade,
+                quantidade: itemExistente ? itemExistente.quantidade + ingresso.quantidade : ingresso.quantidade,
                 imagem: evento?.imagem || '',
                 dataEvento: evento?.dataInicio || '',
                 localEvento: `${evento?.rua}, ${evento?.numero}, ${evento?.bairro} - ${evento?.cidade}, ${evento?.estado}`
             };
 
             CarrinhoService.adicionarOuAtualizarItem(novoItem);
-
-            // Ativa a modal de sucesso
-            setShowSuccessModal(true);
-            setTimeout(() => {
-                setShowSuccessModal(false);
-            }, 3000); // Esconde a modal após 3 segundos
-
+            alert(`${ingresso.quantidade} ingresso(s) ${ingresso.tipo} adicionado(s) ao carrinho!`);
         } catch (error) {
             console.error('Erro ao verificar estoque:', error);
             alert('Erro ao verificar disponibilidade de ingressos');
@@ -261,6 +353,25 @@ const Detalhes: React.FC = () => {
         }
     };
 
+    // Obter dados do criador para exibição
+    const getCriadorNome = () => {
+        if (criadorUsuario?.nome) return criadorUsuario.nome;
+        if (evento.criadoPor && typeof evento.criadoPor === 'object') return evento.criadoPor.nome;
+        return 'Organizador';
+    };
+
+    const getCriadorEmail = () => {
+        if (criadorUsuario?.email) return criadorUsuario.email;
+        if (evento.criadoPor && typeof evento.criadoPor === 'object') return evento.criadoPor.email;
+        return '';
+    };
+
+    const getCriadorImagem = () => {
+        if (criadorUsuario?.imagemPerfil) return criadorUsuario.imagemPerfil;
+        if (evento.criadoPor && typeof evento.criadoPor === 'object') return evento.criadoPor.imagemPerfil;
+        return '';
+    };
+
     return (
         <>
             <div className="detalhes-container">
@@ -272,10 +383,6 @@ const Detalhes: React.FC = () => {
                                 <div className="detalhes-info-linha">
                                     <span className="detalhes-label"><FaCalendarAlt /> Data:</span>
                                     <span>{evento.dataInicio}</span>
-                                </div>
-                                <div className="detalhes-info-linha">
-                                    <span className="detalhes-label"><IoTime /> Hora:</span>
-                                    <span>{evento.horaInicio} - {evento.horaTermino}</span>
                                 </div>
                                 <div className="detalhes-info-linha">
                                     <span className="detalhes-label"><FaMapMarkerAlt /> Local:</span>
@@ -373,22 +480,34 @@ const Detalhes: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Bloco do criador agora utiliza os dados combinados */}
-                {(criadorUsuario || criadorPerfil) ? (
+                {/* Bloco do criador */}
+                {(criadorUsuario || (evento.criadoPor && typeof evento.criadoPor === 'object')) ? (
                     <div className="organizador-container">
                         <h3 className="organizador-titulo">
                             <FaUserCircle /> Informações do Organizador
                         </h3>
                         <div className="organizador-conteudo">
                             <img
-                                src={getCriadorImagemUrl(criadorUsuario?.imagemPerfil)}
+                                src={getImagemPerfilUrl(getCriadorImagem())}
                                 alt="Foto do Criador"
                                 className="organizador-avatar"
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = `${apiUrl}/uploads/blank_profile.png`;
+                                }}
                             />
                             <div className="organizador-info">
-                                {criadorUsuario?.email && (
+                                <p className="organizador-nome">
+                                    {getCriadorNome()}
+                                </p>
+                                {getCriadorEmail() && (
                                     <p className="organizador-contato">
-                                        <FaEnvelope /> {criadorUsuario.email}
+                                        <FaEnvelope /> {getCriadorEmail()}
+                                    </p>
+                                )}
+                                {criadorPerfil?.dadosPessoais?.telefone && (
+                                    <p className="organizador-contato">
+                                        <FaPhone /> {criadorPerfil.dadosPessoais.telefone}
                                     </p>
                                 )}
                             </div>
@@ -407,16 +526,6 @@ const Detalhes: React.FC = () => {
                     </div>
                 )}
             </div>
-
-            {showSuccessModal && (
-                <div className="success-modal">
-                    <div className="success-modal-content">
-                        <span className="modal-icon">&#10004;</span>
-                        <p className="modal-message">Ingressos adicionados ao carrinho!</p>
-                    </div>
-                </div>
-            )}
-
             <Footer />
         </>
     );

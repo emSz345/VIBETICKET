@@ -7,7 +7,7 @@ const Perfil = () => {
   const { user, isLoading, updateUser } = useAuth();
 
   const [editando, setEditando] = useState(false);
-  const [editandoDadosAdicionais, setEditandoDadosAdicionais] = useState(false); // Novo estado
+  const [editandoDadosAdicionais, setEditandoDadosAdicionais] = useState(false);
   const [nome, setNome] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>("");
@@ -56,6 +56,15 @@ const Perfil = () => {
     return value;
   };
 
+  // --- NOVA E CORRETA FUNÇÃO DE FORMATAÇÃO DE TELEFONE ---
+  const formatTelefone = (value: string) => {
+    if (!value) return "";
+    value = value.replace(/\D/g, "");
+    value = value.replace(/^(\d{2})(\d)/g, "($1)$2");
+    value = value.replace(/(\d{5})(\d)/g, "$1-$2");
+    return value;
+  };
+
   const getImagemPerfilUrl = (imagemPerfil?: string) => {
     if (!imagemPerfil) return `${apiUrl}/uploads/blank_profile.png`;
     if (imagemPerfil.startsWith('http')) {
@@ -92,18 +101,18 @@ const Perfil = () => {
               ...perfilData.dadosPessoais,
               dataNascimento: dataNascimentoFormatada,
               cpf: formatCpf(perfilData.dadosPessoais.cpf || ""),
-              cnpj: formatCnpj(perfilData.dadosPessoais.cnpj || "")
+              cnpj: formatCnpj(perfilData.dadosPessoais.cnpj || ""),
+              telefone: formatTelefone(perfilData.dadosPessoais.telefone || "")
             });
 
             setDadosOrganizacao(perfilData.dadosOrganizacao);
-            setEditandoDadosAdicionais(false); // Inicia com o modo de edição desabilitado
+            setEditandoDadosAdicionais(false);
           } else {
-            // Se não houver dados, o modo de edição fica ativado para o primeiro cadastro
             setEditandoDadosAdicionais(true);
           }
         } catch (error) {
           console.error("Erro ao buscar dados de perfil:", error);
-          setEditandoDadosAdicionais(true); // Se houver erro, permite a edição
+          setEditandoDadosAdicionais(true);
         }
       };
       fetchPerfilData();
@@ -157,7 +166,8 @@ const Perfil = () => {
       dadosPessoais: {
         ...dadosPessoais,
         cpf: dadosPessoais.cpf.replace(/\D/g, ""),
-        cnpj: dadosPessoais.cnpj.replace(/\D/g, "")
+        cnpj: dadosPessoais.cnpj.replace(/\D/g, ""),
+        telefone: dadosPessoais.telefone.replace(/\D/g, "")
       },
       dadosOrganizacao
     };
@@ -177,7 +187,7 @@ const Perfil = () => {
       }
 
       alert("Dados pessoais atualizados com sucesso!");
-      setEditandoDadosAdicionais(false); // Desabilita a edição após salvar
+      setEditandoDadosAdicionais(false);
       window.location.reload();
     } catch (error) {
       console.error("Erro ao salvar os dados de perfil:", error);
@@ -196,6 +206,8 @@ const Perfil = () => {
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
+
+
 
   if (isLoading) return <div className="perfil-loading">Carregando perfil...</div>;
   if (!user) return <div className="perfil-error">Usuário não encontrado. Por favor, faça login.</div>;
@@ -294,7 +306,7 @@ const Perfil = () => {
                         value="cpf"
                         checked={tipoPessoa === "cpf"}
                         onChange={() => setTipoPessoa("cpf")}
-                        disabled={!editandoDadosAdicionais} // Bloqueia a troca de tipo
+                        disabled={!editandoDadosAdicionais}
                       />
                       <span>CPF</span>
                     </label>
@@ -305,7 +317,7 @@ const Perfil = () => {
                         value="cnpj"
                         checked={tipoPessoa === "cnpj"}
                         onChange={() => setTipoPessoa("cnpj")}
-                        disabled={!editandoDadosAdicionais} // Bloqueia a troca de tipo
+                        disabled={!editandoDadosAdicionais}
                       />
                       <span>CNPJ</span>
                     </label>
@@ -330,9 +342,27 @@ const Perfil = () => {
                         [tipoPessoa]: formattedValue
                       });
                     }}
-                    disabled={!editandoDadosAdicionais} // Bloqueia o campo
+                    disabled={!editandoDadosAdicionais}
                   />
                 </div>
+
+                {tipoPessoa === "cpf" && (
+                  <>
+                    <div className="perfil-form-group">
+                      <label className="perfil-input-label">
+                        <FiCalendar className="perfil-input-icon" />
+                        <span>Data de nascimento</span>
+                      </label>
+                      <input
+                        type="date"
+                        className="perfil-input"
+                        value={dadosPessoais.dataNascimento}
+                        onChange={(e) => setDadosPessoais({ ...dadosPessoais, dataNascimento: e.target.value })}
+                        disabled={!editandoDadosAdicionais}
+                      />
+                    </div>
+                  </>
+                )}
 
                 {tipoPessoa === "cnpj" && (
                   <>
@@ -345,7 +375,7 @@ const Perfil = () => {
                         className="perfil-input"
                         value={dadosOrganizacao.razaoSocial}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, razaoSocial: e.target.value })}
-                        disabled={!editandoDadosAdicionais} // Bloqueia o campo
+                        disabled={!editandoDadosAdicionais}
                       />
                     </div>
                     <div className="perfil-form-group">
@@ -357,7 +387,7 @@ const Perfil = () => {
                         className="perfil-input"
                         value={dadosOrganizacao.nomeFantasia}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, nomeFantasia: e.target.value })}
-                        disabled={!editandoDadosAdicionais} // Bloqueia o campo
+                        disabled={!editandoDadosAdicionais}
                       />
                     </div>
                     <div className="perfil-form-group">
@@ -369,7 +399,7 @@ const Perfil = () => {
                         className="perfil-input"
                         value={dadosOrganizacao.inscricaoMunicipal}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, inscricaoMunicipal: e.target.value })}
-                        disabled={!editandoDadosAdicionais} // Bloqueia o campo
+                        disabled={!editandoDadosAdicionais}
                       />
                     </div>
                     <div className="perfil-form-group">
@@ -384,36 +414,42 @@ const Perfil = () => {
                         maxLength={14}
                         value={dadosOrganizacao.cpfSocio}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, cpfSocio: e.target.value })}
-                        disabled={!editandoDadosAdicionais} // Bloqueia o campo
+                        disabled={!editandoDadosAdicionais}
                       />
                     </div>
                   </>
                 )}
-                <div className="perfil-form-group">
-                  <label className="perfil-input-label">
-                    <FiUser className="perfil-input-icon" />
-                    <span>Nome Completo</span>
-                  </label>
-                  <input
-                    className="perfil-input"
-                    value={dadosPessoais.nomeCompleto}
-                    onChange={(e) => setDadosPessoais({ ...dadosPessoais, nomeCompleto: e.target.value })}
-                    disabled={!editandoDadosAdicionais} // Bloqueia o campo
-                  />
-                </div>
-                <div className="perfil-form-group">
-                  <label className="perfil-input-label">
-                    <FiCalendar className="perfil-input-icon" />
-                    <span>Data de nascimento</span>
-                  </label>
-                  <input
-                    type="date"
-                    className="perfil-input"
-                    value={dadosPessoais.dataNascimento}
-                    onChange={(e) => setDadosPessoais({ ...dadosPessoais, dataNascimento: e.target.value })}
-                    disabled={!editandoDadosAdicionais} // Bloqueia o campo
-                  />
-                </div>
+
+                {tipoPessoa === "cnpj" && (
+                  <>
+                    <div className="perfil-form-group">
+                      <label className="perfil-input-label">
+                        <FiUser className="perfil-input-icon" />
+                        <span>Nome Completo</span>
+                      </label>
+                      <input
+                        className="perfil-input"
+                        value={dadosPessoais.nomeCompleto}
+                        onChange={(e) => setDadosPessoais({ ...dadosPessoais, nomeCompleto: e.target.value })}
+                        disabled={!editandoDadosAdicionais}
+                      />
+                    </div>
+                    <div className="perfil-form-group">
+                      <label className="perfil-input-label">
+                        <FiCalendar className="perfil-input-icon" />
+                        <span>Data de nascimento</span>
+                      </label>
+                      <input
+                        type="date"
+                        className="perfil-input"
+                        value={dadosPessoais.dataNascimento}
+                        onChange={(e) => setDadosPessoais({ ...dadosPessoais, dataNascimento: e.target.value })}
+                        disabled={!editandoDadosAdicionais}
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div className="perfil-form-group">
                   <label className="perfil-input-label">
                     <FiPhone className="perfil-input-icon" />
@@ -421,9 +457,15 @@ const Perfil = () => {
                   </label>
                   <input
                     className="perfil-input"
+                    placeholder="(99) 99999-9999"
+                    inputMode="numeric"
+                    maxLength={15}
                     value={dadosPessoais.telefone}
-                    onChange={(e) => setDadosPessoais({ ...dadosPessoais, telefone: e.target.value })}
-                    disabled={!editandoDadosAdicionais} // Bloqueia o campo
+                    onChange={(e) => {
+                      const formattedValue = formatTelefone(e.target.value);
+                      setDadosPessoais({ ...dadosPessoais, telefone: formattedValue });
+                    }}
+                    disabled={!editandoDadosAdicionais}
                   />
                 </div>
               </div>

@@ -4,7 +4,6 @@ import { MdAddPhotoAlternate } from 'react-icons/md';
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
-import { FaQuestionCircle } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
 import { GoAlertFill } from "react-icons/go";
@@ -35,7 +34,7 @@ function CriarEventos() {
   const [complemento, setComplemento] = useState('');
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
-  const [linkMaps, setLinkMaps] = useState('');
+  const [linkMaps, setLinkMaps] = useState(''); // linkMaps será a URL final para o iframe
   const [isFetchingCep, setIsFetchingCep] = useState(false);
 
   // Etapa 4
@@ -63,6 +62,9 @@ function CriarEventos() {
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownTimeLeft, setCooldownTimeLeft] = useState<number | null>(null);
 
+  // NOVO: Estado para verificar se o perfil está completo
+  const [perfilCompleto, setPerfilCompleto] = useState(false);
+  const [perfilCarregado, setPerfilCarregado] = useState(false);
 
   // FUNÇÕES HANDLERS
   const handleAbrirModal = () => {
@@ -140,6 +142,32 @@ function CriarEventos() {
     }
   }, []);
 
+  // NOVO: Efeito para verificar o perfil ao carregar o componente
+  useEffect(() => {
+    const verificarPerfil = async () => {
+      const userDataString = localStorage.getItem('user');
+      if (userDataString) {
+        try {
+          const usuario = JSON.parse(userDataString);
+          const userId = usuario?._id;
+          if (userId) {
+            const response = await fetch(`${apiUrl}/api/perfil/${userId}`);
+            if (response.ok) {
+              const perfilData = await response.json();
+              // Verifica se CPF (para pessoa física) ou CNPJ (para organização) estão preenchidos
+              const isComplete = (perfilData.dadosPessoais && perfilData.dadosPessoais.cpf) || (perfilData.dadosOrganizacao && perfilData.dadosOrganizacao.cnpj);
+              setPerfilCompleto(!!isComplete);
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao verificar perfil:', error);
+        }
+      }
+      setPerfilCarregado(true);
+    };
+    verificarPerfil();
+  }, [apiUrl]);
+
   // FUNÇÃO PARA BUSCAR ENDEREÇO POR CEP
   const buscarEnderecoPorCep = async (cep: string) => {
     const cleanedCep = cep.replace(/\D/g, '');
@@ -192,7 +220,40 @@ function CriarEventos() {
     }
   };
 
-  // FUNÇÃO DE VALIDAÇÃO PRINCIPAL
+  const handleLinkMapsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const pastedText = e.target.value;
+
+    setErros(prevErros => {
+      const newErros = { ...prevErros };
+      delete newErros.linkMaps;
+      return newErros;
+    });
+
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(pastedText, 'text/html');
+      const iframe = doc.querySelector('iframe');
+
+      if (iframe && iframe.getAttribute('src')) {
+        const embedUrl = iframe.getAttribute('src')!;
+        setLinkMaps(embedUrl);
+      } else {
+        setLinkMaps(pastedText);
+        setErros(prevErros => ({
+          ...prevErros,
+          linkMaps: 'Cole o código de incorporação completo do mapa (HTML).'
+        }));
+      }
+    } catch (error) {
+      console.error("Erro ao analisar o código HTML do mapa:", error);
+      setLinkMaps(pastedText);
+      setErros(prevErros => ({
+        ...prevErros,
+        linkMaps: 'Formato de código inválido. Por favor, tente novamente.'
+      }));
+    }
+  };
+
   const validarEtapa = (etapa: number) => {
     const novosErros: { [key: string]: string } = {};
     const hoje = new Date();
@@ -215,8 +276,9 @@ function CriarEventos() {
         if (!numero) novosErros.numero = 'O número é obrigatório.';
         if (!cidade) novosErros.cidade = 'A cidade é obrigatória e deve ser preenchida automaticamente pelo CEP.';
         if (!estado) novosErros.estado = 'O estado é obrigatório e deve ser preenchido automaticamente pelo CEP.';
-        if (!linkMaps || (!/^https?:\/\/(www\.)?google\.[a-z.]+\/maps/.test(linkMaps) && !/^https:\/\/maps\.app\.goo\.gl\//.test(linkMaps))) {
-          novosErros.linkMaps = 'O link do Google Maps é inválido ou não foi fornecido.';
+
+        if (!linkMaps || !linkMaps.startsWith('http')) {
+          novosErros.linkMaps = 'O link do Google Maps é inválido ou não foi fornecido. Por favor, cole o código de incorporação completo (HTML) do mapa.';
         }
         break;
       case 4:
@@ -303,7 +365,7 @@ function CriarEventos() {
 
     // --- INÍCIO DA CORREÇÃO ---
     // 1. Obtenha a string com os dados do usuário do localStorage.
-    //    Assumindo que você salva como 'user' após o login.
+    //    Assumindo que você salva como 'user' após o login.
     const userDataString = localStorage.getItem('user');
 
     if (!userDataString) {
@@ -430,10 +492,12 @@ function CriarEventos() {
       )}
 
       <div className="criar-form">
-        <div className="alerta-amarelo">
-          <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
-          preencher suas informações pessoais. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
-        </div>
+        {perfilCarregado && !perfilCompleto && (
+          <div className="alerta-amarelo">
+            <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
+            preencher suas informações pessoais. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
+          </div>
+        )}
 
         {etapaAtual === 1 && (
           <div className="informacoes-basicas-container">
@@ -672,22 +736,27 @@ function CriarEventos() {
             <div className="campo">
               <label htmlFor="link-maps" style={{ display: 'flex', alignItems: 'center' }}>
                 Link do Local no Google Maps <span className={getError('linkMaps') ? 'erro-asterisco' : ''}>*</span>
-                <FaQuestionCircle
-                  size={16}
-                  color="#555"
-                  style={{ marginLeft: '5px', cursor: 'help' }}
-                  title="Como obter o link do Google Maps:&#10;1. Acesse Google Maps e pesquise pelo local.&#10;2. Clique em 'Compartilhar' (ícone de seta).&#10;3. Escolha 'Incorporar um mapa' ou 'Copiar link'.&#10;4. Cole o link aqui."
-                />
               </label>
               <input
                 type="url"
                 id="link-maps"
-                placeholder="Cole o link do local no Google Maps"
+                placeholder="Cole o código de incorporação do mapa aqui"
                 value={linkMaps}
-                onChange={(e) => setLinkMaps(e.target.value)}
+                onChange={handleLinkMapsChange}
                 className={getError('linkMaps') ? 'erro-campo' : ''}
               />
               {getError('linkMaps') && <span className="mensagem-erro">{getError('linkMaps')}</span>}
+              <span className="tutorial-mapa">
+                Como obter o link do Google Maps:
+                <br />
+                1. Acesse o Google Maps e pesquise pelo local.
+                <br />
+                2. Clique em 'Compartilhar' (ícone de seta).
+                <br />
+                3. Clique na aba 'Incorporar um mapa'.
+                <br />
+                4. Clique em 'Copiar HTML' e cole todo o código aqui.
+              </span>
             </div>
           </div>
         )}
