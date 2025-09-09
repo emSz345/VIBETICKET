@@ -372,7 +372,6 @@ function CriarEventos() {
       alert('Não foi possível encontrar o ID do usuário. Por favor, faça login novamente.');
       return;
     }
-    const token = localStorage.getItem('firebaseToken');
 
     const formData = new FormData();
     formData.append("nome", nomeEvento);
@@ -406,10 +405,8 @@ function CriarEventos() {
     try {
       const response = await fetch(`${apiUrl}/api/eventos/criar`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData,
+        body: formData, // seu FormData com os dados do evento
+        credentials: 'include', // <-- ADICIONE ESTA LINHA
       });
 
       const responseData = await response.json();

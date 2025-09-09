@@ -1,300 +1,246 @@
-/* Categorias.css */
+/* === CONFIGURAÇÕES GERAIS E LAYOUT === */
 .categorias-container {
-    max-width: 1400px;
-    margin: 100px auto 40px;
-    padding: 0 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  .categorias-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-  }
-  
-  .categorias-titulo {
-    font-size: 2rem;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .categorias-btn-filtros {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background-color: #0969fb;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.categorias-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.categorias-titulo {
+  font-size: 2rem;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+.categorias-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  /* Layout de uma coluna para mobile-first */
+  gap: 30px;
+}
+
+/* --- FILTROS LATERAIS (DESKTOP) --- */
+.categorias-filtros-desktop {
+  display: none;
+  /* Escondido em telas pequenas */
+  background-color: #f8f9fa;
+  padding: 24px;
+  border-radius: 12px;
+  height: fit-content;
+}
+
+.categorias-filtros-titulo {
+  font-size: 1.25rem;
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+  font-weight: 600;
+}
+
+.categorias-filtro-estados {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Estilo de cada item da lista (estado) */
+.categorias-filtro-estado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  border: 2px solid #e0e0e0;
+  /* <-- BORDA VISÍVEL O TEMPO TODO */
+}
+
+/* Efeito ao passar o mouse */
+.categorias-filtro-estado:hover {
+  background-color: #e9ecef;
+  border-color: #b0b0b0;
+  /* Escurece um pouco a borda no hover */
+}
+
+/* Estilo do item selecionado */
+.categorias-filtro-estado-selecionado {
+  background-color: #e8f4ff;
+  border-color: #0969fb;
+  /* A borda fica azul quando selecionado */
+}
+
+.categorias-filtro-estado-imagem {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.categorias-filtro-estado-nome {
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.categorias-filtro-estado-selecionado .categorias-filtro-estado-nome {
+  color: #0969fb;
+  font-weight: 600;
+}
+
+.categorias-filtro-botoes {
+  margin-top: 24px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 24px;
+}
+
+.categorias-filtro-btn-limpar {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.categorias-filtro-btn-limpar:hover {
+  background-color: #f1f1f1;
+  border-color: #bbb;
+}
+
+
+/* --- CONTEÚDO PRINCIPAL (EVENTOS) --- */
+
+/* Estilos para o grid de eventos e o card */
+.lista-de-eventos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.evento-card-placeholder {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.evento-card-placeholder:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.evento-card-placeholder img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.evento-card-placeholder h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 12px 16px 4px;
+  color: #1a1a1a;
+}
+
+.evento-card-placeholder p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 16px 16px;
+}
+
+/* Mensagens de feedback */
+.categorias-resultados .categorias-lista-titulo {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.categorias-resultados .categorias-lista-descricao {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* --- RESPONSIVIDADE --- */
+
+/* Botão de Filtro para Mobile */
+.categorias-btn-filtros {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #0969fb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Modal de Filtros para Mobile */
+.categorias-filtros-mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.categorias-filtros-conteudo {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Telas maiores (a partir de tablets) */
+@media (min-width: 768px) {
   .categorias-layout {
-    display: grid;
+    /* Layout de 2 colunas */
     grid-template-columns: 280px 1fr;
     gap: 40px;
   }
-  
+
+  .categorias-btn-filtros {
+    display: none;
+    /* Esconde o botão de filtro mobile */
+  }
+
   .categorias-filtros-desktop {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    height: fit-content;
-    margin-left: 0;
+    display: block;
+    /* Mostra a sidebar de filtros */
   }
-  
-  .categorias-filtros-titulo {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    color: #333;
-    font-weight: 600;
+}
+
+/* Ajuste de título para telas menores */
+@media (max-width: 767px) {
+  .categorias-titulo {
+    font-size: 1.75rem;
   }
-  
-  /* Filtro de Estados com imagens */
-  .categorias-filtro-estados {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .categorias-filtro-estado {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: white;
-  }
-  
-  .categorias-filtro-estado:hover {
-    border-color: #0969fb;
-    background-color: #f0f8ff;
-    transform: translateY(-2px);
-  }
-  
-  .categorias-filtro-estado-selecionado {
-    border-color: #0969fb;
-    background-color: #e8f4ff;
-  }
-  
-  .categorias-filtro-estado-imagem {
-    width: 40px;
-    height: 40px;
-    border-radius: 6px;
-    object-fit: cover;
-  }
-  
-  .categorias-filtro-estado-nome {
-    color: #333;
-    font-weight: 500;
-    font-size: 0.95rem;
-  }
-  
-  .categorias-filtro-estado-selecionado .categorias-filtro-estado-nome {
-    color: #0969fb;
-  }
-  
-  .categorias-filtro-botoes {
-    display: flex;
-    gap: 10px;
-    margin-top: 30px;
-  }
-  
-  .categorias-filtro-btn {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  
-  .categorias-filtro-btn-limpar {
-    background-color: #f8f9fa;
-    color: #333;
-    border: 1px solid #ddd;
-  }
-  
-  .categorias-filtro-btn-aplicar {
-    background-color: #0969fb;
-    color: white;
-  }
-  
-  .categorias-conteudo {
-    min-height: 400px;
-    padding: 0;
-  }
-  
-  .categorias-ordenacao {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 30px;
-  }
-  
-  .categorias-ordenacao-label {
-    font-weight: 500;
-    color: #333;
-  }
-  
-  .categorias-ordenacao-select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: white;
-  }
-  
-  .categorias-resultados {
-    min-height: 500px;
-  }
-  
-  /* Lista de Estados no conteúdo principal (apenas texto) */
-  .categorias-lista-estados {
-    text-align: left;
-  }
-  
-  .categorias-lista-titulo {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
-  
-  .categorias-lista-descricao {
-    color: #666;
-    margin-bottom: 30px;
-    font-size: 1rem;
-  }
-  
-  .categorias-estados-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-  }
-  
-  .categorias-estado-item {
-    padding: 20px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: white;
-    text-align: center;
-  }
-  
-  .categorias-estado-item:hover {
-    border-color: #0969fb;
-    background-color: #f0f8ff;
-    transform: translateY(-2px);
-  }
-  
-  .categorias-estado-item-selecionado {
-    border-color: #0969fb;
-    background-color: #e8f4ff;
-    color: #0969fb;
-  }
-  
-  .categorias-estado-nome {
-    font-weight: 500;
-    color: #333;
-  }
-  
-  .categorias-estado-item-selecionado .categorias-estado-nome {
-    color: #0969fb;
-  }
-  
-  /* Estado Selecionado */
-  .categorias-estado-selecionado {
-    text-align: left;
-    padding: 0;
-  }
-  
-  .categorias-estado-titulo {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 15px;
-    font-weight: 600;
-  }
-  
-  .categorias-estado-descricao {
-    color: #666;
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-  }
-  
-  /* Responsividade */
-  @media (max-width: 768px) {
-    .categorias-container {
-      margin: 80px auto 20px;
-      padding: 0 15px;
-    }
-  
-    .categorias-titulo {
-      font-size: 1.5rem;
-    }
-  
-    .categorias-btn-filtros {
-      display: flex;
-    }
-  
-    .categorias-layout {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-  
-    .categorias-filtros-desktop {
-      display: none;
-    }
-  
-    .categorias-filtros-mobile {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  
-    .categorias-filtros-conteudo {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 400px;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-  
-    .categorias-ordenacao {
-      justify-content: center;
-    }
-  
-    .categorias-estados-grid {
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .categorias-filtro-botoes {
-      flex-direction: column;
-    }
-  
-    .categorias-ordenacao {
-      flex-direction: column;
-      align-items: stretch;
-    }
-  
-    .categorias-estados-grid {
-      grid-template-columns: 1fr;
-    }
-  }
+}
