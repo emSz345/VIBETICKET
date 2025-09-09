@@ -14,7 +14,7 @@ const ResetPassword: React.FC = () => {
     const [success, setSuccess] = useState(false);
     const [tokenValid, setTokenValid] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [submitting, setSubmitting] = useState(false); // estado para loading do botão
+    const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
     const { token } = useParams();
 
@@ -24,7 +24,7 @@ const ResetPassword: React.FC = () => {
                 const response = await axios.get(
                     `${apiUrl}/api/users/verify-reset-token/${token}`
                 );
-                
+
                 if (response.data.valid) {
                     setTokenValid(true);
                 } else {
@@ -48,35 +48,35 @@ const ResetPassword: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!newPassword || !confirmPassword) {
             setError("Preencha todos os campos");
             return;
         }
-        
+
         if (newPassword !== confirmPassword) {
             setError("As senhas não coincidem");
             return;
         }
-        
+
         if (newPassword.length < 6) {
             setError("A senha deve ter pelo menos 6 caracteres");
             return;
         }
 
-        setSubmitting(true); // inicia loading do botão
+        setSubmitting(true);
         try {
-            await axios.post(
-                `${apiUrl}/api/users/reset-password`,
-                { token, newPassword }
-            );
-            
+            await axios.post(`${apiUrl}/api/users/reset-password`, {
+                token,
+                newPassword,
+            });
+
             setSuccess(true);
             setTimeout(() => navigate("/login"), 3000);
         } catch (err: any) {
             setError(err.response?.data?.message || "Erro ao redefinir senha");
         } finally {
-            setSubmitting(false); // encerra loading
+            setSubmitting(false);
         }
     };
 
@@ -92,7 +92,7 @@ const ResetPassword: React.FC = () => {
         return (
             <div className="reset-password-container">
                 <h2>Erro na redefinição de senha</h2>
-                <p className="error-message">{error}</p>
+                <p className="reset-password-error-message">{error}</p>
                 <p>Por favor, solicite um novo link de redefinição de senha.</p>
                 <Button
                     text="Voltar para Login"
@@ -114,32 +114,57 @@ const ResetPassword: React.FC = () => {
 
     return (
         <div className="reset-password-container">
-            <h2>Redefinir Senha</h2>
-            <form onSubmit={handleSubmit}>
-                <Input
-                    type="password"
-                    name="newPassword"
-                    placeholder="Nova senha"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    hasError={!!error}
-                />
-                <Input
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="Confirme a nova senha"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    hasError={!!error}
-                />
-                {error && <p className="error-message">{error}</p>}
-                <Button 
-                    text={submitting ? "Redefinindo..." : "Redefinir Senha"}
-                    color="Blue"
-                    onClick={() => {}}
-                    disabled={submitting}
-                />
-            </form>
+            <div className="reset-password-card">
+                {/* Formulário no centro */}
+                <form onSubmit={handleSubmit} className="reset-password-form">
+                    <h2>Redefinir Senha</h2>
+                    <Input
+                        type="password"
+                        name="newPassword"
+                        placeholder="Nova senha"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        hasError={!!error}
+                    />
+                    <Input
+                        type="password"
+                        name="confirmPassword"
+                        placeholder="Confirme a nova senha"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        hasError={!!error}
+                    />
+                    {error && <p className="reset-password-error-message">{error}</p>}
+                    <Button
+                        text={submitting ? "Redefinindo..." : "Redefinir Senha"}
+                        color="Blue"
+                        onClick={() => {}}
+                        disabled={submitting}
+                    />
+                </form>
+
+                {/* Card de dicas ao lado */}
+                <div className="reset-password-tips">
+                    <p className="reset-password-tips-title">Atente-se para criar uma senha segura</p>
+                    <div className="reset-password-tips-box">
+                        <p className="reset-password-tips-subtitle">Dicas de segurança:</p>
+                        <ul>
+                            <li>
+                                Sua senha deve conter <b>6 caracteres</b> entre letras e números.
+                            </li>
+                            <li>
+                                Sua senha deve ter pelo menos <b>1 caractere especial</b> (Ex: !@#$%&*).
+                            </li>
+                            <li>
+                                Sua senha <b>não deve</b> conter informações pessoais (E-mail, nome, data de nascimento).
+                            </li>
+                            <li>
+                                <b>Anote sua senha em um local seguro</b>, você precisará dela para entrar outras vezes.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

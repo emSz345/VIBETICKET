@@ -1,17 +1,19 @@
-
-
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../../services/api"; // USAR SEMPRE A INSTÂNCIA CONFIGURADA DO AXIOS
 import { signInWithGoogle, signInWithFacebook } from "../../services/firebase";
 import { useAuth } from "../../Hook/AuthContext";
+
+// Seus componentes
 import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
 import SocialButton from "../../components/ui/SocialButton/SocialButton";
 import TermosContent from '../../Page/Public/TermosContent';
 
+// Estilos e assets
 import "../../styles/Login.css";
 import logo from "../../assets/logo.png";
-import logo1 from "../../assets/logo-blue1.png"
+import logo1 from "../../assets/logo-blue1.png";
 import googleIcon from "../../assets/logo-google.png";
 import facebookIcon from "../../assets/logo-facebook.png";
 
@@ -29,41 +31,35 @@ const Cadastro: React.FC = () => {
     senha: "",
     confirmSenha: "",
   });
+
   const [termosAceitos, setTermosAceitos] = useState(false);
-  const [imagemPerfil, _] = useState<File | null>(null);
   const [mostrarTermos, setMostrarTermos] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const authContext = useAuth();
-
-  const apiUrl = process.env.REACT_APP_API_URL;
-
   const [loading, setLoading] = useState(false);
-
-  // NOVO: Estados para controlar o fluxo de verificação
+  const [socialLoading, setSocialLoading] = useState(false);
+  
+  // Estado para a tela de "Verifique seu e-mail"
   const [aguardandoVerificacao, setAguardandoVerificacao] = useState(false);
-  const [emailParaVerificar, setEmailParaVerificar] = useState('');
 
-  const fecharModal = () => {
-    setMostrarTermos(false);
-  };
+  const navigate = useNavigate();
+  const { login } = useAuth(); // Usando a função 'login' simplificada do contexto
 
-  const validate = () => {
+  const fecharModal = () => setMostrarTermos(false);
+
+  const validate = (): boolean => {
     const newErrors: Partial<FormData> = {};
     if (!termosAceitos) {
       alert("Você deve aceitar os termos e políticas para continuar.");
       return false;
     }
-    // ... (suas outras validações continuam iguais)
     if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(formData.nome)) {
-      newErrors.nome = "É nescessário inserir o seu nome completo.";
+      newErrors.nome = "É necessário inserir o seu nome completo.";
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Email deve estar em formato válido.";
     }
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{6,}$/.test(formData.senha)) {
-      newErrors.senha = "A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.";
+      newErrors.senha = "A senha deve ter no mínimo 6 caracteres, letras, números e caractere especial.";
     }
     if (formData.confirmSenha !== formData.senha) {
       newErrors.confirmSenha = "As senhas não coincidem.";
@@ -77,255 +73,98 @@ const Cadastro: React.FC = () => {
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
-
-  const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
-    try {
-      // Envia dados para o backend
-      const response = await fetch(`${apiUrl}/api/users/social-login`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          provider,
-          userData: {
-            nome: userData.displayName || "Usuário",
-            email: userData.email,
-            imagemPerfil: userData.photoURL || "",
-            isAdmin: userData.isAdmin || false
-          }
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Erro no login social");
-      }
-
-      // Usa o contexto de autenticação
-      await new Promise(resolve => {
-        authContext.socialLogin({
-          provider,
-          userData: data.user,
-          token: data.token
-        });
-        resolve(null);
-      });
-
-      navigate("/Home");
-    } catch (error) {
-      console.error("Erro no login social:", error);
-      alert("Erro ao fazer login com " + provider);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    if (!termosAceitos) {
-      alert("Você deve aceitar os termos e políticas para continuar.");
-      return;
-    }
-    try {
-      setLoading(true);
-      const userData = await signInWithGoogle();
-      await handleSocialLogin('google', userData);
-    } catch (error) {
-      console.error("Erro no login com Google:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFacebookLogin = async () => {
-    if (!termosAceitos) {
-      alert("Você deve aceitar os termos e políticas para continuar.");
-      return;
-    }
-    try {
-      setLoading(true);
-      const result = await signInWithFacebook();
-
-      // Usa o contexto de autenticação
-      authContext.socialLogin({
-        provider: 'facebook',
-        userData: {
-          _id: result.user._id,
-          nome: result.user.nome,
-          email: result.user.email,
-          isAdmin: result.user.isAdmin || false,
-          isVerified: result.user.isVerified,
-          imagemPerfil: result.user.imagemPerfil
-        },
-        token: result.token
-      });
-      navigate("/Home");
-      window.location.reload();
-    } catch (error) {
-      console.error("Erro no login com Facebook:", error);
-      alert("Erro ao fazer login com Facebook");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-  // ALTERADO: Lógica de envio do formulário de cadastro
-  // adiciona estado para loading
-
-
-  // altera seu handleSubmitLocal para controlar loading
-  const handleSubmitLocal = async () => {
+  
+  // --- FLUXO DE CADASTRO LOCAL SIMPLIFICADO ---
+  const handleSubmitLocal = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!validate()) return;
+    setLoading(true);
 
-    setLoading(true); // começa o loading
-    const { nome, email, senha } = formData;
-    const formDataToSend = new FormData();
-    formDataToSend.append("nome", nome);
-    formDataToSend.append("email", email);
-    formDataToSend.append("senha", senha);
-    formDataToSend.append("provedor", "local");
-    if (imagemPerfil) {
-      formDataToSend.append("imagemPerfil", imagemPerfil);
-    }
+    // Usamos um objeto simples para enviar como JSON, pois o backend espera 'Content-Type': 'application/json' para esta rota.
+    // Se sua rota de registro espera 'FormData' (para imagem), ajuste aqui.
+    const payload = {
+      nome: formData.nome,
+      email: formData.email,
+      senha: formData.senha,
+      provedor: "local",
+    };
 
     try {
-      const response = await fetch(`${apiUrl}/api/users/register`, {
-        method: "POST",
-        body: formDataToSend,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.message || "Erro ao registrar no servidor.");
-        return;
-      }
+      // Usando a instância 'api'
+      const response = await api.post('/api/users/register', payload);
 
       if (response.status === 201) {
-        setEmailParaVerificar(email);
-        setAguardandoVerificacao(true);
+        // Mostra a tela de sucesso pedindo para o usuário verificar o e-mail.
+        setAguardandoVerificacao(true); 
       }
-    } catch (error) {
-      alert("Erro de conexão com o servidor.");
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Erro ao registrar. Tente outro e-mail.");
       console.error(error);
     } finally {
-      setLoading(false); // encerra o loading
+      setLoading(false);
+    }
+  };
+  
+  // --- FLUXO DE CADASTRO/LOGIN SOCIAL CORRIGIDO ---
+  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+    if (!termosAceitos) {
+      alert("Você deve aceitar os termos e políticas para continuar.");
+      return;
+    }
+    setSocialLoading(true);
+
+    try {
+      let socialUserData;
+      if (provider === 'google') {
+        socialUserData = await signInWithGoogle();
+      } else {
+        socialUserData = await signInWithFacebook();
+      }
+      
+      if (!socialUserData || !socialUserData.email) {
+        throw new Error("Não foi possível obter os dados do provedor social.");
+      }
+
+      const response = await api.post('/api/users/social-login', {
+        provider,
+        userData: {
+          nome: socialUserData.displayName || "Usuário",
+          email: socialUserData.email,
+          imagemPerfil: socialUserData.photoURL || "",
+        }
+      });
+      
+      const { user } = response.data; // O backend define o cookie e retorna o usuário
+
+      // USA A FUNÇÃO CORRETA E SIMPLIFICADA DO CONTEXTO
+      login(user);
+      
+      navigate("/Home");
+
+    } catch (error: any) {
+      console.error(`Erro no login com ${provider}:`, error);
+      alert(error.response?.data?.message || `Erro ao fazer login com ${provider}`);
+    } finally {
+      setSocialLoading(false);
     }
   };
 
-
-
-  /*
-   useEffect(() => {
-      // Só executa se estivermos aguardando verificação
-      if (!aguardandoVerificacao) return;
-  
-      // Inicia um "poller" que vai checar o status do usuário a cada 5 segundos
-      const intervalId = setInterval(async () => {
-        try {
-          const statusResponse = await fetch(`http://localhost:5000/api/users/me?email=${emailParaVerificar}`);
-          const userData = await statusResponse.json();
-  
-          // Se o backend confirmar que o usuário foi verificado...
-          if (userData && userData.isVerified) {
-            clearInterval(intervalId); // Para de verificar
-  
-            // ...agora fazemos o login para obter o token
-            const loginResponse = await fetch("http://localhost:5000/api/users/login", {
-              method: "POST",
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: formData.email, senha: formData.senha }),
-            });
-            
-            const loginData = await loginResponse.json();
-  
-            if (!loginResponse.ok) {
-              alert(loginData.message || "Erro ao fazer login após verificação.");
-              setAguardandoVerificacao(false); // Volta para a tela de cadastro
-              return;
-            }
-  
-            // Login bem-sucedido, salva os dados e navega
-            localStorage.setItem("userName", loginData.user.nome);
-            localStorage.setItem("userEmail", loginData.user.email);
-            localStorage.setItem("imagemPerfil", loginData.user.imagemPerfil);
-            localStorage.setItem("id", loginData.user._id);
-            localStorage.setItem("token", loginData.token);
-  
-            navigate("/Home");
-            window.location.reload();
-          }
-        } catch (error) {
-          console.error("Erro ao verificar status do usuário:", error);
-        }
-      }, 5000); // Verifica a cada 5 segundos
-  
-      // Função de limpeza: para o intervalo se o componente for desmontado
-      return () => clearInterval(intervalId);
-    }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate]);
-  
-  */
-
-  // NOVO: Efeito que verifica o status do e-mail em intervalos regulares
-  useEffect(() => {
-    if (!aguardandoVerificacao || !emailParaVerificar) return;
-
-
-    const isSocialLogin = localStorage.getItem("isVerified") === "true";
-    if (isSocialLogin) {
-      setAguardandoVerificacao(false);
-      navigate("/Home");
-      return;
-    }
-
-    const intervalId = setInterval(async () => {
-      try {
-        const statusResponse = await fetch(`${apiUrl}/api/users/me?email=${emailParaVerificar}`);
-        const userData = await statusResponse.json();
-
-        if (userData && userData.isVerified) {
-          clearInterval(intervalId);
-
-          // USANDO O MÉTODO LOGIN DO AUTHCONTEXT
-          try {
-            await login(formData.email, formData.senha);
-            localStorage.setItem("userName", userData.nome);
-            localStorage.setItem("userEmail", userData.email);
-            localStorage.setItem("token", userData.token);
-            localStorage.setItem("isAdmin", userData.isAdmin ? "true" : "false");
-            authContext.updateUser({ ...userData, isAdmin: userData.isAdmin });
-            localStorage.setItem("imagemPerfil", userData.imagemPerfil || "");
-            navigate("/Home");
-          } catch (error) {
-            alert("Erro ao fazer login após verificação.");
-            setAguardandoVerificacao(false);
-          }
-        }
-      } catch (error) {
-        console.error("Erro ao verificar status do usuário:", error);
-      }
-    }, 5000);
-
-    return () => clearInterval(intervalId);
-  }, [aguardandoVerificacao, emailParaVerificar, formData.email, formData.senha, navigate, login, apiUrl, authContext]);
-
-
-
-  // NOVO: Renderização condicional da tela de espera
+  // TELA DE SUCESSO PÓS-CADASTRO
   if (aguardandoVerificacao) {
     return (
       <div className="login-container">
         <div className="form-section" style={{ textAlign: 'center' }}>
           <img src={logo1} alt="Logo" className="logo-image" style={{ marginBottom: '2rem' }} />
-          <h2 className="login-bemvido">Quase lá!</h2>
+          <h2 className="login-bemvido">Cadastro realizado!</h2>
           <p style={{ fontSize: '1.1rem', color: '#666', lineHeight: '1.6' }}>
             Enviamos um link de verificação para o seu e-mail: <br />
-            <strong style={{ color: "#0969fb", }}>{emailParaVerificar}</strong>
+            <strong style={{ color: "#0969fb" }}>{formData.email}</strong>
           </p>
           <p style={{ marginTop: '1.5rem' }}>
-            Por favor, clique no link para ativar sua conta. <br />
-            Assim que você verificar, faremos seu login automaticamente.
+            Por favor, clique no link para ativar sua conta e depois <br/>
+            <Link to="/login" className="crie-conta">faça o login</Link>.
           </p>
-          <div className="loader" style={{ margin: '2rem auto', color: "#0969fb" }}></div>
-          <p style={{ fontSize: '0.9rem', color: '#999' }}>
+          <p style={{ fontSize: '0.9rem', color: '#999', marginTop: '2rem' }}>
             Não recebeu? Verifique sua caixa de spam.
           </p>
         </div>
@@ -333,10 +172,9 @@ const Cadastro: React.FC = () => {
     );
   }
 
-  // Renderização padrão do formulário de cadastro
+  // TELA PADRÃO DE CADASTRO
   return (
     <div className="login-container">
-      {/* ... seu JSX do formulário continua exatamente o mesmo aqui ... */}
       <div className="login-content">
         <div className="logo-section">
           <Link to='/Home' title="Voltar para Home">
@@ -346,133 +184,50 @@ const Cadastro: React.FC = () => {
 
         <div className="form-section">
           <h2 className="login-bemvido">Seja Bem-vindo</h2>
-
-          {/* --- NOME --- */}
-          <h3 className="login-title">Nome completo</h3>
-          <Input
-            type="text"
-            placeholder="Digite seu nome"
-            name="nome"
-            value={formData.nome}
-            onChange={handleChange}
-            isValid={formData.nome.length >= 10 && !errors.nome}
-            hasError={!!errors.nome}
-          />
-          <div className="login-container-error">
-            {errors.nome ? (
-              <p className="error">{errors.nome}</p>
-            ) : (
-              <span className="password-hint">É nescessário inserir o seu nome completo.</span>
-            )}
-          </div>
-
-          {/* --- EMAIL --- */}
-          <h3 className="login-title">Email</h3>
-          <Input
-            type="email"
-            placeholder="seu-email@gmail.com"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            isValid={formData.email.includes("@") && !errors.email}
-            hasError={!!errors.email}
-          />
-          <div className="login-container-error">
-            {errors.email ? (
-              <p className="error">{errors.email}</p>
-            ) : (
-              <span className="password-hint">Email deve estar em formato válido.</span>
-            )}
-          </div>
-
-          {/* --- SENHA --- */}
-          <h3 className="login-title">Crie uma senha</h3>
-          <Input
-            type="password"
-            placeholder="Crie uma senha"
-            name="senha"
-            value={formData.senha}
-            onChange={handleChange}
-            isValid={formData.senha.length >= 6 && !errors.senha}
-            hasError={!!errors.senha}
-          />
-          <div className="login-container-error">
-            {errors.senha ? (
-              <p className="error">{errors.senha}</p>
-            ) : (
-              <span className="password-hint">A senha deve ter no mínimo 6 caracteres e conter letras, números e caractere special.</span>
-            )}
-          </div>
-
-
-          {/* CONFIRMAR SENHA */}
-          <h3 className="login-title">Confirmar senha</h3>
-          <Input
-            type="password"
-            placeholder="Confirme sua senha"
-            name="confirmSenha"
-            value={formData.confirmSenha}
-            onChange={handleChange}
-            isValid={
-              formData.confirmSenha === formData.senha &&
-              formData.confirmSenha.length >= 6 &&
-              !errors.confirmSenha
-            }
-            hasError={!!errors.confirmSenha}
-          />
-          <div className="login-container-error" >
+          <form onSubmit={handleSubmitLocal}>
+            <h3 className="login-title">Nome completo</h3>
+            <Input name="nome" type="text" value={formData.nome} onChange={handleChange} placeholder="Digite seu nome completo" hasError={!!errors.nome} />
+            {errors.nome && <p className="error">{errors.nome}</p>}
+            
+            <h3 className="login-title">Email</h3>
+            <Input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="seu-email@gmail.com" hasError={!!errors.email} />
+            {errors.email && <p className="error">{errors.email}</p>}
+            
+            <h3 className="login-title">Crie uma senha</h3>
+            <Input name="senha" type="password" value={formData.senha} onChange={handleChange} placeholder="Crie uma senha forte" hasError={!!errors.senha} />
+            {errors.senha && <p className="error">{errors.senha}</p>}
+            
+            <h3 className="login-title">Confirmar senha</h3>
+            <Input name="confirmSenha" type="password" value={formData.confirmSenha} onChange={handleChange} placeholder="Confirme sua senha" hasError={!!errors.confirmSenha} />
             {errors.confirmSenha && <p className="error">{errors.confirmSenha}</p>}
-          </div>
 
-
-          {/* TERMOS */}
-          <div className="radio-container">
-            <label className="termos-label">
-              <input
-                type="checkbox"
-                className="checkbox-ajustado"
-                checked={termosAceitos}
-                onChange={(e) => {
-                  setTermosAceitos(e.target.checked);
-                  if (e.target.checked) setMostrarTermos(true);
-                }}
-              />
-              <span className="link">
-                Eu concordo com os termos & políticas
-              </span>
-            </label>
-
-            {mostrarTermos && (
-              <div className="modal">
-                <div className="modal-content">
-                  <button className="close-button" onClick={fecharModal}></button>
-                  <TermosContent onClose={fecharModal} />
+            <div className="radio-container">
+              <label className="termos-label">
+                <input type="checkbox" className="checkbox-ajustado" checked={termosAceitos} onChange={(e) => setTermosAceitos(e.target.checked)} />
+                <span className="link" onClick={() => setMostrarTermos(true)}>
+                  Eu concordo com os termos & políticas
+                </span>
+              </label>
+              {mostrarTermos && (
+                <div className="modal">
+                  <div className="modal-content">
+                    <button className="close-button" onClick={fecharModal}>&times;</button>
+                    <TermosContent onClose={fecharModal} />
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <Button
-            color="Blue"
-            text="Criar minha conta"
-            onClick={handleSubmitLocal}
-            loading={loading}
-            disabled={loading}
-          />
+            <Button color="Blue" type="submit" text="Criar minha conta" loading={loading} disabled={loading} />
+          </form>
 
           <p className="ou">ou</p>
-
           <div className="social-login">
-
-            <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleLogin} />
-
-
-            <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookLogin} />
+            <SocialButton icon={googleIcon} alt="Google" onClick={() => handleSocialLogin('google')} disabled={socialLoading} />
+            <SocialButton icon={facebookIcon} alt="Facebook" onClick={() => handleSocialLogin('facebook')} disabled={socialLoading} />
           </div>
 
-          <p>
-            Já possui uma conta? <Link to="/Login" className="crie-conta">Faça login!</Link>
-          </p>
+          <p>Já possui uma conta? <Link to="/login" className="crie-conta">Faça login!</Link></p>
         </div>
       </div>
     </div>

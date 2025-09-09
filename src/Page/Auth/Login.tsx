@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // Import do axios é necessário para esta abordagem
+import api from "../../services/api"; // Usando a instância centralizada e correta do Axios
 import { useAuth } from "../../Hook/AuthContext";
-// Imports do Firebase (para login social e reset de senha)
-import { auth, signInWithEmailAndPassword, signInWithGoogle, signInWithFacebook } from '../../services/firebase';
+import { signInWithGoogle, signInWithFacebook } from '../../services/firebase';
 
 // Seus componentes de UI e assets
 import Input from "../../components/ui/Input/Input";
@@ -14,30 +13,20 @@ import googleIcon from "../../assets/logo-google.png";
 import facebookIcon from "../../assets/logo-facebook.png";
 import "../../styles/Login.css";
 
-// O useAuth foi removido, pois esta abordagem não usa o contexto na página de Login.
-
 const Login: React.FC = () => {
-  // --- Estados do Formulário e da UI (do seu código original) ---
+  // --- Estados do Formulário e UI ---
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [senhaError, setSenhaError] = useState<string>("");
-  const modoLocal = true;
-
-  const authContext = useAuth();
-  const [_, setSocialLoading] = useState(false);
-
-  // --- Estados da Lógica de Bloqueio (do seu código original) ---
-  const [_falhas, setFalhas] = useState<number>(() => parseInt(localStorage.getItem("loginFalhas") || "0"));
-  const [_tentativas, setTentativas] = useState<number>(() => parseInt(localStorage.getItem("loginTentativas") || "0"));
+  const [socialLoading, setSocialLoading] = useState(false);
   const [bloqueado, setBloqueado] = useState<boolean>(false);
   const [tempoRestante, setTempoRestante] = useState<number>(0);
 
-  // --- Estados para Alertas de Login Social (do seu código original) ---
-
+  const authContext = useAuth();
   const navigate = useNavigate();
 
-  // --- Lógica de Bloqueio (do seu código original) ---
+  // --- Lógica de Bloqueio (sem alterações) ---
   const getUnlockTime = () => parseInt(localStorage.getItem("unlockTime") || "0");
   const getFalhas = () => parseInt(localStorage.getItem("loginFalhas") || "0");
   const getTentativas = () => parseInt(localStorage.getItem("loginTentativas") || "0");
@@ -59,7 +48,6 @@ const Login: React.FC = () => {
     alert(`Muitas tentativas falhas. Tente novamente em ${minutosBloqueio} minuto(s).`);
   };
 
-  // Seus useEffects para controlar o timer de bloqueio (do seu código original)
   useEffect(() => {
     const unlockTime = getUnlockTime();
     const now = Date.now();
@@ -98,19 +86,16 @@ const Login: React.FC = () => {
     if (name === "senha") setSenha(value);
   };
 
-  const apiUrl = process.env.REACT_APP_API_URL;
-  // --- AQUI ESTÁ A CORREÇÃO ---
-  // A sua função 'handleSubmit' já estava correta. Nós apenas a renomeamos para 'handleLocalLogin'
-  // para que o botão 'Entrar' no seu JSX a chame corretamente. A outra função foi removida.
   const handleLocalLogin = async () => {
     if (bloqueado) {
       alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
       return;
     }
+    
     setEmailError("");
     setSenhaError("");
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const senhaForteRegex = /^.{6,}$/;
     if (!email || !senha) {
       if (!email) setEmailError("Digite seu e-mail.");
       if (!senha) setSenhaError("Digite sua senha.");
@@ -120,136 +105,91 @@ const Login: React.FC = () => {
       setEmailError("Digite um email válido.");
       return;
     }
-    if (!senhaForteRegex.test(senha)) {
+    if (senha.length < 6) {
       setSenhaError("A senha deve conter pelo menos 6 caracteres.");
       return;
     }
+
     try {
-      if (modoLocal) {
-        const response = await axios.post(`${apiUrl}/api/users/login`, {
-          email,
-          senha,
-        });
-        const { token, user } = response.data;
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user)); // Linha importante adicionada
-        localStorage.setItem("userName", user.nome);
-        localStorage.setItem("userEmail", user.email);
-        localStorage.setItem("imagemPerfil", user.imagemPerfil || "");
-        localStorage.setItem("tipoLogin", "email");
-        localStorage.setItem("userId", user._id);
-        localStorage.setItem("isAdmin", user.isAdmin);
-        navigate("/Home");
-        window.location.reload();
-      } else {
-        const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-        const user = userCredential.user;
-        const token = await user.getIdToken();
-        const uid = user.uid;
-        localStorage.setItem("firebaseToken", token);
-        const response = await axios.get(`${apiUrl}/api/users/me?email=${user.email}`);
-        localStorage.setItem("userName", response.data.nome || user.email);
-        localStorage.setItem("id", uid);
-        navigate("/Home");
-      }
+      // Usando o caminho relativo, pois o baseURL já está no api.ts
+      const response = await api.post('/api/users/login', {
+        email,
+        senha,
+      });
+
+      const { user } = response.data; // A resposta só contém o objeto 'user'
+
+      // Deixa o AuthContext gerenciar o estado e o localStorage
+      authContext.login(user);
+
+      navigate("/Home");
+
     } catch (error: any) {
-      if (modoLocal) {
-        setSenhaError(error.response?.data?.message || "Erro ao fazer login local.");
-      } else {
-        if (error.code === "auth/wrong-password") setSenhaError("Senha incorreta.");
-        else if (error.code === "auth/user-not-found") setEmailError("Usuário não encontrado.");
-        else setSenhaError("Erro ao realizar login. Tente novamente.");
-      }
+      setSenhaError(error.response?.data?.message || "Erro ao fazer login local.");
+      
       const novasTentativas = getTentativas() + 1;
       localStorage.setItem("loginTentativas", novasTentativas.toString());
-      setTentativas(novasTentativas);
       if (novasTentativas >= 5) {
         const novasFalhas = getFalhas() + 1;
-        setFalhas(novasFalhas);
         bloquearLogin(novasFalhas);
       }
     }
   };
 
-
   const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
+    setSocialLoading(true);
     try {
-
       if (!userData.email) {
         throw new Error("E-mail não disponível na conta social");
       }
 
-      // Envia dados para o backend
-      const response = await fetch(`${apiUrl}/api/users/social-login`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          provider,
-          userData: {
-            nome: userData.displayName || "Usuário",
-            email: userData.email,
-            imagemPerfil: userData.photoURL || "",
-            isAdmin: userData.isAdmin || false
-          }
-        })
+      const response = await api.post('/api/users/social-login', {
+        provider,
+        userData: {
+          nome: userData.displayName || "Usuário",
+          email: userData.email,
+          imagemPerfil: userData.photoURL || "",
+        }
       });
 
-      const data = await response.json();
+      const { user } = response.data; // A resposta também só contém 'user'
 
-      if (!response.ok) {
-        throw new Error(data.message || "Erro no login social");
-      }
-
-      // Usa o contexto de autenticação
-      await new Promise(resolve => {
-        authContext.socialLogin({
-          provider,
-          userData: data.user,
-          token: data.token
-        });
-        resolve(null);
-      });
-
+      authContext.login(user);
       navigate("/Home");
-    } catch (error) {
+
+    } catch (error: any) {
       console.error("Erro no login social:", error);
-      alert("Erro ao fazer login com " + provider);
+      alert(error.response?.data?.message || "Erro ao fazer login com " + provider);
     } finally {
       setSocialLoading(false);
     }
   };
 
-
-  // Funções de login social e reset de senha (do seu código original)
   const handleGoogleSignIn = async () => {
     try {
-      setSocialLoading(true);
       const userData = await signInWithGoogle();
       await handleSocialLogin('google', userData);
     } catch (error) {
       console.error("Erro no login com Google:", error);
-    } finally {
-      setSocialLoading(false);
     }
   };
+
   const handleFacebookSignIn = async () => {
     try {
-      setSocialLoading(true);
       const userData = await signInWithFacebook();
       await handleSocialLogin('facebook', userData);
     } catch (error) {
       console.error("Erro no login com Facebook:", error);
       alert("Erro ao fazer login com Facebook");
-    } finally {
-      setSocialLoading(false);
     }
   };
-  const handleReset = async () => {
+
+  const handleReset = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault(); // Impede o comportamento padrão do link
     if (!email) {
       setEmailError("Digite seu e-mail para redefinir a senha");
       return;
     }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setEmailError("Digite um email válido");
@@ -257,11 +197,7 @@ const Login: React.FC = () => {
     }
 
     try {
-      // Apenas aguarde a requisição, sem atribuir a uma variável
-      await axios.post(`${apiUrl}/api/users/forgot-password`, {
-        email
-      });
-    
+      await api.post('/api/users/forgot-password', { email });
       alert("E-mail de redefinição enviado com sucesso! Verifique sua caixa de entrada.");
     } catch (error: any) {
       console.error("Erro ao solicitar redefinição de senha:", error);
@@ -283,9 +219,7 @@ const Login: React.FC = () => {
           </Link>
         </div>
         <div className="form-section">
-
           <h2 className="login-bemvido">Bem-vindo</h2>
-
           <h3 className="login-title">Email</h3>
           <Input
             type="email"
@@ -294,13 +228,10 @@ const Login: React.FC = () => {
             value={email}
             onChange={handleChange}
           />
-
           <div className="login-container-error">
             {emailError && <p className="error"> {emailError} </p>}
           </div>
-
           <h3 className="login-title">Senha</h3>
-
           <Input
             type="password"
             name="senha"
@@ -308,37 +239,36 @@ const Login: React.FC = () => {
             value={senha}
             onChange={handleChange}
           />
-
           <div className="login-container-error">
-            {senhaError && <p className="error"> {senhaError} </p>} </div>
-          <div className="login-recuperar-senha">
-            <a style={{
-              textDecoration: 'none',
-              fontFamily: "sans-serif",
-              color: "#0969fb",
-              fontWeight: "bolder",
-              cursor: "pointer"
-            }}
-              href="Redefinir-minha-senha" onClick={handleReset}>Esqueci minha senha!</a>
+            {senhaError && <p className="error"> {senhaError} </p>}
           </div>
-
+          <div className="login-recuperar-senha">
+            <a 
+              href="#redefinir" 
+              onClick={handleReset}
+              style={{
+                textDecoration: 'none',
+                fontFamily: "sans-serif",
+                color: "#0969fb",
+                fontWeight: "bolder",
+                cursor: "pointer"
+              }}
+            >
+              Esqueci minha senha!
+            </a>
+          </div>
           <br />
-
           <Button
             text="Entrar"
             color="Blue"
             onClick={handleLocalLogin}
           />
-
           <p className="ou">ou</p>
-
           <div className="social-login">
-            <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} />
-            <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookSignIn} />
+            <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} disabled={socialLoading} />
+            <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookSignIn} disabled={socialLoading} />
           </div>
-
           <p>Ainda não tem uma conta? <Link to="/Cadastro" className="crie-conta">Crie uma!</Link></p>
-
         </div>
       </div>
     </div>

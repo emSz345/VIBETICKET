@@ -31,6 +31,7 @@ const CardEvento: React.FC<CardEventoProps> = ({ evento }) => {
                     <h4>{evento.nome}</h4>
                     <p>{evento.cidade} - {evento.estado}</p>
                     <p>{evento.dataInicio}</p>
+                    <p>{evento.horaInicio} - {evento.horaTermino}</p>
                 </div>
             </div>
         </Link>

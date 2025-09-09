@@ -15,3 +15,14 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     
 }
+
+.social-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .social-button img {
+    width: 24px;   /* Define uma largura fixa para o ícone */
+    height: 24px;  /* Define uma altura fixa para o ícone */
+    object-fit: contain; /* Garante que a imagem não fique distorcida */
+  }

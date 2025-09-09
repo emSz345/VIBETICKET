@@ -20,6 +20,8 @@ export interface Evento {
     dataFim: string;
     valorIngressoInteira: number;
     valorIngressoMeia: number;
+    dataFimVendas: string; // NOVO - Verifique se este campo é 'dataFim' ou 'dataFimVendas'
+    dataInicioVendas:   string;
     quantidadeInteira: number;
     quantidadeMeia: number;
     temMeia: boolean;

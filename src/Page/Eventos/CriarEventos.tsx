@@ -10,23 +10,18 @@ import { GoAlertFill } from "react-icons/go";
 import { FaTrashAlt } from "react-icons/fa";
 
 function CriarEventos() {
-
   const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
   const [etapaAtual, setEtapaAtual] = useState(1);
 
   // ESTADOS DO COMPONENTE
-  // Etapa 1
+  // ... (estados das etapas 1 a 5)
   const [nomeEvento, setNomeEvento] = useState('');
   const [categoriaEvento, setCategoriaEvento] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-
-  // Etapa 2
   const [descricao, setDescricao] = useState('');
-
-  // Etapa 3 - ESTADOS ATUALIZADOS PARA O ENDEREÇO
   const [cep, setCep] = useState('');
   const [rua, setRua] = useState('');
   const [bairro, setBairro] = useState('');
@@ -34,15 +29,11 @@ function CriarEventos() {
   const [complemento, setComplemento] = useState('');
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
-  const [linkMaps, setLinkMaps] = useState(''); // linkMaps será a URL final para o iframe
+  const [linkMaps, setLinkMaps] = useState('');
   const [isFetchingCep, setIsFetchingCep] = useState(false);
-
-  // Etapa 4
   const [dataInicio, setDataInicio] = useState('');
   const [horaInicio, setHoraInicio] = useState('');
   const [horaTermino, setHoraTermino] = useState('');
-
-  // Etapa 5
   const [valorIngressoInteira, setValorIngressoInteira] = useState('');
   const [valorIngressoMeia, setValorIngressoMeia] = useState('');
   const [quantidadeInteira, setQuantidadeInteira] = useState('');
@@ -52,59 +43,68 @@ function CriarEventos() {
   const [dataInicioVendas, setDataInicioVendas] = useState('');
 
   // Etapa 6
-  const [querDoar, setQuerDoar] = useState<boolean | null>(null);
+  const [querDoar, setQuerDoar] = useState<boolean>(false);
   const [valorDoacao, setValorDoacao] = useState('');
   const [termosAceitos, setTermosAceitos] = useState(false);
+
+  // Estados do modal de doação
+  const [modalDoacaoAberto, setModalDoacaoAberto] = useState(false);
+  const [valorDoacaoTemporario, setValorDoacaoTemporario] = useState('');
 
   // Outros estados
   const [modalAberto, setModalAberto] = useState(false);
   const [erros, setErros] = useState<{ [key: string]: string }>({});
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownTimeLeft, setCooldownTimeLeft] = useState<number | null>(null);
-
-  // NOVO: Estado para verificar se o perfil está completo
+  const [isSubmitting, setIsSubmitting] = useState(false); // NOVO ESTADO
   const [perfilCompleto, setPerfilCompleto] = useState(false);
   const [perfilCarregado, setPerfilCarregado] = useState(false);
 
-  // FUNÇÕES HANDLERS
-  const handleAbrirModal = () => {
-    setModalAberto(true);
-  };
-
-  const handleFecharModal = () => {
-    setModalAberto(false);
-  };
-
-  const handleConfirmarSaida = () => {
-    navigate('/');
-  };
-
+  // ... (todas as funções, exceto handleEnviarAnalise, permanecem iguais)
+  const handleAbrirModal = () => setModalAberto(true);
+  const handleFecharModal = () => setModalAberto(false);
+  const handleConfirmarSaida = () => navigate('/');
   const handleProximaEtapa = () => {
     if (validarEtapa(etapaAtual)) {
       setEtapaAtual(prevEtapa => prevEtapa + 1);
       window.scrollTo(0, 0);
     }
   };
-
   const etapaAnterior = () => {
     setEtapaAtual(prevEtapa => prevEtapa - 1);
     window.scrollTo(0, 0);
   };
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImage(file);
-
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviewUrl(reader.result as string);
-      };
+      reader.onloadend = () => { setImagePreviewUrl(reader.result as string); };
       reader.readAsDataURL(file);
     } else {
       setImage(null);
       setImagePreviewUrl(null);
     }
+  };
+  const handleAbrirModalDoacao = () => {
+    setValorDoacaoTemporario(valorDoacao);
+    setModalDoacaoAberto(true);
+  };
+  const handleFecharModalDoacao = () => setModalDoacaoAberto(false);
+  const handleFinalizarDoacao = () => {
+    const valorNumerico = parseFloat(valorDoacaoTemporario.replace(',', '.'));
+    if (valorDoacaoTemporario && valorNumerico > 0) {
+      setValorDoacao(valorDoacaoTemporario);
+      setQuerDoar(true);
+    } else {
+      setValorDoacao('');
+      setQuerDoar(false);
+    }
+    handleFecharModalDoacao();
+  };
+  const handleRemoverDoacao = () => {
+    setValorDoacao('');
+    setQuerDoar(false);
   };
 
   useEffect(() => {
@@ -112,13 +112,12 @@ function CriarEventos() {
   }, [etapaAtual]);
 
   const formatTime = (seconds: number): string => {
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, '0');
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   };
 
+  // ... (outros useEffects e funções de validação)
   useEffect(() => {
     const savedCooldownEnd = localStorage.getItem('eventoCooldownEnd');
     if (savedCooldownEnd) {
@@ -142,7 +141,6 @@ function CriarEventos() {
     }
   }, []);
 
-  // NOVO: Efeito para verificar o perfil ao carregar o componente
   useEffect(() => {
     const verificarPerfil = async () => {
       const userDataString = localStorage.getItem('user');
@@ -154,7 +152,6 @@ function CriarEventos() {
             const response = await fetch(`${apiUrl}/api/perfil/${userId}`);
             if (response.ok) {
               const perfilData = await response.json();
-              // Verifica se CPF (para pessoa física) ou CNPJ (para organização) estão preenchidos
               const isComplete = (perfilData.dadosPessoais && perfilData.dadosPessoais.cpf) || (perfilData.dadosOrganizacao && perfilData.dadosOrganizacao.cnpj);
               setPerfilCompleto(!!isComplete);
             }
@@ -168,7 +165,6 @@ function CriarEventos() {
     verificarPerfil();
   }, [apiUrl]);
 
-  // FUNÇÃO PARA BUSCAR ENDEREÇO POR CEP
   const buscarEnderecoPorCep = async (cep: string) => {
     const cleanedCep = cep.replace(/\D/g, '');
 
@@ -351,10 +347,8 @@ function CriarEventos() {
   };
 
   const handleEnviarAnalise = async () => {
-    // Valida todas as etapas antes de enviar
     if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5) || !validarEtapa(6)) {
       alert('Por favor, corrija os erros em todos os campos antes de enviar para análise.');
-      // Opcional: navegar para a primeira etapa com erro
       if (!validarEtapa(1)) { setEtapaAtual(1); return; }
       if (!validarEtapa(2)) { setEtapaAtual(2); return; }
       if (!validarEtapa(3)) { setEtapaAtual(3); return; }
@@ -363,18 +357,14 @@ function CriarEventos() {
       return;
     }
 
-    // --- INÍCIO DA CORREÇÃO ---
-    // 1. Obtenha a string com os dados do usuário do localStorage.
-    //    Assumindo que você salva como 'user' após o login.
     const userDataString = localStorage.getItem('user');
 
     if (!userDataString) {
       alert('Usuário não autenticado. Por favor, faça login para criar um evento.');
-      navigate('/login'); // Redireciona para o login
+      navigate('/login');
       return;
     }
 
-    // 2. Converta a string para um objeto e pegue o _id.
     const usuario = JSON.parse(userDataString);
     const userId = usuario?._id;
 
@@ -382,8 +372,6 @@ function CriarEventos() {
       alert('Não foi possível encontrar o ID do usuário. Por favor, faça login novamente.');
       return;
     }
-    // --- FIM DA CORREÇÃO ---
-
     const token = localStorage.getItem('firebaseToken');
 
     const formData = new FormData();
@@ -411,15 +399,14 @@ function CriarEventos() {
     formData.append("temMeia", temMeia ? 'true' : 'false');
     formData.append("querDoar", String(querDoar));
     formData.append("valorDoacao", querDoar ? valorDoacao : '0');
-
-    // 3. Envie o ID do usuário correto para o backend.
     formData.append("criadoPor", userId);
+
+    setIsSubmitting(true); // ATIVA O LOADING
 
     try {
       const response = await fetch(`${apiUrl}/api/eventos/criar`, {
         method: 'POST',
         headers: {
-          // O token ainda pode ser útil para uma rota autenticada
           'Authorization': `Bearer ${token}`
         },
         body: formData,
@@ -428,13 +415,12 @@ function CriarEventos() {
       const responseData = await response.json();
 
       if (!response.ok) {
-        // Usa a mensagem de erro do backend se disponível
         throw new Error(responseData.message || `Erro do servidor: ${response.status}`);
       }
 
       alert('Evento criado com sucesso!');
 
-      const cooldownDuration = 5 * 60 * 1000; // 5 minutos
+      const cooldownDuration = 5 * 60 * 1000;
       const cooldownEndTime = Date.now() + cooldownDuration;
 
       localStorage.setItem('eventoCooldownEnd', cooldownEndTime.toString());
@@ -444,13 +430,17 @@ function CriarEventos() {
 
     } catch (error: any) {
       alert(error.message);
+    } finally {
+      setIsSubmitting(false); // DESATIVA O LOADING
     }
   };
 
   const getError = (fieldName: string) => erros[fieldName];
 
+
   return (
     <div>
+      {/* ... header e modal de saída ... */}
       <header className="criar-evento-header">
         <div className="criar-juntos">
           <Link to="/Home" title="Voltar">
@@ -491,7 +481,63 @@ function CriarEventos() {
         </div>
       )}
 
+      {/* ... JSX do Modal de Doação ... */}
+      {modalDoacaoAberto && (
+        <div className="criar-modal-overlay" onClick={handleFecharModalDoacao}>
+          <div className="doacao-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Escolha o valor da Doação</h3>
+            <div className="valores-predefinidos">
+              <button
+                onClick={() => setValorDoacaoTemporario('5,00')}
+                className={valorDoacaoTemporario === '5,00' ? 'ativo' : ''}
+              >
+                R$ 5,00
+              </button>
+              <button
+                onClick={() => setValorDoacaoTemporario('10,00')}
+                className={valorDoacaoTemporario === '10,00' ? 'ativo' : ''}
+              >
+                R$ 10,00
+              </button>
+              <button
+                onClick={() => setValorDoacaoTemporario('50,00')}
+                className={valorDoacaoTemporario === '50,00' ? 'ativo' : ''}
+              >
+                R$ 50,00
+              </button>
+            </div>
+            <div className="campo-valor-personalizado">
+              <label htmlFor="valor-doacao-modal">Ou digite outro valor</label>
+              <input
+                type="text"
+                id="valor-doacao-modal"
+                value={valorDoacaoTemporario}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/[^0-9,]/g, '');
+                  const parts = value.split(',');
+                  if (parts.length > 2) {
+                    value = parts[0] + ',' + parts.slice(1).join('');
+                  }
+                  if (parts[1] && parts[1].length > 2) {
+                    value = parts[0] + ',' + parts[1].substring(0, 2);
+                  }
+                  setValorDoacaoTemporario(value);
+                }}
+                placeholder="R$ 0,00"
+              />
+            </div>
+            <div className="doacao-modal-actions">
+              <button onClick={handleFinalizarDoacao} className="btn-finalizar-doacao">
+                Finalizar Doação
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
       <div className="criar-form">
+        {/* ... alerta e etapas 1 a 5 ... */}
         {perfilCarregado && !perfilCompleto && (
           <div className="alerta-amarelo">
             <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
@@ -827,7 +873,6 @@ function CriarEventos() {
                   <label>
                     Valor do Ingresso Inteira (R$) <span className={getError('valorInteira') ? 'erro-asterisco' : ''}>*</span>
                   </label>
-                  {/* Campo principal de ingresso inteira */}
                   <input
                     type="text"
                     placeholder="R$ 0,00"
@@ -846,7 +891,6 @@ function CriarEventos() {
                     className={getError('valorInteira') ? 'erro-campo' : ''}
                   />
                   {getError('valorInteira') && <span className="mensagem-erro">{getError('valorInteira')}</span>}
-                  {/* Texto que mostra o valor final com a taxa */}
                   <small>Valor final para o comprador com 10% de taxa: R$ {(parseFloat(valorIngressoInteira.replace(',', '.')) * 1.1).toFixed(2).replace('.', ',')}</small>
                 </div>
 
@@ -876,7 +920,6 @@ function CriarEventos() {
                     <label>
                       Valor do Ingresso Meia (R$) <span className={getError('valorMeia') ? 'erro-asterisco' : ''}>*</span>
                     </label>
-                    {/* Campo principal de ingresso meia */}
                     <input
                       type="text"
                       placeholder="R$ 0,00"
@@ -895,7 +938,6 @@ function CriarEventos() {
                       className={getError('valorMeia') ? 'erro-campo' : ''}
                     />
                     {getError('valorMeia') && <span className="mensagem-erro">{getError('valorMeia')}</span>}
-                    {/* Texto que mostra o valor final com a taxa */}
                     <small>Valor final para o comprador com 10% de taxa: R$ {(parseFloat(valorIngressoMeia.replace(',', '.')) * 1.1).toFixed(2).replace('.', ',')}</small>
                   </div>
                 )}
@@ -962,50 +1004,25 @@ function CriarEventos() {
 
         {etapaAtual === 6 && (
           <div className="informacoes-basicas-container">
-            <h2 className="criar-doacao-title">6. Deseja fazer uma doação?</h2>
+            <h2 className="criar-doacao-title">6. Apoie uma causa</h2>
             <p className="criar-doacao-descricao">
-              Você pode contribuir com uma doação para uma instituição beneficente. Todo o valor arrecadado será destinado a causas sociais selecionadas pelos organizadores.
+              Você pode habilitar uma opção para que os compradores do ingresso façam uma doação extra para uma instituição beneficente. Todo o valor arrecadado será destinado a causas sociais.
             </p>
-
-            <div className="botoes-doacao">
-              <button
-                onClick={() => setQuerDoar(true)}
-                className={querDoar === true ? 'ativo' : ''}
-              >
-                Sim
-              </button>
-              <button
-                onClick={() => setQuerDoar(false)}
-                className={querDoar === false ? 'ativo' : ''}
-              >
-                Não
-              </button>
+            <div className="container-doacao-principal">
+              {!querDoar ? (
+                <button onClick={handleAbrirModalDoacao} className="btn-abrir-doacao">
+                  Adicionar Opção de Doação
+                </button>
+              ) : (
+                <div className="info-doacao-selecionada">
+                  <p>Opção de doação habilitada!</p>
+                  <p>Valor inicial sugerido: <span>R$ {valorDoacao}</span></p>
+                  <button onClick={handleAbrirModalDoacao}>Alterar Valor</button>
+                  <button onClick={handleRemoverDoacao} style={{ marginLeft: '10px' }}>Remover Doação</button>
+                </div>
+              )}
+              {getError('valorDoacao') && <span className="mensagem-erro">{getError('valorDoacao')}</span>}
             </div>
-
-            {querDoar && (
-              <div className="campo-doacao">
-                <label htmlFor="valor-doacao">Valor da doação</label>
-                <input
-                  type="text"
-                  id="valor-doacao"
-                  value={valorDoacao}
-                  onChange={(e) => {
-                    let value = e.target.value.replace(/[^0-9,]/g, '');
-                    const parts = value.split(',');
-                    if (parts.length > 2) {
-                      value = parts[0] + ',' + parts.slice(1).join('');
-                    }
-                    if (parts[1] && parts[1].length > 2) {
-                      value = parts[0] + ',' + parts[1].substring(0, 2);
-                    }
-                    setValorDoacao(value);
-                  }}
-                  placeholder="R$ 0,00"
-                  className={getError('valorDoacao') ? 'erro-campo' : ''}
-                />
-                {getError('valorDoacao') && <span className="mensagem-erro">{getError('valorDoacao')}</span>}
-              </div>
-            )}
             <div className="termos-container">
               <div className="checkbox-container">
                 <input
@@ -1040,16 +1057,24 @@ function CriarEventos() {
             <button
               className="criar-btn-enviar"
               onClick={handleEnviarAnalise}
-              disabled={isCooldown || !termosAceitos}
+              disabled={isCooldown || !termosAceitos || isSubmitting}
             >
-              {isCooldown
-                ? `Aguarde... (${formatTime(cooldownTimeLeft || 0)})`
-                : 'Enviar para Análise'}
-              <IoSend />
+              {isSubmitting ? (
+                <>
+                  <div className="loading-spinner"></div>
+                  <span>Enviando...</span>
+                </>
+              ) : isCooldown ? (
+                `Aguarde... (${formatTime(cooldownTimeLeft || 0)})`
+              ) : (
+                <>
+                  Enviar para Análise
+                  <IoSend />
+                </>
+              )}
             </button>
           )}
         </div>
-
       </div>
     </div>
   );

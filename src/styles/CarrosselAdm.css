@@ -4,6 +4,7 @@
     padding: 2rem;
     background-color: #f0f2f5;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .carrossel-adm-header {
@@ -36,24 +37,69 @@
     background-color: #0056b3;
 }
 
-.carrossel-adm-content {
+/* NOVO LAYOUT - SEÇÕES INDEPENDENTES */
+.carrossel-adm-sections {
     display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+}
+
+.carrossel-adm-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* SEÇÃO DE UPLOAD (MENOR) */
+.upload-section-container {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
 }
 
-.image-upload-section, .carousel-preview-section {
+.image-upload-section {
     background-color: #fff;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.image-upload-section {
-    flex: 1;
+/* SEÇÃO DE EVENTOS APROVADOS (LARGURA COMPLETA) */
+.eventos-section-container {
+    grid-column: 1 / -1; /* OCUPA TODAS AS COLUNAS */
+    width: 100%;
+}
+
+.eventos-aprovados-section {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* SEÇÃO DO CARROSSEL (LADO DIREITO) */
+.carousel-section-container {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .carousel-preview-section {
-    flex: 2;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 h3 {
@@ -61,6 +107,7 @@ h3 {
     color: #555;
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
+    margin-bottom: 1.5rem;
 }
 
 .upload-box {
@@ -86,6 +133,11 @@ h3 {
     border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #0056b3;
 }
 
 input[type="file"] {
@@ -96,8 +148,133 @@ input[type="file"] {
     text-align: center;
     margin-top: 1rem;
     color: #888;
+    font-size: 0.9rem;
 }
 
+/* ESTILOS PARA EVENTOS APROVADOS - LAYOUT HORIZONTAL */
+.eventos-aprovados-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    align-items: stretch;
+}
+
+.evento-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.2rem;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    height: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.evento-card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+.evento-image {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.evento-card:hover .evento-image {
+    transform: scale(1.05);
+}
+
+.evento-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.evento-nome {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.evento-criador {
+    margin: 0 0 0.3rem 0;
+    color: #6c757d;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.evento-categoria {
+    margin: 0 0 1rem 0;
+    color: #007bff;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.evento-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: auto;
+}
+
+.btn-adicionar-carrossel {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #17a2b8;
+    color: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-adicionar-carrossel:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+}
+
+.loading-message {
+    text-align: center;
+    color: #6c757d;
+    padding: 2rem;
+    font-style: italic;
+    grid-column: 1 / -1;
+}
+
+.no-eventos-message {
+    text-align: center;
+    color: #6c757d;
+    padding: 2rem;
+    font-style: italic;
+    grid-column: 1 / -1;
+}
+
+/* Estilos para o carrossel atual */
 .carousel-preview {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -109,6 +286,11 @@ input[type="file"] {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.image-preview-card:hover {
+    transform: translateY(-2px);
 }
 
 .image-preview-card img {
@@ -126,9 +308,9 @@ input[type="file"] {
     color: #fff;
     border: none;
     border-radius: 50%;
-    width: 40px; /* Aumentado para 40px */
-    height: 40px; /* Aumentado para 40px */
-    font-size: 1.5rem; /* Aumentado o tamanho da fonte do ícone */
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -144,4 +326,229 @@ input[type="file"] {
     text-align: center;
     color: #888;
     padding: 2rem;
+    font-style: italic;
+}
+
+/* Barra de rolagem personalizada */
+.eventos-aprovados-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.eventos-aprovados-section::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.eventos-aprovados-section::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.eventos-aprovados-section::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1200px) {
+    .carrossel-adm-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .upload-section-container {
+        grid-column: 1;
+    }
+    
+    .eventos-section-container {
+        grid-column: 1;
+    }
+    
+    .carousel-section-container {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 900px) {
+    .eventos-aprovados-list {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .evento-image {
+        height: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carrossel-adm-container {
+        padding: 1rem;
+    }
+    
+    .carrossel-adm-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .carrossel-adm-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .eventos-aprovados-list {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .evento-card {
+        padding: 1rem;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .evento-image {
+        height: 150px;
+    }
+    
+    .evento-nome {
+        font-size: 0.95rem;
+    }
+    
+    .carousel-preview {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .eventos-aprovados-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .evento-card {
+        max-width: 100%;
+    }
+    
+    .evento-image {
+        height: 130px;
+    }
+}
+
+@media (max-width: 480px) {
+    .image-upload-section,
+    .eventos-aprovados-section,
+    .carousel-preview-section {
+        padding: 1.5rem;
+    }
+    
+    .upload-box {
+        padding: 1.2rem;
+    }
+    
+    .custom-file-upload {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .eventos-aprovados-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .carousel-preview {
+        grid-template-columns: 1fr;
+    }
+    
+    .evento-actions {
+        flex-direction: row;
+    }
+    
+    .btn-adicionar-carrossel {
+        width: 100%;
+        padding: 0.7rem;
+    }
+    
+    .evento-image {
+        height: 110px;
+    }
+}
+
+/* Estilo para quando há muitos eventos */
+.eventos-aprovados-section:has(.eventos-aprovados-list:not(:empty)) {
+    max-height: 800px;
+    overflow-y: auto;
+}
+
+/* Melhorias visuais */
+.evento-card {
+    position: relative;
+}
+
+.evento-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #007bff, #17a2b8);
+    border-radius: 12px 12px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.evento-card:hover::before {
+    opacity: 1;
+}
+
+/* Animações suaves */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.evento-card {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Scroll suave */
+.eventos-aprovados-section {
+    scroll-behavior: smooth;
+}
+
+/* Estados de loading */
+.loading-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.loading-message::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Melhorias de acessibilidade */
+.btn-adicionar-carrossel:focus,
+.back-button:focus,
+.remove-image-button:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+.evento-card:focus-within {
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }

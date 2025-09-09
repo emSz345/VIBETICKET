@@ -698,3 +698,170 @@ body {
       padding: 15px;
   }
 }
+
+/* Estilos para o aviso de evento encerrado */
+.evento-encerrado-aviso {
+  background-color: #d9534f; /* Vermelho */
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+/* Ajuste no header para acomodar o aviso */
+.detalhes-header-content {
+  position: relative;
+  padding-top: 40px; /* Adiciona espaço para o aviso acima */
+}
+
+/* Estilos para o aviso de vendas encerradas */
+.vendas-encerradas-aviso {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px dashed #ccc;
+}
+
+.vendas-encerradas-aviso h3 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.vendas-encerradas-aviso p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* modal */
+
+/* --- ESTILOS DO MODAL DE CONFIRMAÇÃO --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  transform: translateY(-50px);
+  animation: slideIn 0.3s forwards;
+  position: relative;
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  flex-grow: 1; /* Faz o título ocupar o espaço disponível */
+}
+
+.modal-icon {
+  color: #28a745; /* Verde sucesso */
+  margin-right: 10px;
+  font-size: 1.8rem;
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #aaa;
+  line-height: 1;
+}
+
+.modal-close-button:hover {
+    color: #333;
+}
+
+.modal-body p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-actions .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none; /* Remove sublinhado de links */
+    display: inline-block; /* Alinhamento correto */
+    transition: background-color 0.2s;
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}

@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
-import axios from 'axios';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import api from '../services/api'; // Importe sua instância central do Axios
 
-// Interface para os dados do usuário
+// Interface para os dados do usuário (sem alterações)
 interface UserData {
   _id: string;
   nome: string;
@@ -11,177 +11,105 @@ interface UserData {
   imagemPerfil?: string;
 }
 
-// Interface para os dados do login social
-interface SocialLoginData {
-  provider: 'google' | 'facebook';
-  userData: UserData;
-  token: string;
-}
-
-// Interface para o valor do nosso contexto
+// Interface para o valor do nosso contexto (simplificada)
 interface AuthContextType {
   isAuthenticated: boolean;
   user: UserData | null;
   isLoading: boolean;
-  login: (email: string, senha: string) => Promise<void>;
-  logout: () => void;
+  login: (userData: UserData) => void; // Apenas recebe os dados do usuário
+  logout: () => Promise<void>; // Agora é assíncrona para chamar a API
   updateUser: (newUserData: UserData) => void;
-  socialLogin: (data: SocialLoginData) => void;
-  updateUserProfileImage: (newImageUrl: string) => void; // Nova função
+  updateUserProfileImage: (newImageUrl: string) => void;
 }
 
-// Criação do contexto
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-// Componente Provedor
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<UserData | null>(() => {
-    try {
-      const storedUser = localStorage.getItem('user');
-      const token = localStorage.getItem('token');
+  const [user, setUser] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Começa como true
 
-      // Se não houver token, retorna null mesmo que tenha user
-      if (!token) return null;
-
-      return storedUser ? JSON.parse(storedUser) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return !!localStorage.getItem('token');
-  });
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  // Efeito para carregar dados do usuário na inicialização do app
+  // Efeito para verificar se já existe uma sessão válida no backend
   useEffect(() => {
-    try {
-      const token = localStorage.getItem('token');
-      const storedUserString = localStorage.getItem('user');
-      const isAdmin = localStorage.getItem('isAdmin') === 'true';
-      if (token && storedUserString) {
-        const storedUser = JSON.parse(storedUserString);
-        setUser({
-          ...storedUser,
-          isAdmin // Garanta que isAdmin é carregado corretamente
-        });
-        setIsAuthenticated(true);
+    const verifySession = async () => {
+      try {
+        // O navegador envia o cookie HttpOnly automaticamente com esta chamada
+        const response = await api.get('/api/users/me'); 
+        
+        if (response.data && response.data._id) {
+          setUser(response.data);
+          localStorage.setItem('user', JSON.stringify(response.data)); // Salva o user para acesso rápido
+        }
+      } catch (error) {
+        // Se a chamada falhar (ex: 401 Unauthorized), significa que não há cookie válido
+        console.log("Nenhuma sessão válida encontrada.");
+        setUser(null);
+        localStorage.removeItem('user');
+      } finally {
+        setIsLoading(false); // Termina o carregamento
       }
+    };
+
+    verifySession();
+  }, []);
+
+  // Função de LOGIN simplificada
+  const login = useCallback((userData: UserData) => {
+    // A única responsabilidade desta função é atualizar o estado da aplicação
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  }, []);
+
+  // Função de LOGOUT corrigida
+  const logout = useCallback(async () => {
+    try {
+      // Chama a rota de logout no backend para limpar o cookie HttpOnly
+      await api.post('/api/users/logout');
     } catch (error) {
-      console.error("Falha ao carregar dados do usuário do localStorage", error);
-      setUser(null);
-      setIsAuthenticated(false);
-      localStorage.clear();
+      console.error("Erro ao fazer logout no backend:", error);
     } finally {
-      setIsLoading(false);
+      // Limpa o estado e o localStorage no frontend, independentemente do resultado do backend
+      setUser(null);
+      localStorage.removeItem('user');
+      // Redireciona para a página de login para garantir
+      window.location.href = '/login'; 
     }
   }, []);
 
-  // --- Funções de manipulação de estado ---
-  
-  // Envolve a função logout com useCallback
-  const logout = useCallback(() => {
-    localStorage.clear();
-    setUser(null);
-    setIsAuthenticated(false);
-  }, [setUser, setIsAuthenticated]);
-
-  // Envolve a função login com useCallback
-  const login = useCallback(async (email: string, senha: string) => {
-    try {
-      const apiUrl = process.env.REACT_APP_API_URL;
-      const response = await axios.post(`${apiUrl}/api/users/login`, { email, senha });
-      const { token, user: userData } = response.data;
-
-      if (!token) {
-        throw new Error('Token não recebido do servidor');
-      }
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("isAdmin", userData.isAdmin.toString());
-      localStorage.setItem("isAuthenticated", "true");
-      setUser(userData);
-      setIsAuthenticated(true);
-
-      console.log("✅ [AuthContext] Estado atualizado! Autenticado:", true, "Usuário:", userData);
-    } catch (error) {
-      console.error("Falha no login:", error);
-      logout(); 
-      throw error;
-    }
-  }, [logout, setUser, setIsAuthenticated]);
-
-  // Envolve a função socialLogin com useCallback
-  const socialLogin = useCallback((data: SocialLoginData) => {
-    const existingLocalImage = localStorage.getItem('hasLocalImage');
-
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.userData));
-    localStorage.setItem("userName", data.userData.nome);
-    localStorage.setItem("userEmail", data.userData.email);
-    localStorage.setItem("userRole", data.userData.isAdmin ? "admin" : "user");
-    if (!existingLocalImage) {
-      localStorage.setItem("imagemPerfil", data.userData.imagemPerfil || "");
-    }
-    localStorage.setItem("isAdmin", data.userData.isAdmin.toString());
-    localStorage.setItem("isVerified", "true");
-    setUser(data.userData);
-    setIsAuthenticated(true);
-  }, [setUser, setIsAuthenticated]);
-
-  // Envolve a função updateUser com useCallback
+  // Funções de atualização do usuário (sem grandes alterações)
   const updateUser = useCallback((newUserData: UserData) => {
     setUser(newUserData);
     localStorage.setItem('user', JSON.stringify(newUserData));
-  }, [setUser]);
+  }, []);
 
-  // Nova função para atualizar apenas a imagem de perfil
   const updateUserProfileImage = useCallback((newImageUrl: string) => {
     setUser(prevUser => {
-      if (!prevUser) return prevUser;
+      if (!prevUser) return null;
       
-      const updatedUser = {
-        ...prevUser,
-        imagemPerfil: newImageUrl
-      };
-      
+      const updatedUser = { ...prevUser, imagemPerfil: newImageUrl };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
     });
-  }, [setUser]);
+  }, []);
 
-  // Memorizando o valor do contexto para evitar renderizações desnecessárias
+  // Memoriza o valor do contexto
   const contextValue = useMemo(() => ({
-    isAuthenticated,
+    isAuthenticated: !!user, // A autenticação é simplesmente baseada na existência do usuário
     user,
     isLoading,
     login,
     logout,
     updateUser,
-    socialLogin,
-    updateUserProfileImage // Nova função adicionada ao contexto
-  }), [
-    isAuthenticated, 
-    user, 
-    isLoading, 
-    login, 
-    logout, 
-    updateUser, 
-    socialLogin, 
-    updateUserProfileImage
-  ]);
+    updateUserProfileImage,
+  }), [user, isLoading, login, logout, updateUser, updateUserProfileImage]);
 
   return (
     <AuthContext.Provider value={contextValue}>
-      {children}
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 };
 
-// Hook customizado para usar o contexto
+// Hook customizado para usar o contexto (sem alterações)
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
