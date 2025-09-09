@@ -10,7 +10,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const CarrosselAdm: React.FC = () => {
     const [eventosAprovados, setEventosAprovados] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [doadoresPendentes, setDoadoresPendentes] = useState<any[]>([]);
+    const [_doadoresPendentes, setDoadoresPendentes] = useState<any[]>([]);
     const [images, setImages] = useState<string[]>([]);
     const navigate = useNavigate();
 
@@ -115,99 +115,6 @@ const CarrosselAdm: React.FC = () => {
             }
         } catch (error) {
             console.error('Erro ao buscar doadores pendentes:', error);
-        }
-    };
-
-    const handleAprovarDoador = async (doadorId: string, aprovado: boolean) => {
-        try {
-            const response = await fetch(`${apiUrl}/api/eventos/doadores/${doadorId}/aprovar`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ aprovado }),
-            });
-
-            if (response.ok) {
-                fetchDoadoresPendentes();
-                if (aprovado) {
-                    const doador = doadoresPendentes.find(d => d._id === doadorId);
-                    if (doador) {
-                        await handleAddToCarrossel(doador.imagemPerfil);
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Erro ao processar doador:', error);
-        }
-    };
-
-    const getImagemPerfilUrl = (imagemPerfil?: string): string => {
-        if (!imagemPerfil) return `${apiUrl}/uploads/blank_profile.png`;
-        if (imagemPerfil.startsWith('http')) return imagemPerfil;
-        if (imagemPerfil.startsWith('/uploads')) return `${apiUrl}${imagemPerfil}`;
-        return `${apiUrl}/uploads/${imagemPerfil}`;
-    };
-
-    const handleAddToCarrossel = async (imageUrl: string) => {
-        try {
-            console.log('Tentando adicionar imagem ao carrossel:', imageUrl);
-
-            const normalizedUrl = getImagemPerfilUrl(imageUrl);
-            console.log('URL normalizada:', normalizedUrl);
-
-            const imageName = normalizedUrl.split('/').pop();
-            const alreadyExists = images.some(img => img.includes(imageName || ''));
-
-            if (alreadyExists) {
-                alert('Esta imagem já está no carrossel!');
-                return;
-            }
-
-            try {
-                const urlResponse = await fetch(`${apiUrl}/api/carrossel/upload-from-url`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ imageUrl: normalizedUrl }),
-                });
-
-                if (urlResponse.ok) {
-                    fetchCarrosselImages();
-                    alert('Imagem do doador adicionada ao carrossel com sucesso!');
-                    return;
-                }
-            } catch (urlError) {
-                console.log('Método por URL não disponível, tentando upload por arquivo...');
-            }
-
-            const response = await fetch(normalizedUrl);
-            if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
-
-            const blob = await response.blob();
-            const fileExtension = normalizedUrl.split('.').pop() || 'jpg';
-            const fileName = `doador_${Date.now()}.${fileExtension}`;
-            const file = new File([blob], fileName, { type: blob.type });
-
-            const formData = new FormData();
-            formData.append('image', file);
-
-            const uploadResponse = await fetch(`${apiUrl}/api/carrossel/upload`, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (uploadResponse.ok) {
-                fetchCarrosselImages();
-                alert('Imagem do doador adicionada ao carrossel com sucesso!');
-            } else {
-                throw new Error('Falha no upload da imagem');
-            }
-
-        } catch (error) {
-            console.error('Erro detalhado ao adicionar imagem:', error);
-            alert('Não foi possível adicionar a imagem ao carrossel. Verifique se a imagem existe e tente novamente.');
         }
     };
 
