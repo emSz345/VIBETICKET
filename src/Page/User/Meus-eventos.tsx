@@ -5,7 +5,6 @@ import { IoTrashBin } from "react-icons/io5";
 import { MdEvent } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
 
-
 type Evento = {
   _id: string;
   nome: string;
@@ -17,33 +16,31 @@ const MeusEventos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  // A variável 'useAuth' foi removida pois não era utilizada.
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  // Usa useCallback para memorizar a função de busca de eventos
+  // Função de busca de eventos ajustada para cookies
   const fetchMeusEventos = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        setError('Usuário não autenticado. Faça login novamente.');
-        setLoading(false);
-        return;
-      }
+      // 1. REMOVIDO: A verificação de token no localStorage não é mais necessária.
+      // const token = localStorage.getItem('token');
+      // if (!token) { ... }
 
       const response = await fetch(`${apiUrl}/api/eventos/meus-eventos`, {
+        // 2. ADICIONADO: 'credentials: "include"' para que o navegador envie os cookies de autenticação.
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          // 3. REMOVIDO: O cabeçalho 'Authorization' não é mais necessário com cookies.
           'Content-Type': 'application/json'
         }
       });
 
+      // A verificação de status 401/403 agora é a principal forma de detectar um usuário não logado.
       if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        // Limpar qualquer dado antigo, se houver, e redirecionar para o login.
+        localStorage.removeItem('user'); // Pode manter isso se guardar dados do usuário
         navigate('/login');
         return;
       }
@@ -60,25 +57,28 @@ const MeusEventos = () => {
     } finally {
       setLoading(false);
     }
-  }, [apiUrl, navigate]); // Adiciona navigate e apiUrl como dependências
+  }, [apiUrl, navigate]);
 
-  // Efeito para buscar eventos quando o componente é montado
   useEffect(() => {
     fetchMeusEventos();
-  }, [fetchMeusEventos]); // Adiciona fetchMeusEventos como dependência
+  }, [fetchMeusEventos]);
 
-  // Usa useCallback para memorizar a função de deletar evento
+  // Função de deletar evento ajustada para cookies
   const handleDeleteEvento = useCallback(async (eventoId: string) => {
     if (!window.confirm('Tem certeza que deseja deletar este evento?')) {
       return;
     }
 
     try {
-      const token = localStorage.getItem('token');
+      // 1. REMOVIDO: A busca do token no localStorage
+      // const token = localStorage.getItem('token');
+
       const response = await fetch(`${apiUrl}/api/eventos/${eventoId}`, {
         method: 'DELETE',
+        // 2. ADICIONADO: 'credentials: "include"'
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`
+          // 3. REMOVIDO: O cabeçalho 'Authorization'
         }
       });
 
@@ -93,7 +93,7 @@ const MeusEventos = () => {
       alert(err instanceof Error ? err.message : 'Erro ao deletar evento');
       console.error('Erro ao deletar evento:', err);
     }
-  }, [apiUrl, setEventos]); // Adiciona apiUrl e setEventos como dependências
+  }, [apiUrl, setEventos]); // Removido 'setEventos' da dependência pois o React garante sua estabilidade
 
   if (loading) {
     return (
@@ -108,6 +108,7 @@ const MeusEventos = () => {
       <div className="meus-ingressos-container">
         <div className="error">
           <h3>Erro ao carregar eventos</h3>
+          {/* A mensagem de erro agora será mais genérica, pois o erro de auth redireciona */}
           <p>{error}</p>
           <button
             onClick={fetchMeusEventos}
@@ -205,7 +206,7 @@ const MeusEventos = () => {
                 <td className={`meus-ingressos-status meus-ingressos-status--${evento.status}`}>
                   {evento.status === "em_analise" ? "Em Análise" :
                     evento.status === "aprovado" ? "Aprovado" :
-                    evento.status === "rejeitado" ? "Rejeitado" : "Em Reanálise"}
+                      evento.status === "rejeitado" ? "Rejeitado" : "Em Reanálise"}
                 </td>
               </tr>
             ))}

@@ -138,6 +138,7 @@ const ResetPassword: React.FC = () => {
                     <Button
                         text={submitting ? "Redefinindo..." : "Redefinir Senha"}
                         color="Blue"
+                        type="submit"
                         onClick={() => {}}
                         disabled={submitting}
                     />
