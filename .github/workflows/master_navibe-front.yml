@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read # Isso é necessário para actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -52,6 +52,13 @@ jobs:
           name: dist-package
           path: ./
 
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_33C58100B60B4EAB916C00CA311A34EE }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1963FEAF117340A1B525BB0416990615 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_98843BA45B92426CB15CFB5A8B14B288 }}
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -59,10 +66,3 @@ jobs:
           app-name: 'navibe-front'
           slot-name: 'Production'
           package: ./build
-          
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_33C58100B60B4EAB916C00CA311A34EE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1963FEAF117340A1B525BB0416990615 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_98843BA45B92426CB15CFB5A8B14B288 }}
