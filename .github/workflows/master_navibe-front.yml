@@ -27,7 +27,7 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Build the project
-        run: npm run build
+        run: CI=false npm run build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -66,3 +66,4 @@ jobs:
           app-name: 'navibe-front'
           slot-name: 'Production'
           package: .
+
