@@ -50,10 +50,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-package
-          # Ação de download irá criar a pasta 'dist-package'
-          # e colocar o conteúdo de 'build' dentro dela.
-
-      - name: Login to Azure
+          path: .
+      
+      - name: 'Login to Azure'
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_33C58100B60B4EAB916C00CA311A34EE }}
