@@ -50,7 +50,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-          path: app_deploy_package  # Caminho explícito para onde os arquivos serão baixados
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -65,4 +64,4 @@ jobs:
         with:
           app-name: 'navibe-front'
           slot-name: 'Production'
-          package: app_deploy_package/build
+          package: node-app/build
