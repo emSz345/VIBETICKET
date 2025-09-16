@@ -1,6 +1,5 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - navibe-front
 
 on:
@@ -22,7 +21,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22.x'
-
+          
+      - name: npm install, build, and test
+        run: |
+          npm install --legacy-peer-deps
+          npm run build
+        env:
+          CI: false
+          
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -56,4 +62,5 @@ jobs:
           app-name: 'navibe-front'
           slot-name: 'Production'
           package: .
+
           
