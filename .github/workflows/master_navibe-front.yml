@@ -29,11 +29,11 @@ jobs:
       - name: Build the project
         run: CI=false npm run build
 
-      - name: Upload artifact for deployment job
+      - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: build/ # Corrigido para fazer o upload do conteúdo da pasta build.
+          name: dist-package
+          path: build/ # Esta etapa irá empacotar o conteúdo da pasta 'build'
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,17 +46,11 @@ jobs:
       cancel-in-progress: true
 
     steps:
-      - name: Download artifact from build job
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_33C58100B60B4EAB916C00CA311A34EE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1963FEAF117340A1B525BB0416990615 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_98843BA45B92426CB15CFB5A8B14B288 }}
+          name: dist-package
+          path: ./
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -64,4 +58,11 @@ jobs:
         with:
           app-name: 'navibe-front'
           slot-name: 'Production'
-          package: node-app
+          package: ./build
+          
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_33C58100B60B4EAB916C00CA311A34EE }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1963FEAF117340A1B525BB0416990615 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_98843BA45B92426CB15CFB5A8B14B288 }}
