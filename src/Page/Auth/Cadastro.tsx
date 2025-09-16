@@ -37,7 +37,7 @@ const Cadastro: React.FC = () => {
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState(false);
-  
+
   // Estado para a tela de "Verifique seu e-mail"
   const [aguardandoVerificacao, setAguardandoVerificacao] = useState(false);
 
@@ -73,7 +73,7 @@ const Cadastro: React.FC = () => {
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
-  
+
   // --- FLUXO DE CADASTRO LOCAL SIMPLIFICADO ---
   const handleSubmitLocal = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +95,7 @@ const Cadastro: React.FC = () => {
 
       if (response.status === 201) {
         // Mostra a tela de sucesso pedindo para o usuário verificar o e-mail.
-        setAguardandoVerificacao(true); 
+        setAguardandoVerificacao(true);
       }
     } catch (error: any) {
       alert(error.response?.data?.message || "Erro ao registrar. Tente outro e-mail.");
@@ -104,7 +104,7 @@ const Cadastro: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   // --- FLUXO DE CADASTRO/LOGIN SOCIAL CORRIGIDO ---
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     if (!termosAceitos) {
@@ -120,7 +120,7 @@ const Cadastro: React.FC = () => {
       } else {
         socialUserData = await signInWithFacebook();
       }
-      
+
       if (!socialUserData || !socialUserData.email) {
         throw new Error("Não foi possível obter os dados do provedor social.");
       }
@@ -133,12 +133,12 @@ const Cadastro: React.FC = () => {
           imagemPerfil: socialUserData.photoURL || "",
         }
       });
-      
+
       const { user } = response.data; // O backend define o cookie e retorna o usuário
 
       // USA A FUNÇÃO CORRETA E SIMPLIFICADA DO CONTEXTO
       login(user);
-      
+
       navigate("/Home");
 
     } catch (error: any) {
@@ -161,7 +161,7 @@ const Cadastro: React.FC = () => {
             <strong style={{ color: "#0969fb" }}>{formData.email}</strong>
           </p>
           <p style={{ marginTop: '1.5rem' }}>
-            Por favor, clique no link para ativar sua conta e depois <br/>
+            Por favor, clique no link para ativar sua conta e depois <br />
             <Link to="/login" className="crie-conta">faça o login</Link>.
           </p>
           <p style={{ fontSize: '0.9rem', color: '#999', marginTop: '2rem' }}>
@@ -186,24 +186,60 @@ const Cadastro: React.FC = () => {
           <h2 className="login-bemvido">Seja Bem-vindo</h2>
           <form onSubmit={handleSubmitLocal}>
             <h3 className="login-title">Nome completo</h3>
-            <Input name="nome" type="text" value={formData.nome} onChange={handleChange} placeholder="Digite seu nome completo" hasError={!!errors.nome} />
-            {errors.nome && <p className="error">{errors.nome}</p>}
-            
+            <Input
+              name="nome"
+              type="text"
+              value={formData.nome}
+              onChange={handleChange}
+              placeholder="Digite seu nome completo"
+              hasError={!!errors.nome}
+            />
+            <div className="login-container-error">
+              {errors.nome && <p className="error">{errors.nome}</p>}
+            </div>
+
             <h3 className="login-title">Email</h3>
-            <Input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="seu-email@gmail.com" hasError={!!errors.email} />
-            {errors.email && <p className="error">{errors.email}</p>}
-            
+            <Input
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="seu-email@gmail.com"
+              hasError={!!errors.email}
+            />
+            <div className="login-container-error">
+              {errors.email && <p className="error">{errors.email}</p>}
+            </div>
+
             <h3 className="login-title">Crie uma senha</h3>
-            <Input name="senha" type="password" value={formData.senha} onChange={handleChange} placeholder="Crie uma senha forte" hasError={!!errors.senha} />
-            {errors.senha && <p className="error">{errors.senha}</p>}
-            
+            <Input
+              name="senha"
+              type="password"
+              value={formData.senha}
+              onChange={handleChange}
+              placeholder="Crie uma senha forte"
+              hasError={!!errors.senha}
+            />
+            <div className="login-container-error">
+              {errors.senha && <p className="error">{errors.senha}</p>}
+            </div>
+
             <h3 className="login-title">Confirmar senha</h3>
-            <Input name="confirmSenha" type="password" value={formData.confirmSenha} onChange={handleChange} placeholder="Confirme sua senha" hasError={!!errors.confirmSenha} />
-            {errors.confirmSenha && <p className="error">{errors.confirmSenha}</p>}
+            <Input
+              name="confirmSenha"
+              type="password"
+              value={formData.confirmSenha}
+              onChange={handleChange}
+              placeholder="Confirme sua senha"
+              hasError={!!errors.confirmSenha}
+            />
+            <div className="login-container-error">
+              {errors.confirmSenha && <p className="error">{errors.confirmSenha}</p>}
+            </div>
 
             <div className="radio-container">
               <label className="termos-label">
-                <input type="checkbox" className="checkbox-ajustado" checked={termosAceitos} onChange={(e) => setTermosAceitos(e.target.checked)} />
+                <input type="checkbox" className="checkbox-ajustado" onClick={() => setMostrarTermos(true)} checked={termosAceitos} onChange={(e) => setTermosAceitos(e.target.checked)} />
                 <span className="link" onClick={() => setMostrarTermos(true)}>
                   Eu concordo com os termos & políticas
                 </span>

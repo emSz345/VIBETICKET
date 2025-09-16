@@ -254,3 +254,20 @@
     justify-content: flex-start;
   }
 }
+
+.footer-payment-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.payment-icons-container {
+  display: flex;
+  gap: 10px; /* Adiciona espaço entre os ícones */
+}
+
+.payment-icon {
+  width: 50px; /* Ajuste o tamanho dos ícones */
+  height: auto;
+}

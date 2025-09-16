@@ -11,7 +11,7 @@
 }
 
 .carrinho-container {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 120px auto 40px;
   padding: 0 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -459,4 +459,23 @@
     padding: 12px 15px;
     font-size: 0.85rem;
   }
+}
+
+/* Carrinho.css */
+
+.mercadopago-info {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centraliza horizontalmente */
+  flex-direction: column; /* Alinha a logo e o texto verticalmente */
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
+
+.mercadopago-logo {
+  width: 120px; /* Ajuste o tamanho conforme necessário */
+  height: auto;
+  margin-top: 5px;
 }

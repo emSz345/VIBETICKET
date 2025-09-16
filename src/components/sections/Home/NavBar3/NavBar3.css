@@ -1,3 +1,6 @@
+NavBar.css
+
+
 :root {
   --primary: #0969fb;
   --primary-dark: #0756cc;
@@ -58,6 +61,7 @@ body {
 .nav--scrolled .nav__logo { width: 120px; }
 
 .nav__search {
+  position: relative; /* Adicionado para servir como referência para os resultados */
   max-width: 450px;
   flex-grow: 1;
   display: flex;
@@ -68,7 +72,7 @@ body {
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   transition: box-shadow var(--transition-speed);
 }
-.nav__search input {
+.nav_input {
   width: 100%;
   border: none;
   outline: none;
@@ -77,7 +81,11 @@ body {
   color: #222;
   background: transparent;
   caret-color: var(--primary);
+  padding: 12px;
+  margin-top: 5px;
+  transition: all 0.3s ease;
 }
+
 
 .nav__actions {
   display: flex;
@@ -463,6 +471,84 @@ body {
 
 .mobile-menu-close:hover {
   background-color: #f5f5f5;
+}
+
+.search-results-container {
+  position: absolute;
+  top: calc(100% + 4px); /* Posiciona logo abaixo da barra de pesquisa */
+  left: 0;
+  width: 100%; /* Ocupa a mesma largura que o container pai */
+  background: white;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 350px;
+  overflow-y: auto;
+  z-index: 10001;
+}
+
+
+/* Item individual do resultado */
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Imagem do evento */
+.search-result-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 12px;
+}
+
+/* Informações do evento */
+.search-result-info {
+  flex: 1;
+}
+
+.search-result-info h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.search-result-info p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Ajuste para quando a navbar está com scroll */
+.nav--scrolled .search-results-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+/* Para dispositivos móveis */
+@media (max-width: 768px) {
+  .search-results-container {
+    position: fixed;
+    top: var(--header-height-scrolled);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: unset;
+    border-radius: 0;
+  }
 }
 
 /* ============================ */

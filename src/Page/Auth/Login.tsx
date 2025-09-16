@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../../services/api"; // Usando a instância centralizada e correta do Axios
+import api from "../../services/api";
 import { useAuth } from "../../Hook/AuthContext";
 import { signInWithGoogle, signInWithFacebook } from '../../services/firebase';
 
-// Seus componentes de UI e assets
 import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
 import SocialButton from "../../components/ui/SocialButton/SocialButton";
@@ -27,9 +26,9 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   // --- Lógica de Bloqueio (sem alterações) ---
-  const getUnlockTime = () => parseInt(localStorage.getItem("unlockTime") || "0");
-  const getFalhas = () => parseInt(localStorage.getItem("loginFalhas") || "0");
-  const getTentativas = () => parseInt(localStorage.getItem("loginTentativas") || "0");
+  const getUnlockTime = useCallback(() => parseInt(localStorage.getItem("unlockTime") || "0"), []);
+  const getFalhas = useCallback(() => parseInt(localStorage.getItem("loginFalhas") || "0"), []);
+  const getTentativas = useCallback(() => parseInt(localStorage.getItem("loginTentativas") || "0"), []);
 
   const bloquearLogin = (falhasAtualizadas: number) => {
     const minutosBloqueio = falhasAtualizadas;
@@ -48,6 +47,69 @@ const Login: React.FC = () => {
     alert(`Muitas tentativas falhas. Tente novamente em ${minutosBloqueio} minuto(s).`);
   };
 
+  // 1. Mova a função de login para antes do `useEffect`
+  // 2. Envolva a função com `useCallback` para memorizá-la
+  const handleLocalLogin = useCallback(async () => {
+    if (bloqueado) {
+      alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
+      return;
+    }
+
+    setEmailError("");
+    setSenhaError("");
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !senha) {
+      if (!email) setEmailError("Digite seu e-mail.");
+      if (!senha) setSenhaError("Digite sua senha.");
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      setEmailError("Digite um email válido.");
+      return;
+    }
+    if (senha.length < 6) {
+      setSenhaError("A senha deve conter pelo menos 6 caracteres.");
+      return;
+    }
+
+    try {
+      const response = await api.post('/api/users/login', {
+        email,
+        senha,
+      });
+
+      const { user } = response.data;
+      authContext.login(user);
+      navigate("/Home");
+
+    } catch (error: any) {
+      setSenhaError(error.response?.data?.message || "Erro ao fazer login local.");
+      const novasTentativas = getTentativas() + 1;
+      localStorage.setItem("loginTentativas", novasTentativas.toString());
+      if (novasTentativas >= 5) {
+        const novasFalhas = getFalhas() + 1;
+        bloquearLogin(novasFalhas);
+      }
+    }
+  }, [email, senha, bloqueado, navigate, authContext, getTentativas, getFalhas]); // 3. Adicione todas as dependências aqui
+
+  // 4. O `useEffect` que estava com o aviso agora está correto, pois `handleLocalLogin` é uma dependência estável
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && !bloqueado) {
+        handleLocalLogin();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [bloqueado, handleLocalLogin]);
+
+  // Restante dos useEffects e funções
   useEffect(() => {
     const unlockTime = getUnlockTime();
     const now = Date.now();
@@ -62,7 +124,7 @@ const Login: React.FC = () => {
       }, restante);
       return () => clearTimeout(timeout);
     }
-  }, []);
+  }, [getUnlockTime]);
 
   useEffect(() => {
     if (!bloqueado || tempoRestante <= 0) return;
@@ -86,56 +148,6 @@ const Login: React.FC = () => {
     if (name === "senha") setSenha(value);
   };
 
-  const handleLocalLogin = async () => {
-    if (bloqueado) {
-      alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
-      return;
-    }
-    
-    setEmailError("");
-    setSenhaError("");
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !senha) {
-      if (!email) setEmailError("Digite seu e-mail.");
-      if (!senha) setSenhaError("Digite sua senha.");
-      return;
-    }
-    if (!emailRegex.test(email)) {
-      setEmailError("Digite um email válido.");
-      return;
-    }
-    if (senha.length < 6) {
-      setSenhaError("A senha deve conter pelo menos 6 caracteres.");
-      return;
-    }
-
-    try {
-      // Usando o caminho relativo, pois o baseURL já está no api.ts
-      const response = await api.post('/api/users/login', {
-        email,
-        senha,
-      });
-
-      const { user } = response.data; // A resposta só contém o objeto 'user'
-
-      // Deixa o AuthContext gerenciar o estado e o localStorage
-      authContext.login(user);
-
-      navigate("/Home");
-
-    } catch (error: any) {
-      setSenhaError(error.response?.data?.message || "Erro ao fazer login local.");
-      
-      const novasTentativas = getTentativas() + 1;
-      localStorage.setItem("loginTentativas", novasTentativas.toString());
-      if (novasTentativas >= 5) {
-        const novasFalhas = getFalhas() + 1;
-        bloquearLogin(novasFalhas);
-      }
-    }
-  };
-
   const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
     setSocialLoading(true);
     try {
@@ -152,8 +164,7 @@ const Login: React.FC = () => {
         }
       });
 
-      const { user } = response.data; // A resposta também só contém 'user'
-
+      const { user } = response.data;
       authContext.login(user);
       navigate("/Home");
 
@@ -185,7 +196,7 @@ const Login: React.FC = () => {
   };
 
   const handleReset = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault(); // Impede o comportamento padrão do link
+    e.preventDefault();
     if (!email) {
       setEmailError("Digite seu e-mail para redefinir a senha");
       return;
@@ -243,8 +254,8 @@ const Login: React.FC = () => {
             {senhaError && <p className="error"> {senhaError} </p>}
           </div>
           <div className="login-recuperar-senha">
-            <a 
-              href="#redefinir" 
+            <a
+              href="#redefinir"
               onClick={handleReset}
               style={{
                 textDecoration: 'none',

@@ -37,6 +37,10 @@ const Perfil = () => {
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  // --- NOVOS ESTADOS PARA O MERCADO PAGO ---
+  const [mercadopagoConnected, setMercadopagoConnected] = useState(false);
+  const [mercadopagoAccountId, setMercadopagoAccountId] = useState("");
+
   const formatCpf = (value: string) => {
     if (!value) return "";
     value = value.replace(/\D/g, "");
@@ -56,7 +60,6 @@ const Perfil = () => {
     return value;
   };
 
-  // --- NOVA E CORRETA FUNÇÃO DE FORMATAÇÃO DE TELEFONE ---
   const formatTelefone = (value: string) => {
     if (!value) return "";
     value = value.replace(/\D/g, "");
@@ -107,6 +110,12 @@ const Perfil = () => {
 
             setDadosOrganizacao(perfilData.dadosOrganizacao);
             setEditandoDadosAdicionais(false);
+
+            // --- VERIFICAÇÃO DE CONTA DO MERCADO PAGO ---
+            if (perfilData.mercadopago_account_id) {
+              setMercadopagoConnected(true);
+              setMercadopagoAccountId(perfilData.mercadopago_account_id);
+            }
           } else {
             setEditandoDadosAdicionais(true);
           }
@@ -207,7 +216,31 @@ const Perfil = () => {
     }
   };
 
+  // --- NOVA FUNÇÃO PARA CONECTAR O MERCADO PAGO ---
+  const handleConnectMercadoPago = async () => {
+    // Adicione esta verificação aqui
+    if (!user) {
+      alert("Usuário não encontrado. Por favor, faça login novamente.");
+      return;
+    }
 
+    try {
+      const response = await fetch(`${apiUrl}/api/mercadopago/connect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user._id })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        window.location.href = data.url; // Redireciona o usuário para a URL de autorização
+      } else {
+        alert(`Erro: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Erro ao conectar com Mercado Pago:", error);
+      alert("Ocorreu um erro ao iniciar a conexão com o Mercado Pago.");
+    }
+  };
 
   if (isLoading) return <div className="perfil-loading">Carregando perfil...</div>;
   if (!user) return <div className="perfil-error">Usuário não encontrado. Por favor, faça login.</div>;
@@ -485,6 +518,32 @@ const Perfil = () => {
               {editandoDadosAdicionais ? <FiCheck /> : <FiEdit2 />}
               {editandoDadosAdicionais ? "Salvar Dados Pessoais" : "Editar Dados Pessoais"}
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* NOVO: Seção para conexão com o Mercado Pago */}
+      <div className="perfil-content">
+        <div className="perfil-card">
+          <div className="perfil-header-secondary">
+            <FiShoppingBag className="perfil-tab-icon" />
+            <h3>Conexão Mercado Pago</h3>
+          </div>
+          <div className="perfil-tab-content">
+            {mercadopagoConnected ? (
+              <div className="perfil-connection-status connected">
+                <p>Sua conta do Mercado Pago está conectada!</p>
+                <p><strong>ID da Conta:</strong> {mercadopagoAccountId}</p>
+                {/* Implemente um botão de desconectar no futuro */}
+              </div>
+            ) : (
+              <div className="perfil-connection-status disconnected">
+                <p>Para vender ingressos e receber pagamentos, conecte sua conta do Mercado Pago.</p>
+                <button className="perfil-btn-primary" onClick={handleConnectMercadoPago}>
+                  Conectar ao Mercado Pago
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

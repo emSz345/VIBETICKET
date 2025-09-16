@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./style.css";
+import "./Input.css";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 interface InputProps {

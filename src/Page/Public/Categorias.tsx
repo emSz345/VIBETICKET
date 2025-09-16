@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Usaremos axios para facilitar as chamadas
+import axios from "axios";
+import { useSearchParams } from 'react-router-dom';
 import "./../../styles/Categorias.css";
+import NavBar3 from '../../components/sections/Home/NavBar3/NavBar3';
 
 // Importe as imagens dos estados
 import sp from "./../../assets/estados/estado-sp.jpg";
@@ -51,6 +53,10 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 // --- Componente Principal ---
 const Categorias: React.FC = () => {
+    // 1. Usa useSearchParams para gerenciar o estado do filtro na URL
+    const [searchParams, setSearchParams] = useSearchParams();
+    const estadoUrl = searchParams.get('estado') || '';
+
     // Estados para controlar os dados da API
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [estadosDisponiveis, setEstadosDisponiveis] = useState<Estado[]>([]);
@@ -58,11 +64,10 @@ const Categorias: React.FC = () => {
     const [carregandoEstados, setCarregandoEstados] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
 
-    // Estados para controlar os filtros e a UI
+    // Estado para controlar a UI
     const [filtrosAbertos, setFiltrosAbertos] = useState(false);
-    const [filtros, setFiltros] = useState<Filtros>({ estado: "" });
 
-    // 1. Busca os estados disponíveis quando o componente é montado
+    // 2. Busca os estados disponíveis quando o componente é montado
     useEffect(() => {
         const fetchEstados = async () => {
             try {
@@ -72,7 +77,7 @@ const Categorias: React.FC = () => {
 
                 const estadosCompletos = siglasDosEstados
                     .map(sigla => mapeamentoEstados[sigla.toUpperCase() as keyof typeof mapeamentoEstados])
-                    .filter(Boolean); // Filtra siglas que não estão no nosso mapa
+                    .filter(Boolean);
 
                 setEstadosDisponiveis(estadosCompletos);
             } catch (err) {
@@ -82,11 +87,10 @@ const Categorias: React.FC = () => {
                 setCarregandoEstados(false);
             }
         };
-
         fetchEstados();
-    }, []); // O array vazio [] garante que isso rode apenas uma vez
+    }, []);
 
-    // 2. Busca os eventos sempre que o filtro de estado mudar
+    // 3. Busca os eventos sempre que a URL com o filtro de estado mudar
     useEffect(() => {
         const fetchEventos = async () => {
             try {
@@ -94,8 +98,8 @@ const Categorias: React.FC = () => {
                 setErro(null);
 
                 const url = new URL(`${apiUrl}/api/eventos/aprovados`);
-                if (filtros.estado) {
-                    url.searchParams.append('estado', filtros.estado);
+                if (estadoUrl) {
+                    url.searchParams.append('estado', estadoUrl);
                 }
 
                 const response = await axios.get(url.toString());
@@ -107,23 +111,28 @@ const Categorias: React.FC = () => {
                 setCarregandoEventos(false);
             }
         };
-
         fetchEventos();
-    }, [filtros.estado]); // Roda sempre que `filtros.estado` mudar
+    }, [estadoUrl]); // <-- Roda sempre que o estado na URL mudar
 
     const handleEstadoClick = (estadoId: string) => {
-        setFiltros(prev => ({ ...prev, estado: prev.estado === estadoId ? "" : estadoId }));
+        // Se clicar no mesmo estado, remove o filtro. Caso contrário, define o novo filtro.
+        if (estadoUrl === estadoId) {
+            setSearchParams({});
+        } else {
+            setSearchParams({ estado: estadoId });
+        }
         setFiltrosAbertos(false); // Fecha o menu mobile ao selecionar
     };
 
     const limparFiltros = () => {
-        setFiltros({ estado: "" });
+        setSearchParams({});
     };
 
-    const estadoSelecionado = estadosDisponiveis.find(e => e.id === filtros.estado);
+    const estadoSelecionado = estadosDisponiveis.find(e => e.id === estadoUrl);
 
     return (
         <div className="categorias-container">
+            <NavBar3 />
             <div className="categorias-header">
                 <h1 className="categorias-titulo">
                     {estadoSelecionado ? `Eventos em ${estadoSelecionado.nome}` : "Todos os Eventos"}
@@ -138,7 +147,7 @@ const Categorias: React.FC = () => {
                 <div className="categorias-filtros-mobile">
                     <div className="categorias-filtros-conteudo">
                         <FiltrosContent
-                            filtros={filtros}
+                            filtros={{ estado: estadoUrl }}
                             estados={estadosDisponiveis}
                             onEstadoClick={handleEstadoClick}
                             onLimpar={limparFiltros}
@@ -151,7 +160,7 @@ const Categorias: React.FC = () => {
             <div className="categorias-layout">
                 <aside className="categorias-filtros-desktop">
                     <FiltrosContent
-                        filtros={filtros}
+                        filtros={{ estado: estadoUrl }}
                         estados={estadosDisponiveis}
                         onEstadoClick={handleEstadoClick}
                         onLimpar={limparFiltros}
@@ -166,9 +175,8 @@ const Categorias: React.FC = () => {
                         ) : erro ? (
                             <p className="categorias-erro">{erro}</p>
                         ) : eventos.length > 0 ? (
-                            <div className="lista-de-eventos"> {/* Usando uma classe para o grid de eventos */}
+                            <div className="lista-de-eventos">
                                 {eventos.map(evento => (
-                                    // Você pode substituir este div pelo seu componente de Card de Evento
                                     <div key={evento._id} className="evento-card-placeholder">
                                         <img src={`${apiUrl}/uploads/${evento.imagem}`} alt={evento.nome} />
                                         <h3>{evento.nome}</h3>
@@ -198,7 +206,7 @@ interface FiltrosContentProps {
     estados: Estado[];
     onEstadoClick: (estadoId: string) => void;
     onLimpar: () => void;
-    carregando: boolean; // Adicionado para mostrar feedback de carregamento
+    carregando: boolean;
 }
 
 const FiltrosContent: React.FC<FiltrosContentProps> = ({ filtros, estados, onEstadoClick, onLimpar, carregando }) => {
@@ -225,81 +233,9 @@ const FiltrosContent: React.FC<FiltrosContentProps> = ({ filtros, estados, onEst
                 <button onClick={onLimpar} className="categorias-filtro-btn categorias-filtro-btn-limpar">
                     Limpar Filtros
                 </button>
-                {/* O botão "Aplicar" foi removido pois a busca é automática ao clicar no estado */}
             </div>
         </>
     );
 };
 
 export default Categorias;
-
-//-----Posivel adição-----//
-
-// import ac from "./../../assets/estados/estado-ac.jpg";
-// import al from "./../../assets/estados/estado-al.jpg";
-// import ap from "./../../assets/estados/estado-ap.jpg";
-// import am from "./../../assets/estados/estado-am.jpg";
-// import ba from "./../../assets/estados/estado-ba.jpg";
-// import ce from "./../../assets/estados/estado-ce.jpg";
-// import df from "./../../assets/estados/estado-df.jpg";
-// import es from "./../../assets/estados/estado-es.jpg";
-// import go from "./../../assets/estados/estado-go.jpg";
-// import ma from "./../../assets/estados/estado_mrn.jpg"; // Mantive seu nome original
-// import mt from "./../../assets/estados/estado-mt.jpg";
-// import ms from "./../../assets/estados/estado-ms.jpg";
-// import mg from "./../../assets/estados/estado-mg.jpg";
-// import pa from "./../../assets/estados/estado-pa.jpg"; // Você tinha um nome diferente aqui, padronizei
-// import pb from "./../../assets/estados/estado-pb.jpg";
-// import pr from "./../../assets/estados/estados-prn.jpg"; // Mantive seu nome original
-// import pe from "./../../assets/estados/estado-pe.jpg";
-// import pi from "./../../assets/estados/estado-pi.jpg";
-// import rj from "./../../assets/estados/estados-rj.jpg";
-// import rn from "./../../assets/estados/estado-rn.jpg";
-// import rs from "./../../assets/estados/estado_rgs.jpg"; // Mantive seu nome original
-// import ro from "./../../assets/estados/estado-ro.jpg";
-// import rr from "./../../assets/estados/estado-rr.jpg";
-// import sc from "./../../assets/estados/estado_sc.jpg"; // Mantive seu nome original
-// import sp from "./../../assets/estados/estado-sp.jpg";
-// import se from "./../../assets/estados/estado-se.jpg";
-// import to from "./../../assets/estados/estado-to.jpg";
-
-
-// // Dicionário completo de estados para traduzir as siglas vindas do backend
-// const mapeamentoEstados = {
-//     // Região Norte
-//     AC: { nome: "Acre", img: ac, id: "AC" },
-//     AP: { nome: "Amapá", img: ap, id: "AP" },
-//     AM: { nome: "Amazonas", img: am, id: "AM" },
-//     PA: { nome: "Pará", img: pa, id: "PA" },
-//     RO: { nome: "Rondônia", img: ro, id: "RO" },
-//     RR: { nome: "Roraima", img: rr, id: "RR" },
-//     TO: { nome: "Tocantins", img: to, id: "TO" },
-
-//     // Região Nordeste
-//     AL: { nome: "Alagoas", img: al, id: "AL" },
-//     BA: { nome: "Bahia", img: ba, id: "BA" },
-//     CE: { nome: "Ceará", img: ce, id: "CE" },
-//     MA: { nome: "Maranhão", img: ma, id: "MA" },
-//     PB: { nome: "Paraíba", img: pb, id: "PB" },
-//     PE: { nome: "Pernambuco", img: pe, id: "PE" },
-//     PI: { nome: "Piauí", img: pi, id: "PI" },
-//     RN: { nome: "Rio Grande do Norte", img: rn, id: "RN" },
-//     SE: { nome: "Sergipe", img: se, id: "SE" },
-    
-//     // Região Centro-Oeste
-//     DF: { nome: "Distrito Federal", img: df, id: "DF" },
-//     GO: { nome: "Goiás", img: go, id: "GO" },
-//     MT: { nome: "Mato Grosso", img: mt, id: "MT" },
-//     MS: { nome: "Mato Grosso do Sul", img: ms, id: "MS" },
-
-//     // Região Sudeste
-//     ES: { nome: "Espírito Santo", img: es, id: "ES" },
-//     MG: { nome: "Minas Gerais", img: mg, id: "MG" },
-//     RJ: { nome: "Rio de Janeiro", img: rj, id: "RJ" },
-//     SP: { nome: "São Paulo", img: sp, id: "SP" },
-
-//     // Região Sul
-//     PR: { nome: "Paraná", img: pr, id: "PR" },
-//     RS: { nome: "Rio Grande do Sul", img: rs, id: "RS" },
-//     SC: { nome: "Santa Catarina", img: sc, id: "SC" },
-// };

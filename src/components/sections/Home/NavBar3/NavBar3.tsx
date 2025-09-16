@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { FaPlusCircle, FaShoppingCart, FaSearch, FaBars, FaTimes } from 'react-icons/fa';
 import './NavBar3.css';
 import logoLight from '../../../../assets/logo.png';
@@ -16,14 +16,62 @@ import {
   FaUserShield,
 } from 'react-icons/fa';
 
+interface Event {
+  _id: string;
+  nome: string;
+  imagem: string;
+  cidade: string;
+  estado: string;
+  dataInicio: string;
+  horaInicio: string;
+}
+
+interface SearchResultsProps {
+  results: Event[];
+  onSelect: () => void;
+  apiUrl: string;
+}
+
+const SearchResults: React.FC<SearchResultsProps> = ({ results, onSelect, apiUrl }) => {
+  if (results.length === 0) return null;
+
+  return (
+    <div className="search-results-container">
+      {results.map(event => (
+        <Link 
+          key={event._id} 
+          to={`/evento/${event._id}`} 
+          className="search-result-item"
+          onClick={onSelect}
+        >
+          <img 
+            src={`${apiUrl}/uploads/${event.imagem}`} 
+            alt={event.nome}
+            className="search-result-image"
+          />
+          <div className="search-result-info">
+            <h4>{event.nome}</h4>
+            <p>{event.cidade} - {event.estado}</p>
+            <p>{new Date(event.dataInicio).toLocaleDateString('pt-BR')} às {event.horaInicio}</p>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+};
+
 export default function NavBar3() {
   const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<Event[]>([]);
+  const [showResults, setShowResults] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -38,19 +86,46 @@ export default function NavBar3() {
       return `${apiUrl}/uploads/blank_profile.png`;
     }
 
-    // Se já é uma URL completa (http ou https)
     if (/^https?:\/\//.test(user.imagemPerfil)) {
       return user.imagemPerfil;
     }
 
-    // Se começa com /uploads (caminho relativo)
     if (user.imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${user.imagemPerfil}`;
     }
 
-    // Padrão para imagens locais
     return `${apiUrl}/uploads/${user.imagemPerfil}`;
   };
+
+  // Função para buscar eventos
+  const fetchSearchResults = useCallback(async (term: string) => {
+    if (!term.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${apiUrl}/api/eventos/aprovados?search=${encodeURIComponent(term)}`);
+      const data = await response.json();
+      setSearchResults(data.slice(0, 5));
+    } catch (error) {
+      console.error('Erro ao buscar eventos:', error);
+      setSearchResults([]);
+    }
+  }, [apiUrl]);
+
+  // Debounce para evitar muitas requisições
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchTerm) {
+        fetchSearchResults(searchTerm);
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, fetchSearchResults]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -69,10 +144,32 @@ export default function NavBar3() {
       ) {
         setDropdownOpen(false);
       }
+
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value) {
+      setShowResults(true);
+    }
+  };
+
+  const handleSearchFocus = () => {
+    if (searchTerm) {
+      setShowResults(true);
+    }
+  };
+
+  const handleResultSelect = () => {
+    setShowResults(false);
+    setSearchTerm('');
+  };
 
   return (
     <header className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
@@ -82,9 +179,23 @@ export default function NavBar3() {
       </Link>
 
       {/* Busca (desktop apenas) */}
-      <div className="nav__search hide-mobile">
+      <div className="nav__search hide-mobile" ref={searchRef}>
         <FaSearch aria-hidden />
-        <input type="text" placeholder="Buscar eventos, artistas..." />
+        <input 
+          className='nav_input' 
+          type="text" 
+          placeholder="Buscar eventos, artistas..." 
+          value={searchTerm}
+          onChange={handleSearchChange}
+          onFocus={handleSearchFocus}
+        />
+        {showResults && (
+          <SearchResults 
+            results={searchResults} 
+            onSelect={handleResultSelect}
+            apiUrl={apiUrl || ''}
+          />
+        )}
       </div>
 
       {/* Ações (desktop) */}

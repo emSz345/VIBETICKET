@@ -92,16 +92,71 @@ function CriarEventos() {
   };
   const handleFecharModalDoacao = () => setModalDoacaoAberto(false);
   const handleFinalizarDoacao = () => {
+    // Lógica de validação do valor da doação
     const valorNumerico = parseFloat(valorDoacaoTemporario.replace(',', '.'));
     if (valorDoacaoTemporario && valorNumerico > 0) {
       setValorDoacao(valorDoacaoTemporario);
       setQuerDoar(true);
+      // Chama a nova função para iniciar o pagamento do Mercado Pago
+      criarPreferenciaDePagamento(valorNumerico); 
     } else {
       setValorDoacao('');
       setQuerDoar(false);
     }
     handleFecharModalDoacao();
   };
+
+  const criarPreferenciaDePagamento = async (valor: number) => {
+    const userDataString = localStorage.getItem('user');
+    if (!userDataString) {
+      alert('Usuário não autenticado. Por favor, faça login para fazer uma doação.');
+      navigate('/login');
+      return;
+    }
+  
+    const usuario = JSON.parse(userDataString);
+    const userId = usuario?._id;
+  
+    if (!userId) {
+      alert('Não foi possível encontrar o ID do usuário. Por favor, faça login novamente.');
+      return;
+    }
+  
+    // Corrigido: Envie os campos diretamente como o backend espera
+    const doacaoData = {
+      valor: valor,
+      title: 'Doação para instituições de apoio', // Título para a doação
+      userId: userId, // Envia o ID do usuário para o backend
+    };
+  
+    try {
+      // Faz a requisição POST para a rota do backend do Mercado Pago
+      const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(doacaoData),
+      });
+  
+      // Se a resposta não for OK, lança um erro com a mensagem do servidor
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Erro do servidor: ${response.status}`);
+      }
+  
+      const responseData = await response.json();
+      const url = responseData.preference_url; // Pega a URL de pagamento do Mercado Pago
+      
+      // Redireciona o usuário para a página de pagamento
+      window.open(url, '_blank'); 
+  
+    } catch (error: any) {
+      console.error('Erro na doação:', error);
+      alert(error.message);
+    }
+  };
+
   const handleRemoverDoacao = () => {
     setValorDoacao('');
     setQuerDoar(false);

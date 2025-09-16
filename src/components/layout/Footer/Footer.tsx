@@ -3,7 +3,14 @@ import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FaXTwitter } from 'react-icons/fa6';
 import { Link } from "react-router-dom";
 import "./Footer.css";
+import { HashLink } from 'react-router-hash-link';
 import logo from '../../../assets/logo.png';
+
+// Importe os SVGs de pagamento
+import pix from '../../../assets/SVGs/ic-payment-pix.svg';
+import boleto from '../../../assets/SVGs/ic-payment-boleto.svg';
+import visa from '../../../assets/SVGs/ic-payment-visa.svg';
+import mastercard from '../../../assets/SVGs/ic-payment-master-card.svg';
 
 const Footer: React.FC = () => {
   return (
@@ -28,11 +35,21 @@ const Footer: React.FC = () => {
           <div className="footer-section">
             <h4 className="footer-section-title">Explore</h4>
             <ul className="footer-section-list">
-              <li className="footer-section-item"><Link to="/eventos/rock" className="footer-link">Eventos de Rock</Link></li>
-              <li className="footer-section-item"><Link to="/eventos/pop" className="footer-link">Eventos de Pop</Link></li>
-              <li className="footer-section-item"><Link to="/eventos/funk" className="footer-link">Eventos de Funk</Link></li>
-              <li className="footer-section-item"><Link to="/eventos/eletronica" className="footer-link">Eventos Eletrônicos</Link></li>
-              <li className="footer-section-item"><Link to="/eventos" className="footer-link footer-link-highlight">Todos os Eventos →</Link></li>
+              <li className="footer-section-item">
+                <HashLink to="#rock" className="footer-link">Eventos de Rock</HashLink>
+              </li>
+              <li className="footer-section-item">
+                <HashLink to="#pop" className="footer-link">Eventos de Pop</HashLink>
+              </li>
+              <li className="footer-section-item">
+                <HashLink to="#funk" className="footer-link">Eventos de Funk</HashLink>
+              </li>
+              <li className="footer-section-item">
+                <HashLink to="#eletronica" className="footer-link">Eventos Eletrônicos</HashLink>
+              </li>
+              <li className="footer-section-item">
+                <Link to="/categorias" className="footer-link footer-link-highlight">Todos os Eventos →</Link>
+              </li>
             </ul>
           </div>
 
@@ -40,21 +57,20 @@ const Footer: React.FC = () => {
           <div className="footer-section">
             <h4 className="footer-section-title">Por Local</h4>
             <ul className="footer-section-list">
-              <li className="footer-section-item"><Link to="/eventos/sao-paulo" className="footer-link">São Paulo</Link></li>
-              <li className="footer-section-item"><Link to="/eventos/rio-de-janeiro" className="footer-link">Rio de Janeiro</Link></li>
-              <li className="footer-section-item"><Link to="/eventos/minas-gerais" className="footer-link">Minas Gerais</Link></li>
-              <li className="footer-section-item"><Link to="/eventos/parana" className="footer-link">Paraná</Link></li>
-              <li className="footer-section-item"><a
-                href="#estados"
-                className="footer-link footer-link-highlight"
-                onClick={(e) => {
-                  e.preventDefault();
-                  const element = document.getElementById('estados');
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}> Ver todos os estados →
-              </a>
+              <li className="footer-section-item">
+                <Link to="/categorias?estado=SP" className="footer-link">São Paulo</Link>
+              </li>
+              <li className="footer-section-item">
+                <Link to="/categorias?estado=RJ" className="footer-link">Rio de Janeiro</Link>
+              </li>
+              <li className="footer-section-item">
+                <Link to="/categorias?estado=MG" className="footer-link">Minas Gerais</Link>
+              </li>
+              <li className="footer-section-item">
+                <Link to="/categorias?estado=PR" className="footer-link">Paraná</Link>
+              </li>
+              <li className="footer-section-item">
+                <Link to="/categorias" className="footer-link footer-link-highlight">Ver todos os estados →</Link>
               </li>
             </ul>
           </div>
@@ -79,9 +95,20 @@ const Footer: React.FC = () => {
               <li className="footer-section-item"><Link to="/reembolsos" className="footer-link">Política de Reembolso</Link></li>
             </ul>
           </div>
+
+          {/* Seção 5 - Métodos de Pagamento */}
+          <div className="footer-section">
+            <h4 className="footer-section-title">Métodos de pagamento</h4>
+            <div className="payment-icons-container">
+              <img src={pix} alt="Pagamento via Pix" className="payment-icon" />
+              <img src={boleto} alt="Pagamento via Boleto" className="payment-icon" />
+              <img src={visa} alt="Pagamento via Visa" className="payment-icon" />
+              <img src={mastercard} alt="Pagamento via Mastercard" className="payment-icon" />
+            </div>
+          </div>
         </div>
 
-        {/* Rodapé inferior */}
+        {/* Rodapé inferior (somente com direitos autorais) */}
         <div className="footer-bottom">
           <p className="footer-copyright">© {new Date().getFullYear()} NaVibe. Todos os direitos reservados.</p>
         </div>

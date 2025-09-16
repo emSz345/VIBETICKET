@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "/static/css/main.bab86b60.css",
+    "main.js": "/static/js/main.2e3f646c.js",
+    "static/js/453.4bbed1e5.chunk.js": "/static/js/453.4bbed1e5.chunk.js",
+    "static/media/logo-chatBot-with.png": "/static/media/logo-chatBot-with.2972339d1991a0a55cc0.png",
+    "static/media/estado-mg.jpg": "/static/media/estado-mg.040de300a15ca73bf415.jpg",
+    "static/media/estado-sp.jpg": "/static/media/estado-sp.421e91981328ae2ed739.jpg",
+    "static/media/estados-rj.jpg": "/static/media/estados-rj.77d0c38c410abc81d00b.jpg",
+    "static/media/estados-prn.jpg": "/static/media/estados-prn.673047ed087d58dbe78a.jpg",
+    "static/media/estado_rgs.jpg": "/static/media/estado_rgs.872e46a24514b7878b99.jpg",
+    "static/media/estado_pr.jpg": "/static/media/estado_pr.05aacfb60ed1d550633f.jpg",
+    "static/media/logo-blue1.png": "/static/media/logo-blue1.9f7c2fba14038923feb7.png",
+    "static/media/logo.png": "/static/media/logo.934398bcb98c9c438253.png",
+    "static/media/estado_df.jpg": "/static/media/estado_df.56e49304f9812a1f863a.jpg",
+    "static/media/estado_sc.jpg": "/static/media/estado_sc.1d37347c657011a0e3c5.jpg",
+    "static/media/logo-chatbot.png": "/static/media/logo-chatbot.4d381d3ecd5c8c4d0bed.png",
+    "static/media/Cookie.png": "/static/media/Cookie.7e02f6198157cceda152.png",
+    "static/media/estado_mrn.jpg": "/static/media/estado_mrn.5c86873024baab97e6c9.jpg",
+    "static/media/logo-google.png": "/static/media/logo-google.2b6e39172496967e0d88.png",
+    "static/media/logo-facebook.png": "/static/media/logo-facebook.785b5e560523c05527c7.png",
+    "static/media/Logo_MP.svg": "/static/media/Logo_MP.8dffb0399380168436e0baedea791965.svg",
+    "static/media/help.png": "/static/media/help.c446fa62193924c67f88.png",
+    "static/media/ic-payment-pix.svg": "/static/media/ic-payment-pix.c8883b69e93b3ddb1f4a710e71a4b27b.svg",
+    "static/media/ic-payment-visa.svg": "/static/media/ic-payment-visa.47476f23a1abc0ac0cebfaed92e610ae.svg",
+    "static/media/ic-payment-master-card.svg": "/static/media/ic-payment-master-card.4ed04a290172024b0aaa5b15a1d91161.svg",
+    "index.html": "/index.html",
+    "static/media/ic-payment-boleto.svg": "/static/media/ic-payment-boleto.c4c649a00a96ef5cd2780d16e44ffd16.svg",
+    "main.bab86b60.css.map": "/static/css/main.bab86b60.css.map",
+    "main.2e3f646c.js.map": "/static/js/main.2e3f646c.js.map",
+    "453.4bbed1e5.chunk.js.map": "/static/js/453.4bbed1e5.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bab86b60.css",
+    "static/js/main.2e3f646c.js"
+  ]
+}

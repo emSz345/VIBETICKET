@@ -5,6 +5,7 @@
   max-width: 1200px;
   width: 90%;
   margin: 0 auto;
+  
 }
 
 .cidades-title {
@@ -22,6 +23,7 @@
   padding: 10px 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  cursor: pointer;
 }
 
 .cidades-grid::-webkit-scrollbar {

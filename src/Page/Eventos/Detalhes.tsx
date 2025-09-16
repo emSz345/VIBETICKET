@@ -12,6 +12,7 @@ import { Evento } from '../../components/sections/Home/home-eventos/evento';
 import { CarrinhoService } from '../../services/carrinhoService';
 import { CarrinhoItem } from "../../types/carrinho";
 import { useAuth } from "../../Hook/AuthContext";
+import NavBar3 from "../../components/sections/Home/NavBar3/NavBar3";
 
 // ... (todas as suas interfaces permanecem as mesmas) ...
 interface CriadorUsuario {
@@ -319,6 +320,7 @@ const Detalhes: React.FC = () => {
             )}
 
             <div className="detalhes-container">
+            <NavBar3 />
                  {/* ... (todo o seu JSX existente, sem alterações) ... */}
                  <div className="detalhes-header">
                     <div className="detalhes-header-content">
