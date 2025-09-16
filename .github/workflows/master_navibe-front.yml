@@ -66,4 +66,3 @@ jobs:
           app-name: 'navibe-front'
           slot-name: 'Production'
           package: .
-
