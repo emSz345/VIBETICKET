@@ -50,7 +50,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-package
-          path: ./
+          # Ação de download irá criar a pasta 'dist-package'
+          # e colocar o conteúdo de 'build' dentro dela.
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -65,4 +66,4 @@ jobs:
         with:
           app-name: 'navibe-front'
           slot-name: 'Production'
-          package: ./build
+          package: dist-package/build
