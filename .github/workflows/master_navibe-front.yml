@@ -23,13 +23,6 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: npm install, build, and test
-        run: |
-          npm install --legacy-peer-deps
-          npm run build
-        env:
-          CI: false
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -52,9 +45,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D91EAEDD434A46EFB8411E91872C03FE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_59F82AC9DB764B688C5D8FF4D9CA135F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3B6618C8E53A4548A269D647DD8A72B1 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5117E8D78E8D46A3AD65C30D3A9B6BD1 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AB09339800D44EB8B9307A7A932DFA62 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2B48B6F54A09432FA4222A1AF01E45F9 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -63,9 +56,4 @@ jobs:
           app-name: 'navibe-front'
           slot-name: 'Production'
           package: .
-
           
-
-
-
-
