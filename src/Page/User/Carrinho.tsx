@@ -18,7 +18,7 @@ const Carrinho = () => {
   // Removido o estado de preferenceId e o import da Wallet, pois não serão mais usados
 
   // Certifique-se de que este token é de ambiente de teste
-  initMercadoPago('APP_USR-2c36cc9f-ba86-404f-bf94-4c95deb392e3');
+  initMercadoPago('APP_USR-ea824941-70e7-434a-9fd9-c40a1c1bcb46');
 
   const [carrinhoShowSuccess, _setCarrinhoShowSuccess] = useState(false);
   const navigate = useNavigate();
@@ -244,5 +244,6 @@ const Carrinho = () => {
     </>
   );
 };
+
 
 export default Carrinho;
