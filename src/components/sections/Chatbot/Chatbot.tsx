@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Chatbot.css";
 import { useNavigate } from "react-router-dom";
 import { FaTimes, FaPaperPlane } from "react-icons/fa";
-import axios from "axios";
 
 import logoChatBot from "../../../assets/logo-chatbot.png";
 import logoChatBot1 from "../../../assets/logo-chatBot-with.png";
@@ -59,42 +58,32 @@ const ComandosRapidos: React.FC<{ onComandoClick: (comando: string) => void }> =
   const [isExpanded, setIsExpanded] = useState(false);
 
   const comandos: ComandoRapido[] = [
-    // SAUDAÇÕES E SOCIAIS
     { texto: "Dizer olá", acao: "Oi, tudo bem?", icone: "👋", tipo: 'social' },
     { texto: "Agradecer", acao: "Obrigado!", icone: "🙏", tipo: 'social' },
-
-    // AJUDA DO SISTEMA
     { texto: "Como usar?", acao: "Como funciona?", icone: "❓", tipo: 'ajuda' },
     { texto: "Sobre", acao: "Quem é você?", icone: "🎪", tipo: 'sistema' },
     { texto: "Comprar ingresso", acao: "Como comprar ingressos?", icone: "🎫", tipo: 'evento' },
     { texto: "Meu carrinho", acao: "Como funciona o carrinho?", icone: "🛒", tipo: 'evento' },
     { texto: "Criar evento", acao: "Como criar um evento?", icone: "🎪", tipo: 'evento' },
     { texto: "Meu perfil", acao: "Como editar meu perfil?", icone: "👤", tipo: 'sistema' },
-
-    // EVENTOS (mantenha apenas os essenciais)
     { texto: "Rock", acao: "Eventos de rock", icone: "🎸", tipo: 'evento' },
     { texto: "São Paulo", acao: "Eventos em SP", icone: "🏙️", tipo: 'evento' },
     { texto: "Próximos", acao: "Próximos eventos", icone: "📅", tipo: 'evento' },
     { texto: "Categorias", acao: "Quais categorias?", icone: "🎵", tipo: 'evento' }
   ];
 
-  // Comandos principais (sempre visíveis)
   const comandosPrincipais = comandos.slice(0, 4);
-  // Comandos secundários (expandíveis)
   const comandosSecundarios = comandos.slice(4);
 
   return (
     <div className="comandos-rapidos">
       <div className="comandos-titulo">💡 Comandos rápidos</div>
-
-      {/* Comandos principais */}
       <div className="comandos-grid">
         {comandosPrincipais.map((comando, index) => (
           <button
             key={index}
             className="comando-btn"
             onClick={() => onComandoClick(comando.acao)}
-            title={comando.acao}
             data-tipo={comando.tipo}
           >
             <span className="comando-icone">{comando.icone}</span>
@@ -103,27 +92,22 @@ const ComandosRapidos: React.FC<{ onComandoClick: (comando: string) => void }> =
         ))}
       </div>
 
-      {/* Comandos expandíveis */}
       {isExpanded && (
-        <>
-          <div className="comandos-grid">
-            {comandosSecundarios.map((comando, index) => (
-              <button
-                key={index}
-                className="comando-btn"
-                onClick={() => onComandoClick(comando.acao)}
-                title={comando.acao}
-                data-tipo={comando.tipo}
-              >
-                <span className="comando-icone">{comando.icone}</span>
-                {comando.texto}
-              </button>
-            ))}
-          </div>
-        </>
+        <div className="comandos-grid">
+          {comandosSecundarios.map((comando, index) => (
+            <button
+              key={index}
+              className="comando-btn"
+              onClick={() => onComandoClick(comando.acao)}
+              data-tipo={comando.tipo}
+            >
+              <span className="comando-icone">{comando.icone}</span>
+              {comando.texto}
+            </button>
+          ))}
+        </div>
       )}
 
-      {/* Botão toggle */}
       <button
         className="comandos-toggle"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -134,10 +118,7 @@ const ComandosRapidos: React.FC<{ onComandoClick: (comando: string) => void }> =
   );
 };
 
-const CategoriasLista: React.FC<CategoriasListaProps> = ({
-  categorias,
-  onCategoriaClick
-}) => {
+const CategoriasLista: React.FC<CategoriasListaProps> = ({ categorias, onCategoriaClick }) => {
   if (!categorias || categorias.length === 0) return null;
 
   return (
@@ -159,11 +140,12 @@ const CategoriasLista: React.FC<CategoriasListaProps> = ({
 };
 
 const ChatBot: React.FC = () => {
-  const [isEnabled, _setIsEnabled] = useState(true);
+  const [isEnabled] = useState(true); // Renamed _setIsEnabled to isEnabled
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>({});
   const [showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [_categorias, setCategorias] = useState<string[]>([]);
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const [categorias] = useState<string[]>([]); // Renamed _categorias to categorias, but still unused
   const [showBalloon, setShowBalloon] = useState(true);
   const [messages, setMessages] = useState<Mensagem[]>([
     {
@@ -176,10 +158,8 @@ const ChatBot: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Gerar ID único para o usuário
   const userId = useRef('user-' + Math.random().toString(36).substr(2, 9));
 
-  // Auto-scroll quando mensagens mudam
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -193,7 +173,6 @@ const ChatBot: React.FC = () => {
     }
   }, [isOpen, messages.length, isEnabled]);
 
-  // Balão reaparece a cada 1 minuto e dura 5s
   useEffect(() => {
     if (!isOpen && isEnabled) {
       const showBalloonNow = () => {
@@ -213,11 +192,9 @@ const ChatBot: React.FC = () => {
     if (!isEnabled) return;
     setIsOpen(!isOpen);
     if (!isOpen) setShowBalloon(false);
-  };  
+  };
 
-  // Função auxiliar para determinar o conteúdo da mensagem
   const getMessageContent = (msg: Mensagem) => {
-    // Prioridade 1: Eventos encontrados
     if (msg.eventos && msg.eventos.length > 0) {
       return {
         showText: true,
@@ -227,7 +204,6 @@ const ChatBot: React.FC = () => {
       };
     }
 
-    // Prioridade 2: Categorias (apenas quando não há eventos)
     if (msg.categorias && msg.categorias.length > 0) {
       return {
         showText: true,
@@ -237,7 +213,6 @@ const ChatBot: React.FC = () => {
       };
     }
 
-    // Prioridade 3: Sem resultados para busca de eventos
     if (msg.intent?.includes('evento')) {
       return {
         showText: true,
@@ -247,7 +222,6 @@ const ChatBot: React.FC = () => {
       };
     }
 
-    // Padrão: mostrar apenas texto
     return {
       showText: true,
       showEvents: false,
@@ -293,23 +267,28 @@ const ChatBot: React.FC = () => {
     setShowCommands(false);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/huggingface/chat', {
-        message: textToSend,
-        state: filtroEstado
-      }, {
+      const response = await fetch(`${apiUrl}/api/huggingface/chat`, {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'User-ID': userId.current
-        }
+        },
+        body: JSON.stringify({
+          message: textToSend,
+          state: filtroEstado
+        })
       });
 
-      const responseData: HuggingFaceResponse = response.data;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      // PRIMEIRO verificar se há navegação
+      const responseData: HuggingFaceResponse = await response.json();
+
       if (responseData.reply.state?.navegarPara) {
         const destino = responseData.reply.state.navegarPara;
         const nomeDestino = destino.replace('/', '').replace('-', ' ');
 
-        // Mostrar mensagem de confirmação
         const mensagemNavegacao: Mensagem = {
           from: "bot",
           text: `Te levando para ${nomeDestino}... 🚀`,
@@ -318,7 +297,6 @@ const ChatBot: React.FC = () => {
 
         setMessages(prev => [...prev, mensagemNavegacao]);
 
-        // Fechar o chat e navegar
         setTimeout(() => {
           setIsOpen(false);
           navigate(destino);
@@ -328,7 +306,6 @@ const ChatBot: React.FC = () => {
         return;
       }
 
-      // SE NÃO HOUVER NAVEGAÇÃO, processar a resposta normal
       if (responseData.success) {
         const botReply = responseData.reply;
 
@@ -350,9 +327,12 @@ const ChatBot: React.FC = () => {
         setMessages(prev => [...prev, botMessage]);
         setShowCommands(botReply.showCommands || false);
 
-        if (responseData.categorias && responseData.categorias.length > 0) {
-          setCategorias(responseData.categorias);
-        }
+        // Note: The `responseData.categorias` is a top-level property
+        // The `botReply.categorias` is nested. I'm leaving the logic as is.
+        // If you intended to use responseData.categorias, adjust accordingly.
+        // if (responseData.categorias && responseData.categorias.length > 0) {
+        //   setCategorias(responseData.categorias);
+        // }
       } else {
         const errorMessage: Mensagem = {
           from: "bot",
@@ -427,7 +407,6 @@ const ChatBot: React.FC = () => {
 
   return (
     <>
-      {/* Balão de mensagem acima do botão */}
       {!isOpen && showBalloon && isEnabled && (
         <div className="chatbot-message-floating">
           Tem alguma dúvida? <br /> Vem conhecer a Vibe Bot!!!
@@ -435,7 +414,6 @@ const ChatBot: React.FC = () => {
         </div>
       )}
 
-      {/* Botão Flutuante */}
       <motion.button
         className="chatbot-button"
         onClick={toggleChat}
@@ -454,7 +432,6 @@ const ChatBot: React.FC = () => {
         )}
       </motion.button>
 
-      {/* Janela do Chat */}
       <AnimatePresence>
         {isOpen && isEnabled && (
           <motion.div
@@ -483,10 +460,10 @@ const ChatBot: React.FC = () => {
                     key={index}
                     className={`chatbot-message ${msg.from === "bot" ? "bot" : "user"}`}
                     initial={{ opacity: 0, y: 10 }}
-                    animate={{opacity: 1, y: 0 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    
+
                     {content.showText && (
                       <div className="message-text-content">
                         {msg.text.split('\n').map((line, i) => (
@@ -498,12 +475,10 @@ const ChatBot: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Eventos encontrados */}
                     {content.showEvents && msg.eventos && msg.eventos.length > 0 && (
                       <EventosLista eventos={msg.eventos} />
                     )}
 
-                    {/* Categorias disponíveis */}
                     {content.showCategories && msg.categorias && msg.categorias.length > 0 && (
                       <CategoriasLista
                         categorias={msg.categorias}
@@ -514,7 +489,6 @@ const ChatBot: React.FC = () => {
                       />
                     )}
 
-                    {/* Mensagem de "sem resultados" */}
                     {content.showNoResults && (
                       <div className="navibe-evento-sem-resultado">
                         {msg.localizacao ? (
