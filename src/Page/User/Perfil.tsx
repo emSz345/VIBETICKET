@@ -1,7 +1,9 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
-import { FiEdit2, FiCheck, FiUser, FiShoppingBag, FiCalendar, FiPhone, FiMail, FiCamera } from "react-icons/fi";
+import { FiEdit2, FiCheck, FiUser, FiCalendar, FiPhone, FiMail, FiCamera } from "react-icons/fi";
 import { useAuth } from "../../Hook/AuthContext";
+import { TbPlugConnected } from "react-icons/tb";
 import "../../styles/Perfil.css";
+import { FaUserEdit } from "react-icons/fa";
 
 const Perfil = () => {
   const { user, isLoading, updateUser } = useAuth();
@@ -252,6 +254,33 @@ const Perfil = () => {
         <p>Gerencie suas informações pessoais</p>
       </div>
 
+      {/* Seção de Conexão com o Mercado Pago - MOVIDA E AGORA TEM LARGURA TOTAL */}
+      <div className="perfil-card full-width">
+        <div className="perfil-header-secondary">
+          <TbPlugConnected className="perfil-tab-icon" />
+          <h3>Conexão Mercado Pago</h3>
+        </div>
+        <div className="perfil-tab-content">
+          {mercadopagoConnected ? (
+            <div className="perfil-connection-status connected">
+              <p>Sua conta do Mercado Pago está conectada!</p>
+              <p><strong>ID da Conta:</strong> {mercadopagoAccountId}</p>
+            </div>
+          ) : (
+            <div className="perfil-connection-status disconnected">
+              <p>Para vender ingressos e receber pagamentos, conecte sua conta do Mercado Pago.</p>
+              <p className="perfil-notice">
+                <strong>Atenção:</strong> A emissão de notas fiscais será realizada automaticamente a partir dos dados cadastrados nesta conta.
+              </p>
+              <button className="perfil-btn-primary" onClick={handleConnectMercadoPago}>
+                Conectar ao Mercado Pago
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* O resto do conteúdo em duas colunas como no formato que você mandou */}
       <div className="perfil-content">
         <div className="perfil-left">
           <div className="perfil-card">
@@ -320,7 +349,7 @@ const Perfil = () => {
         <div className="perfil-right">
           <div className="perfil-card">
             <div className="perfil-header-secondary">
-              <FiShoppingBag className="perfil-tab-icon" />
+              <FaUserEdit className="perfil-tab-icon" />
               <h3>Dados Pessoais</h3>
             </div>
 
@@ -518,32 +547,6 @@ const Perfil = () => {
               {editandoDadosAdicionais ? <FiCheck /> : <FiEdit2 />}
               {editandoDadosAdicionais ? "Salvar Dados Pessoais" : "Editar Dados Pessoais"}
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* NOVO: Seção para conexão com o Mercado Pago */}
-      <div className="perfil-content">
-        <div className="perfil-card">
-          <div className="perfil-header-secondary">
-            <FiShoppingBag className="perfil-tab-icon" />
-            <h3>Conexão Mercado Pago</h3>
-          </div>
-          <div className="perfil-tab-content">
-            {mercadopagoConnected ? (
-              <div className="perfil-connection-status connected">
-                <p>Sua conta do Mercado Pago está conectada!</p>
-                <p><strong>ID da Conta:</strong> {mercadopagoAccountId}</p>
-                {/* Implemente um botão de desconectar no futuro */}
-              </div>
-            ) : (
-              <div className="perfil-connection-status disconnected">
-                <p>Para vender ingressos e receber pagamentos, conecte sua conta do Mercado Pago.</p>
-                <button className="perfil-btn-primary" onClick={handleConnectMercadoPago}>
-                  Conectar ao Mercado Pago
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>

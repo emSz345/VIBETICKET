@@ -4,8 +4,8 @@ import './NavBar3.css';
 import logoLight from '../../../../assets/logo.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../Hook/AuthContext';
+import { useCart } from '../../../../Hook/CartContext'; // Importe o hook do carrinho
 import { TfiMenu } from "react-icons/tfi";
-
 import {
   FaHome,
   FaTicketAlt,
@@ -16,6 +16,7 @@ import {
   FaUserShield,
 } from 'react-icons/fa';
 
+// Interfaces e outros componentes
 interface Event {
   _id: string;
   nome: string;
@@ -30,22 +31,37 @@ interface SearchResultsProps {
   results: Event[];
   onSelect: () => void;
   apiUrl: string;
+  isLoading?: boolean;
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ results, onSelect, apiUrl }) => {
-  if (results.length === 0) return null;
+const SearchResults: React.FC<SearchResultsProps> = ({ results, onSelect, apiUrl, isLoading = false }) => {
+  if (isLoading) {
+    return (
+      <div className="search-results-container">
+        <div className="search-result-item">Buscando eventos...</div>
+      </div>
+    );
+  }
+
+  if (results.length === 0) {
+    return (
+      <div className="search-results-container">
+        <div className="search-result-item">Nenhum evento encontrado.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="search-results-container">
       {results.map(event => (
-        <Link 
-          key={event._id} 
-          to={`/evento/${event._id}`} 
+        <Link
+          key={event._id}
+          to={`/evento/${event._id}`}
           className="search-result-item"
           onClick={onSelect}
         >
-          <img 
-            src={`${apiUrl}/uploads/${event.imagem}`} 
+          <img
+            src={`${apiUrl}/uploads/${event.imagem}`}
             alt={event.nome}
             className="search-result-image"
           />
@@ -60,14 +76,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, onSelect, apiUrl
   );
 };
 
+// Componente principal da NavBar
 export default function NavBar3() {
   const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const { cartItemsCount } = useCart(); // <--- Use o hook para obter a contagem de itens
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<Event[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -85,47 +104,36 @@ export default function NavBar3() {
     if (!user?.imagemPerfil) {
       return `${apiUrl}/uploads/blank_profile.png`;
     }
-
     if (/^https?:\/\//.test(user.imagemPerfil)) {
       return user.imagemPerfil;
     }
-
     if (user.imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${user.imagemPerfil}`;
     }
-
     return `${apiUrl}/uploads/${user.imagemPerfil}`;
   };
 
-  // Função para buscar eventos
   const fetchSearchResults = useCallback(async (term: string) => {
     if (!term.trim()) {
       setSearchResults([]);
+      setSearchLoading(false);
       return;
     }
-
+    setSearchLoading(true);
     try {
       const response = await fetch(`${apiUrl}/api/eventos/aprovados?search=${encodeURIComponent(term)}`);
+      if (!response.ok) {
+        throw new Error('Erro na busca');
+      }
       const data = await response.json();
       setSearchResults(data.slice(0, 5));
     } catch (error) {
       console.error('Erro ao buscar eventos:', error);
       setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
     }
   }, [apiUrl]);
-
-  // Debounce para evitar muitas requisições
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (searchTerm) {
-        fetchSearchResults(searchTerm);
-      } else {
-        setSearchResults([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, fetchSearchResults]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -133,7 +141,18 @@ export default function NavBar3() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Fecha dropdown quando clicar fora
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchTerm) {
+        fetchSearchResults(searchTerm);
+      } else {
+        setSearchResults([]);
+        setSearchLoading(false);
+      }
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, fetchSearchResults]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -144,7 +163,6 @@ export default function NavBar3() {
       ) {
         setDropdownOpen(false);
       }
-
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowResults(false);
       }
@@ -157,6 +175,8 @@ export default function NavBar3() {
     setSearchTerm(e.target.value);
     if (e.target.value) {
       setShowResults(true);
+    } else {
+      setShowResults(false);
     }
   };
 
@@ -173,41 +193,43 @@ export default function NavBar3() {
 
   return (
     <header className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
-      {/* Logo */}
       <Link to="/Home" aria-label="Página inicial">
         <img src={logoLight} alt="Logo" className="app-header__logo" />
       </Link>
 
-      {/* Busca (desktop apenas) */}
       <div className="nav__search hide-mobile" ref={searchRef}>
         <FaSearch aria-hidden />
-        <input 
-          className='nav_input' 
-          type="text" 
-          placeholder="Buscar eventos, artistas..." 
+        <input
+          className='nav_input'
+          type="text"
+          placeholder="Buscar eventos, artistas..."
           value={searchTerm}
           onChange={handleSearchChange}
           onFocus={handleSearchFocus}
         />
         {showResults && (
-          <SearchResults 
-            results={searchResults} 
+          <SearchResults
+            results={searchResults}
             onSelect={handleResultSelect}
             apiUrl={apiUrl || ''}
+            isLoading={searchLoading}
           />
         )}
       </div>
 
-      {/* Ações (desktop) */}
       <div className="nav__actions hide-mobile">
         <button className="nav__cta" onClick={() => navigate("/CriarEventos")}>
           <FaPlusCircle size={20} />
           CRIE SEU EVENTO
         </button>
 
-        <div className="cart-icon" title="Carrinho de compras" aria-label="Carrinho de compras">
-          <FaShoppingCart size={24} onClick={() => navigate("/Carrinho")} />
+        {/* ---- CÓDIGO DO CARRINHO MODIFICADO AQUI ---- */}
+        <div className="cart-icon" title="Carrinho de compras" aria-label="Carrinho de compras" onClick={() => navigate("/Carrinho")}>
+          <FaShoppingCart size={24} />
+          {/* Renderiza o badge apenas se houver itens */}
+          {cartItemsCount > 0 && <span className="cart-badge">{cartItemsCount}</span>}
         </div>
+        {/* ---- FIM DA MODIFICAÇÃO ---- */}
 
         <div className="nav__auth">
           {!isAuthenticated ? (
@@ -216,7 +238,6 @@ export default function NavBar3() {
             </button>
           ) : (
             <div className="user-dropdown">
-              {/* Trigger */}
               <div
                 ref={triggerRef}
                 className="user-info"
@@ -308,12 +329,10 @@ export default function NavBar3() {
         {mobileOpen ? <FaTimes size={26} color="#fff" /> : <FaBars size={26} color="#fff" />}
       </div>
 
-      {/* MOBILE MENU (off-canvas) */}
       {mobileOpen && (
         <div className="mobile-menu-overlay open" onClick={() => setMobileOpen(false)} />
       )}
       <div className={`mobile-menu ${mobileOpen ? "open" : ""}`}>
-        {/* Cabeçalho com "MENU" na esquerda e "X" na direita */}
         <div className="mobile-menu-header">
           <h3>Menu</h3>
           <div className="mobile-menu-close" onClick={() => setMobileOpen(false)}>
@@ -365,8 +384,10 @@ export default function NavBar3() {
         <button onClick={() => { navigate('/CriarEventos'); setMobileOpen(false); }}>
           <FaPlusCircle /> Criar Evento
         </button>
+        {/* Botão do carrinho no menu mobile */}
         <button onClick={() => { navigate('/Carrinho'); setMobileOpen(false); }}>
           <FaShoppingCart /> Carrinho
+          {cartItemsCount > 0 && <span className="cart-badge-mobile">{cartItemsCount}</span>}
         </button>
 
         {!isAuthenticated ? (

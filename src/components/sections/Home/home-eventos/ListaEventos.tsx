@@ -1,10 +1,7 @@
-// src/components/ListaEventos.tsx
-
 import React from 'react';
 import CardEvento from './CardEvento'; 
 import { MdEventBusy } from "react-icons/md";
-import { Evento } from './evento'; // Verifique o caminho da sua interface
-
+import { Evento } from './evento';
 interface ListaEventosProps {
     eventos: Evento[]; 
     titulo: string;

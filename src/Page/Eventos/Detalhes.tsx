@@ -4,7 +4,7 @@ import "../../styles/detalhes.css";
 import Footer from "../../components/layout/Footer/Footer";
 import {
     FaCalendarAlt, FaMapMarkerAlt, FaShareAlt,
-    FaUserCircle, FaEnvelope, FaPhone, FaCheckCircle // NOVO ICONE
+    FaUserCircle, FaEnvelope, FaPhone, FaCheckCircle
 } from "react-icons/fa";
 import { IoTicket, IoTime } from "react-icons/io5";
 import { FiMinus, FiPlus } from "react-icons/fi";
@@ -12,6 +12,7 @@ import { Evento } from '../../components/sections/Home/home-eventos/evento';
 import { CarrinhoService } from '../../services/carrinhoService';
 import { CarrinhoItem } from "../../types/carrinho";
 import { useAuth } from "../../Hook/AuthContext";
+import { useCart } from "../../Hook/CartContext"; 
 import NavBar3 from "../../components/sections/Home/NavBar3/NavBar3";
 
 // ... (todas as suas interfaces permanecem as mesmas) ...
@@ -52,6 +53,7 @@ const Detalhes: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { state } = useLocation();
     const { user: currentUser } = useAuth();
+    const { addItemToCart } = useCart(); 
     const [evento, setEvento] = useState<EventoComCriador | null>(state as EventoComCriador || null);
     const [criadorUsuario, setCriadorUsuario] = useState<CriadorUsuario | null>(null);
     const [criadorPerfil, setCriadorPerfil] = useState<CriadorPerfil | null>(null);
@@ -61,11 +63,9 @@ const Detalhes: React.FC = () => {
     const [eventoEncerrado, setEventoEncerrado] = useState(false);
     const [vendasEncerradas, setVendasEncerradas] = useState(false);
 
-    // NOVO: Estados para controlar o modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
 
-    // ... (todos os seus useEffects e funções auxiliares permanecem os mesmos) ...
     useEffect(() => {
         if (evento) {
             const agora = new Date();
@@ -201,17 +201,19 @@ const Detalhes: React.FC = () => {
         );
     };
 
-    // ALTERADO: Função `adicionarAoCarrinho` para usar o modal
+    // FUNÇÃO CORRIGIDA: Usa apenas a função addItemToCart do contexto
     const adicionarAoCarrinho = async (ingresso: TicketType) => {
         if (ingresso.quantidade === 0) {
-            alert("Selecione pelo menos um ingresso.");
+            setModalMessage("Selecione pelo menos um ingresso.");
+            setIsModalOpen(true);
             return;
         }
 
         try {
             const response = await fetch(`${apiUrl}/api/eventos/verificar-estoque/${evento?._id}`);
             if (!response.ok) {
-                alert('Não foi possível verificar a disponibilidade de ingressos.');
+                setModalMessage('Não foi possível verificar a disponibilidade de ingressos.');
+                setIsModalOpen(true);
                 return;
             }
 
@@ -224,7 +226,8 @@ const Detalhes: React.FC = () => {
             let estoqueDisponivel = ingresso.tipo === 'Inteira' ? estoque.quantidadeInteira : estoque.quantidadeMeia;
 
             if (totalSolicitado > estoqueDisponivel) {
-                alert(`Desculpe, não há ingressos ${ingresso.tipo} suficientes disponíveis.`);
+                setModalMessage(`Desculpe, não há ingressos ${ingresso.tipo} suficientes disponíveis.`);
+                setIsModalOpen(true);
                 return;
             }
 
@@ -234,15 +237,16 @@ const Detalhes: React.FC = () => {
                 nomeEvento: evento?.nome || '',
                 tipoIngresso: ingresso.tipo,
                 preco: ingresso.valor,
-                quantidade: itemExistente ? itemExistente.quantidade + ingresso.quantidade : ingresso.quantidade,
+                quantidade: ingresso.quantidade, 
                 imagem: evento?.imagem || '',
                 dataEvento: evento?.dataInicio || '',
                 localEvento: `${evento?.rua}, ${evento?.numero}, ${evento?.bairro} - ${evento?.cidade}, ${evento?.estado}`
             };
 
-            CarrinhoService.adicionarOuAtualizarItem(novoItem);
-            
-            // NOVO: Define a mensagem e abre o modal
+            // Chamada ÚNICA e CORRETA para adicionar o item ao carrinho
+            addItemToCart(novoItem); 
+
+            // Define a mensagem e abre o modal
             setModalMessage(`${ingresso.quantidade} ingresso(s) do tipo "${ingresso.tipo}" foram adicionados ao seu carrinho.`);
             setIsModalOpen(true);
 
@@ -253,11 +257,11 @@ const Detalhes: React.FC = () => {
 
         } catch (error) {
             console.error('Erro ao verificar estoque:', error);
-            alert('Erro ao verificar disponibilidade de ingressos');
+            setModalMessage('Erro ao verificar disponibilidade de ingressos');
+            setIsModalOpen(true);
         }
     };
-    
-    // ... (restante das suas funções) ...
+
     const calcularTotal = () => {
         return (tiposIngresso || []).reduce((total, ingresso) => total + (ingresso.valor * ingresso.quantidade), 0).toFixed(2);
     };
@@ -283,7 +287,8 @@ const Detalhes: React.FC = () => {
             }
         } else {
             navigator.clipboard.writeText(url);
-            alert("Link copiado para a área de transferência!");
+            setModalMessage("Link copiado para a área de transferência!");
+            setIsModalOpen(true);
         }
     };
 
@@ -294,7 +299,6 @@ const Detalhes: React.FC = () => {
 
     return (
         <>
-            {/* NOVO: JSX do Modal renderizado condicionalmente */}
             {isModalOpen && (
                 <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -320,9 +324,8 @@ const Detalhes: React.FC = () => {
             )}
 
             <div className="detalhes-container">
-            <NavBar3 />
-                 {/* ... (todo o seu JSX existente, sem alterações) ... */}
-                 <div className="detalhes-header">
+                <NavBar3 />
+                <div className="detalhes-header">
                     <div className="detalhes-header-content">
                         {eventoEncerrado && <div className="evento-encerrado-aviso">Evento Encerrado</div>}
                         <div className="detalhes-info-evento">

@@ -1,32 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiTrash2, FiPlus, FiMinus, FiArrowLeft, FiCheck } from 'react-icons/fi';
+import { FiTrash2, FiPlus, FiMinus, FiArrowLeft } from 'react-icons/fi';
 import AppHeader from '../../components/layout/Header/AppHeader';
 import "../../styles/Carrinho.css";
 import { CarrinhoItem } from '../../types/carrinho';
 import { CarrinhoService } from '../../services/carrinhoService';
 import { initMercadoPago } from '@mercadopago/sdk-react';
+import { useAuth } from '../../Hook/AuthContext'; // Importe o hook useAuth
 import LogoMP from "../../assets/SVGs/Logo_MP.svg";
 
 
 const Carrinho = () => {
+  const { user } = useAuth(); // Chame o hook para obter o objeto user
   const apiUrl = process.env.REACT_APP_API_URL;
   const [carrinho, setCarrinho] = useState<CarrinhoItem[]>(() => {
     return CarrinhoService.getCarrinho();
   });
 
-  // Removido o estado de preferenceId e o import da Wallet, pois não serão mais usados
-
-  // Certifique-se de que este token é de ambiente de teste
   initMercadoPago('APP_USR-ea824941-70e7-434a-9fd9-c40a1c1bcb46');
 
-  const [carrinhoShowSuccess, _setCarrinhoShowSuccess] = useState(false);
   const navigate = useNavigate();
 
-  // Função para criar a preferência de pagamento e redirecionar para o Checkout Pro
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status');
+
+    if (status === 'approved') {
+      alert('Pagamento aprovado! Seus ingressos estão sendo gerados.');
+      CarrinhoService.limparCarrinho();
+      setCarrinho([]);
+      navigate('/meus-ingressos');
+    } else if (status === 'pending') {
+      alert('Pagamento pendente. A compra será confirmada assim que o pagamento for processado.');
+    } else if (status === 'rejected') {
+      alert('Pagamento rejeitado. Por favor, tente novamente ou use outro método de pagamento.');
+    }
+
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }, [navigate]);
+
   const handleFinalizarCompra = async () => {
     if (carrinho.length === 0) {
       alert("Seu carrinho está vazio!");
+      return;
+    }
+
+    // Adicionamos a verificação do usuário
+    if (!user) {
+      alert("Você precisa estar logado para finalizar a compra.");
       return;
     }
 
@@ -37,26 +58,19 @@ const Carrinho = () => {
         unit_price: item.preco,
       }));
 
+      const userId = user._id; // O objeto 'user' agora está disponível aqui
+
       const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items, userId }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Preferência criada com sucesso:", data);
-
-        // Redireciona o usuário para a URL do Mercado Pago em uma nova aba
-        // O backend deve retornar a propriedade 'preference_url' (também conhecida como 'init_point')
         window.open(data.preference_url, '_blank');
-
-        // Opcional: Você pode limpar o carrinho aqui para uma melhor experiência
-        // CarrinhoService.limparCarrinho();
-        // setCarrinho([]);
-
       } else {
         const errorData = await response.json();
         console.error('Falha ao criar preferência:', response.statusText, errorData);
@@ -231,20 +245,9 @@ const Carrinho = () => {
             </div>
           </>
         )}
-
-        {carrinhoShowSuccess && (
-          <div className="carrinho-sucesso">
-            <div className="carrinho-sucesso-conteudo">
-              <FiCheck className="carrinho-sucesso-icone" />
-              <p className="carrinho-sucesso-texto">Compra finalizada com sucesso!</p>
-            </div>
-          </div>
-        )}
       </div>
     </>
   );
 };
 
-
 export default Carrinho;
-

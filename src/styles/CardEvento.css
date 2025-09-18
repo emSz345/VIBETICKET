@@ -1,67 +1,143 @@
-/* Container principal do card */
-.card-evento {
-    text-decoration: none;
+/* CardEvento.css - Versão com tamanho fixo */
+.cardEvento {
     display: flex;
     flex-direction: column;
     background-color: #fff;
     border-radius: 12px;
-    overflow: hidden; /* Garante que a imagem e outros conteúdos fiquem dentro das bordas */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra suave para destacar o card */
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    width: 280px; /* Tamanho fixo para padronizar os cards */
-    margin: 15px; /* Espaço entre os cards */
-  }
-  
-  /* Efeito de hover para dar vida ao card */
-  .card-evento:hover {
-    transform: translateY(-5px); /* Move o card levemente para cima */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Sombra mais forte no hover */
-  }
-  
-  /* Estilo da imagem do evento */
-  .card-image {
+    width: 300px;
+    /* Largura fixa */
+    height: 310px;
+    /* Altura fixa */
+    margin: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cardEvento:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Imagem com badge da data */
+.cardEvento-imageWrapper {
+    position: relative;
+    height: 160px;
+    /* Altura fixa para a imagem */
+    flex-shrink: 0;
+    /* Impede que a imagem redimensione */
+}
+
+.cardEvento-image {
     width: 100%;
-    height: 180px; /* Altura fixa para manter a consistência */
-    object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
-  }
-  
-  /* Container para o conteúdo de texto */
-  .card-content {
-    padding: 15px;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cardEvento-date {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #3060ff, #4c1bff);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Conteúdo */
+.cardEvento-content {
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-  }
-  
-  /* Título do evento */
-  .card-content h4 {
-    font-size: 1.2em;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 10px 0;
-    white-space: nowrap; /* Impede a quebra de linha */
-    overflow: hidden; /* Esconde o texto que ultrapassa o limite */
-    text-overflow: ellipsis; /* Adiciona '...' no final */
-  }
-  
-  /* Parágrafos de informações (cidade, data, etc.) */
-  .card-content p {
-    font-size: 0.9em;
-    color: #666;
-    margin: 0;
-    line-height: 1.4;
-  }
-  
-  /* Estilo para o container da lista de eventos (em ListaEventos.tsx) */
-  .lista-eventos-container {
-      display: flex;
-      flex-wrap: wrap; /* Permite que os cards quebrem a linha */
-      justify-content: center; /* Centraliza os cards */
-      gap: 20px; /* Espaçamento entre os cards */
-      padding: 20px 0;
-  }
+    flex-grow: 1;
+    overflow: hidden;
+    /* Impede que o conteúdo transborde */
+}
 
-  .card-evento-link {
+.cardEvento-data {
+    font-size: 0.75em;
+    /* Um pouco menor */
+    font-weight: 600;
+    color: #6e8efb;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+}
+
+.cardEvento-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cardEvento-info {
+    margin-top: auto;
+}
+
+.cardEvento-local {
+    font-size: 0.85em;
+    color: #718096;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Container de lista */
+.lista-eventos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.cardEvento-link {
     text-decoration: none;
-  }
+}
+
+/* MOBILE - Mantém a altura fixa mas ajusta a largura */
+@media (max-width: 768px) {
+    .cardEvento {
+        width: 280px;
+        height: 30px;
+        margin: 0;
+    }
+
+    .cardEvento-imageWrapper {
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cardEvento {
+        width: 260px;
+        height: 360px;
+    }
+
+    .cardEvento-imageWrapper {
+        height: 140px;
+    }
+
+    .cardEvento-content {
+        padding: 12px;
+    }
+}

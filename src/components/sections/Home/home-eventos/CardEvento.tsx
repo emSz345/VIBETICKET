@@ -1,37 +1,58 @@
+// CardEvento.tsx - Corrigindo a exibição do horário
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../../../../styles/CardEvento.css'
 import { Evento } from './evento';
 
+import { FaLocationDot } from "react-icons/fa6";
+
+
 interface CardEventoProps {
     evento: Evento;
 }
 
+
+
 const CardEvento: React.FC<CardEventoProps> = ({ evento }) => {
-    // Certifique-se de que a propriedade `evento.imagem` contém um valor válido
-
-
     const apiUrl = process.env.REACT_APP_API_URL;
-
     const imageUrl = `${apiUrl}/uploads/${evento.imagem}`;
 
     return (
         <Link
-            // Acessa a rota com o ID do evento na URL e passa o objeto completo no `state`
             to={{ pathname: `/evento/${evento._id}` }}
             state={evento}
-            className="card-evento-link"
+            className="cardEvento-link"
         >
-            <div className="card-evento">
-                {/* Exibe a imagem apenas se a URL for válida */}
+            <div className="cardEvento">
                 {evento.imagem && (
-                    <img src={imageUrl} alt={evento.nome} className="card-image" />
+                    <div className="cardEvento-imageWrapper">
+                        <img src={imageUrl} alt={evento.nome} className="cardEvento-image" />
+                        <span className="cardEvento-date">
+                            {new Date(evento.dataInicio).toLocaleDateString("pt-BR", {
+                                day: "2-digit",
+                                month: "short"
+                            })}
+                        </span>
+                    </div>
                 )}
-                <div className="card-content">
-                    <h4>{evento.nome}</h4>
-                    <p>{evento.cidade} - {evento.estado}</p>
-                    <p>{evento.dataInicio}</p>
-                    <p>{evento.horaInicio} - {evento.horaTermino}</p>
+                <div className="cardEvento-content">
+                    <span className="cardEvento-data">
+                        {new Date(evento.dataInicio).toLocaleDateString("pt-BR", {
+                            weekday: "long",
+                            day: "2-digit",
+                            month: "long"
+                        }).toUpperCase()}
+                    </span>
+
+                    <h4 className="cardEvento-title">{evento.nome}</h4>
+
+                    <div className="cardEvento-info">
+                        <p className="cardEvento-local">
+                            <FaLocationDot />
+                            {evento.rua && `${evento.rua}, `}
+                            {evento.cidade} - {evento.estado}
+                        </p>
+                    </div>
                 </div>
             </div>
         </Link>

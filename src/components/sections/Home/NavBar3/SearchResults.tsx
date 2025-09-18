@@ -1,4 +1,3 @@
-// SearchResults.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -46,4 +45,4 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, onSelect, apiUrl
   );
 };
 
-export default SearchResults;
+export default SearchResults

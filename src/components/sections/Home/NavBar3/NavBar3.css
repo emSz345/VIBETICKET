@@ -247,6 +247,12 @@ body {
   border: 1px solid rgba(255,255,255,0.4);
   box-shadow: none;
 }
+.nav__search svg {
+  flex-shrink: 0; /* Impede que o ícone diminua */
+  transition: none; /* Remove qualquer transição do ícone */
+  margin-right: 8px; /* Espaçamento consistente */
+}
+
 .nav--scrolled .nav__search svg { color: #fff; }
 .nav--scrolled .nav__search input { color: #fff; }
 .nav--scrolled .nav__search input::placeholder { color: #dbe9ff; }
@@ -562,3 +568,100 @@ body {
   to { opacity: 0; transform: translateY(8px); }
 }
 
+/* Adicione estas classes ao seu arquivo CSS existente */
+
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-loading-indicator {
+  position: absolute;
+  right: 10px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.search-loading-text {
+  position: absolute;
+  bottom: -25px;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 4px;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-loading {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.search-no-results {
+  padding: 15px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.search-results-header {
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.search-result-category {
+  color: #666;
+  font-size: 0.9em;
+  margin: 2px 0;
+}
+
+.search-result-item:hover {
+  background-color: #f9f9f9;
+}
+
+/* Melhorias na barra de pesquisa mobile */
+@media (max-width: 768px) {
+  .search-results-container {
+    position: fixed;
+    top: var(--header-height-scrolled);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: unset;
+    border-radius: 0;
+    z-index: 12000;
+  }
+  
+  .search-result-item {
+    padding: 16px;
+  }
+  
+  .search-result-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .search-result-info h4 {
+    font-size: 16px;
+  }
+  
+  .search-result-info p {
+    font-size: 14px;
+  }
+}

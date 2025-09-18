@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
-import AppHeader from './components/layout/Header/AppHeader';
+
+// Seus componentes de navegação
+import NavBar3 from './components/sections/Home/NavBar3/NavBar3';
+import AppHeader from './components/layout/Header/AppHeader';// **Ajuste o caminho para o seu AppHeader**
 import './App.css';
 
 // ROTA AUTH
@@ -12,9 +15,10 @@ import EditarEvento from './Page/User/EditarEvento';
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
 import AdminRoute from './Hook/RotaDoAdm';
 import ProtectedRoute from './Hook/RotaProtegida';
-import { AuthProvider } from './Hook/AuthContext'; // Hook que já corrigimos
+import { AuthProvider } from './Hook/AuthContext';
+import { CartProvider } from './Hook/CartContext';
 
-// ... (seus outros imports de páginas permanecem os mesmos) ...
+// Suas outras páginas
 import CarrosselAdm from './Page/Admin/CarrosselAdm';
 import Detalhes from './Page/Eventos/Detalhes';
 import CriarEventos from './Page/Eventos/CriarEventos';
@@ -29,95 +33,113 @@ import Painel from './Page/Admin/Painel';
 import AdicionarAdm from "./Page/Admin/AdicionarAdm";
 import ResetPassword from './Page/Auth/ResetPassword';
 
+// ==================================================================
+// COMPONENTES DE LAYOUT
+// ==================================================================
 
-// ==================================================================
-// COMPONENTE DE LAYOUT (permanece o mesmo, está perfeito)
-// Ele renderiza o Header e depois a página da rota atual.
-// ==================================================================
-function LayoutWithHeader() {
-  return (
-    <div>
-      <AppHeader />
-      <main className="main-content">
-        <Outlet />
-      </main>
-    </div>
-  );
+// Layout com a NavBar3
+function LayoutWithNavBar3() {
+    return (
+        <div>
+            <NavBar3 />
+            <main className="main-content">
+                <Outlet />
+            </main>
+        </div>
+    );
+}
+
+// Layout com apenas o AppHeader
+function LayoutWithAppHeader() {
+    return (
+        <div>
+            <AppHeader />
+            <main className="main-content">
+                <Outlet />
+            </main>
+        </div>
+    );
+}
+
+// Layout sem nenhuma navbar
+function LayoutWithoutHeader() {
+    return (
+        <main className="main-content full-screen">
+            <Outlet />
+        </main>
+    );
 }
 
 // ==================================================================
-// COMPONENTE DE ROTAS (aqui estão as principais mudanças)
+// COMPONENTE DE ROTAS
 // ==================================================================
 function AppRoutes() {
-  // 1. REMOVEMOS O useEffect e o checkAuth daqui.
-  // O nosso novo AuthContext já faz isso internamente e de forma mais eficiente. // Pegamos o 'user' para passar para as rotas que precisam.
+    return (
+        <Routes>
+            {/* ROTAS PROTEGIDAS SEM NENHUM CABEÇALHO */}
+            <Route element={<ProtectedRoute />}>
+                <Route path="/CriarEventos" element={<CriarEventos />} />
+            </Route>
 
-  return (
-    <Routes>
-      {/* ================================================================== */}
-      {/* MUDANÇA PRINCIPAL: Grupo de rotas QUE TÊM a Navbar */}
-      {/* Todas as rotas filhas de `LayoutWithHeader` terão a navbar no topo. */}
-      {/* ================================================================== */}
+            <Route element={<AdminRoute />}>
+                <Route path="/painel" element={<Painel />} />
+                <Route path="/CarrosselAdm" element={<CarrosselAdm />} />
+                <Route path="/AdicionarAdm" element={<AdicionarAdm />} />
+            </Route>
 
-      <Route element={<ProtectedRoute />}>
-        <Route path="/CriarEventos" element={<CriarEventos />} />
-         <Route path="/editar-evento/:id" element={<EditarEvento />} />
-      </Route>
+            <Route path="/duvidas" element={<Duvidas />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
+            {/* ROTAS SEM NENHUM CABEÇALHO */}
+            <Route element={<LayoutWithoutHeader />}>
+                <Route path="/carrinho" element={<Carrinho />} />
+            </Route>
 
-      <Route path="/home" element={<Home />} />
-      <Route path="/evento/:id" element={<Detalhes />} />
-      <Route element={<LayoutWithHeader />}>
+            {/* ROTAS COM A NAVBART3 */}
+            <Route element={<LayoutWithNavBar3 />}>
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/evento/:id" element={<Detalhes />} />
+                <Route path="/categorias" element={<Categorias />} />
 
-        {/* --- Rotas Públicas (acessíveis a todos) --- */}
-        <Route path="/categorias" element={<Categorias />} />
-        <Route path="/termos" element={<Termos />} />
-        <Route path="/carrinho" element={<Carrinho />} />
-        
-        {/* --- Rotas Protegidas (só para usuários logados) --- */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/perfil" element={<Perfil />} /> {/* O Perfil pode pegar os dados do useAuth() internamente */}
-          <Route path="/meus-ingressos" element={<MeusIngressos />} />
-           <Route path="/meus-eventos" element={<MeusEventos />} />
-           
-        </Route>
+                {/* Rotas protegidas com NavBar3 */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/editar-evento/:id" element={<EditarEvento />} />
+                    <Route path="/perfil" element={<Perfil />} />
+                </Route>
+            </Route>
 
-        {/* --- Rotas de Admin (só para usuários logados E que são admin) --- */}
-      </Route>
+            {/* ROTAS COM APENAS O AppHeader */}
+            <Route element={<LayoutWithAppHeader />}>
+                <Route path="/termos" element={<Termos />} />
+                {/* Rota protegida com AppHeader */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/meus-eventos" element={<MeusEventos />} />
+                    <Route path="/meus-ingressos" element={<MeusIngressos />} />
+                </Route>
+            </Route>
 
-      <Route element={<AdminRoute />}>
-        <Route path="/painel" element={<Painel />} />
-         <Route path="/CarrosselAdm" element={<CarrosselAdm />} />
-        <Route path="/AdicionarAdm" element={<AdicionarAdm />} />
-      </Route>
-
-
-      {/* ================================================================== */}
-      {/* Grupo de rotas QUE NÃO TÊM a Navbar (tela cheia) */}
-      {/* ================================================================== */}
-      <Route path="/duvidas" element={<Duvidas />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/reset-password/:token" element={<ResetPassword />} />
-      <Route path="/cadastro" element={<Cadastro />} />
-
-      {/* Redirecionamentos e rotas de fallback */}
-      <Route path="/" element={<Navigate to="/home" replace />} />
-      <Route path="*" element={<Navigate to="/home" replace />} />
-    </Routes>
-  );
+            {/* Redirecionamento de fallback para qualquer rota não encontrada */}
+            <Route path="*" element={<Navigate to="/home" replace />} />
+        </Routes>
+    );
 }
 
 // ==================================================================
-// COMPONENTE PRINCIPAL APP (permanece o mesmo)
+// COMPONENTE PRINCIPAL APP
 // ==================================================================
 function App() {
-  return (
-    <Router>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </Router>
-  );
+    return (
+        <Router>
+            <AuthProvider>
+                <CartProvider>
+                    <AppRoutes />
+                </CartProvider>
+            </AuthProvider>
+        </Router>
+    );
 }
 
 export default App;

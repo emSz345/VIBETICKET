@@ -145,7 +145,7 @@ const ChatBot: React.FC = () => {
   const [showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const apiUrl = process.env.REACT_APP_API_URL;
-  const [categorias] = useState<string[]>([]); // Renamed _categorias to categorias, but still unused
+  const [_categorias] = useState<string[]>([]); // Renamed _categorias to categorias, but still unused
   const [showBalloon, setShowBalloon] = useState(true);
   const [messages, setMessages] = useState<Mensagem[]>([
     {
@@ -420,7 +420,7 @@ const ChatBot: React.FC = () => {
         whileHover={isEnabled ? { scale: 1.1 } : {}}
         whileTap={isEnabled ? { scale: 0.95 } : {}}
         aria-label={isEnabled ? "Abrir chat" : "Chat desabilitado"}
-        style={{ opacity: isEnabled ? 1 : 0.5 }}
+        // style={{ opacity: isEnabled ? 1 : 0.5 }}
       >
         {isOpen ? <FaTimes /> : <img src={logoChatBot} alt="logoChat" title="Foto Chatbot" style={{ height: "55px", width: "55px" }} />}
         {!isOpen && isEnabled && (

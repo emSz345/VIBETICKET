@@ -225,3 +225,25 @@ body{ background:var(--bg); }
       grid-column: span 1;
   }
 }
+
+.perfil-notice {
+  background-color: #fffacd; /* Amarelo bem claro, tipo limão */
+  border: 1px solid #ffc107 !important; /* Amarelo da borda */
+  color: #856404; /* Cor do texto, um marrom escuro para contraste */
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.perfil-notice strong {
+  color: #ffc107; /* Amarelo mais vibrante para a palavra "Atenção" */
+}
+
+div.perfil-card.full-width {
+  width: 100%;
+  max-width: none; /* Remove qualquer limitação de largura anterior */
+  flex-basis: 100%; /* Garante que ele ocupe 100% do espaço flexível */
+}

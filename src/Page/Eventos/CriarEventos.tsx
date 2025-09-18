@@ -98,7 +98,7 @@ function CriarEventos() {
       setValorDoacao(valorDoacaoTemporario);
       setQuerDoar(true);
       // Chama a nova função para iniciar o pagamento do Mercado Pago
-      criarPreferenciaDePagamento(valorNumerico); 
+      criarPreferenciaDePagamento(valorNumerico);
     } else {
       setValorDoacao('');
       setQuerDoar(false);
@@ -113,22 +113,22 @@ function CriarEventos() {
       navigate('/login');
       return;
     }
-  
+
     const usuario = JSON.parse(userDataString);
     const userId = usuario?._id;
-  
+
     if (!userId) {
       alert('Não foi possível encontrar o ID do usuário. Por favor, faça login novamente.');
       return;
     }
-  
+
     // Corrigido: Envie os campos diretamente como o backend espera
     const doacaoData = {
       valor: valor,
       title: 'Doação para instituições de apoio', // Título para a doação
       userId: userId, // Envia o ID do usuário para o backend
     };
-  
+
     try {
       // Faz a requisição POST para a rota do backend do Mercado Pago
       const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, {
@@ -138,19 +138,19 @@ function CriarEventos() {
         },
         body: JSON.stringify(doacaoData),
       });
-  
+
       // Se a resposta não for OK, lança um erro com a mensagem do servidor
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Erro do servidor: ${response.status}`);
       }
-  
+
       const responseData = await response.json();
       const url = responseData.preference_url; // Pega a URL de pagamento do Mercado Pago
-      
+
       // Redireciona o usuário para a página de pagamento
-      window.open(url, '_blank'); 
-  
+      window.open(url, '_blank');
+
     } catch (error: any) {
       console.error('Erro na doação:', error);
       alert(error.message);
