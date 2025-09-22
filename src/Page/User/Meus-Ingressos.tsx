@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IngressoCard } from '../../components/sections/User/IngressoCard/IngresseCard';
 import '../../styles/Meus-Ingressos.css';
 import { Ingresso } from '../../types/Ingresso';
-import { useAuth } from '../../Hook/AuthContext'; // Importe o hook de autenticação
+import { useAuth } from '../../Hook/AuthContext';
 
 
 const MeusIngressos: React.FC = () => {
@@ -18,17 +18,29 @@ const MeusIngressos: React.FC = () => {
     // useEffect para buscar os dados dos ingressos
     useEffect(() => {
         const fetchIngressos = async () => {
-            if (!user?._id) {
+
+            // Obtém o token do localStorage
+            const token = localStorage.getItem('token');
+
+            // Verifica se o token existe e se o usuário está logado
+            if (!token || !user) {
                 setLoading(false);
-                setError("Usuário não logado.");
+                setError("Usuário não logado. Token de autenticação não encontrado.");
                 return;
             }
 
             try {
-                const response = await fetch(`${apiUrl}/api/compras/minhas-compras`);
+                // CORREÇÃO: Envia o token no cabeçalho Authorization
+                const response = await fetch(`${apiUrl}/api/compras/minhas-compras`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
                 if (!response.ok) {
                     throw new Error("Erro ao buscar ingressos.");
                 }
+
                 const data: Ingresso[] = await response.json();
                 setIngressos(data);
             } catch (err) {
@@ -45,7 +57,7 @@ const MeusIngressos: React.FC = () => {
         if (!isLoading) {
             fetchIngressos();
         }
-    }, [user, isLoading, apiUrl]); // As dependências garantem que a requisição só ocorra quando o user e apiUrl estiverem prontos.
+    }, [user, isLoading, apiUrl]);
 
     // Tela de carregamento
     if (loading) {
@@ -72,6 +84,5 @@ const MeusIngressos: React.FC = () => {
         </div>
     );
 };
-
 
 export default MeusIngressos;
