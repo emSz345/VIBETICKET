@@ -25,7 +25,7 @@ const MeusIngressos: React.FC = () => {
             }
 
             try {
-                const response = await fetch(`${apiUrl}/api/ingressos/user/${user._id}`);
+                const response = await fetch(`${apiUrl}/api/compras/minhas-compras`);
                 if (!response.ok) {
                     throw new Error("Erro ao buscar ingressos.");
                 }
@@ -72,5 +72,6 @@ const MeusIngressos: React.FC = () => {
         </div>
     );
 };
+
 
 export default MeusIngressos;
