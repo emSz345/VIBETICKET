@@ -6,31 +6,27 @@ import { useAuth } from '../../Hook/AuthContext';
 
 
 const MeusIngressos: React.FC = () => {
-    // Acesse o usuário logado para obter o ID
     const { user, isLoading } = useAuth();
     const apiUrl = process.env.REACT_APP_API_URL;
 
-    // Estado para armazenar os ingressos buscados da API
     const [ingressos, setIngressos] = useState<Ingresso[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // useEffect para buscar os dados dos ingressos
     useEffect(() => {
         const fetchIngressos = async () => {
 
-            // Obtém o token do localStorage
             const token = localStorage.getItem('token');
 
-            // Verifica se o token existe e se o usuário está logado
-            if (!token || !user) {
+            // CORREÇÃO: Remova a verificação de '!user' aqui. 
+            // A verificação '!isLoading' logo abaixo já garante que o estado de auth está pronto.
+            if (!token) {
                 setLoading(false);
                 setError("Usuário não logado. Token de autenticação não encontrado.");
                 return;
             }
 
             try {
-                // CORREÇÃO: Envia o token no cabeçalho Authorization
                 const response = await fetch(`${apiUrl}/api/compras/minhas-compras`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -54,22 +50,20 @@ const MeusIngressos: React.FC = () => {
             }
         };
 
+        // Essa verificação é a mais importante. Ela garante que a função só roda quando o useAuth terminar de carregar.
         if (!isLoading) {
             fetchIngressos();
         }
     }, [user, isLoading, apiUrl]);
 
-    // Tela de carregamento
     if (loading) {
         return <div className="meus-ingressos-carregando">Carregando seus ingressos...</div>;
     }
 
-    // Tela de erro
     if (error) {
         return <div className="meus-ingressos-erro">Erro: {error}</div>;
     }
 
-    // Renderização condicional
     return (
         <div className="meus-ingressos-pagina-meus-ingressos">
             {ingressos.length === 0 ? (
