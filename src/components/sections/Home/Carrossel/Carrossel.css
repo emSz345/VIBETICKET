@@ -8,7 +8,7 @@
 
 .mySwiper {
   width: 90%;
-  max-width: 1400px;
+  max-width: 1200px;
   height: 500px;
   margin: 0 auto;
   border-radius: 12px;
@@ -99,9 +99,14 @@
 }
 
 @media (max-width: 768px) {
+  .carrossel-container {
+    margin-top: 160px /* Reduz margem superior em mobile */
+  }
+  
   .mySwiper {
-    height: 350px;
+    height: 300px;
     border-radius: 8px;
+    width: 95%; /* Mantém uma pequena margem nas laterais */
   }
   
   .swiper-pagination-bullet {
@@ -117,16 +122,38 @@
 
 @media (max-width: 576px) {
   .carrossel-container {
-    margin: 30px 0;
+    margin: 160px 0 30px 0; /* Ajusta margens superior e inferior */
   }
   
   .mySwiper {
-    height: 250px;
-    width: 100%;
-    border-radius: 0;
+    height: 220px;
+    width: 92%; /* Margem lateral menor mas ainda existe */
+    border-radius: 6px; /* Mantém bordas arredondadas suaves */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
   }
   
   .swiper-pagination {
-    bottom: 10px !important;
+    bottom: 8px !important;
+  }
+  
+  .swiper-pagination-bullet {
+    width: 15px;
+    height: 3px;
+  }
+  
+  .swiper-pagination-bullet-active {
+    width: 25px;
+    height: 4px;
+  }
+}
+
+/* Ajustes para telas muito pequenas (iPhone SE, etc) */
+@media (max-width: 375px) {
+  .carrossel-container {
+    margin: 160px 0 20px 0;
+  }
+  
+  .mySwiper {
+    height: 180px;
   }
 }

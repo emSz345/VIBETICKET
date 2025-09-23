@@ -7,7 +7,7 @@ const CookieNotice: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
-    // Função para verificar se o usuário já aceitou os cookies
+    
     const checkCookieAcceptance = () => {
         const alreadySeen = localStorage.getItem("cookie_notice_seen");
         return !!alreadySeen; // Retorna true se já aceitou, false se não

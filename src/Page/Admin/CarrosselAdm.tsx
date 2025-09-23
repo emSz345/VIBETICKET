@@ -1,5 +1,4 @@
 // src/pages/CarrosselAdm.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaUpload, FaTrashAlt, FaPlus } from 'react-icons/fa';
@@ -7,19 +6,24 @@ import '../../styles/CarrosselAdm.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
+interface CarrosselImage {
+  filename: string;
+  eventoId?: string;
+}
+
 const CarrosselAdm: React.FC = () => {
     const [eventosAprovados, setEventosAprovados] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [_doadoresPendentes, setDoadoresPendentes] = useState<any[]>([]);
-    const [images, setImages] = useState<string[]>([]);
+    const [images, setImages] = useState<CarrosselImage[]>([]);
     const navigate = useNavigate();
 
     const fetchCarrosselImages = async () => {
         try {
             const response = await fetch(`${apiUrl}/api/carrossel`);
             if (response.ok) {
-                const data = await response.json();
-                setImages(data.map((img: string) => `${apiUrl}/uploads/carrossel/${img}`));
+                const data: CarrosselImage[] = await response.json();
+                setImages(data);
             }
         } catch (error) {
             console.error('Erro ao buscar imagens do carrossel:', error);
@@ -46,8 +50,10 @@ const CarrosselAdm: React.FC = () => {
 
                 if (response.ok) {
                     fetchCarrosselImages();
+                    alert('Imagem adicionada com sucesso!');
                 } else {
-                    console.log("Erro ao adicionar imagem")
+                    console.log("Erro ao adicionar imagem");
+                    alert('Erro ao adicionar imagem.');
                 }
             } catch (error) {
                 console.error('Erro ao enviar imagem:', error);
@@ -88,6 +94,7 @@ const CarrosselAdm: React.FC = () => {
 
             const formData = new FormData();
             formData.append('image', file);
+            formData.append('eventoId', evento._id);
 
             const uploadResponse = await fetch(`${apiUrl}/api/carrossel/upload`, {
                 method: 'POST',
@@ -120,14 +127,19 @@ const CarrosselAdm: React.FC = () => {
 
     const handleRemoveImage = async (imageName: string) => {
         try {
-            const response = await fetch(`${apiUrl}/api/carrossel/delete/${imageName}`, {
+            // Codifica o nome do arquivo para garantir que caracteres especiais sejam tratados
+            const encodedImageName = encodeURIComponent(imageName);
+            const response = await fetch(`${apiUrl}/api/carrossel/delete/${encodedImageName}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
                 fetchCarrosselImages();
+                alert('Imagem removida com sucesso!');
             } else {
                 console.log("Erro ao remover imagem");
+                const errorData = await response.json();
+                alert(`Erro ao remover imagem: ${errorData.message}`);
             }
         } catch (error) {
             console.error('Erro ao remover imagem:', error);
@@ -164,17 +176,17 @@ const CarrosselAdm: React.FC = () => {
                             <h3>Carrossel Atual</h3>
                             {images.length > 0 ? (
                                 <div className="carousel-preview">
-                                    {images.map((image, index) => {
-                                        const imageName = image.substring(image.lastIndexOf('/') + 1);
-                                        return (
-                                            <div key={index} className="image-preview-card">
-                                                <img src={image} alt={`Carrossel Imagem ${index + 1}`} />
-                                                <button onClick={() => handleRemoveImage(imageName)} className="remove-image-button">
-                                                    <FaTrashAlt />
-                                                </button>
-                                            </div>
-                                        );
-                                    })}
+                                    {images.map((image, index) => (
+                                        <div key={index} className="image-preview-card">
+                                            <img 
+                                                src={`${apiUrl}/uploads/carrossel/${image.filename}`} 
+                                                alt={`Carrossel Imagem ${index + 1}`} 
+                                            />
+                                            <button onClick={() => handleRemoveImage(image.filename)} className="remove-image-button">
+                                                <FaTrashAlt />
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             ) : (
                                 <p className="no-images-message">Nenhuma imagem no carrossel. Adicione uma para começar!</p>

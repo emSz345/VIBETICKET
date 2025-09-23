@@ -13,9 +13,10 @@ import TermosContent from '../../Page/Public/TermosContent';
 // Estilos e assets
 import "../../styles/Login.css";
 import logo from "../../assets/logo.png";
-import logo1 from "../../assets/logo-blue1.png";
+import logo1 from "../../assets/logoEmail.png";
 import googleIcon from "../../assets/logo-google.png";
 import facebookIcon from "../../assets/logo-facebook.png";
+import IndicadorSenha from "../../components/ui/IndicadorSenha/IndicadorSenha";
 
 interface FormData {
   nome: string;
@@ -154,7 +155,7 @@ const Cadastro: React.FC = () => {
     return (
       <div className="login-container">
         <div className="form-section" style={{ textAlign: 'center' }}>
-          <img src={logo1} alt="Logo" className="logo-image" style={{ marginBottom: '2rem' }} />
+          <img src={logo1} alt="Logo" className="logo-imageEmail" style={{ marginBottom: '2rem' }} />
           <h2 className="login-bemvido">Cadastro realizado!</h2>
           <p style={{ fontSize: '1.1rem', color: '#666', lineHeight: '1.6' }}>
             Enviamos um link de verificação para o seu e-mail: <br />
@@ -204,7 +205,7 @@ const Cadastro: React.FC = () => {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="seu-email@gmail.com"
+              placeholder="seunome@email.com"
               hasError={!!errors.email}
             />
             <div className="login-container-error">
@@ -220,9 +221,7 @@ const Cadastro: React.FC = () => {
               placeholder="Crie uma senha forte"
               hasError={!!errors.senha}
             />
-            <div className="login-container-error">
-              {errors.senha && <p className="error">{errors.senha}</p>}
-            </div>
+            <IndicadorSenha password={formData.senha} />
 
             <h3 className="login-title">Confirmar senha</h3>
             <Input
@@ -245,9 +244,9 @@ const Cadastro: React.FC = () => {
                 </span>
               </label>
               {mostrarTermos && (
-                <div className="modal">
-                  <div className="modal-content">
-                    <button className="close-button" onClick={fecharModal}>&times;</button>
+                <div className="login-modal">
+                  <div className="login-modal-content">
+                    <button className="login-close-button" onClick={fecharModal}>&times;</button>
                     <TermosContent onClose={fecharModal} />
                   </div>
                 </div>
