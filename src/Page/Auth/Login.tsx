@@ -47,8 +47,6 @@ const Login: React.FC = () => {
     alert(`Muitas tentativas falhas. Tente novamente em ${minutosBloqueio} minuto(s).`);
   };
 
-  // 1. Mova a função de login para antes do `useEffect`
-  // 2. Envolva a função com `useCallback` para memorizá-la
   const handleLocalLogin = useCallback(async () => {
     if (bloqueado) {
       alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
@@ -79,8 +77,16 @@ const Login: React.FC = () => {
         senha,
       });
 
-      const { user } = response.data;
+      // CORREÇÃO: Extraia o token e o usuário da resposta
+      const { user, token } = response.data;
+
+      // SALVAR O TOKEN NO LOCAL STORAGE
+      localStorage.setItem('token', token);
+
+      // Usar o método de login do contexto para atualizar o estado global
       authContext.login(user);
+
+      // Redirecionar
       navigate("/Home");
 
     } catch (error: any) {
@@ -92,9 +98,8 @@ const Login: React.FC = () => {
         bloquearLogin(novasFalhas);
       }
     }
-  }, [email, senha, bloqueado, navigate, authContext, getTentativas, getFalhas]); // 3. Adicione todas as dependências aqui
+  }, [email, senha, bloqueado, navigate, authContext, getTentativas, getFalhas]);
 
-  // 4. O `useEffect` que estava com o aviso agora está correto, pois `handleLocalLogin` é uma dependência estável
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === 'Enter' && !bloqueado) {
@@ -109,7 +114,6 @@ const Login: React.FC = () => {
     };
   }, [bloqueado, handleLocalLogin]);
 
-  // Restante dos useEffects e funções
   useEffect(() => {
     const unlockTime = getUnlockTime();
     const now = Date.now();
@@ -163,8 +167,12 @@ const Login: React.FC = () => {
           imagemPerfil: userData.photoURL || "",
         }
       });
+      // CORREÇÃO: Extraia o token e o usuário da resposta
+      const { user, token } = response.data;
 
-      const { user } = response.data;
+      // SALVAR O TOKEN NO LOCAL STORAGE
+      localStorage.setItem('token', token);
+
       authContext.login(user);
       navigate("/Home");
 
