@@ -145,6 +145,10 @@
   opacity: 0.8;
 }
 
+.vw-plugin-top-wrapper {
+    z-index: 9999 !important;
+}
+
 /* Responsividade do Banner */
 @media (max-width: 768px) {
   .banner {

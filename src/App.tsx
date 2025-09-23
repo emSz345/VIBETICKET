@@ -14,6 +14,7 @@ import EditarEvento from './Page/User/EditarEvento';
 
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
 import AdminRoute from './Hook/RotaDoAdm';
+import CookieNotice from './components/layout/CookieNotice/CookieNotice';
 import ProtectedRoute from './Hook/RotaProtegida';
 import { AuthProvider } from './Hook/AuthContext';
 import { CartProvider } from './Hook/CartContext';
@@ -135,6 +136,7 @@ function App() {
         <Router>
             <AuthProvider>
                 <CartProvider>
+                    <CookieNotice />
                     <AppRoutes />
                 </CartProvider>
             </AuthProvider>

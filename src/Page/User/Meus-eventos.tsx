@@ -4,6 +4,7 @@ import { FaEye, FaPencilAlt, FaPlus } from "react-icons/fa";
 import { IoTrashBin } from "react-icons/io5";
 import { MdEvent } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
+import ModalDetalhesEvento from "../../components/sections/Adm/ModalDetalhesEvento/ModalDetalhesEvento";
 
 type Evento = {
   _id: string;
@@ -12,6 +13,8 @@ type Evento = {
 };
 
 const MeusEventos = () => {
+  const [modalAberta, setModalAberta] = useState(false);
+  const [eventoSelecionado, setEventoSelecionado] = useState<string | null>(null);
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +65,11 @@ const MeusEventos = () => {
   useEffect(() => {
     fetchMeusEventos();
   }, [fetchMeusEventos]);
+
+  const abrirModalDetalhes = (eventoId: string) => {
+    setEventoSelecionado(eventoId);
+    setModalAberta(true);
+  };
 
   // Função de deletar evento ajustada para cookies
   const handleDeleteEvento = useCallback(async (eventoId: string) => {
@@ -185,7 +193,10 @@ const MeusEventos = () => {
                 <td>{index + 1}</td>
                 <td>{evento.nome}</td>
                 <td className="meus-ingressos-acoes">
-                  <button className="meus-ingressos-acao-btn" title="Visualizar">
+                  <button
+                    className="meus-ingressos-acao-btn"
+                    title="Visualizar"
+                    onClick={() => abrirModalDetalhes(evento._id)}>
                     <FaEye size={18} />
                   </button>
                   <Link
@@ -219,6 +230,11 @@ const MeusEventos = () => {
           </div>
         )}
       </main>
+      <ModalDetalhesEvento
+        eventoId={eventoSelecionado || ''}
+        isOpen={modalAberta}
+        onClose={() => setModalAberta(false)}
+      />
     </div>
   );
 };

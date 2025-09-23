@@ -81,15 +81,20 @@ const EditarEvento = () => {
   const [valorDoacao, setValorDoacao] = useState('');
   const [termosAceitos, setTermosAceitos] = useState(false);
 
-  useEffect(() => {
+ useEffect(() => {
     const fetchEvento = async () => {
       try {
-        const token = localStorage.getItem('token');
         const response = await fetch(`${apiUrl}/api/eventos/${id}`, {
+          credentials: 'include',
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
           }
         });
+        
+        if (response.status === 401) {
+          navigate('/login');
+          return;
+        }
         
         if (response.status === 404) {
           setErrorMessage('Evento não encontrado');
@@ -111,7 +116,7 @@ const EditarEvento = () => {
         setEvento(data);
         
         // Preencher os campos do formulário com os dados do evento
-        setNomeEvento(data.nome);
+       setNomeEvento(data.nome);
         setCategoriaEvento(data.categoria);
         setDescricao(data.descricao);
         setCep(data.cep);
@@ -136,7 +141,7 @@ const EditarEvento = () => {
         setValorDoacao(data.valorDoacao?.toString() || '');
         
         // Carregar preview da imagem
-        if (data.imagem) {
+      if (data.imagem) {
           setImagePreviewUrl(`${apiUrl}/uploads/${data.imagem}`);
         }
       } catch (error) {
@@ -150,7 +155,7 @@ const EditarEvento = () => {
     if (id) {
       fetchEvento();
     }
-  }, [id, apiUrl]);
+   }, [id, apiUrl, navigate]);
 
   const handleAbrirModal = () => {
     setModalAberto(true);
@@ -342,18 +347,18 @@ const EditarEvento = () => {
   };
 
   const handleEnviarEdicao = async () => {
-  if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5) || !validarEtapa(6)) {
-    alert('Por favor, corrija os erros em todos os campos antes de enviar para reanálise.');
-    if (!validarEtapa(1)) { setEtapaAtual(1); return; }
-    if (!validarEtapa(2)) { setEtapaAtual(2); return; }
-    if (!validarEtapa(3)) { setEtapaAtual(3); return; }
-    if (!validarEtapa(4)) { setEtapaAtual(4); return; }
-    if (!validarEtapa(5)) { setEtapaAtual(5); return; }
-    return;
-  }
+    if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5) || !validarEtapa(6)) {
+      alert('Por favor, corrija os erros em todos os campos antes de enviar para reanálise.');
+      if (!validarEtapa(1)) { setEtapaAtual(1); return; }
+      if (!validarEtapa(2)) { setEtapaAtual(2); return; }
+      if (!validarEtapa(3)) { setEtapaAtual(3); return; }
+      if (!validarEtapa(4)) { setEtapaAtual(4); return; }
+      if (!validarEtapa(5)) { setEtapaAtual(5); return; }
+      return;
+    }
 
   setSaving(true);
-  const token = localStorage.getItem('token');
+  
   const formData = new FormData();
   
   // Adicionar todos os campos ao FormData
@@ -384,31 +389,30 @@ const EditarEvento = () => {
   formData.append("status", "em_reanalise");
 
   try {
-    const response = await fetch(`${apiUrl}/api/eventos/${id}/editar`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`
-        // NÃO adicione 'Content-Type' aqui - o browser vai definir automaticamente para multipart/form-data
-      },
-      body: formData,
-    });
+      const response = await fetch(`${apiUrl}/api/eventos/${id}/editar`, {
+        method: 'PUT',
+        credentials: 'include', // ADICIONAR: para enviar cookies
+        // REMOVER headers com Authorization
+        body: formData,
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || `Erro do servidor: ${response.status}`);
-    }
+     if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Erro do servidor: ${response.status}`);
+      }
 
     const _ = await response.json();
-    alert('Evento atualizado com sucesso e enviado para reanálise!');
-    navigate('/meus-eventos');
+      alert('Evento atualizado com sucesso e enviado para reanálise!');
+      navigate('/meus-eventos');
+
 
   } catch (error: any) {
-    console.error('Erro ao editar evento:', error);
-    alert(error.message || 'Erro ao editar evento');
-  } finally {
-    setSaving(false);
-  }
-};
+      console.error('Erro ao editar evento:', error);
+      alert(error.message || 'Erro ao editar evento');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const getError = (fieldName: string) => erros[fieldName];
 

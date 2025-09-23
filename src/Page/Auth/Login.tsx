@@ -235,7 +235,7 @@ const Login: React.FC = () => {
           <Input
             type="email"
             name="email"
-            placeholder="example@gmail.com"
+            placeholder="seunome@email.com"
             value={email}
             onChange={handleChange}
           />
