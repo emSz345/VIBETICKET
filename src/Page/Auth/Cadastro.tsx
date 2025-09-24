@@ -9,6 +9,7 @@ import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
 import SocialButton from "../../components/ui/SocialButton/SocialButton";
 import TermosContent from '../../Page/Public/TermosContent';
+import "../../styles/Termos.css";
 
 // Estilos e assets
 import "../../styles/Login.css";
@@ -244,10 +245,20 @@ const Cadastro: React.FC = () => {
                 </span>
               </label>
               {mostrarTermos && (
-                <div className="login-modal">
-                  <div className="login-modal-content">
-                    <button className="login-close-button" onClick={fecharModal}>&times;</button>
-                    <TermosContent onClose={fecharModal} />
+                <div className="modal-overlay">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h3>Termos de Uso</h3>
+                    </div>
+                    <button className="close-button" onClick={fecharModal}>&times;</button>
+                    <div className="modal-body">
+                      <TermosContent onClose={fecharModal} />
+                    </div>
+                    <div className="modal-footer">
+                      <p style={{ fontSize: '14px', color: '#666', textAlign: 'center' }}>
+                        Ao clicar em "Concordo", você aceita nossos termos e condições
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
