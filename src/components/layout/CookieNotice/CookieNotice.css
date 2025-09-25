@@ -112,7 +112,7 @@
 /* ========================================= */
 /* MODAL (SABER MAIS)                        */
 /* ========================================= */
-.modal-overlay {
+.cookie-modal-overlay {
     position: fixed; 
     top: 0; 
     left: 0; 
@@ -125,7 +125,7 @@
     z-index: 10001;
 }
 
-.modal-content {
+.cookie-modal-content {
     background-color: #fff; 
     padding: 25px; 
     border-radius: 12px;
@@ -134,7 +134,7 @@
     box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
 }
 
-.modal-header {
+.cookie-modal-header {
     display: flex; 
     justify-content: space-between; 
     align-items: center;
@@ -143,12 +143,12 @@
     margin-bottom: 15px;
 }
 
-.modal-header h2 { 
+.cookie-modal-header h2 { 
     margin: 0; 
     font-size: 18px; 
 }
 
-.modal-close { 
+.cookie-modal-close { 
     background: none; 
     border: none; 
     font-size: 24px; 
@@ -156,18 +156,18 @@
     color: #888; 
 }
 
-.modal-body h3, 
-.modal-body h4 { 
+.cookie-modal-body h3, 
+.cookie-modal-body h4 { 
     color: #333; 
 }
 
-.modal-body p, 
-.modal-body li { 
+.cookie-modal-body p, 
+.cookie-modal-body li { 
     color: #666; 
     line-height: 1.6; 
 }
 
-.modal-body ul { 
+.cookie-modal-body ul { 
     padding-left: 20px; 
 }
 

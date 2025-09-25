@@ -789,3 +789,45 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* Estilo para o novo botão de doação direta */
+.btn-doacao-direta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 300px;
+  /* Limita a largura para um visual mais limpo */
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #28a745;
+  /* Verde discreto */
+  border: none;
+  border-radius: 5px;
+  /* Bordas levemente arredondadas */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-doacao-direta:hover {
+  background-color: #218838;
+  /* Um verde um pouco mais escuro ao passar o mouse */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-doacao-direta:disabled {
+  background-color: #e9ecef;
+  /* Cinza claro para indicar que está desativado */
+  color: #6c757d;
+  /* Texto cinza escuro */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}

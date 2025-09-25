@@ -1,9 +1,9 @@
-// Duvidas.tsx (apenas a parte do header atualizada)
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiPlus, FiMinus, FiMail, FiHelpCircle } from "react-icons/fi";
 import "../../styles/Duvidas.css";
 import logo from "../../assets/logo.png";
+import Rodape from '../../components/layout/Footer/Footer';
 
 function Duvidas() {
   useEffect(() => {
@@ -17,8 +17,8 @@ function Duvidas() {
   };
 
   const faqItems = [
-    { 
-      category: "Eventos", 
+    {
+      category: "Eventos",
       questions: [
         { question: "Como posso criar um evento?", answer: "Para criar um evento, basta acessar a seção 'Criar Evento' e preencher as informações solicitadas." },
         { question: "Como faço para editar meu evento?", answer: "Você pode editar o evento clicando em 'Editar' na página de detalhes do evento." },
@@ -26,8 +26,8 @@ function Duvidas() {
         { question: "Como posso adicionar uma imagem ao evento?", answer: "Ao criar ou editar um evento, você pode adicionar uma imagem clicando na opção de upload de imagem." }
       ]
     },
-    { 
-      category: "Conta e Login", 
+    {
+      category: "Conta e Login",
       questions: [
         { question: "Como faço para criar uma conta?", answer: "Para criar uma conta, clique no botão 'Cadastrar' na página inicial, preencha os campos necessários (nome, e-mail, senha), e você estará pronto para começar." },
         { question: "Esqueci minha senha, como posso recuperá-la?", answer: "Clique em 'Esqueci minha senha' na tela de login, insira seu e-mail, e enviaremos um link para você redefinir sua senha." },
@@ -36,8 +36,8 @@ function Duvidas() {
         { question: "Posso usar meu login do Google/Facebook para acessar?", answer: "Sim, você pode fazer login utilizando sua conta do Google ou Facebook. Basta escolher uma das opções na tela de login." }
       ]
     },
-    { 
-      category: "Cadastro", 
+    {
+      category: "Cadastro",
       questions: [
         { question: "Como faço para desativar minha conta?", answer: "Para desativar sua conta, entre em contato com o suporte ou acesse as configurações da sua conta e solicite a desativação." },
         { question: "Preciso confirmar meu e-mail para finalizar o cadastro?", answer: "Sim, após se cadastrar, você receberá um e-mail de confirmação. Clique no link do e-mail para ativar sua conta." },
@@ -52,9 +52,10 @@ function Duvidas() {
     <div className="duvidas-page">
       <header className="duvidas-header">
         <div className="duvidas-header-content">
+          {/* Lado esquerdo do header */}
           <div className="header-left">
-            <Link to="/Home" className="back-button" title="Voltar">
-              <img src={logo} alt="Logo" className="duvidas-header-logo" />
+            <Link to="/Home" className="duvidas-header-logo-link" title="Voltar para a Home">
+              <img src={logo} alt="Logo VibeTicket" className="duvidas-header-logo" />
             </Link>
             <div className="header-divider"></div>
             <div className="header-title-section">
@@ -62,11 +63,17 @@ function Duvidas() {
               <h1 className="duvidas-header-title">Central de Dúvidas</h1>
             </div>
           </div>
+
+          {/* Lado direito do header com o novo botão */}
+          <div className="header-right">
+            <Link to="/Home" className="home-button">
+              Voltar para a Home
+            </Link>
+          </div>
         </div>
       </header>
 
       <main className="duvidas-main">
-        {/* O restante do conteúdo permanece igual */}
         <section className="duvidas-intro">
           <h1>Como podemos ajudar?</h1>
           <p>Encontre respostas para as dúvidas mais comuns ou entre em contato conosco.</p>
@@ -74,7 +81,7 @@ function Duvidas() {
 
         <section className="duvidas-faq">
           <h2>Perguntas Frequentes</h2>
-          
+
           {faqItems.map((category, categoryIndex) => (
             <div key={categoryIndex} className="faq-category">
               <h3>{category.category}</h3>
@@ -115,7 +122,12 @@ function Duvidas() {
             <h2>Não encontrou o que procurava?</h2>
             <p>Nossa equipe de suporte está pronta para ajudar você</p>
             <div className="contact-actions">
-              <a href="bruno.nunes.5056.br@gmail.com" className="duvidas-contact-button">
+              <a
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=bruno.nunes.5056.br@gmail.com&su=Ajuda%20com%20o%20VibeTicket&body=Olá,%20preciso%20de%20ajuda%20com%20o%20seguinte%20problema:%0A%0A"
+                className="duvidas-contact-button"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FiMail size={18} />
                 Enviar e-mail
               </a>
@@ -123,6 +135,7 @@ function Duvidas() {
           </div>
         </section>
       </main>
+      <Rodape />
     </div>
   );
 }

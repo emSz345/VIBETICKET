@@ -80,8 +80,7 @@ const Footer: React.FC = () => {
             <h4 className="footer-section-title">Produtores</h4>
             <ul className="footer-section-list">
               <li className="footer-section-item"><Link to="/criarEeventos" className="footer-link">Criar Evento</Link></li>
-              <li className="footer-section-item"><Link to="/gerenciar-eventos" className="footer-link">Gerenciar Eventos</Link></li>
-              <li className="footer-section-item"><Link to="/duvidas-produtores" className="footer-link">Dúvidas para Produtores</Link></li>
+              <li className="footer-section-item"><Link to="/gerenciar-eventos" className="footer-link">Gerenciar Eventos</Link></li>     
             </ul>
           </div>
 
@@ -92,7 +91,7 @@ const Footer: React.FC = () => {
               <li className="footer-section-item"><Link to="/duvidas" className="footer-link">Central de Ajuda</Link></li>
               <li className="footer-section-item"><Link to="/termos" className="footer-link">Termos de Uso</Link></li>
               <li className="footer-section-item"><Link to="/politica-privacidade" className="footer-link">Política de Privacidade</Link></li>
-              <li className="footer-section-item"><Link to="/reembolsos" className="footer-link">Política de Reembolso</Link></li>
+              <li className="footer-section-item"><Link to="/PoliticaReembolso" className="footer-link">Política de Reembolso</Link></li>
             </ul>
           </div>
 
@@ -110,7 +109,7 @@ const Footer: React.FC = () => {
 
         {/* Rodapé inferior (somente com direitos autorais) */}
         <div className="footer-bottom">
-          <p className="footer-copyright">© {new Date().getFullYear()} NaVibe. Todos os direitos reservados.</p>
+          <p className="footer-copyright">© {new Date().getFullYear()} VibeTicket. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

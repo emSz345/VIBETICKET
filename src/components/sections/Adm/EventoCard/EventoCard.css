@@ -1,62 +1,124 @@
+/* Estilo Base do Card */
 .evento-card {
-    background-color: white;
-    border-radius: 10px;
+    background-color: #ffffff;
+    border-radius: 12px; /* Cantos mais arredondados */
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra mais profunda e suave */
     display: flex;
     flex-direction: column;
-    transition: box-shadow 0.2s ease; /* Removido transform */
-    position: relative;
+    cursor: pointer; /* Indica que é clicável */
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0; /* Borda sutil */
 }
 
 .evento-card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    /* Evitamos o transform: scale */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Sombra mais intensa no hover */
+    transform: translateY(-3px); /* Leve levantamento para feedback */
+}
+
+/* Cabeçalho (Imagem e Tag de Status) */
+.evento-cabecalho {
+    position: relative;
+    height: 180px; /* Altura da imagem um pouco maior */
+    overflow: hidden;
 }
 
 .evento-imagem {
     width: 100%;
-    height: 150px;
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
-.evento-dados {
-    padding: 15px;
-    font-size: 14px;
+.evento-card:hover .evento-imagem {
+    transform: scale(1.05); /* Zoom sutil na imagem no hover */
 }
 
-.evento-botoes {
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.btn-aceitar,
-.btn-rejeitar {
-    flex: 1;
-    border: none;
-    padding: 8px 16px;
+/* Tag de Status */
+.evento-status-tag {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 5px 10px;
     border-radius: 5px;
-    cursor: pointer;
+    font-size: 12px;
     font-weight: bold;
-    transition: background-color 0.2s ease;
-}
-
-.btn-aceitar {
-    background-color: #4CAF50;
     color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.btn-aceitar:hover {
-    background-color: #45a049;
+/* Cores do Status - Adapte conforme suas necessidades */
+.evento-status-tag.status-em-analise {
+    /* Cor para 'em_analise' */
+    background-color: #ff9800; /* Laranja */
 }
 
-.btn-rejeitar {
-    background-color: #F44336;
-    color: white;
+.evento-status-tag.status-aprovado {
+    /* Cor para 'aprovado' */
+    background-color: #4CAF50; /* Verde */
 }
 
-.btn-rejeitar:hover {
-    background-color: #d32f2f;
+.evento-status-tag.status-rejeitado {
+    /* Cor para 'rejeitado' */
+    background-color: #F44336; /* Vermelho */
 }
+
+.evento-status-tag.status-em-reanalise {
+    /* Cor para 'em_reanalise' */
+    background-color: #2196F3; /* Azul */
+}
+
+/* Corpo (Nome e Detalhes) */
+.evento-corpo {
+    padding: 15px;
+    flex-grow: 1; /* Permite que o corpo ocupe o espaço extra */
+}
+
+.evento-nome {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+    /* Para evitar que o nome seja muito longo em uma linha */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.evento-detalhe {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+/* Rodapé (Criador) */
+.evento-rodape {
+    padding: 10px 15px;
+    border-top: 1px solid #f0f0f0;
+    background-color: #f7f7f7;
+}
+
+.evento-criador {
+    font-size: 13px;
+    color: #777;
+}
+
+/* Estilos de Botões (Mantidos, mas não visíveis no card principal - estão no Modal) */
+.evento-botoes {
+    /* Mantenha se for usar em outro contexto, mas não necessário para este card */
+    display: none; 
+}
+/* Estilos para os botões Aceitar/Rejeitar podem ser mantidos para uso no Modal */
+
+/* Estilos de Mídia (Opcional: para melhor responsividade) */
+/*
+@media (max-width: 600px) {
+    .evento-cabecalho {
+        height: 120px;
+    }
+    .evento-nome {
+        font-size: 16px;
+    }
+}
+*/

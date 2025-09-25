@@ -62,6 +62,10 @@ const Perfil = () => {
     return value;
   };
 
+  const cleanInscricaoMunicipal = (value: string) => {
+    return value.replace(/[^a-zA-Z0-9]/g, ""); // Permite apenas letras e números, removendo espaços e símbolos
+  };
+
   const formatTelefone = (value: string) => {
     if (!value) return "";
     value = value.replace(/\D/g, "");
@@ -180,7 +184,11 @@ const Perfil = () => {
         cnpj: dadosPessoais.cnpj.replace(/\D/g, ""),
         telefone: dadosPessoais.telefone.replace(/\D/g, "")
       },
-      dadosOrganizacao
+      dadosOrganizacao: {
+        ...dadosOrganizacao,
+        cpfSocio: dadosOrganizacao.cpfSocio.replace(/\D/g, ""), // Mantém apenas dígitos para o CPF
+        inscricaoMunicipal: cleanInscricaoMunicipal(dadosOrganizacao.inscricaoMunicipal) // Limpa espaços/símbolos, mas mantém letras/números
+      }
     };
 
     try {
@@ -435,6 +443,7 @@ const Perfil = () => {
                       </label>
                       <input
                         className="perfil-input"
+                        placeholder="Ex: Empresa de Eventos Ltda."
                         value={dadosOrganizacao.razaoSocial}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, razaoSocial: e.target.value })}
                         disabled={!editandoDadosAdicionais}
@@ -447,6 +456,7 @@ const Perfil = () => {
                       </label>
                       <input
                         className="perfil-input"
+                        placeholder="Ex: Nome Popular da Marca"
                         value={dadosOrganizacao.nomeFantasia}
                         onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, nomeFantasia: e.target.value })}
                         disabled={!editandoDadosAdicionais}
@@ -459,8 +469,13 @@ const Perfil = () => {
                       </label>
                       <input
                         className="perfil-input"
+                        maxLength={15}
+                        placeholder="Ex: 12345678 ou 001.234-A" 
                         value={dadosOrganizacao.inscricaoMunicipal}
-                        onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, inscricaoMunicipal: e.target.value })}
+                        onChange={(e) => {
+                          // Permite letras, números e caracteres especiais, mas limita apenas o campo
+                          setDadosOrganizacao({ ...dadosOrganizacao, inscricaoMunicipal: e.target.value });
+                        }}
                         disabled={!editandoDadosAdicionais}
                       />
                     </div>
@@ -475,7 +490,11 @@ const Perfil = () => {
                         inputMode="numeric"
                         maxLength={14}
                         value={dadosOrganizacao.cpfSocio}
-                        onChange={(e) => setDadosOrganizacao({ ...dadosOrganizacao, cpfSocio: e.target.value })}
+                        onChange={(e) => {
+                          // AQUI ESTÁ A MUDANÇA
+                          const formattedCpf = formatCpf(e.target.value);
+                          setDadosOrganizacao({ ...dadosOrganizacao, cpfSocio: formattedCpf });
+                        }}
                         disabled={!editandoDadosAdicionais}
                       />
                     </div>
@@ -487,7 +506,7 @@ const Perfil = () => {
                     <div className="perfil-form-group">
                       <label className="perfil-input-label">
                         <FiUser className="perfil-input-icon" />
-                        <span>Nome Completo</span>
+                        <span>Nome completo do Sócio/Representante</span>
                       </label>
                       <input
                         className="perfil-input"

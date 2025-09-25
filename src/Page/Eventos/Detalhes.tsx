@@ -12,8 +12,9 @@ import { Evento } from '../../components/sections/Home/home-eventos/evento';
 import { CarrinhoService } from '../../services/carrinhoService';
 import { CarrinhoItem } from "../../types/carrinho";
 import { useAuth } from "../../Hook/AuthContext";
-import { useCart } from "../../Hook/CartContext"; 
+import { useCart } from "../../Hook/CartContext";
 import NavBar3 from "../../components/sections/Home/NavBar3/NavBar3";
+import ChatBot from "../../components/sections/Chatbot/Chatbot";
 
 // ... (todas as suas interfaces permanecem as mesmas) ...
 interface CriadorUsuario {
@@ -53,7 +54,7 @@ const Detalhes: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { state } = useLocation();
     const { user: currentUser } = useAuth();
-    const { addItemToCart } = useCart(); 
+    const { addItemToCart } = useCart();
     const [evento, setEvento] = useState<EventoComCriador | null>(state as EventoComCriador || null);
     const [criadorUsuario, setCriadorUsuario] = useState<CriadorUsuario | null>(null);
     const [criadorPerfil, setCriadorPerfil] = useState<CriadorPerfil | null>(null);
@@ -237,14 +238,14 @@ const Detalhes: React.FC = () => {
                 nomeEvento: evento?.nome || '',
                 tipoIngresso: ingresso.tipo,
                 preco: ingresso.valor,
-                quantidade: ingresso.quantidade, 
+                quantidade: ingresso.quantidade,
                 imagem: evento?.imagem || '',
                 dataEvento: evento?.dataInicio || '',
                 localEvento: `${evento?.rua}, ${evento?.numero}, ${evento?.bairro} - ${evento?.cidade}, ${evento?.estado}`
             };
 
             // Chamada ÚNICA e CORRETA para adicionar o item ao carrinho
-            addItemToCart(novoItem); 
+            addItemToCart(novoItem);
 
             // Define a mensagem e abre o modal
             setModalMessage(`${ingresso.quantidade} ingresso(s) do tipo "${ingresso.tipo}" foram adicionados ao seu carrinho.`);
@@ -301,7 +302,7 @@ const Detalhes: React.FC = () => {
         <>
             {isModalOpen && (
                 <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <div className="Detalhes-modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3 className="modal-title">
                                 <FaCheckCircle className="modal-icon" /> Sucesso!
@@ -424,6 +425,9 @@ const Detalhes: React.FC = () => {
                         <p className="organizador-mensagem">Não foi possível carregar os dados do criador do evento.</p>
                     </div>
                 )}
+            </div>
+            <div style={{ display: "flex", right: "20px", bottom: "30px", position: 'fixed', zIndex: '1000' }}>
+                <ChatBot />
             </div>
             <Footer />
         </>

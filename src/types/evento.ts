@@ -1,3 +1,5 @@
+export type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
+
 export interface Evento {
   _id: string;
   nome: string;
@@ -16,8 +18,11 @@ export interface Evento {
   valorIngressoMeia?: number;
   quantidadeInteira?: number;
   quantidadeMeia?: number;
+  status: EventoStatus;
   temMeia?: boolean;
   querDoar?: boolean;
   valorDoacao?: number;
   criadoPor: string;
+  dataInicioVendas: string;
+  dataFimVendas: string;
 }

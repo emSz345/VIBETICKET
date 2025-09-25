@@ -1,6 +1,6 @@
 // ModalDetalhesEvento.tsx
-import React, { useState, useEffect } from "react";
-import { FaCalendarAlt, FaMapMarkerAlt, FaUserCircle, FaEnvelope, FaPhone } from "react-icons/fa";
+import React, { useState, useEffect, useCallback } from "react";
+import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { IoTicket, IoTime } from "react-icons/io5";
 import "./ModalDetalhesEvento.css";
 
@@ -38,26 +38,31 @@ const ModalDetalhesEvento: React.FC<ModalDetalhesEventoProps> = ({ eventoId, isO
     const [loading, setLoading] = useState(false);
     const apiUrl = process.env.REACT_APP_API_URL;
 
-    useEffect(() => {
-        if (isOpen && eventoId) {
-            buscarDetalhesEvento();
-        }
-    }, [isOpen, eventoId]);
-
-    const buscarDetalhesEvento = async () => {
+    // Função memoizada para buscar os detalhes do evento
+    const buscarDetalhesEvento = useCallback(async () => {
         setLoading(true);
         try {
             const response = await fetch(`${apiUrl}/api/eventos/publico/${eventoId}`);
             if (response.ok) {
                 const eventoData = await response.json();
                 setEvento(eventoData);
+            } else {
+                setEvento(null);
             }
         } catch (error) {
             console.error("Erro ao buscar detalhes do evento:", error);
+            setEvento(null);
         } finally {
             setLoading(false);
         }
-    };
+    }, [apiUrl, eventoId]);
+
+    // useEffect para buscar os detalhes quando isOpen e eventoId mudam
+    useEffect(() => {
+        if (isOpen && eventoId) {
+            buscarDetalhesEvento();
+        }
+    }, [isOpen, eventoId, buscarDetalhesEvento]);
 
     if (!isOpen) return null;
 

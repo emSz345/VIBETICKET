@@ -16,7 +16,6 @@ function CriarEventos() {
   const [etapaAtual, setEtapaAtual] = useState(1);
 
   // ESTADOS DO COMPONENTE
-  // ... (estados das etapas 1 a 5)
   const [nomeEvento, setNomeEvento] = useState('');
   const [categoriaEvento, setCategoriaEvento] = useState('');
   const [image, setImage] = useState<File | null>(null);
@@ -43,24 +42,18 @@ function CriarEventos() {
   const [dataInicioVendas, setDataInicioVendas] = useState('');
 
   // Etapa 6
-  const [querDoar, setQuerDoar] = useState<boolean>(false);
-  const [valorDoacao, setValorDoacao] = useState('');
   const [termosAceitos, setTermosAceitos] = useState(false);
-
-  // Estados do modal de doação
-  const [modalDoacaoAberto, setModalDoacaoAberto] = useState(false);
-  const [valorDoacaoTemporario, setValorDoacaoTemporario] = useState('');
+  const [valorDoacao, setValorDoacao] = useState('');
 
   // Outros estados
   const [modalAberto, setModalAberto] = useState(false);
   const [erros, setErros] = useState<{ [key: string]: string }>({});
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownTimeLeft, setCooldownTimeLeft] = useState<number | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false); // NOVO ESTADO
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [perfilCompleto, setPerfilCompleto] = useState(false);
   const [perfilCarregado, setPerfilCarregado] = useState(false);
 
-  // ... (todas as funções, exceto handleEnviarAnalise, permanecem iguais)
   const handleAbrirModal = () => setModalAberto(true);
   const handleFecharModal = () => setModalAberto(false);
   const handleConfirmarSaida = () => navigate('/');
@@ -86,27 +79,9 @@ function CriarEventos() {
       setImagePreviewUrl(null);
     }
   };
-  const handleAbrirModalDoacao = () => {
-    setValorDoacaoTemporario(valorDoacao);
-    setModalDoacaoAberto(true);
-  };
-  const handleFecharModalDoacao = () => setModalDoacaoAberto(false);
-  const handleFinalizarDoacao = () => {
-    // Lógica de validação do valor da doação
-    const valorNumerico = parseFloat(valorDoacaoTemporario.replace(',', '.'));
-    if (valorDoacaoTemporario && valorNumerico > 0) {
-      setValorDoacao(valorDoacaoTemporario);
-      setQuerDoar(true);
-      // Chama a nova função para iniciar o pagamento do Mercado Pago
-      criarPreferenciaDePagamento(valorNumerico);
-    } else {
-      setValorDoacao('');
-      setQuerDoar(false);
-    }
-    handleFecharModalDoacao();
-  };
 
-  const criarPreferenciaDePagamento = async (valor: number) => {
+  // Função para doação direta (SEM MODAL)
+  const handleDoacaoDireta = async (valor: number) => {
     const userDataString = localStorage.getItem('user');
     if (!userDataString) {
       alert('Usuário não autenticado. Por favor, faça login para fazer uma doação.');
@@ -122,15 +97,16 @@ function CriarEventos() {
       return;
     }
 
-    // Corrigido: Envie os campos diretamente como o backend espera
     const doacaoData = {
-      valor: valor,
-      title: 'Doação para instituições de apoio', // Título para a doação
-      userId: userId, // Envia o ID do usuário para o backend
+      items: [{
+        title: "Doação para Evento",
+        quantity: 1,
+        unit_price: valor,
+      }],
+      userId: userId,
     };
 
     try {
-      // Faz a requisição POST para a rota do backend do Mercado Pago
       const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, {
         method: 'POST',
         headers: {
@@ -139,28 +115,22 @@ function CriarEventos() {
         body: JSON.stringify(doacaoData),
       });
 
-      // Se a resposta não for OK, lança um erro com a mensagem do servidor
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Erro do servidor: ${response.status}`);
       }
 
       const responseData = await response.json();
-      const url = responseData.preference_url; // Pega a URL de pagamento do Mercado Pago
+      const url = responseData.preference_url;
 
-      // Redireciona o usuário para a página de pagamento
       window.open(url, '_blank');
 
     } catch (error: any) {
       console.error('Erro na doação:', error);
-      alert(error.message);
+      alert(error.message || "Erro na criação da preferência.");
     }
   };
 
-  const handleRemoverDoacao = () => {
-    setValorDoacao('');
-    setQuerDoar(false);
-  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -172,7 +142,6 @@ function CriarEventos() {
     return `${m}:${s}`;
   };
 
-  // ... (outros useEffects e funções de validação)
   useEffect(() => {
     const savedCooldownEnd = localStorage.getItem('eventoCooldownEnd');
     if (savedCooldownEnd) {
@@ -389,9 +358,6 @@ function CriarEventos() {
         }
         break;
       case 6:
-        if (querDoar && (!valorDoacao || parseFloat(valorDoacao.replace(',', '.')) <= 0)) {
-          novosErros.valorDoacao = 'Se deseja doar, informe um valor válido.';
-        }
         break;
       default:
         break;
@@ -402,13 +368,18 @@ function CriarEventos() {
   };
 
   const handleEnviarAnalise = async () => {
-    if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5) || !validarEtapa(6)) {
+    if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5)) {
       alert('Por favor, corrija os erros em todos os campos antes de enviar para análise.');
       if (!validarEtapa(1)) { setEtapaAtual(1); return; }
       if (!validarEtapa(2)) { setEtapaAtual(2); return; }
       if (!validarEtapa(3)) { setEtapaAtual(3); return; }
       if (!validarEtapa(4)) { setEtapaAtual(4); return; }
       if (!validarEtapa(5)) { setEtapaAtual(5); return; }
+      return;
+    }
+
+    if (!termosAceitos) {
+      alert('Você deve aceitar os Termos e Condições para criar o evento.');
       return;
     }
 
@@ -451,17 +422,18 @@ function CriarEventos() {
     formData.append("quantidadeInteira", quantidadeInteira);
     formData.append("quantidadeMeia", temMeia ? quantidadeMeia : '0');
     formData.append("temMeia", temMeia ? 'true' : 'false');
-    formData.append("querDoar", String(querDoar));
-    formData.append("valorDoacao", querDoar ? valorDoacao : '0');
     formData.append("criadoPor", userId);
+    // Remover a doação do FormData pois não é mais um campo do evento
+    // formData.append("querDoar", String(querDoar));
+    // formData.append("valorDoacao", querDoar ? valorDoacao : '0');
 
-    setIsSubmitting(true); // ATIVA O LOADING
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(`${apiUrl}/api/eventos/criar`, {
         method: 'POST',
-        body: formData, // seu FormData com os dados do evento
-        credentials: 'include', // <-- ADICIONE ESTA LINHA
+        body: formData,
+        credentials: 'include',
       });
 
       const responseData = await response.json();
@@ -483,7 +455,7 @@ function CriarEventos() {
     } catch (error: any) {
       alert(error.message);
     } finally {
-      setIsSubmitting(false); // DESATIVA O LOADING
+      setIsSubmitting(false);
     }
   };
 
@@ -492,7 +464,6 @@ function CriarEventos() {
 
   return (
     <div>
-      {/* ... header e modal de saída ... */}
       <header className="criar-evento-header">
         <div className="criar-juntos">
           <Link to="/Home" title="Voltar">
@@ -533,63 +504,10 @@ function CriarEventos() {
         </div>
       )}
 
-      {/* ... JSX do Modal de Doação ... */}
-      {modalDoacaoAberto && (
-        <div className="criar-modal-overlay" onClick={handleFecharModalDoacao}>
-          <div className="doacao-modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Escolha o valor da Doação</h3>
-            <div className="valores-predefinidos">
-              <button
-                onClick={() => setValorDoacaoTemporario('5,00')}
-                className={valorDoacaoTemporario === '5,00' ? 'ativo' : ''}
-              >
-                R$ 5,00
-              </button>
-              <button
-                onClick={() => setValorDoacaoTemporario('10,00')}
-                className={valorDoacaoTemporario === '10,00' ? 'ativo' : ''}
-              >
-                R$ 10,00
-              </button>
-              <button
-                onClick={() => setValorDoacaoTemporario('50,00')}
-                className={valorDoacaoTemporario === '50,00' ? 'ativo' : ''}
-              >
-                R$ 50,00
-              </button>
-            </div>
-            <div className="campo-valor-personalizado">
-              <label htmlFor="valor-doacao-modal">Ou digite outro valor</label>
-              <input
-                type="text"
-                id="valor-doacao-modal"
-                value={valorDoacaoTemporario}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/[^0-9,]/g, '');
-                  const parts = value.split(',');
-                  if (parts.length > 2) {
-                    value = parts[0] + ',' + parts.slice(1).join('');
-                  }
-                  if (parts[1] && parts[1].length > 2) {
-                    value = parts[0] + ',' + parts[1].substring(0, 2);
-                  }
-                  setValorDoacaoTemporario(value);
-                }}
-                placeholder="R$ 0,00"
-              />
-            </div>
-            <div className="doacao-modal-actions">
-              <button onClick={handleFinalizarDoacao} className="btn-finalizar-doacao">
-                Finalizar Doação
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* O Modal de Doação foi removido para simplificar a lógica */}
+      {/* {modalDoacaoAberto && (...) } */}
 
       <div className="criar-form">
-        {/* ... alerta e etapas 1 a 5 ... */}
         {perfilCarregado && !perfilCompleto && (
           <div className="alerta-amarelo">
             <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
@@ -630,7 +548,6 @@ function CriarEventos() {
                   onChange={handleImageChange}
                   accept="image/*"
                 />
-
                 {imagePreviewUrl ? (
                   <div className="image-preview-container">
                     <img src={imagePreviewUrl} alt="Preview do evento" className="image-preview" />
@@ -880,7 +797,6 @@ function CriarEventos() {
             </div>
 
             <div className="campos-horizontais">
-
               <div className="campo">
                 <label htmlFor="hora-inicio">
                   Hora de Início <span className={getError('horaInicio') ? 'erro-asterisco' : ''}>*</span>
@@ -908,7 +824,6 @@ function CriarEventos() {
                 />
                 {getError('horaTermino') && <span className="mensagem-erro">{getError('horaTermino')}</span>}
               </div>
-
             </div>
           </div>
         )}
@@ -1058,23 +973,43 @@ function CriarEventos() {
           <div className="informacoes-basicas-container">
             <h2 className="criar-doacao-title">6. Apoie uma causa</h2>
             <p className="criar-doacao-descricao">
-              Você pode habilitar uma opção para que os compradores do ingresso façam uma doação extra para uma instituição beneficente. Todo o valor arrecadado será destinado a causas sociais.
+              Se deseja apoiar a causa, por favor, digite o valor que deseja doar e clique no botão abaixo para fazer uma doação.
             </p>
+
             <div className="container-doacao-principal">
-              {!querDoar ? (
-                <button onClick={handleAbrirModalDoacao} className="btn-abrir-doacao">
-                  Adicionar Opção de Doação
-                </button>
-              ) : (
-                <div className="info-doacao-selecionada">
-                  <p>Opção de doação habilitada!</p>
-                  <p>Valor inicial sugerido: <span>R$ {valorDoacao}</span></p>
-                  <button onClick={handleAbrirModalDoacao}>Alterar Valor</button>
-                  <button onClick={handleRemoverDoacao} style={{ marginLeft: '10px' }}>Remover Doação</button>
-                </div>
-              )}
-              {getError('valorDoacao') && <span className="mensagem-erro">{getError('valorDoacao')}</span>}
+              <div className="campo">
+                <label htmlFor="valor-doacao">Valor da Doação (R$)</label>
+                <input
+                  type="text"
+                  id="valor-doacao"
+                  value={valorDoacao}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9,]/g, '');
+                    setValorDoacao(value);
+                  }}
+                  placeholder="Ex: 10,00"
+                  className={getError('valorDoacao') ? 'erro-campo' : ''}
+                />
+                {getError('valorDoacao') && <span className="mensagem-erro">{getError('valorDoacao')}</span>}
+              </div>
+
+              <button
+                onClick={() => {
+                  const valorNumerico = parseFloat(valorDoacao.replace(',', '.'));
+                  if (valorNumerico > 0) {
+                    handleDoacaoDireta(valorNumerico);
+                  } else {
+                    alert('Por favor, insira um valor válido para a doação.');
+                    setErros(prevErros => ({ ...prevErros, valorDoacao: 'Por favor, insira um valor maior que zero.' }));
+                  }
+                }}
+                className="btn-doacao-direta"
+                disabled={!valorDoacao || parseFloat(valorDoacao.replace(',', '.')) <= 0}
+              >
+                Fazer Doação
+              </button>
             </div>
+
             <div className="termos-container">
               <div className="checkbox-container">
                 <input

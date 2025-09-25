@@ -26,6 +26,7 @@ import CriarEventos from './Page/Eventos/CriarEventos';
 import Home from './Page/Public/Home';
 import Categorias from "./Page/Public/Categorias";
 import Termos from './Page/Public/Termos';
+import PoliticaReembolso from './Page/Public/PoliticaReembolso';
 import Duvidas from './Page/Public/Duvidas';
 import Perfil from './Page/User/Perfil';
 import Carrinho from './Page/User/Carrinho';
@@ -78,8 +79,10 @@ function AppRoutes() {
     return (
         <Routes>
             {/* ROTAS PROTEGIDAS SEM NENHUM CABEÇALHO */}
+            <Route path="/evento/:id" element={<Detalhes />} />
             <Route element={<ProtectedRoute />}>
                 <Route path="/CriarEventos" element={<CriarEventos />} />
+                <Route path="/editar-evento/:id" element={<EditarEvento />} />
             </Route>
 
             <Route element={<AdminRoute />}>
@@ -107,7 +110,6 @@ function AppRoutes() {
 
                 {/* Rotas protegidas com NavBar3 */}
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/editar-evento/:id" element={<EditarEvento />} />
                     <Route path="/perfil" element={<Perfil />} />
                 </Route>
             </Route>
@@ -115,6 +117,7 @@ function AppRoutes() {
             {/* ROTAS COM APENAS O AppHeader */}
             <Route element={<LayoutWithAppHeader />}>
                 <Route path="/termos" element={<Termos />} />
+                <Route path="/PoliticaReembolso" element={<PoliticaReembolso />} />
                 {/* Rota protegida com AppHeader */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/meus-eventos" element={<MeusEventos />} />

@@ -1,121 +1,26 @@
-
 .modal-evento-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    padding: 20px;
 }
 
 .modal-evento-conteudo {
-    background: white;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 500px; /* Largura mais estreita para lista */
-    max-height: 90vh;
+    background-color: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 700px; /* Tamanho confortável para visualização */
+    max-height: 90vh; /* Limite de altura */
     overflow-y: auto;
-    padding: 25px;
     position: relative;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-}
-
-.modal-evento-header {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.modal-evento-imagem {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-.modal-evento-titulo {
-    font-size: 1.5rem;
-    color: #2c3e50;
-    margin-bottom: 5px;
-}
-
-.modal-evento-data {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-/* LISTA - ITENS UM ABAIXO DO OUTRO */
-.modal-evento-lista {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.modal-evento-item {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-}
-
-.modal-evento-item:last-child {
-    border-bottom: none;
-}
-
-.modal-evento-label {
-    font-weight: 600;
-    color: #34495e;
-    margin-bottom: 3px;
-}
-
-.modal-evento-texto {
-    color: #555;
-    line-height: 1.5;
-    word-break: break-word; /* Corrige quebra de texto longos */
-    white-space: pre-line; /* Mantém quebras de linha do texto */
-}
-
-.modal-evento-link {
-    color: #3498db;
-    word-break: break-all;
-}
-
-/* Botões */
-.modal-evento-botoes {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    margin-top: 25px;
-}
-
-.modal-evento-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.modal-evento-btn-aceitar {
-    background: #27ae60;
-    color: white;
-}
-
-.modal-evento-btn-rejeitar {
-    background: #e74c3c;
-    color: white;
-}
-
-.modal-evento-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
 .modal-evento-fechar {
@@ -126,9 +31,173 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: #7f8c8d;
+    color: #333;
+    transition: color 0.2s;
 }
 
 .modal-evento-fechar:hover {
-    color: #e74c3c;
+    color: #F44336;
+}
+
+/* --- Cabeçalho --- */
+.modal-evento-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-evento-imagem {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0; /* Impede que a imagem encolha */
+}
+
+.modal-evento-info-basica {
+    flex-grow: 1;
+}
+
+.modal-evento-titulo {
+    font-size: 24px;
+    color: #333;
+    margin: 0 0 5px 0;
+    line-height: 1.2;
+}
+
+.modal-evento-data,
+.modal-evento-criador {
+    font-size: 14px;
+    color: #666;
+    margin: 3px 0;
+}
+
+/* --- Detalhes (Lista/Itens) --- */
+.modal-evento-detalhes {
+    padding: 0 5px;
+}
+
+.modal-evento-secao-colunas {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.modal-evento-item {
+    margin-bottom: 15px;
+    /* Para a seção de colunas */
+    flex: 1; 
+}
+
+.modal-evento-item.full-width {
+    flex: none;
+    width: 100%;
+}
+
+.modal-evento-label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.modal-evento-texto {
+    font-size: 15px;
+    color: #555;
+    white-space: pre-wrap; /* Mantém quebras de linha e formatação */
+}
+
+.modal-evento-link {
+    color: #2196F3;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.modal-evento-link:hover {
+    text-decoration: underline;
+}
+
+/* --- Botões de Ação --- */
+.modal-evento-botoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.modal-evento-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    min-width: 100px;
+}
+
+.modal-evento-btn-aceitar {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.modal-evento-btn-aceitar:hover {
+    background-color: #45a049;
+}
+
+.modal-evento-btn-rejeitar {
+    background-color: #F44336;
+    color: white;
+}
+
+.modal-evento-btn-rejeitar:hover {
+    background-color: #d32f2f;
+}
+
+/* NOVO ESTILO: Reanálise */
+.modal-evento-btn-reanalise {
+    background-color: #FFC107; /* Amarelo/Âmbar */
+    color: #333;
+}
+
+.modal-evento-btn-reanalise:hover {
+    background-color: #e0a800;
+    color: #333;
+}
+
+/* Adicione estas novas classes ao seu ModalEvento.css */
+
+.modal-evento-label-secao {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff; /* Cor para destacar o título da seção */
+    margin: 15px 0 10px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+/* Garante que o item de data de venda ocupe 2 colunas para alinhar com a meia-entrada (se for o caso) */
+.ingressos-inteira .modal-evento-item:last-child {
+    flex: 1.5; /* Faz com que o item de data/fim de vendas ocupe um pouco mais de espaço */
+}
+
+.ingressos-meia .modal-evento-item {
+    flex: 1;
+}
+
+/* Adicione este bloco ao seu ModalEvento.css */
+.modal-evento-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
 }

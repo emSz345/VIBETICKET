@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import "./../../styles/Categorias.css";
 import NavBar3 from '../../components/sections/Home/NavBar3/NavBar3';
+import Rodape from '../../components/layout/Footer/Footer'; // Importe o Rodape
 
 // Importe as imagens dos estados
 import sp from "./../../assets/estados/estado-sp.jpg";
@@ -14,8 +15,8 @@ import pr from "./../../assets/estados/estados-prn.jpg";
 import sc from "./../../assets/estados/estado_sc.jpg";
 import rs from "./../../assets/estados/estado_rgs.jpg";
 import df from "./../../assets/estados/estado_df.jpg";
+import ChatBot from "../../components/sections/Chatbot/Chatbot";
 
-// O "Dicionário" que traduz siglas para dados completos (nome, imagem)
 const mapeamentoEstados = {
     SP: { nome: "São Paulo", img: sp, id: "SP" },
     RJ: { nome: "Rio de Janeiro", img: rj, id: "RJ" },
@@ -26,10 +27,8 @@ const mapeamentoEstados = {
     SC: { nome: "Santa Catarina", img: sc, id: "SC" },
     RS: { nome: "Rio Grande do Sul", img: rs, id: "RS" },
     DF: { nome: "Brasília", img: df, id: "DF" },
-    // Adicione outras siglas e seus dados correspondentes aqui
 };
 
-// --- Interfaces (Tipos de Dados) ---
 interface Evento {
     _id: string;
     nome: string;
@@ -42,7 +41,7 @@ interface Evento {
 interface Estado {
     nome: string;
     img: string;
-    id: string; // id será a sigla, ex: "SP"
+    id: string;
 }
 
 interface Filtros {
@@ -51,23 +50,19 @@ interface Filtros {
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-// --- Componente Principal ---
 const Categorias: React.FC = () => {
-    // 1. Usa useSearchParams para gerenciar o estado do filtro na URL
     const [searchParams, setSearchParams] = useSearchParams();
     const estadoUrl = searchParams.get('estado') || '';
+    const navigate = useNavigate();
 
-    // Estados para controlar os dados da API
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [estadosDisponiveis, setEstadosDisponiveis] = useState<Estado[]>([]);
     const [carregandoEventos, setCarregandoEventos] = useState(true);
     const [carregandoEstados, setCarregandoEstados] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
 
-    // Estado para controlar a UI
     const [filtrosAbertos, setFiltrosAbertos] = useState(false);
 
-    // 2. Busca os estados disponíveis quando o componente é montado
     useEffect(() => {
         const fetchEstados = async () => {
             try {
@@ -90,7 +85,6 @@ const Categorias: React.FC = () => {
         fetchEstados();
     }, []);
 
-    // 3. Busca os eventos sempre que a URL com o filtro de estado mudar
     useEffect(() => {
         const fetchEventos = async () => {
             try {
@@ -112,16 +106,19 @@ const Categorias: React.FC = () => {
             }
         };
         fetchEventos();
-    }, [estadoUrl]); // <-- Roda sempre que o estado na URL mudar
+    }, [estadoUrl]);
+
+    const handleEventoClick = (id: string) => {
+        navigate(`/evento/${id}`);
+    };
 
     const handleEstadoClick = (estadoId: string) => {
-        // Se clicar no mesmo estado, remove o filtro. Caso contrário, define o novo filtro.
         if (estadoUrl === estadoId) {
             setSearchParams({});
         } else {
             setSearchParams({ estado: estadoId });
         }
-        setFiltrosAbertos(false); // Fecha o menu mobile ao selecionar
+        setFiltrosAbertos(false);
     };
 
     const limparFiltros = () => {
@@ -131,76 +128,87 @@ const Categorias: React.FC = () => {
     const estadoSelecionado = estadosDisponiveis.find(e => e.id === estadoUrl);
 
     return (
-        <div className="categorias-container">
-            <NavBar3 />
-            <div className="categorias-header">
-                <h1 className="categorias-titulo">
-                    {estadoSelecionado ? `Eventos em ${estadoSelecionado.nome}` : "Todos os Eventos"}
-                </h1>
-                <button className="categorias-btn-filtros" onClick={() => setFiltrosAbertos(!filtrosAbertos)}>
-                    <span>Filtros</span>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </button>
-            </div>
+        <> {/* Use um fragmento para englobar todo o conteúdo */}
+            <div className="categorias-container">
+                <NavBar3 />
 
-            {filtrosAbertos && (
-                <div className="categorias-filtros-mobile">
-                    <div className="categorias-filtros-conteudo">
-                        <FiltrosContent
-                            filtros={{ estado: estadoUrl }}
-                            estados={estadosDisponiveis}
-                            onEstadoClick={handleEstadoClick}
-                            onLimpar={limparFiltros}
-                            carregando={carregandoEstados}
-                        />
+                {/* Conteúdo principal que cresce */}
+                <div className="categorias-main-content">
+                    <div className="categorias-header">
+                        <h1 className="categorias-titulo">
+                            {estadoSelecionado ? `Eventos em ${estadoSelecionado.nome}` : "Todos os Eventos"}
+                        </h1>
+                        <button className="categorias-btn-filtros" onClick={() => setFiltrosAbertos(!filtrosAbertos)}>
+                            <span>Filtros</span>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </button>
+                    </div>
+
+                    {filtrosAbertos && (
+                        <div className="categorias-filtros-mobile">
+                            <div className="categorias-filtros-conteudo">
+                                <FiltrosContent
+                                    filtros={{ estado: estadoUrl }}
+                                    estados={estadosDisponiveis}
+                                    onEstadoClick={handleEstadoClick}
+                                    onLimpar={limparFiltros}
+                                    carregando={carregandoEstados}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="categorias-layout">
+                        <aside className="categorias-filtros-desktop">
+                            <FiltrosContent
+                                filtros={{ estado: estadoUrl }}
+                                estados={estadosDisponiveis}
+                                onEstadoClick={handleEstadoClick}
+                                onLimpar={limparFiltros}
+                                carregando={carregandoEstados}
+                            />
+                        </aside>
+
+                        <main className="categorias-conteudo">
+                            <div className="categorias-resultados">
+                                {carregandoEventos ? (
+                                    <p>Carregando eventos...</p>
+                                ) : erro ? (
+                                    <p className="categorias-erro">{erro}</p>
+                                ) : eventos.length > 0 ? (
+                                    <div className="lista-de-eventos">
+                                        {eventos.map(evento => (
+                                            <div
+                                                key={evento._id}
+                                                className="evento-card-placeholder"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={() => handleEventoClick(evento._id)}
+                                            >
+                                                <img src={`${apiUrl}/uploads/${evento.imagem}`} alt={evento.nome} />
+                                                <h3>{evento.nome}</h3>
+                                                <p>{`${evento.cidade} - ${evento.estado}`}</p>
+                                                <p>{new Date(evento.dataInicio).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="categorias-lista-estados">
+                                        <h2 className="categorias-lista-titulo">Nenhum evento encontrado</h2>
+                                        <p className="categorias-lista-descricao">
+                                            Tente selecionar outro estado ou limpar os filtros.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </main>
                     </div>
                 </div>
-            )}
-
-            <div className="categorias-layout">
-                <aside className="categorias-filtros-desktop">
-                    <FiltrosContent
-                        filtros={{ estado: estadoUrl }}
-                        estados={estadosDisponiveis}
-                        onEstadoClick={handleEstadoClick}
-                        onLimpar={limparFiltros}
-                        carregando={carregandoEstados}
-                    />
-                </aside>
-
-                <main className="categorias-conteudo">
-                    <div className="categorias-resultados">
-                        {carregandoEventos ? (
-                            <p>Carregando eventos...</p>
-                        ) : erro ? (
-                            <p className="categorias-erro">{erro}</p>
-                        ) : eventos.length > 0 ? (
-                            <div className="lista-de-eventos">
-                                {eventos.map(evento => (
-                                    <div key={evento._id} className="evento-card-placeholder">
-                                        <img src={`${apiUrl}/uploads/${evento.imagem}`} alt={evento.nome} />
-                                        <h3>{evento.nome}</h3>
-                                        <p>{`${evento.cidade} - ${evento.estado}`}</p>
-                                        <p>{new Date(evento.dataInicio).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="categorias-lista-estados">
-                                <h2 className="categorias-lista-titulo">Nenhum evento encontrado</h2>
-                                <p className="categorias-lista-descricao">
-                                    Tente selecionar outro estado ou limpar os filtros.
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </main>
             </div>
-        </div>
+            <Rodape />
+        </>
     );
 };
 
-// --- Componente de Conteúdo dos Filtros (Reutilizável) ---
 interface FiltrosContentProps {
     filtros: Filtros;
     estados: Estado[];
@@ -233,6 +241,9 @@ const FiltrosContent: React.FC<FiltrosContentProps> = ({ filtros, estados, onEst
                 <button onClick={onLimpar} className="categorias-filtro-btn categorias-filtro-btn-limpar">
                     Limpar Filtros
                 </button>
+            </div>
+            <div style={{ display: "flex", right: "20px", bottom: "30px", position: 'fixed', zIndex: '1000' }}>
+                <ChatBot />
             </div>
         </>
     );

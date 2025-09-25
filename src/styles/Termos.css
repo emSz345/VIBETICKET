@@ -1,247 +1,175 @@
-/* Reset e configurações globais */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* --------------------------
-   Estilo principal da página
---------------------------- */
-
-/* Container externo que centraliza o conteúdo de termos */
-.termos-scroll-container {
-  padding: 40px 20px;
+.Termos-pagina-termos {
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px); /* Ajuste simplificado */
+  background-color: #f4f4f4;
+  padding: 40px;
 }
 
-/* Container interno com rolagem e conteúdo centralizado */
-.termos-container {
+.Termos-container {
   background-color: white;
-  max-width: 700px;
-  max-height: 80vh;
-  overflow-y: auto; /* permite rolagem apenas neste elemento */
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 95%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Título da seção de termos */
-.container-title {
+.Termos-titulo-principal {
+  color: #333;
+  margin-bottom: 40px;
   text-align: center;
-  margin-bottom: 20px;
-}
-
-.container-title h3 {
-  font-size: 20px;
+  font-size: 2.5rem;
   font-weight: bold;
 }
 
-.container-title span {
-  color: #1976d2; /* Destaque de cor para parte do título */
+.Termos-titulo-secao {
+  color: #555;
+  margin-top: 35px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
-/* Texto dos termos */
-.termos-texto {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #333;
-  text-align: justify;
+.Termos-introducao {
+  margin-bottom: 30px;
+  color: #666;
 }
 
-.termos-texto p {
-  text-align: left;
+.Termos-texto-introducao {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.Termos-texto {
+  color: #666;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.Termos-paragrafo {
+  font-size: 1.05rem;
+  line-height: 1.7;
   margin-bottom: 15px;
+  display: block;
 }
 
-/* Linha separadora */
-hr {
-  margin: 20px 0;
-  border: none;
-  border-top: 2px solid #1976d2;
+.Termos-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
 }
 
-/* Botão dentro dos termos */
-.termos-texto button {
-  margin-top: 30px;
-  width: 100%;
+.Termos-link:hover {
+  text-decoration: underline;
+  color: #0056b3;
 }
 
-/* --------------------------
-   Estilos relacionados ao Modal - VERSÃO MELHORADA
---------------------------- */
-
-/* Fundo escurecido para modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.3s ease;
+.Termos-separador {
+  border: 1px solid #eee;
+  margin: 40px 0;
 }
 
-/* Conteúdo central do modal - VERSÃO MELHORADA */
-.modal-content {
-  background-color: white;
-  width: 90%;
-  max-width: 700px;
-  max-height: 85vh;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  animation: slideIn 0.3s ease;
-  overflow: hidden; /* Remove qualquer scroll externo */
+.Termos-secao {
+  margin-bottom: 30px;
 }
 
-/* Cabeçalho do modal fixo */
-.modal-header {
-  padding: 20px 30px 10px;
-  border-bottom: 1px solid #eee;
-  background: white;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-/* Conteúdo rolável do modal */
-.modal-body {
-  padding: 0 30px;
-  overflow-y: auto;
-  flex: 1;
-  max-height: calc(85vh - 140px); /* Altura total menos cabeçalho e rodapé */
-}
-
-/* Rodapé do modal fixo */
-.modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid #eee;
-  background: white;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-}
-
-/* Botão de fechar o modal - VERSÃO MELHORADA */
-.close-button {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  background: #f5f5f5;
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-  z-index: 11;
-}
-
-.close-button:hover {
-  background: #e0e0e0;
-}
-
-/* Animações */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { 
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
+/* Estilos responsivos */
+@media (max-width: 1200px) {
+  .Termos-container {
+    max-width: 1100px;
+    padding: 40px;
   }
 }
 
-/* --------------------------
-   Ajustes para o conteúdo dos termos dentro do modal
---------------------------- */
-
-/* Remove padding extra e scroll duplo */
-.modal-body .termos-container {
-  max-height: none;
-  overflow-y: visible;
-  padding: 0;
-  box-shadow: none;
-  max-width: 100%;
+@media (max-width: 992px) {
+  .Termos-container {
+    max-width: 900px;
+    padding: 35px;
+  }
+  
+  .Termos-titulo-principal {
+    font-size: 2.2rem;
+    margin-bottom: 35px;
+  }
+  
+  .Termos-titulo-secao {
+    font-size: 1.3rem;
+  }
 }
-
-/* Ajusta o título dentro do modal */
-.modal-body .container-title {
-  margin-top: 0;
-  padding-top: 0;
-}
-
-/* --------------------------
-   Termos exibidos diretamente na tela (sem modal)
---------------------------- */
-
-.termos-direto-na-tela {
-  margin-top: 2rem;
-  max-height: 350px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-}
-
-/* --------------------------
-   Responsividade
---------------------------- */
 
 @media (max-width: 768px) {
-  .termos-texto {
-    font-size: 16px;
+  .Termos-pagina-termos {
+    padding: 20px;
+    min-height: calc(100vh - 80px);
   }
 
-  .termos-container {
+  .Termos-container {
+    padding: 25px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .Termos-titulo-principal {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+  }
+
+  .Termos-titulo-secao {
+    font-size: 1.2rem;
+    margin-top: 25px;
+    margin-bottom: 15px;
+  }
+
+  .Termos-introducao,
+  .Termos-texto {
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+
+  .Termos-paragrafo {
+    font-size: 1rem;
+  }
+
+  .Termos-separador {
+    margin: 30px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .Termos-pagina-termos {
     padding: 15px;
   }
 
-  .container-title h3 {
-    font-size: 1.5rem;
+  .Termos-container {
+    padding: 20px;
   }
 
-  .modal-content {
-    width: 95%;
-    max-height: 90vh;
-    margin: 20px;
+  .Termos-titulo-principal {
+    font-size: 1.6rem;
   }
 
-  .modal-header,
-  .modal-body,
-  .modal-footer {
-    padding: 15px 20px;
+  .Termos-titulo-secao {
+    font-size: 1.1rem;
+  }
+  
+  .Termos-introducao,
+  .Termos-texto {
+    font-size: 0.95rem;
   }
 
-  .modal-body {
-    max-height: calc(90vh - 120px);
+  .Termos-paragrafo {
+    font-size: 0.95rem;
   }
+}
 
-  .close-button {
-    top: 10px;
-    right: 15px;
-    width: 28px;
-    height: 28px;
-    font-size: 18px;
+/* Para telas muito grandes */
+@media (min-width: 1600px) {
+  .Termos-container {
+    max-width: 1500px;
+    padding: 60px;
   }
 }

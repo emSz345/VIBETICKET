@@ -7,7 +7,7 @@ const CookieNotice: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
-    
+
     const checkCookieAcceptance = () => {
         const alreadySeen = localStorage.getItem("cookie_notice_seen");
         return !!alreadySeen; // Retorna true se já aceitou, false se não
@@ -66,21 +66,21 @@ const CookieNotice: React.FC = () => {
                         <div className="cookie-text">
                             <h3>Cookies Necessários</h3>
                             <p>
-                                Usamos cookies essenciais para manter seu login seguro e 
+                                Usamos cookies essenciais para manter seu login seguro e
                                 o carrinho de compras funcionando.
                             </p>
                         </div>
                     </div>
-                    
+
                     <div className="cookie-actions">
-                        <button 
-                            className="btn-learn-more" 
+                        <button
+                            className="btn-learn-more"
                             onClick={handleOpenModal}
                         >
                             Saber mais
                         </button>
-                        <button 
-                            className="btn-accept" 
+                        <button
+                            className="btn-accept"
                             onClick={handleClose}
                         >
                             Entendi
@@ -91,16 +91,16 @@ const CookieNotice: React.FC = () => {
 
             {/* Modal de Detalhes */}
             {showModal && (
-                <div className="modal-overlay" onClick={handleCloseModal}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
+                <div className="cookie-modal-overlay" onClick={handleCloseModal}>
+                    <div className="cookie-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="cookie-modal-header">
                             <h2>🍪 Política de Cookies</h2>
-                            <button className="modal-close" onClick={handleCloseModal}>
+                            <button className="cookie-modal-close" onClick={handleCloseModal}>
                                 ×
                             </button>
                         </div>
-                        
-                        <div className="modal-body">
+
+                        <div className="cookie-modal-body">
                             <div className="cookie-info-section">
                                 <h3>Cookies que Utilizamos</h3>
                                 <ul>
@@ -114,8 +114,8 @@ const CookieNotice: React.FC = () => {
                             <div className="cookie-explanation">
                                 <h4>Por que não pedimos consentimento?</h4>
                                 <p>
-                                    Estes cookies são <strong>estritamente necessários</strong> 
-                                    para o funcionamento da plataforma. Sem eles, não podemos 
+                                    Estes cookies são <strong>estritamente necessários</strong>
+                                    para o funcionamento da plataforma. Sem eles, não podemos
                                     fornecer nossos serviços.
                                 </p>
                             </div>
@@ -123,13 +123,13 @@ const CookieNotice: React.FC = () => {
                             <div className="cookie-transparency">
                                 <h4>Transparência Total</h4>
                                 <p>
-                                    Não usamos cookies de marketing, analytics ou de terceiros. 
+                                    Não usamos cookies de marketing, analytics ou de terceiros.
                                     Somente o necessário para você comprar ingressos com segurança.
                                 </p>
                             </div>
                         </div>
 
-                        <div className="modal-footer">
+                        <div className="cookie-modal-footer">
                             <button className="btn-accept" onClick={handleCloseModal}>
                                 Fechar
                             </button>
