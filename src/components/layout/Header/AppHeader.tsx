@@ -28,19 +28,23 @@ export default function AppHeader() {
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
 
+  // FUNÇÃO CORRIGIDA PARA TRATAR IMAGENS DO GOOGLE
   const getProfileImageUrl = () => {
     if (!user?.imagemPerfil) {
       return `${apiUrl}/uploads/blank_profile.png`;
     }
-
+    
+    // Se já é uma URL completa (Google, Facebook, etc), retorna diretamente
     if (/^https?:\/\//.test(user.imagemPerfil)) {
       return user.imagemPerfil;
     }
-
+    
+    // Se começa com /uploads, adiciona o apiUrl
     if (user.imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${user.imagemPerfil}`;
     }
-
+    
+    // Caso contrário, assume que é um arquivo local em uploads
     return `${apiUrl}/uploads/${user.imagemPerfil}`;
   };
 
@@ -50,7 +54,6 @@ export default function AppHeader() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Fecha dropdown quando clicar fora
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -68,12 +71,10 @@ export default function AppHeader() {
 
   return (
     <header className={`app-header ${scrolled ? 'app-header--scrolled' : ''}`}>
-      {/* Logo */}
       <Link to="/Home" aria-label="Página inicial">
         <img src={logoLight} alt="Logo" className="app-header__logo" />
       </Link>
 
-      {/* Ações do Usuário (Desktop) */}
       <div className="app-header__actions">
         <div className="app-header__auth">
           {!isAuthenticated ? (
@@ -89,7 +90,14 @@ export default function AppHeader() {
               >
                 {user?.imagemPerfil ? (
                   <div className="user-menu__avatar-container">
-                    <img src={getProfileImageUrl()} className="user-menu__avatar-image" alt="Avatar" />
+                    <img 
+                      src={getProfileImageUrl()} 
+                      className="user-menu__avatar-image" 
+                      alt="Avatar" 
+                      onError={(e) => {
+                        e.currentTarget.src = `${apiUrl}/uploads/blank_profile.png`;
+                      }}
+                    />
                     <TfiMenu className="user-menu__icon" />
                   </div>
                 ) : (
@@ -102,7 +110,14 @@ export default function AppHeader() {
               {dropdownOpen && (
                 <div ref={menuRef} className="user-menu__content">
                   <div className="user-menu__header">
-                    <img src={getProfileImageUrl()} className="user-menu__avatar-image" alt="Avatar" />
+                    <img 
+                      src={getProfileImageUrl()} 
+                      className="user-menu__avatar-image" 
+                      alt="Avatar" 
+                      onError={(e) => {
+                        e.currentTarget.src = `${apiUrl}/uploads/blank_profile.png`;
+                      }}
+                    />
                     <div className="user-menu__user-info">
                       <strong>{user?.nome}</strong>
                       <small>{user?.email}</small>
@@ -136,19 +151,15 @@ export default function AppHeader() {
         </div>
       </div>
 
-      {/* Ícone do Menu Mobile */}
       <div className="mobile-menu-icon" onClick={() => setMobileOpen(!mobileOpen)}>
         {mobileOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
       </div>
 
-      {/* Overlay do Menu Mobile */}
       {mobileOpen && (
         <div className="mobile-menu-overlay open" onClick={() => setMobileOpen(false)} />
       )}
 
-      {/* Menu Mobile - Estilo da NavBar3 */}
       <div className={`mobile-menu ${mobileOpen ? "open" : ""}`}>
-        {/* Cabeçalho com "MENU" na esquerda e "X" na direita */}
         <div className="mobile-menu-header">
           <h3>Menu</h3>
           <div className="mobile-menu-close" onClick={() => setMobileOpen(false)}>
@@ -163,6 +174,9 @@ export default function AppHeader() {
               className="avatar"
               alt="Avatar"
               style={{ width: "50px", height: "50px" }}
+              onError={(e) => {
+                e.currentTarget.src = `${apiUrl}/uploads/blank_profile.png`;
+              }}
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <strong>{user?.nome}</strong>

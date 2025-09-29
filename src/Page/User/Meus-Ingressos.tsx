@@ -4,7 +4,6 @@ import '../../styles/Meus-Ingressos.css';
 import { Ingresso } from '../../types/Ingresso';
 import { useAuth } from '../../Hook/AuthContext';
 
-
 const MeusIngressos: React.FC = () => {
     const { user, isLoading } = useAuth();
     const apiUrl = process.env.REACT_APP_API_URL;
@@ -15,11 +14,26 @@ const MeusIngressos: React.FC = () => {
 
     useEffect(() => {
         const fetchIngressos = async () => {
+            let token = localStorage.getItem('token');
 
-            const token = localStorage.getItem('token');
+            // Se não tem token mas o usuário está autenticado, tentar buscar da sessão
+            if (!token && user) {
+                try {
+                    const response = await fetch(`${apiUrl}/api/users/me`, {
+                        credentials: 'include'
+                    });
+                    if (response.ok) {
+                        const userData = await response.json();
+                        if (userData.token) {
+                            token = userData.token;
+                            localStorage.setItem('token', userData.token);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar token da sessão:", error);
+                }
+            }
 
-            // CORREÇÃO: Remova a verificação de '!user' aqui. 
-            // A verificação '!isLoading' logo abaixo já garante que o estado de auth está pronto.
             if (!token) {
                 setLoading(false);
                 setError("Usuário não logado. Token de autenticação não encontrado.");
@@ -50,7 +64,6 @@ const MeusIngressos: React.FC = () => {
             }
         };
 
-        // Essa verificação é a mais importante. Ela garante que a função só roda quando o useAuth terminar de carregar.
         if (!isLoading) {
             fetchIngressos();
         }

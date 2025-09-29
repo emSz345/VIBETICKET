@@ -1,17 +1,15 @@
 import React, { useState, ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../../services/api"; // USAR SEMPRE A INSTÂNCIA CONFIGURADA DO AXIOS
+import api from "../../services/api";
 import { signInWithGoogle, signInWithFacebook } from "../../services/firebase";
 import { useAuth } from "../../Hook/AuthContext";
 
-// Seus componentes
 import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
 import SocialButton from "../../components/ui/SocialButton/SocialButton";
 import TermosContent from '../../Page/Public/TermosContent';
 import "../../styles/Termos.css";
 
-// Estilos e assets
 import "../../styles/Login.css";
 import logo from "../../assets/logo.png";
 import logo1 from "../../assets/logoEmail.png";
@@ -39,12 +37,10 @@ const Cadastro: React.FC = () => {
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState(false);
-
-  // Estado para a tela de "Verifique seu e-mail"
   const [aguardandoVerificacao, setAguardandoVerificacao] = useState(false);
 
   const navigate = useNavigate();
-  const { login } = useAuth(); // Usando a função 'login' simplificada do contexto
+  const { login } = useAuth();
 
   const fecharModal = () => setMostrarTermos(false);
 
@@ -76,14 +72,11 @@ const Cadastro: React.FC = () => {
     setErrors({ ...errors, [name]: "" });
   };
 
-  // --- FLUXO DE CADASTRO LOCAL SIMPLIFICADO ---
   const handleSubmitLocal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
 
-    // Usamos um objeto simples para enviar como JSON, pois o backend espera 'Content-Type': 'application/json' para esta rota.
-    // Se sua rota de registro espera 'FormData' (para imagem), ajuste aqui.
     const payload = {
       nome: formData.nome,
       email: formData.email,
@@ -92,11 +85,9 @@ const Cadastro: React.FC = () => {
     };
 
     try {
-      // Usando a instância 'api'
       const response = await api.post('/api/users/register', payload);
 
       if (response.status === 201) {
-        // Mostra a tela de sucesso pedindo para o usuário verificar o e-mail.
         setAguardandoVerificacao(true);
       }
     } catch (error: any) {
@@ -107,7 +98,7 @@ const Cadastro: React.FC = () => {
     }
   };
 
-  // --- FLUXO DE CADASTRO/LOGIN SOCIAL CORRIGIDO ---
+  // FLUXO DE CADASTRO/LOGIN SOCIAL CORRIGIDO
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     if (!termosAceitos) {
       alert("Você deve aceitar os termos e políticas para continuar.");
@@ -136,11 +127,12 @@ const Cadastro: React.FC = () => {
         }
       });
 
-      const { user } = response.data; // O backend define o cookie e retorna o usuário
+      const { user, token } = response.data;
 
-      // USA A FUNÇÃO CORRETA E SIMPLIFICADA DO CONTEXTO
+      // SALVAR O TOKEN NO LOCAL STORAGE
+      localStorage.setItem('token', token);
+
       login(user);
-
       navigate("/Home");
 
     } catch (error: any) {
@@ -151,7 +143,6 @@ const Cadastro: React.FC = () => {
     }
   };
 
-  // TELA DE SUCESSO PÓS-CADASTRO
   if (aguardandoVerificacao) {
     return (
       <div className="login-container">
@@ -174,7 +165,6 @@ const Cadastro: React.FC = () => {
     );
   }
 
-  // TELA PADRÃO DE CADASTRO
   return (
     <div className="login-container">
       <div className="login-content">

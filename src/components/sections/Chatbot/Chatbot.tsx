@@ -30,6 +30,23 @@ interface FiltroEstado {
   dataPreferencia?: string;
 }
 
+interface CarrinhoItem {
+  id: string;
+  nomeEvento: string;
+  imagem: string;
+  dataEvento: string;
+  localEvento: string;
+  tipoIngresso: string;
+  preco: number;
+  quantidade: number;
+}
+
+interface QuickReply {
+  text: string;
+  action: string;
+  itemId?: string;
+}
+
 interface Mensagem {
   from: "user" | "bot";
   text: string;
@@ -40,6 +57,8 @@ interface Mensagem {
   localizacao?: string;
   showCommands?: boolean;
   state?: FiltroEstado;
+  quickReplies?: QuickReply[];
+  carrinho?: CarrinhoItem[];
 }
 
 interface CategoriasListaProps {
@@ -63,7 +82,9 @@ const ComandosRapidos: React.FC<{ onComandoClick: (comando: string) => void }> =
     { texto: "Como usar?", acao: "Como funciona?", icone: "❓", tipo: 'ajuda' },
     { texto: "Sobre", acao: "Quem é você?", icone: "🎪", tipo: 'sistema' },
     { texto: "Comprar ingresso", acao: "Como comprar ingressos?", icone: "🎫", tipo: 'evento' },
-    { texto: "Meu carrinho", acao: "Como funciona o carrinho?", icone: "🛒", tipo: 'evento' },
+    { texto: "Meu carrinho", acao: "Ver meu carrinho", icone: "🛒", tipo: 'evento' },
+    { texto: "Finalizar compra", acao: "Quero finalizar a compra", icone: "✅", tipo: 'evento' },
+    { texto: "Limpar carrinho", acao: "Limpar carrinho", icone: "🧹", tipo: 'evento' },
     { texto: "Criar evento", acao: "Como criar um evento?", icone: "🎪", tipo: 'evento' },
     { texto: "Meu perfil", acao: "Como editar meu perfil?", icone: "👤", tipo: 'sistema' },
     { texto: "Rock", acao: "Eventos de rock", icone: "🎸", tipo: 'evento' },
@@ -139,13 +160,86 @@ const CategoriasLista: React.FC<CategoriasListaProps> = ({ categorias, onCategor
   );
 };
 
+const QuickReplies: React.FC<{ 
+  quickReplies: QuickReply[]; 
+  onQuickReplyClick: (action: string, itemId?: string) => void 
+}> = ({ quickReplies, onQuickReplyClick }) => {
+  if (!quickReplies || quickReplies.length === 0) return null;
+
+  return (
+    <div className="quick-replies">
+      <div className="quick-replies-titulo">💡 Ações rápidas:</div>
+      <div className="quick-replies-grid">
+        {quickReplies.map((qr, index) => (
+          <button
+            key={index}
+            className="quick-reply-btn"
+            onClick={() => onQuickReplyClick(qr.action, qr.itemId)}
+            data-action={qr.action}
+          >
+            {qr.text}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const CarrinhoLista: React.FC<{ 
+  carrinho: CarrinhoItem[];
+  onRemoverItem: (id: string) => void;
+  onLimparCarrinho: () => void;
+  onFinalizarCompra: () => void;
+}> = ({ carrinho, onRemoverItem, onLimparCarrinho, onFinalizarCompra }) => {
+  if (!carrinho || carrinho.length === 0) return null;
+
+  const total = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+
+  return (
+    <div className="carrinho-lista">
+      <div className="carrinho-titulo">🛒 Seu Carrinho</div>
+      {carrinho.map((item, index) => (
+        <div key={item.id} className="carrinho-item">
+          <div className="carrinho-item-info">
+            <div className="carrinho-item-nome">{item.nomeEvento}</div>
+            <div className="carrinho-item-detalhes">
+              <span>📅 {item.dataEvento}</span>
+              <span>📍 {item.localEvento}</span>
+              <span>🎫 {item.quantidade}x R$ {item.preco.toFixed(2)}</span>
+              <span>💰 Subtotal: R$ {(item.preco * item.quantidade).toFixed(2)}</span>
+            </div>
+          </div>
+          <button
+            className="carrinho-item-remover"
+            onClick={() => onRemoverItem(item.id)}
+            aria-label="Remover item"
+          >
+            🗑️
+          </button>
+        </div>
+      ))}
+      <div className="carrinho-total">
+        <strong>💰 TOTAL: R$ {total.toFixed(2)}</strong>
+      </div>
+      <div className="carrinho-acoes">
+        <button className="carrinho-btn-limpar" onClick={onLimparCarrinho}>
+          🧹 Limpar Carrinho
+        </button>
+        <button className="carrinho-btn-finalizar" onClick={onFinalizarCompra}>
+          ✅ Finalizar Compra
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const ChatBot: React.FC = () => {
-  const [isEnabled] = useState(true); // Renamed _setIsEnabled to isEnabled
+  const [isEnabled] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>({});
   const [showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const apiUrl = process.env.REACT_APP_API_URL;
-  const [_categorias] = useState<string[]>([]); // Renamed _categorias to categorias, but still unused
+  const [_categorias] = useState<string[]>([]);
   const [showBalloon, setShowBalloon] = useState(true);
   const [messages, setMessages] = useState<Mensagem[]>([
     {
@@ -157,8 +251,23 @@ const ChatBot: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [carrinho, setCarrinho] = useState<CarrinhoItem[]>([]);
 
   const userId = useRef('user-' + Math.random().toString(36).substr(2, 9));
+  const navigate = useNavigate();
+
+  // Carregar carrinho do localStorage ao inicializar
+  useEffect(() => {
+    const carrinhoSalvo = localStorage.getItem('carrinho');
+    if (carrinhoSalvo) {
+      setCarrinho(JSON.parse(carrinhoSalvo));
+    }
+  }, []);
+
+  // Salvar carrinho no localStorage sempre que ele mudar
+  useEffect(() => {
+    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+  }, [carrinho]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -194,13 +303,96 @@ const ChatBot: React.FC = () => {
     if (!isOpen) setShowBalloon(false);
   };
 
+  // Funções para gerenciar o carrinho
+  
+
+  const removerDoCarrinho = (id: string) => {
+    setCarrinho(prev => prev.filter(item => item.id !== id));
+  };
+
+  const limparCarrinho = () => {
+    setCarrinho([]);
+  };
+
+  const finalizarCompra = () => {
+    navigate('/carrinho');
+    setIsOpen(false);
+  };
+
+  const gerenciarCarrinho = (action: string, itemId?: string) => {
+    switch (action) {
+      case 'verCarrinho':
+        // Mostrar carrinho atual
+        if (carrinho.length === 0) {
+          setMessages(prev => [...prev, {
+            from: "bot",
+            text: "🛒 Seu carrinho está vazio! Que tal explorar alguns eventos? 🎪",
+            showCommands: true
+          }]);
+        } else {
+          const total = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+          
+          let mensagemItens = "🛒 **Seu Carrinho:**\n\n";
+          carrinho.forEach((item, index) => {
+            mensagemItens += `${index + 1}. **${item.nomeEvento}**\n`;
+            mensagemItens += `   📅 ${item.dataEvento}\n`;
+            mensagemItens += `   🎫 ${item.quantidade}x R$ ${item.preco.toFixed(2)}\n`;
+            mensagemItens += `   💰 Subtotal: R$ ${(item.preco * item.quantidade).toFixed(2)}\n\n`;
+          });
+          mensagemItens += `**💰 TOTAL: R$ ${total.toFixed(2)}**`;
+          
+          setMessages(prev => [...prev, {
+            from: "bot",
+            text: mensagemItens,
+            quickReplies: [
+              { text: "🗑️ Remover item", action: "removerItem" },
+              { text: "🧹 Limpar carrinho", action: "limparCarrinho" },
+              { text: "✅ Finalizar compra", action: "finalizarCompra" }
+            ]
+          }]);
+        }
+        break;
+        
+      case 'limparCarrinho':
+        limparCarrinho();
+        setMessages(prev => [...prev, {
+          from: "bot",
+          text: "🧹 Carrinho limpo com sucesso! Todos os itens foram removidos.",
+          showCommands: true
+        }]);
+        break;
+        
+      case 'finalizarCompra':
+        finalizarCompra();
+        break;
+        
+      case 'removerItem':
+        if (itemId) {
+          removerDoCarrinho(itemId);
+          setMessages(prev => [...prev, {
+            from: "bot",
+            text: "🗑️ Item removido do carrinho!",
+            quickReplies: [
+              { text: "🛒 Ver carrinho", action: "verCarrinho" },
+              { text: "🎪 Continuar comprando", action: "verEventos" }
+            ]
+          }]);
+        }
+        break;
+        
+      default:
+        break;
+    }
+  };
+
   const getMessageContent = (msg: Mensagem) => {
     if (msg.eventos && msg.eventos.length > 0) {
       return {
         showText: true,
         showEvents: true,
         showCategories: false,
-        showNoResults: false
+        showNoResults: false,
+        showCarrinho: false
       };
     }
 
@@ -209,7 +401,8 @@ const ChatBot: React.FC = () => {
         showText: true,
         showEvents: false,
         showCategories: true,
-        showNoResults: false
+        showNoResults: false,
+        showCarrinho: false
       };
     }
 
@@ -218,7 +411,18 @@ const ChatBot: React.FC = () => {
         showText: true,
         showEvents: false,
         showCategories: false,
-        showNoResults: true
+        showNoResults: true,
+        showCarrinho: false
+      };
+    }
+
+    if (msg.carrinho && msg.carrinho.length > 0) {
+      return {
+        showText: true,
+        showEvents: false,
+        showCategories: false,
+        showNoResults: false,
+        showCarrinho: true
       };
     }
 
@@ -226,7 +430,8 @@ const ChatBot: React.FC = () => {
       showText: true,
       showEvents: false,
       showCategories: false,
-      showNoResults: false
+      showNoResults: false,
+      showCarrinho: false
     };
   };
 
@@ -242,11 +447,11 @@ const ChatBot: React.FC = () => {
       state?: FiltroEstado & {
         navegarPara?: string;
       };
+      quickReplies?: QuickReply[];
+      carrinho?: CarrinhoItem[];
     };
     categorias?: string[];
   }
-
-  const navigate = useNavigate();
 
   const sendMessage = async (messageText?: string) => {
     if (!isEnabled) return;
@@ -275,7 +480,8 @@ const ChatBot: React.FC = () => {
         },
         body: JSON.stringify({
           message: textToSend,
-          state: filtroEstado
+          state: filtroEstado,
+          carrinho: carrinho
         })
       });
 
@@ -318,21 +524,22 @@ const ChatBot: React.FC = () => {
           categorias: botReply.categorias || [],
           showCommands: botReply.showCommands,
           state: botReply.state,
+          quickReplies: botReply.quickReplies,
+          carrinho: botReply.carrinho
         };
 
         if (botReply.state) {
           setFiltroEstado(botReply.state);
         }
 
+        // Processar ações de carrinho da resposta
+        if (botReply.carrinho) {
+          setCarrinho(botReply.carrinho);
+        }
+
         setMessages(prev => [...prev, botMessage]);
         setShowCommands(botReply.showCommands || false);
 
-        // Note: The `responseData.categorias` is a top-level property
-        // The `botReply.categorias` is nested. I'm leaving the logic as is.
-        // If you intended to use responseData.categorias, adjust accordingly.
-        // if (responseData.categorias && responseData.categorias.length > 0) {
-        //   setCategorias(responseData.categorias);
-        // }
       } else {
         const errorMessage: Mensagem = {
           from: "bot",
@@ -392,6 +599,24 @@ const ChatBot: React.FC = () => {
                 💰 R$ {evento.valorIngressoInteira.toFixed(2)}
               </div>
             )}
+            <button
+              className="chatbot-evento-adicionar-carrinho"
+              onClick={(e) => {
+                e.stopPropagation();
+               
+                setMessages(prev => [...prev, {
+                  from: "bot",
+                  text: `🎫 "${evento.nome}" adicionado ao carrinho! 🛒\n\nQuantidade: 1\nPreço: R$ ${evento.valorIngressoInteira?.toFixed(2)}`,
+                  quickReplies: [
+                    { text: "🛒 Ver carrinho", action: "verCarrinho" },
+                    { text: "🎪 Continuar comprando", action: "verEventos" },
+                    { text: "✅ Finalizar compra", action: "finalizarCompra" }
+                  ]
+                }]);
+              }}
+            >
+              🛒 Adicionar ao Carrinho
+            </button>
           </div>
         ))}
       </div>
@@ -420,7 +645,6 @@ const ChatBot: React.FC = () => {
         whileHover={isEnabled ? { scale: 1.1 } : {}}
         whileTap={isEnabled ? { scale: 0.95 } : {}}
         aria-label={isEnabled ? "Abrir chat" : "Chat desabilitado"}
-        // style={{ opacity: isEnabled ? 1 : 0.5 }}
       >
         {isOpen ? <FaTimes /> : <img src={logoChatBot} alt="logoChat" title="Foto Chatbot" style={{ height: "55px", width: "55px" }} />}
         {!isOpen && isEnabled && (
@@ -489,6 +713,15 @@ const ChatBot: React.FC = () => {
                       />
                     )}
 
+                    {content.showCarrinho && msg.carrinho && msg.carrinho.length > 0 && (
+                      <CarrinhoLista 
+                        carrinho={msg.carrinho}
+                        onRemoverItem={removerDoCarrinho}
+                        onLimparCarrinho={limparCarrinho}
+                        onFinalizarCompra={finalizarCompra}
+                      />
+                    )}
+
                     {content.showNoResults && (
                       <div className="navibe-evento-sem-resultado">
                         {msg.localizacao ? (
@@ -527,6 +760,13 @@ const ChatBot: React.FC = () => {
                           </button>
                         </div>
                       </div>
+                    )}
+
+                    {msg.quickReplies && msg.quickReplies.length > 0 && (
+                      <QuickReplies 
+                        quickReplies={msg.quickReplies} 
+                        onQuickReplyClick={gerenciarCarrinho}
+                      />
                     )}
                   </motion.div>
                 );

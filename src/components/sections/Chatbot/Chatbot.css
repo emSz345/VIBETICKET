@@ -231,6 +231,24 @@
     font-size: 0.85em;
 }
 
+.chatbot-evento-adicionar-carrinho {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.chatbot-evento-adicionar-carrinho:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
 .chatbot-input {
     display: flex;
     border-top: 1px solid var(--gray-border);
@@ -489,6 +507,201 @@
     transform: translateY(-1px);
 }
 
+/* QUICK REPLIES - ESTILOS */
+.quick-replies {
+    padding: 8px 12px;
+    border-top: 1px solid #eee;
+    background: #f8f9fa;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.quick-replies-titulo {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.quick-replies-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+}
+
+.quick-reply-btn {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.quick-reply-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.quick-reply-btn[data-action="limparCarrinho"] {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.quick-reply-btn[data-action="limparCarrinho"]:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.quick-reply-btn[data-action="finalizarCompra"] {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.quick-reply-btn[data-action="finalizarCompra"]:hover {
+    background: #28a745;
+    color: white;
+}
+
+.quick-reply-btn[data-action="verCarrinho"] {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.quick-reply-btn[data-action="verCarrinho"]:hover {
+    background: #007bff;
+    color: white;
+}
+
+.quick-reply-btn[data-action="removerItem"] {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.quick-reply-btn[data-action="removerItem"]:hover {
+    background: #6c757d;
+    color: white;
+}
+
+/* CARRINHO - ESTILOS */
+.carrinho-lista {
+    margin-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding-top: 12px;
+}
+
+.carrinho-titulo {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1em;
+    opacity: 0.9;
+}
+
+.carrinho-item {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    backdrop-filter: blur(10px);
+}
+
+.carrinho-item-info {
+    flex: 1;
+}
+
+.carrinho-item-nome {
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: white;
+    font-size: 0.9em;
+}
+
+.carrinho-item-detalhes {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.carrinho-item-remover {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8em;
+    margin-left: 8px;
+}
+
+.carrinho-item-remover:hover {
+    background: rgba(255, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+.carrinho-total {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.95em;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.carrinho-acoes {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.carrinho-btn-limpar {
+    background: rgba(220, 53, 69, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.carrinho-btn-limpar:hover {
+    background: rgba(220, 53, 69, 1);
+    transform: translateY(-1px);
+}
+
+.carrinho-btn-finalizar {
+    background: rgba(40, 167, 69, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.carrinho-btn-finalizar:hover {
+    background: rgba(40, 167, 69, 1);
+    transform: translateY(-1px);
+}
+
 /* ESTILOS PARA SEM EVENTOS */
 .navibe-evento-sem-resultado {
     margin-top: 15px;
@@ -563,6 +776,10 @@
     .comandos-rapidos {
         max-height: 160px;
     }
+
+    .quick-replies {
+        max-height: 100px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -622,6 +839,24 @@
         padding: 6px 8px;
         max-height: 150px;
     }
+
+    .quick-replies {
+        padding: 6px 8px;
+        max-height: 90px;
+    }
+
+    .quick-replies-grid {
+        gap: 4px;
+    }
+
+    .quick-reply-btn {
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+
+    .carrinho-acoes {
+        flex-direction: column;
+    }
 }
 
 @media (max-height: 600px) {
@@ -635,6 +870,10 @@
     
     .comandos-rapidos {
         max-height: 130px;
+    }
+
+    .quick-replies {
+        max-height: 80px;
     }
 }
 
@@ -650,6 +889,10 @@
     
     .comandos-rapidos {
         max-height: 100px;
+    }
+
+    .quick-replies {
+        max-height: 60px;
     }
 }
 
@@ -668,7 +911,11 @@
 .comando-btn:focus,
 .categoria-btn:focus,
 .chatbot-input input:focus,
-.chatbot-input button:focus {
+.chatbot-input button:focus,
+.quick-reply-btn:focus,
+.carrinho-item-remover:focus,
+.carrinho-btn-limpar:focus,
+.carrinho-btn-finalizar:focus {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
 }
@@ -677,7 +924,11 @@
 .chatbot-container,
 .chatbot-message,
 .comando-btn,
-.categoria-btn {
+.categoria-btn,
+.quick-reply-btn,
+.carrinho-item-remover,
+.carrinho-btn-limpar,
+.carrinho-btn-finalizar {
     transition: all 0.3s ease;
 }
 
@@ -710,7 +961,11 @@
     .chatbot-message,
     .comando-btn,
     .categoria-btn,
-    .typing-indicator .dot {
+    .typing-indicator .dot,
+    .quick-reply-btn,
+    .carrinho-item-remover,
+    .carrinho-btn-limpar,
+    .carrinho-btn-finalizar {
         transition: none;
         animation: none;
     }

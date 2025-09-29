@@ -5,8 +5,7 @@ import '../../styles/PoliticaReembolso.css';
 interface PoliticaReembolsoProps { }
 
 const PoliticaReembolso: React.FC<PoliticaReembolsoProps> = () => {
-  const emailSuporte = "felipezica7000@gmail.com";
-  const enderecoDevolucao = "Av. Dr. Flávio Henrique, Av. Dr. Flávio Henrique Lemos, 585 - Portal Itamaracá, Taquaritinga - SP, 15900-000";
+  const emailSuporte = "contatovibe@gmail.com";
 
   return (
     <>

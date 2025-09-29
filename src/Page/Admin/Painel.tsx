@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import EventoCard from "../../components/sections/Adm/EventoCard/EventoCard";
 import { Evento } from "../../types/evento";
 import { FaSignOutAlt, FaImages, FaUserPlus } from 'react-icons/fa';
+import { useAuth } from "../../Hook/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
@@ -15,6 +16,7 @@ const email = localStorage.getItem('userName');
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
 
 const Painel: React.FC = () => {
+    const { logout } = useAuth();
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [status, setStatusFilter] = useState<EventoStatus>("em_analise");
     const [_, setUsuarioLogado] = useState(false);
@@ -80,7 +82,7 @@ const Painel: React.FC = () => {
                         <p>Adicionar Admin</p>
                     </Link>
                     <button className="btn-gerenciar-carrossel" onClick={() => {
-                        localStorage.clear();
+                        logout();
                         setUsuarioLogado(false);
                         navigate('/');
                         window.location.reload();

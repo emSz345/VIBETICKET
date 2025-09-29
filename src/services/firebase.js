@@ -1,9 +1,6 @@
-
 import { initializeApp } from "firebase/app";
-import axios from "axios";
 import { getAuth, signInWithPopup, OAuthProvider, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithCredential } from "firebase/auth";
 
-// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyC32vVABbCQv8Xm_iA-lC1BBEuUh7AfujU",
   authDomain: "b4yint.firebaseapp.com",
@@ -14,15 +11,13 @@ const firebaseConfig = {
   measurementId: "G-5JR4J6G81J"
 };
 
-// Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const appleProvider = new OAuthProvider("apple.com");
 
-const apiUrl = process.env.REACT_APP_API_URL;
 
-//  login com Google
+
 const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -37,7 +32,7 @@ const signInWithGoogle = async () => {
       email: user.email,
       photoURL: user.photoURL || "",
       uid: user.uid,
-       isAdmin: false // Adicione este campo
+      isAdmin: false
     };
   } catch (error) {
     console.error("Erro no login com Google:", error);
@@ -45,17 +40,15 @@ const signInWithGoogle = async () => {
   }
 };
 
-//ERRO
 const signInWithFacebook = () => {
   return new Promise((resolve, reject) => {
     if (!window.FB) {
-
       const script = document.createElement("script");
       script.src = "https://connect.facebook.net/pt_BR/sdk.js";
       script.async = true;
       script.onload = () => {
         window.FB.init({
-          appId: "2369325230112335", // ✅ Coloque aqui seu App ID do Facebook
+          appId: "2369325230112335",
           cookie: true,
           xfbml: false,
           version: "v18.0"
@@ -71,7 +64,6 @@ const signInWithFacebook = () => {
   });
 };
 
-
 function realizarLoginComFacebook(resolve, reject) {
   window.FB.login((response) => {
     if (response.authResponse) {
@@ -82,28 +74,13 @@ function realizarLoginComFacebook(resolve, reject) {
         try {
           const result = await signInWithCredential(auth, credential);
           const user = result.user;
-         
 
-         
-
-          // Envia os dados pro backend
-          const response = await axios.post(
-            `${apiUrl}/api/users/social-login`,
-            {
-              provider: 'facebook',
-              userData: {
-                nome: user.displayName || "Usuário",
-                email: user.email,
-                imagemPerfil: user.photoURL || "",
-                 isAdmin: false // Adicione este campo
-              }
-            }
-          );
-
-          const backendData = response.data;
           resolve({
-            token: backendData.token,
-            user: backendData.user
+            displayName: user.displayName || "Usuário",
+            email: user.email,
+            photoURL: user.photoURL || "",
+            uid: user.uid,
+            isAdmin: false
           });
         } catch (error) {
           console.error("Erro ao autenticar no Firebase:", error);
@@ -115,8 +92,6 @@ function realizarLoginComFacebook(resolve, reject) {
     }
   }, { scope: "email" });
 }
-
-
 
 const signInWithApple = async () => {
   try {

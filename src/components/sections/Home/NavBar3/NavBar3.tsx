@@ -4,7 +4,7 @@ import './NavBar3.css';
 import logoLight from '../../../../assets/logo.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../Hook/AuthContext';
-import { useCart } from '../../../../Hook/CartContext'; // Importe o hook do carrinho
+import { useCart } from '../../../../Hook/CartContext';
 import { TfiMenu } from "react-icons/tfi";
 import {
   FaHome,
@@ -16,7 +16,6 @@ import {
   FaUserShield,
 } from 'react-icons/fa';
 
-// Interfaces e outros componentes
 interface Event {
   _id: string;
   nome: string;
@@ -64,6 +63,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, onSelect, apiUrl
             src={`${apiUrl}/uploads/${event.imagem}`}
             alt={event.nome}
             className="search-result-image"
+            onError={(e) => {
+              e.currentTarget.src = `${apiUrl}/uploads/blank_profile.png`;
+            }}
           />
           <div className="search-result-info">
             <h4>{event.nome}</h4>
@@ -76,11 +78,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, onSelect, apiUrl
   );
 };
 
-// Componente principal da NavBar
 export default function NavBar3() {
   const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
-  const { cartItemsCount } = useCart(); // <--- Use o hook para obter a contagem de itens
+  const { cartItemsCount } = useCart();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -100,16 +101,23 @@ export default function NavBar3() {
     window.location.reload();
   };
 
+  // FUNÇÃO CORRIGIDA PARA TRATAR IMAGENS DO GOOGLE
   const getProfileImageUrl = () => {
     if (!user?.imagemPerfil) {
       return `${apiUrl}/uploads/blank_profile.png`;
     }
+    
+    // Se já é uma URL completa (Google, Facebook, etc), retorna diretamente
     if (/^https?:\/\//.test(user.imagemPerfil)) {
       return user.imagemPerfil;
     }
+    
+    // Se começa com /uploads, adiciona o apiUrl
     if (user.imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${user.imagemPerfil}`;
     }
+    
+    // Caso contrário, assume que é um arquivo local em uploads
     return `${apiUrl}/uploads/${user.imagemPerfil}`;
   };
 
@@ -223,13 +231,10 @@ export default function NavBar3() {
           CRIE SEU EVENTO
         </button>
 
-        {/* ---- CÓDIGO DO CARRINHO MODIFICADO AQUI ---- */}
         <div className="cart-icon" title="Carrinho de compras" aria-label="Carrinho de compras" onClick={() => navigate("/Carrinho")}>
           <FaShoppingCart size={24} />
-          {/* Renderiza o badge apenas se houver itens */}
           {cartItemsCount > 0 && <span className="cart-badge">{cartItemsCount}</span>}
         </div>
-        {/* ---- FIM DA MODIFICAÇÃO ---- */}
 
         <div className="nav__auth">
           {!isAuthenticated ? (
@@ -265,6 +270,9 @@ export default function NavBar3() {
                         border: "2px solid var(--primary)"
                       }}
                       loading="eager"
+                      onError={(e) => {
+                        e.currentTarget.src = `${apiUrl}/uploads/blank_profile.png`;
+                      }}
                     />
                     <TfiMenu style={{ color: "#fff", fontSize: "24px" }} />
                   </div>
@@ -284,6 +292,9 @@ export default function NavBar3() {
                         className="avatar"
                         alt="Avatar"
                         loading="eager"
+                        onError={(e) => {
+                          e.currentTarget.src = `${apiUrl}/uploads/blank_profile.png`;
+                        }}
                       />
                     ) : (
                       <div className="avatar-placeholder">
@@ -310,7 +321,6 @@ export default function NavBar3() {
                   <button
                     className="logout-btn"
                     onClick={() => {
-                      localStorage.clear();
                       logout();
                       navigate('/');
                       window.location.reload();
@@ -347,6 +357,9 @@ export default function NavBar3() {
               className="avatar"
               alt="Avatar"
               style={{ width: "50px", height: "50px" }}
+              onError={(e) => {
+                e.currentTarget.src = `${apiUrl}/uploads/blank_profile.png`;
+              }}
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <strong>{user?.nome}</strong>
@@ -384,7 +397,6 @@ export default function NavBar3() {
         <button onClick={() => { navigate('/CriarEventos'); setMobileOpen(false); }}>
           <FaPlusCircle /> Criar Evento
         </button>
-        {/* Botão do carrinho no menu mobile */}
         <button onClick={() => { navigate('/Carrinho'); setMobileOpen(false); }}>
           <FaShoppingCart /> Carrinho
           {cartItemsCount > 0 && <span className="cart-badge-mobile">{cartItemsCount}</span>}

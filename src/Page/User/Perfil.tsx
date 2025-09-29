@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
 import { FiEdit2, FiCheck, FiUser, FiCalendar, FiPhone, FiMail, FiCamera } from "react-icons/fi";
 import { useAuth } from "../../Hook/AuthContext";
 import { TbPlugConnected } from "react-icons/tb";
@@ -63,7 +63,7 @@ const Perfil = () => {
   };
 
   const cleanInscricaoMunicipal = (value: string) => {
-    return value.replace(/[^a-zA-Z0-9]/g, ""); // Permite apenas letras e números, removendo espaços e símbolos
+    return value.replace(/[^a-zA-Z0-9]/g, "");
   };
 
   const formatTelefone = (value: string) => {
@@ -74,25 +74,30 @@ const Perfil = () => {
     return value;
   };
 
-  const getImagemPerfilUrl = (imagemPerfil?: string) => {
+  // FUNÇÃO CORRIGIDA PARA TRATAR IMAGENS DO GOOGLE
+  const getImagemPerfilUrl = useCallback((imagemPerfil?: string) => {
     if (!imagemPerfil) return `${apiUrl}/uploads/blank_profile.png`;
+    
+    // Se já é uma URL completa (Google, Facebook, etc), retorna diretamente
     if (imagemPerfil.startsWith('http')) {
       return imagemPerfil;
     }
+    
+    // Se começa com /uploads, adiciona o apiUrl
     if (imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${imagemPerfil}`;
     }
+    
+    // Caso contrário, assume que é um arquivo local em uploads
     return `${apiUrl}/uploads/${imagemPerfil}`;
-  };
+  },[apiUrl]);
 
   useEffect(() => {
     if (user && user._id) {
       setNome(user.nome);
-      if (user.imagemPerfil?.startsWith('http')) {
-        setPreviewUrl(user.imagemPerfil);
-      } else {
-        setPreviewUrl(user.imagemPerfil ? `${apiUrl}${user.imagemPerfil}` : undefined);
-      }
+      
+      // CORREÇÃO: Usar a função getImagemPerfilUrl para todas as imagens
+      setPreviewUrl(getImagemPerfilUrl(user.imagemPerfil));
 
       const fetchPerfilData = async () => {
         try {
@@ -132,7 +137,7 @@ const Perfil = () => {
       };
       fetchPerfilData();
     }
-  }, [user, setPreviewUrl, apiUrl]);
+  }, [user, apiUrl, getImagemPerfilUrl]);
 
   const handleSalvarLogin = async () => {
     if (!user) return;
@@ -186,8 +191,8 @@ const Perfil = () => {
       },
       dadosOrganizacao: {
         ...dadosOrganizacao,
-        cpfSocio: dadosOrganizacao.cpfSocio.replace(/\D/g, ""), // Mantém apenas dígitos para o CPF
-        inscricaoMunicipal: cleanInscricaoMunicipal(dadosOrganizacao.inscricaoMunicipal) // Limpa espaços/símbolos, mas mantém letras/números
+        cpfSocio: dadosOrganizacao.cpfSocio.replace(/\D/g, ""),
+        inscricaoMunicipal: cleanInscricaoMunicipal(dadosOrganizacao.inscricaoMunicipal)
       }
     };
 
@@ -228,7 +233,6 @@ const Perfil = () => {
 
   // --- NOVA FUNÇÃO PARA CONECTAR O MERCADO PAGO ---
   const handleConnectMercadoPago = async () => {
-    // Adicione esta verificação aqui
     if (!user) {
       alert("Usuário não encontrado. Por favor, faça login novamente.");
       return;
@@ -242,7 +246,7 @@ const Perfil = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        window.location.href = data.url; // Redireciona o usuário para a URL de autorização
+        window.location.href = data.url;
       } else {
         alert(`Erro: ${data.error}`);
       }
@@ -262,7 +266,7 @@ const Perfil = () => {
         <p>Gerencie suas informações pessoais</p>
       </div>
 
-      {/* Seção de Conexão com o Mercado Pago - MOVIDA E AGORA TEM LARGURA TOTAL */}
+      {/* Seção de Conexão com o Mercado Pago */}
       <div className="perfil-card full-width">
         <div className="perfil-header-secondary">
           <TbPlugConnected className="perfil-tab-icon" />
@@ -288,7 +292,7 @@ const Perfil = () => {
         </div>
       </div>
 
-      {/* O resto do conteúdo em duas colunas como no formato que você mandou */}
+      {/* Conteúdo em duas colunas */}
       <div className="perfil-content">
         <div className="perfil-left">
           <div className="perfil-card">
@@ -299,6 +303,10 @@ const Perfil = () => {
                   alt="Foto de perfil"
                   className="perfil-avatar"
                   loading="eager"
+                  onError={(e) => {
+                    // Fallback em caso de erro no carregamento
+                    e.currentTarget.src = `${apiUrl}/uploads/blank_profile.png`;
+                  }}
                 />
                 {editando && (
                   <label htmlFor="upload-avatar" className="perfil-avatar-edit">
@@ -473,7 +481,6 @@ const Perfil = () => {
                         placeholder="Ex: 12345678 ou 001.234-A" 
                         value={dadosOrganizacao.inscricaoMunicipal}
                         onChange={(e) => {
-                          // Permite letras, números e caracteres especiais, mas limita apenas o campo
                           setDadosOrganizacao({ ...dadosOrganizacao, inscricaoMunicipal: e.target.value });
                         }}
                         disabled={!editandoDadosAdicionais}
@@ -491,7 +498,6 @@ const Perfil = () => {
                         maxLength={14}
                         value={dadosOrganizacao.cpfSocio}
                         onChange={(e) => {
-                          // AQUI ESTÁ A MUDANÇA
                           const formattedCpf = formatCpf(e.target.value);
                           setDadosOrganizacao({ ...dadosOrganizacao, cpfSocio: formattedCpf });
                         }}

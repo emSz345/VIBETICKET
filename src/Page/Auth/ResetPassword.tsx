@@ -46,6 +46,11 @@ const ResetPassword: React.FC = () => {
         }
     }, [token]);
 
+    const validatePassword = (password: string) => {
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*])[A-Za-z\d!@#$%&*]{8,}$/;
+        return regex.test(password);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -59,8 +64,8 @@ const ResetPassword: React.FC = () => {
             return;
         }
 
-        if (newPassword.length < 6) {
-            setError("A senha deve ter pelo menos 6 caracteres");
+        if (!validatePassword(newPassword)) {
+            setError("A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais");
             return;
         }
 
@@ -151,16 +156,25 @@ const ResetPassword: React.FC = () => {
                         <p className="reset-password-tips-subtitle">Dicas de segurança:</p>
                         <ul>
                             <li>
-                                Sua senha deve conter <b>6 caracteres</b> entre letras e números.
+                                Sua senha deve conter <b>mínimo 8 caracteres</b>
                             </li>
                             <li>
-                                Sua senha deve ter pelo menos <b>1 caractere especial</b> (Ex: !@#$%&*).
+                                Pelo menos <b>1 letra maiúscula</b>
                             </li>
                             <li>
-                                Sua senha <b>não deve</b> conter informações pessoais (E-mail, nome, data de nascimento).
+                                Pelo menos <b>1 letra minúscula</b>
                             </li>
                             <li>
-                                <b>Anote sua senha em um local seguro</b>, você precisará dela para entrar outras vezes.
+                                Pelo menos <b>1 número</b>
+                            </li>
+                            <li>
+                                Pelo menos <b>1 caractere especial</b> (Ex: !@#$%&*)
+                            </li>
+                            <li>
+                                Sua senha <b>não deve</b> conter informações pessoais (E-mail, nome, data de nascimento)
+                            </li>
+                            <li>
+                                <b>Anote sua senha em um local seguro</b>, você precisará dela para entrar outras vezes
                             </li>
                         </ul>
                     </div>
