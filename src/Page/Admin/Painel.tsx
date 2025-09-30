@@ -53,7 +53,6 @@ const Painel: React.FC = () => {
     const handleAceitar = (id: string) => updateEventoStatus(id, "aprovado");
     const handleRejeitar = (id: string, motivo: { titulo: string, descricao: string }) =>
         updateEventoStatus(id, "rejeitado", motivo);
-    const handleReanalise = (id: string) => updateEventoStatus(id, "em_reanalise");
 
     // LÓGICA DE TRANSIÇÃO (Regras do Usuário)
     const getAcoesPermitidas = (currentStatus: EventoStatus) => {
@@ -178,5 +177,6 @@ const Painel: React.FC = () => {
         </div>
     );
 };
+
 
 export default Painel;
