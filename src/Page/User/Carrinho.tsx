@@ -13,11 +13,12 @@ import LogoMP from "../../assets/SVGs/Logo_MP.svg";
 const Carrinho = () => {
   const { user } = useAuth(); // Chame o hook para obter o objeto user
   const apiUrl = process.env.REACT_APP_API_URL;
+  const MP_KEY_PUBLIC = process.env.MP_PUBLIC_KEY;
   const [carrinho, setCarrinho] = useState<CarrinhoItem[]>(() => {
     return CarrinhoService.getCarrinho();
   });
 
-  initMercadoPago('APP_USR-ea824941-70e7-434a-9fd9-c40a1c1bcb46');
+  initMercadoPago(`${MP_KEY_PUBLIC}`);
 
   const navigate = useNavigate();
 

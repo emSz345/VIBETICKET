@@ -23,23 +23,32 @@ const formatStatus = (status: EventoStatus): string => {
 }
 
 interface EventoCardProps {
-    // Tipo estendido para garantir a segurança dos campos que usamos (status, temMeia, etc)
     evento: Evento & { status: EventoStatus, temMeia: boolean };
-    onAceitar: (id: string) => void;
-    onRejeitar: (id: string, motivo: { titulo: string, descricao: string }) => void;
-    onReanalise: (id: string) => void;
+    
+    // CORREÇÃO: Tornando as props opcionais para receber 'undefined' do Painel
+    onAceitar?: (id: string) => void; 
+    onRejeitar?: (id: string, motivo: { titulo: string, descricao: string }) => void;
+    onReanalise?: (id: string) => void;
 }
 
 const EventoCard: React.FC<EventoCardProps> = ({ evento, onAceitar, onRejeitar, onReanalise }) => {
     const [mostrarModal, setMostrarModal] = React.useState(false);
     const [mostrarModalRejeicao, setMostrarModalRejeicao] = React.useState(false);
 
+    // FUNÇÃO DE SEGURANÇA para rejeição
     const handleRejeitarComMotivo = (motivo: { titulo: string, descricao: string }) => {
-        onRejeitar(evento._id, motivo);
+        if (onRejeitar) {
+            onRejeitar(evento._id, motivo);
+        }
         setMostrarModalRejeicao(false);
     };
     
-    // Lê o status real do evento
+    // FUNÇÕES AUXILIARES: Geram o callback para o ModalEvento ou undefined
+    const handleAceitarClick = onAceitar ? () => onAceitar(evento._id) : undefined;
+    const handleRejeitarClick = onRejeitar ? () => setMostrarModalRejeicao(true) : undefined;
+    const handleReanaliseClick = onReanalise ? () => onReanalise(evento._id) : undefined;
+
+
     const status = evento.status;
     const formattedStatus = formatStatus(status);
 
@@ -66,12 +75,14 @@ const EventoCard: React.FC<EventoCardProps> = ({ evento, onAceitar, onRejeitar, 
                 <ModalEvento
                     evento={evento}
                     onClose={() => setMostrarModal(false)}
-                    onAceitar={() => onAceitar(evento._id)}
-                    onRejeitar={() => setMostrarModalRejeicao(true)}
-                    onReanalise={() => onReanalise(evento._id)}
+                    // Passando as funções auxiliares (que podem ser undefined)
+                    onAceitar={handleAceitarClick}
+                    onRejeitar={handleRejeitarClick}
+                    onReanalise={handleReanaliseClick}
                 />
             )}
-            {mostrarModalRejeicao && (
+            {/* ModalRejeicao é renderizado se a flag estiver ativa E a ação de rejeitar for permitida */}
+            {mostrarModalRejeicao && onRejeitar && ( 
                 <ModalRejeicao
                     onClose={() => setMostrarModalRejeicao(false)}
                     onConfirmar={handleRejeitarComMotivo}

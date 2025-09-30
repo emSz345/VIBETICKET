@@ -5,30 +5,32 @@ import "./ModalEvento.css";
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
 
 interface ModalEventoProps {
-    // CORREÇÃO: Tornando os campos de ingresso e venda opcionais (?)
-    // Isso resolve o erro de tipagem com o EventoCard.
+    // A tipagem de Evento já está correta, incluindo os campos opcionais de ingresso
     evento: Evento & { 
         status: EventoStatus, 
         temMeia: boolean, 
-        valorIngressoInteira?: number, // Opcional
-        quantidadeInteira?: number,    // Opcional
-        dataInicioVendas?: string,     // Opcional
-        dataFimVendas?: string,        // Opcional
+        valorIngressoInteira?: number, 
+        quantidadeInteira?: number,    
+        dataInicioVendas?: string,     
+        dataFimVendas?: string,        
         valorIngressoMeia?: number, 
         quantidadeMeia?: number 
     };
     onClose: () => void;
-    onAceitar: () => void;
-    onRejeitar: () => void;
-    onReanalise: () => void;
+    
+    // CORREÇÃO ESSENCIAL: As props de ação SÃO OPCIONAIS (com '?' no tipo)
+    // Isso resolve os erros de tipagem no EventoCard.
+    onAceitar?: () => void;
+    onRejeitar?: () => void;
+    onReanalise?: () => void;
 }
 
 const ModalEvento: React.FC<ModalEventoProps> = ({ 
     evento, 
     onClose, 
-    onAceitar, 
-    onRejeitar, 
-    onReanalise 
+    onAceitar, // Recebe a função ou undefined
+    onRejeitar, // Recebe a função ou undefined
+    onReanalise // Recebe a função ou undefined
 }) => {
     const formatarMoeda = (valor: number | string | undefined) => {
         if (typeof valor === 'string') {
@@ -43,19 +45,8 @@ const ModalEvento: React.FC<ModalEventoProps> = ({
 
     const temMeiaEntrada = evento.temMeia;
 
-    // Lógica para desabilitar botões
-    const isAprovado = evento.status === 'aprovado';
-    const isRejeitado = evento.status === 'rejeitado';
-    const isEmReanalise = evento.status === 'em_reanalise';
-    
-    // ACEITAR e REJEITAR são bloqueados após qualquer decisão
-    const disableAceitar = isAprovado || isRejeitado || isEmReanalise;
-    const disableRejeitar = isAprovado || isRejeitado || isEmReanalise;
-
-    // REANÁLISE: Bloqueado apenas se estiver REJEITADO ou EM REANÁLISE.
-    // Permanece ativo se for APROVADO para permitir a reversão.
-    const disableReanalise = isRejeitado || isEmReanalise; 
-
+    // A lógica de transição é delegada aos componentes pai (Painel e EventoCard),
+    // que passarão `undefined` para as ações não permitidas.
 
     return (
         <div className="modal-evento-overlay" onClick={onClose}>
@@ -88,7 +79,6 @@ const ModalEvento: React.FC<ModalEventoProps> = ({
                     <div className="modal-evento-secao-colunas ingressos-inteira">
                         <div className="modal-evento-item">
                             <strong className="modal-evento-label">Valor:</strong>
-                            {/* Usa ?? 0 para garantir que o formato seja exibido corretamente */}
                             <span>{formatarMoeda(evento.valorIngressoInteira)}</span>
                         </div>
                         <div className="modal-evento-item">
@@ -140,29 +130,36 @@ const ModalEvento: React.FC<ModalEventoProps> = ({
                     </div>
                 </div>
 
-                {/* Botões de Ação */}
+                {/* Botões de Ação - RENDERIZAÇÃO CONDICIONAL */}
+                {/* Os botões só aparecem se a função de callback (prop) tiver sido passada */}
                 <div className="modal-evento-botoes">
-                    <button 
-                        className="modal-evento-btn modal-evento-btn-rejeitar" 
-                        onClick={onRejeitar} 
-                        disabled={disableRejeitar}
-                    >
-                        Rejeitar
-                    </button>
-                    <button 
-                        className="modal-evento-btn modal-evento-btn-reanalise" 
-                        onClick={onReanalise}
-                        disabled={disableReanalise}
-                    >
-                        Reanálise
-                    </button>
-                    <button 
-                        className="modal-evento-btn modal-evento-btn-aceitar" 
-                        onClick={onAceitar}
-                        disabled={disableAceitar}
-                    >
-                        Aceitar
-                    </button>
+                    
+                    {onRejeitar && (
+                        <button 
+                            className="modal-evento-btn modal-evento-btn-rejeitar" 
+                            onClick={onRejeitar} 
+                        >
+                            Rejeitar
+                        </button>
+                    )}
+
+                    {onReanalise && (
+                        <button 
+                            className="modal-evento-btn modal-evento-btn-reanalise" 
+                            onClick={onReanalise}
+                        >
+                            Reanálise
+                        </button>
+                    )}
+
+                    {onAceitar && (
+                        <button 
+                            className="modal-evento-btn modal-evento-btn-aceitar" 
+                            onClick={onAceitar}
+                        >
+                            Aceitar
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

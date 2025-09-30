@@ -3,8 +3,7 @@ import EventoCard from "../../components/sections/Adm/EventoCard/EventoCard";
 import { Evento } from "../../types/evento";
 import { FaSignOutAlt, FaImages, FaUserPlus } from 'react-icons/fa';
 import { useAuth } from "../../Hook/AuthContext";
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import logo from "../../assets/logo.png";
 import "../../styles/Painel.css";
@@ -12,7 +11,6 @@ import "../../styles/Painel.css";
 const apiUrl = process.env.REACT_APP_API_URL;
 const email = localStorage.getItem('userName');
 
-// Adicionando 'reanalise' ao tipo de status
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
 
 const Painel: React.FC = () => {
@@ -20,8 +18,8 @@ const Painel: React.FC = () => {
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [status, setStatusFilter] = useState<EventoStatus>("em_analise");
     const [_, setUsuarioLogado] = useState(false);
+    const navigate = useNavigate();
 
-    // Função para buscar os eventos com base no status selecionado
     const fetchEventosByStatus = (status: EventoStatus) => {
         fetch(`${apiUrl}/api/eventos/listar/${status}`)
             .then((res) => res.json())
@@ -29,12 +27,10 @@ const Painel: React.FC = () => {
             .catch((err) => console.error(`Erro ao buscar eventos ${status}:`, err));
     };
 
-    // Hook para buscar eventos sempre que o statusFilter mudar
     useEffect(() => {
         fetchEventosByStatus(status);
     }, [status]);
 
-    // Função para atualizar o status de um evento
     const updateEventoStatus = async (id: string, newStatus: EventoStatus, motivo?: { titulo: string, descricao: string }) => {
         try {
             const body = motivo
@@ -47,7 +43,6 @@ const Painel: React.FC = () => {
                 body: body,
             });
 
-            // Atualiza a lista removendo o evento que foi modificado
             setEventos((prevEventos) => prevEventos.filter((evento) => evento._id !== id));
             
         } catch (err) {
@@ -60,8 +55,37 @@ const Painel: React.FC = () => {
         updateEventoStatus(id, "rejeitado", motivo);
     const handleReanalise = (id: string) => updateEventoStatus(id, "em_reanalise");
 
-    const navigate = useNavigate();
+    // LÓGICA DE TRANSIÇÃO (Regras do Usuário)
+    const getAcoesPermitidas = (currentStatus: EventoStatus) => {
+        let aceitar = undefined;
+        let rejeitar = undefined;
+        let reanalise = undefined;
 
+        switch (currentStatus) {
+            case "em_analise":
+                // se o evento estiver em analise ele so pode ser aprovado ou rejeitado
+                aceitar = handleAceitar;
+                rejeitar = handleRejeitar;
+                break;
+            case "aprovado":
+                // se estiver aprovado ele so pode ser rejeitado
+                rejeitar = handleRejeitar;
+                break;
+            case "rejeitado":
+                // se estiver rejeitado nao pode nenhum
+                break;
+            case "em_reanalise":
+                // se estiver em reanalise pode ser rejeitado ou aprovado
+                aceitar = handleAceitar;
+                rejeitar = handleRejeitar;
+                break;
+            default:
+                break;
+        }
+
+        return { aceitar, rejeitar, reanalise };
+    };
+    
     return (
         <div className="painel-wrapper">
             <aside className="painel-sidebar">
@@ -130,21 +154,25 @@ const Painel: React.FC = () => {
                 </header>
 
                 <div className="painel-grid">
-                    {eventos.map((evento) => (
-                        <EventoCard
-                            key={evento._id}
-                            evento={{
-                                ...evento,
-                                imagem: `${apiUrl}/uploads/${evento.imagem}`,
-                                // CORREÇÃO DE TIPAGEM: Passa os campos esperados pelo EventoCardProps
-                                status: (evento as any).status as EventoStatus,
-                                temMeia: (evento as any).temMeia as boolean,
-                            }}
-                            onAceitar={handleAceitar}
-                            onRejeitar={handleRejeitar}
-                            onReanalise={handleReanalise} 
-                        />
-                    ))}
+                    {eventos.map((evento) => {
+                        const acoes = getAcoesPermitidas(evento.status as EventoStatus);
+
+                        return (
+                            <EventoCard
+                                key={evento._id}
+                                evento={{
+                                    ...evento,
+                                    imagem: `${apiUrl}/uploads/${evento.imagem}`,
+                                    status: (evento as any).status as EventoStatus,
+                                    temMeia: (evento as any).temMeia as boolean,
+                                }}
+                                // Passa a função de manipulação ou undefined para o EventoCard
+                                onAceitar={acoes.aceitar} 
+                                onRejeitar={acoes.rejeitar}
+                                onReanalise={acoes.reanalise} 
+                            />
+                        );
+                    })}
                 </div>
             </main>
         </div>
