@@ -33,7 +33,7 @@ const Login: React.FC = () => {
   // --- Estados do Modal ---
   const [showResetModal, setShowResetModal] = useState<boolean>(false);
   const [resetMessage, setResetMessage] = useState<string>("");
-  const [resetMessageType, setResetMessageType] = useState<"success" | "error" | "">("");
+  
 
   const bloquearLogin = (falhasAtualizadas: number) => {
     const minutosBloqueio = falhasAtualizadas;

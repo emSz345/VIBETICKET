@@ -471,10 +471,7 @@ function CriarEventos() {
   };
 
   // Adicione a função para fechar o modal de sucesso e navegar
-  const handleFecharModalSucesso = () => {
-    setModalSucessoAberto(false);
-    navigate('/Home');
-  };
+  
 
   const getError = (fieldName: string) => erros[fieldName];
 

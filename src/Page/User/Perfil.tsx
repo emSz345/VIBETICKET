@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
-import { FiEdit2, FiCheck, FiUser, FiCalendar, FiPhone, FiMail, FiCamera, FiX } from "react-icons/fi";
+import { FiEdit2, FiCheck, FiUser, FiCalendar, FiPhone, FiMail, FiCamera } from "react-icons/fi";
 import { useAuth } from "../../Hook/AuthContext";
 import { TbPlugConnected } from "react-icons/tb";
 import "../../styles/Perfil.css";
