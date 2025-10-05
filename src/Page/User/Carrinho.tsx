@@ -6,21 +6,27 @@ import "../../styles/Carrinho.css";
 import { CarrinhoItem } from '../../types/carrinho';
 import { CarrinhoService } from '../../services/carrinhoService';
 import { initMercadoPago } from '@mercadopago/sdk-react';
-import { useAuth } from '../../Hook/AuthContext'; // Importe o hook useAuth
+import { useAuth } from '../../Hook/AuthContext';
+import { useCart } from '../../Hook/CartContext';
 import LogoMP from "../../assets/SVGs/Logo_MP.svg";
 
-
 const Carrinho = () => {
-  const { user } = useAuth(); // Chame o hook para obter o objeto user
+  const { user } = useAuth();
+  const { cartItems, updateItemQuantity, removeItemFromCart, refreshCart } = useCart();
   const apiUrl = process.env.REACT_APP_API_URL;
   const MP_KEY_PUBLIC = process.env.MP_PUBLIC_KEY;
-  const [carrinho, setCarrinho] = useState<CarrinhoItem[]>(() => {
-    return CarrinhoService.getCarrinho();
-  });
+  
+  const [carrinho, setCarrinho] = useState<CarrinhoItem[]>(cartItems);
+  const [isLoading, setIsLoading] = useState(false);
 
   initMercadoPago(`${MP_KEY_PUBLIC}`);
 
   const navigate = useNavigate();
+
+  // SINCRONIZAÇÃO: Atualize o estado local quando o contexto mudar
+  useEffect(() => {
+    setCarrinho(cartItems);
+  }, [cartItems]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -46,7 +52,6 @@ const Carrinho = () => {
       return;
     }
 
-    // Adicionamos a verificação do usuário
     if (!user) {
       alert("Você precisa estar logado para finalizar a compra.");
       return;
@@ -59,7 +64,7 @@ const Carrinho = () => {
         unit_price: item.preco,
       }));
 
-      const userId = user._id; // O objeto 'user' agora está disponível aqui
+      const userId = user._id;
 
       const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, {
         method: 'POST',
@@ -83,38 +88,47 @@ const Carrinho = () => {
     }
   };
 
-  const carrinhoAumentarQuantidade = (id: string) => {
-    const limiteIngressos = 8;
-    setCarrinho(prev => {
-      const novoCarrinho = prev.map(item => {
-        if (item.id === id && item.quantidade < limiteIngressos) {
-          return { ...item, quantidade: item.quantidade + 1 };
-        }
-        return item;
-      });
-      localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
-      return novoCarrinho;
-    });
+  const carrinhoAumentarQuantidade = async (id: string) => {
+    const item = carrinho.find(item => item.id === id);
+    if (item) {
+      try {
+        setIsLoading(true);
+        await updateItemQuantity(id, item.quantidade + 1);
+        // Recarrega o carrinho do backend para garantir sincronização
+        await refreshCart();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : 'Erro ao aumentar quantidade');
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
-  const carrinhoDiminuirQuantidade = (id: string) => {
-    setCarrinho(prev => {
-      const novoCarrinho = prev.map(item =>
-        item.id === id && item.quantidade > 1
-          ? { ...item, quantidade: item.quantidade - 1 }
-          : item
-      );
-      localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
-      return novoCarrinho;
-    });
+  const carrinhoDiminuirQuantidade = async (id: string) => {
+    const item = carrinho.find(item => item.id === id);
+    if (item && item.quantidade > 1) {
+      try {
+        setIsLoading(true);
+        await updateItemQuantity(id, item.quantidade - 1);
+        await refreshCart();
+      } catch (error) {
+        alert(error instanceof Error ? error.message : 'Erro ao diminuir quantidade');
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
-  const carrinhoRemoverItem = (id: string) => {
-    setCarrinho(prev => {
-      const novoCarrinho = prev.filter(item => item.id !== id);
-      localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
-      return novoCarrinho;
-    });
+  const carrinhoRemoverItem = async (id: string) => {
+    try {
+      setIsLoading(true);
+      await removeItemFromCart(id);
+      await refreshCart();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Erro ao remover item');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const carrinhoCalcularSubtotal = () => {
@@ -122,7 +136,11 @@ const Carrinho = () => {
   };
 
   const carrinhoCalcularTotal = () => {
-    return carrinhoCalcularSubtotal()
+    return carrinhoCalcularSubtotal();
+  };
+
+  const getTotalItens = () => {
+    return carrinho.reduce((acc, item) => acc + item.quantidade, 0);
   };
 
   const getImageUrl = (imagem: string) => {
@@ -138,6 +156,12 @@ const Carrinho = () => {
       <div className="carrinho-container">
         <h1 className="carrinho-titulo">Seu Carrinho</h1>
 
+        {isLoading && (
+          <div className="carrinho-loading">
+            <p>Atualizando carrinho...</p>
+          </div>
+        )}
+
         {carrinho.length === 0 ? (
           <div className="carrinho-vazio">
             <h2 className="carrinho-vazio-titulo">Seu carrinho está vazio</h2>
@@ -145,6 +169,7 @@ const Carrinho = () => {
             <button
               className="carrinho-btn-voltar"
               onClick={() => navigate('/eventos')}
+              disabled={isLoading}
             >
               <FiArrowLeft /> Ver Eventos
             </button>
@@ -177,7 +202,7 @@ const Carrinho = () => {
                     <button
                       className="carrinho-item-quantidade-btn"
                       onClick={() => carrinhoDiminuirQuantidade(item.id)}
-                      disabled={item.quantidade <= 1}
+                      disabled={item.quantidade <= 1 || isLoading}
                     >
                       <FiMinus />
                     </button>
@@ -185,6 +210,7 @@ const Carrinho = () => {
                     <button
                       className="carrinho-item-quantidade-btn"
                       onClick={() => carrinhoAumentarQuantidade(item.id)}
+                      disabled={item.quantidade >= 8 || isLoading}
                     >
                       <FiPlus />
                     </button>
@@ -198,6 +224,7 @@ const Carrinho = () => {
                     className="carrinho-item-remover"
                     onClick={() => carrinhoRemoverItem(item.id)}
                     aria-label="Remover item"
+                    disabled={isLoading}
                   >
                     <FiTrash2 />
                   </button>
@@ -210,7 +237,7 @@ const Carrinho = () => {
                 <h3 className="carrinho-resumo-titulo">Resumo do Pedido</h3>
 
                 <div className="carrinho-resumo-linha">
-                  <span className="carrinho-resumo-label">Subtotal ({carrinho.reduce((acc, item) => acc + item.quantidade, 0)} itens)</span>
+                  <span className="carrinho-resumo-label">Subtotal ({getTotalItens()} itens)</span>
                   <span className="carrinho-resumo-valor">R$ {carrinhoCalcularSubtotal().toFixed(2)}</span>
                 </div>
 
@@ -228,6 +255,7 @@ const Carrinho = () => {
                 <button
                   className="carrinho-btn-continuar"
                   onClick={() => navigate('/eventos')}
+                  disabled={isLoading}
                 >
                   <FiArrowLeft /> Continuar Comprando
                 </button>
@@ -235,8 +263,9 @@ const Carrinho = () => {
                 <button
                   className="carrinho-btn-finalizar"
                   onClick={handleFinalizarCompra}
+                  disabled={isLoading}
                 >
-                  Finalizar Compra
+                  {isLoading ? 'Processando...' : 'Finalizar Compra'}
                 </button>
               </div>
               <div className="mercadopago-info">

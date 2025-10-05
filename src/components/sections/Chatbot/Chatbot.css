@@ -685,7 +685,7 @@
     transform: translateY(-1px);
 }
 
-.carrinho-btn-finalizar {
+.chatBot-carrinho-btn-finalizar {
     background: rgba(40, 167, 69, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
@@ -697,7 +697,7 @@
     flex: 1;
 }
 
-.carrinho-btn-finalizar:hover {
+.chatBot-carrinho-btn-finalizar:hover {
     background: rgba(40, 167, 69, 1);
     transform: translateY(-1px);
 }
@@ -915,7 +915,7 @@
 .quick-reply-btn:focus,
 .carrinho-item-remover:focus,
 .carrinho-btn-limpar:focus,
-.carrinho-btn-finalizar:focus {
+.chatBot-carrinho-btn-finalizar:focus {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
 }
@@ -928,7 +928,7 @@
 .quick-reply-btn,
 .carrinho-item-remover,
 .carrinho-btn-limpar,
-.carrinho-btn-finalizar {
+.chatBot-carrinho-btn-finalizar {
     transition: all 0.3s ease;
 }
 
@@ -965,7 +965,7 @@
     .quick-reply-btn,
     .carrinho-item-remover,
     .carrinho-btn-limpar,
-    .carrinho-btn-finalizar {
+    .chatBot-carrinho-btn-finalizar {
         transition: none;
         animation: none;
     }

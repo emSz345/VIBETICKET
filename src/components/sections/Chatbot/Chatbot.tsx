@@ -225,7 +225,7 @@ const CarrinhoLista: React.FC<{
         <button className="carrinho-btn-limpar" onClick={onLimparCarrinho}>
           🧹 Limpar Carrinho
         </button>
-        <button className="carrinho-btn-finalizar" onClick={onFinalizarCompra}>
+        <button className="chatBot-carrinho-btn-finalizar" onClick={onFinalizarCompra}>
           ✅ Finalizar Compra
         </button>
       </div>

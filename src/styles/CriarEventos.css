@@ -831,3 +831,82 @@
   transform: none;
   box-shadow: none;
 }
+
+/* ==========================================================================
+   MODAL DE SUCESSO (FECHAMENTO AUTOMÁTICO)
+   ========================================================================== */
+   .criar-modal-sucesso {
+    text-align: center;
+    padding: 2.5rem;
+    max-width: 450px;
+    animation: criar-modal-aparecer 0.3s ease-out;
+  }
+  
+  @keyframes criar-modal-aparecer {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  .criar-modal-sucesso-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .criar-modal-sucesso-imagem {
+    width: 180px;
+    height: 185px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+  }
+  
+  .criar-modal-sucesso-titulo {
+    color: #28a745;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .criar-modal-sucesso-mensagem {
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    color: #666;
+  }
+  
+  .criar-modal-sucesso-progresso {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+  }
+  
+  .criar-modal-sucesso-barra {
+    height: 100%;
+    background: #28a745;
+    animation: criar-modal-progresso 3s linear forwards;
+  }
+  
+  @keyframes criar-modal-progresso {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
+  
+  /* Remove o botão OK do modal de sucesso */
+  .criar-modal-sucesso .criar-modal-botoes {
+    display: none;
+  }

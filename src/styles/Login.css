@@ -507,76 +507,160 @@ input {
 }
 
 /* ========================
-   INDICADOR DE FORÇA DA SENHA
+   MODAL DE REDEFINIÇÃO DE SENHA
 ======================== */
-.login-password-strength {
-  margin: 10px 0 15px 0;
-  padding: 0 5px;
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.login-strength-bar-container {
-  width: 100%;
-  height: 6px;
-  background-color: #e0e0e0;
-  border-radius: 3px;
+.login-modal {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 380px;
+  animation: login-modal-appear 0.3s ease-out;
   overflow: hidden;
-  margin-bottom: 8px;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.login-strength-bar {
+@keyframes login-modal-appear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.login-modal-content {
+  padding: 30px 25px 25px;
+  text-align: center;
+  position: relative;
+}
+
+.login-modal-icon {
+  width: 70px;
+  height: 70px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: white;
+  font-size: 28px;
+  animation: login-modal-icon-bounce 0.5s ease-out;
+}
+
+/* Spinner para o estado de carregamento */
+.login-modal-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes login-modal-icon-bounce {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.login-modal-title {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.login-modal-message {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.login-modal-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e2e8f0;
+}
+
+.login-modal-progress-bar {
   height: 100%;
-  border-radius: 3px;
-  transition: all 0.3s ease;
+  background: #10b981;
+  animation: login-modal-progress 3s linear forwards;
 }
 
-.login-strength-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+@keyframes login-modal-progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
 }
 
-.login-strength-label {
-  font-size: 12px;
-  color: #666;
-  font-weight: 500;
-}
-
-.login-password-requirements {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.login-requirement {
-  font-size: 11px;
-  color: #999;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: color 0.3s ease;
-}
-
-.login-requirement-met {
-  color: #00C851;
-  font-weight: 500;
-}
-
-/* Responsividade para o indicador de força */
+/* Responsividade */
 @media (max-width: 768px) {
-  .login-password-strength {
-    margin: 8px 0 12px 0;
+  .login-modal {
+    top: 10px;
+    width: 95%;
+    max-width: 350px;
   }
   
-  .login-strength-label {
-    font-size: 11px;
+  .login-modal-content {
+    padding: 25px 20px 20px;
   }
   
-  .login-requirement {
-    font-size: 10px;
+  .login-modal-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
   }
   
-  .login-strength-bar-container {
-    height: 5px;
+  .login-modal-spinner {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .login-modal-title {
+    font-size: 18px;
+  }
+  
+  .login-modal-message {
+    font-size: 14px;
   }
 }

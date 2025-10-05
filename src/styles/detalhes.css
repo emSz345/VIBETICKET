@@ -37,7 +37,7 @@ body {
   color: white;
   padding: 40px 0;
   margin-bottom: 40px;
-  margin-top: 150px;
+  margin-top: 140px;
   border-radius: 0 0 var(--borda-arredondada) var(--borda-arredondada);
   box-shadow: var(--sombra-media);
 }

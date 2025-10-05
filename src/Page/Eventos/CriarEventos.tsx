@@ -5,6 +5,8 @@ import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
+import Conclusao from "../../assets/img-conclusao.png"
+
 import { Link } from 'react-router-dom';
 import { GoAlertFill } from "react-icons/go";
 import { FaTrashAlt } from "react-icons/fa";
@@ -53,6 +55,9 @@ function CriarEventos() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [perfilCompleto, setPerfilCompleto] = useState(false);
   const [perfilCarregado, setPerfilCarregado] = useState(false);
+
+  // MODAL CONCLUSÃO
+  const [modalSucessoAberto, setModalSucessoAberto] = useState(false);
 
   const handleAbrirModal = () => setModalAberto(true);
   const handleFecharModal = () => setModalAberto(false);
@@ -133,8 +138,15 @@ function CriarEventos() {
 
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [etapaAtual]);
+    if (modalSucessoAberto) {
+      const timer = setTimeout(() => {
+        setModalSucessoAberto(false);
+        navigate('/Home');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [modalSucessoAberto, navigate]);
 
   const formatTime = (seconds: number): string => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -367,6 +379,8 @@ function CriarEventos() {
     return Object.keys(novosErros).length === 0;
   };
 
+
+  // ALTERADO 
   const handleEnviarAnalise = async () => {
     if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5)) {
       alert('Por favor, corrija os erros em todos os campos antes de enviar para análise.');
@@ -423,9 +437,6 @@ function CriarEventos() {
     formData.append("quantidadeMeia", temMeia ? quantidadeMeia : '0');
     formData.append("temMeia", temMeia ? 'true' : 'false');
     formData.append("criadoPor", userId);
-    // Remover a doação do FormData pois não é mais um campo do evento
-    // formData.append("querDoar", String(querDoar));
-    // formData.append("valorDoacao", querDoar ? valorDoacao : '0');
 
     setIsSubmitting(true);
 
@@ -442,13 +453,13 @@ function CriarEventos() {
         throw new Error(responseData.message || `Erro do servidor: ${response.status}`);
       }
 
-      alert('Evento criado com sucesso!');
+      // Em vez do alert, abrir o modal de sucesso
+      setModalSucessoAberto(true);
 
       const cooldownDuration = 5 * 60 * 1000;
       const cooldownEndTime = Date.now() + cooldownDuration;
 
       localStorage.setItem('eventoCooldownEnd', cooldownEndTime.toString());
-      navigate('/Home');
       setIsCooldown(true);
       setCooldownTimeLeft(Math.floor(cooldownDuration / 1000));
 
@@ -457,6 +468,12 @@ function CriarEventos() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Adicione a função para fechar o modal de sucesso e navegar
+  const handleFecharModalSucesso = () => {
+    setModalSucessoAberto(false);
+    navigate('/Home');
   };
 
   const getError = (fieldName: string) => erros[fieldName];
@@ -1060,6 +1077,28 @@ function CriarEventos() {
                 </>
               )}
             </button>
+          )}
+          {modalSucessoAberto && (
+            <div className="criar-modal-overlay">
+              <div className="criar-modal-content criar-modal-sucesso">
+                <div className="criar-modal-sucesso-conteudo">
+                  <img
+                    src={Conclusao}
+                    alt="Conclusão"
+                    className="criar-modal-sucesso-imagem"
+                  />
+                  <h2 className="criar-modal-sucesso-titulo">
+                    Parabéns! Seu evento foi criado!
+                  </h2>
+                  <p className="criar-modal-sucesso-mensagem">
+                    Seu evento foi enviado para análise.
+                  </p>
+                  <div className="criar-modal-sucesso-progresso">
+                    <div className="criar-modal-sucesso-barra"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>

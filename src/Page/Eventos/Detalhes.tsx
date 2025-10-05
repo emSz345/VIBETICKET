@@ -9,14 +9,12 @@ import {
 import { IoTicket, IoTime } from "react-icons/io5";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { Evento } from '../../components/sections/Home/home-eventos/evento';
-import { CarrinhoService } from '../../services/carrinhoService';
 import { CarrinhoItem } from "../../types/carrinho";
 import { useAuth } from "../../Hook/AuthContext";
 import { useCart } from "../../Hook/CartContext";
 import NavBar3 from "../../components/sections/Home/NavBar3/NavBar3";
 import ChatBot from "../../components/sections/Chatbot/Chatbot";
 
-// ... (todas as suas interfaces permanecem as mesmas) ...
 interface CriadorUsuario {
     email: string;
     imagemPerfil: string;
@@ -47,14 +45,12 @@ interface TicketType {
     descricao?: string;
 }
 
-
 const Detalhes: React.FC = () => {
-    // ... (seus hooks e estados existentes) ...
     const apiUrl = process.env.REACT_APP_API_URL;
     const { id } = useParams<{ id: string }>();
     const { state } = useLocation();
     const { user: currentUser } = useAuth();
-    const { addItemToCart } = useCart();
+    const { addItemToCart, cartItems } = useCart();
     const [evento, setEvento] = useState<EventoComCriador | null>(state as EventoComCriador || null);
     const [criadorUsuario, setCriadorUsuario] = useState<CriadorUsuario | null>(null);
     const [criadorPerfil, setCriadorPerfil] = useState<CriadorPerfil | null>(null);
@@ -202,10 +198,16 @@ const Detalhes: React.FC = () => {
         );
     };
 
-    // FUNÇÃO CORRIGIDA: Usa apenas a função addItemToCart do contexto
+    // FUNÇÃO CORRIGIDA: Com tratamento de erro assíncrono
     const adicionarAoCarrinho = async (ingresso: TicketType) => {
         if (ingresso.quantidade === 0) {
             setModalMessage("Selecione pelo menos um ingresso.");
+            setIsModalOpen(true);
+            return;
+        }
+
+        if (!currentUser) {
+            setModalMessage("Você precisa estar logado para adicionar ingressos ao carrinho.");
             setIsModalOpen(true);
             return;
         }
@@ -219,21 +221,20 @@ const Detalhes: React.FC = () => {
             }
 
             const estoque = await response.json();
-            const itensDoCarrinho = CarrinhoService.getCarrinho();
-            const itemExistente = itensDoCarrinho.find(item => item.eventoId === evento?._id && item.tipoIngresso === ingresso.tipo);
+            const itemExistente = cartItems.find((item: CarrinhoItem) => item.eventoId === evento?._id && item.tipoIngresso === ingresso.tipo);
             const quantidadeNoCarrinho = itemExistente ? itemExistente.quantidade : 0;
             const totalSolicitado = ingresso.quantidade + quantidadeNoCarrinho;
 
             let estoqueDisponivel = ingresso.tipo === 'Inteira' ? estoque.quantidadeInteira : estoque.quantidadeMeia;
 
             if (totalSolicitado > estoqueDisponivel) {
-                setModalMessage(`Desculpe, não há ingressos ${ingresso.tipo} suficientes disponíveis.`);
+                setModalMessage(`Desculpe, não há ingressos ${ingresso.tipo} suficientes disponíveis. Disponível: ${estoqueDisponivel}`);
                 setIsModalOpen(true);
                 return;
             }
 
             const novoItem: CarrinhoItem = {
-                id: `${evento?._id}-${ingresso.tipo}`,
+                id: `${evento?._id}-${ingresso.tipo}`, // ID temporário
                 eventoId: evento?._id || '',
                 nomeEvento: evento?.nome || '',
                 tipoIngresso: ingresso.tipo,
@@ -244,10 +245,9 @@ const Detalhes: React.FC = () => {
                 localEvento: `${evento?.rua}, ${evento?.numero}, ${evento?.bairro} - ${evento?.cidade}, ${evento?.estado}`
             };
 
-            // Chamada ÚNICA e CORRETA para adicionar o item ao carrinho
-            addItemToCart(novoItem);
+            // 🔥 AGORA é assíncrono e pode lançar erros
+            await addItemToCart(novoItem);
 
-            // Define a mensagem e abre o modal
             setModalMessage(`${ingresso.quantidade} ingresso(s) do tipo "${ingresso.tipo}" foram adicionados ao seu carrinho.`);
             setIsModalOpen(true);
 
@@ -257,8 +257,8 @@ const Detalhes: React.FC = () => {
             );
 
         } catch (error) {
-            console.error('Erro ao verificar estoque:', error);
-            setModalMessage('Erro ao verificar disponibilidade de ingressos');
+            console.error('Erro ao adicionar ao carrinho:', error);
+            setModalMessage(error instanceof Error ? error.message : 'Erro ao adicionar ingressos ao carrinho');
             setIsModalOpen(true);
         }
     };
@@ -296,7 +296,6 @@ const Detalhes: React.FC = () => {
     const getCriadorNome = () => criadorUsuario?.nome || (typeof evento.criadoPor === 'object' && evento.criadoPor.nome) || 'Organizador';
     const getCriadorEmail = () => criadorUsuario?.email || (typeof evento.criadoPor === 'object' && evento.criadoPor.email) || '';
     const getCriadorImagem = () => criadorUsuario?.imagemPerfil || (typeof evento.criadoPor === 'object' && evento.criadoPor.imagemPerfil) || '';
-
 
     return (
         <>
@@ -366,7 +365,13 @@ const Detalhes: React.FC = () => {
                                                     <span>{ingresso.quantidade}</span>
                                                     <button onClick={() => aumentarQuantidade(index)} disabled={ingresso.quantidade >= 8}><FiPlus /></button>
                                                 </div>
-                                                <button className="detalhes-btn-comprar" onClick={() => adicionarAoCarrinho(ingresso)} disabled={ingresso.quantidade === 0}>Adicionar ao Carrinho</button>
+                                                <button 
+                                                    className="detalhes-btn-comprar" 
+                                                    onClick={() => adicionarAoCarrinho(ingresso)} 
+                                                    disabled={ingresso.quantidade === 0}
+                                                >
+                                                    Adicionar ao Carrinho
+                                                </button>
                                             </div>
                                         </div>
                                     ))}

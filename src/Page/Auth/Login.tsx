@@ -30,6 +30,11 @@ const Login: React.FC = () => {
   const getFalhas = useCallback(() => parseInt(localStorage.getItem("loginFalhas") || "0"), []);
   const getTentativas = useCallback(() => parseInt(localStorage.getItem("loginTentativas") || "0"), []);
 
+  // --- Estados do Modal ---
+  const [showResetModal, setShowResetModal] = useState<boolean>(false);
+  const [resetMessage, setResetMessage] = useState<string>("");
+  const [resetMessageType, setResetMessageType] = useState<"success" | "error" | "">("");
+
   const bloquearLogin = (falhasAtualizadas: number) => {
     const minutosBloqueio = falhasAtualizadas;
     const tempoBloqueioMs = minutosBloqueio * 60 * 1000;
@@ -203,8 +208,11 @@ const Login: React.FC = () => {
     }
   };
 
+  // --- Função do Modal ---
   const handleReset = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+
+    // Validação do email
     if (!email) {
       setEmailError("Digite seu e-mail para redefinir a senha");
       return;
@@ -215,11 +223,25 @@ const Login: React.FC = () => {
       return;
     }
 
+    // Abre o modal de carregamento
+    setShowResetModal(true);
+    setResetMessage(""); // Mensagem vazia durante o envio
+
     try {
       await api.post('/api/users/forgot-password', { email });
-      alert("E-mail de redefinição enviado com sucesso! Verifique sua caixa de entrada.");
+
+      // Atualiza para mensagem de sucesso
+      setResetMessage("E-mail de redefinição enviado com sucesso! Verifique sua caixa de entrada.");
+
+      // Fecha automaticamente após 3 segundos
+      setTimeout(() => {
+        setShowResetModal(false);
+      }, 3000);
+
     } catch (error: any) {
       console.error("Erro ao solicitar redefinição de senha:", error);
+      // Fecha o modal em caso de erro
+      setShowResetModal(false);
       alert(error.response?.data?.message || "Erro ao solicitar redefinição de senha");
     }
   };
@@ -290,6 +312,27 @@ const Login: React.FC = () => {
           <p>Ainda não tem uma conta? <Link to="/Cadastro" className="crie-conta">Crie uma!</Link></p>
         </div>
       </div>
+      {/* Modal de Redefinição de Senha */}
+      {showResetModal && (
+        <div className="login-modal-overlay">
+          <div className="login-modal">
+            <div className="login-modal-content">
+              <div className="login-modal-icon">
+                {resetMessage ? '✓' : <div className="login-modal-spinner"></div>}
+              </div>
+              <h3 className="login-modal-title">
+                {resetMessage ? 'E-mail Enviado!' : 'Enviando...'}
+              </h3>
+              {resetMessage && <p className="login-modal-message">{resetMessage}</p>}
+            </div>
+            {resetMessage && (
+              <div className="login-modal-progress">
+                <div className="login-modal-progress-bar"></div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

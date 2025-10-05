@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
-import { FiEdit2, FiCheck, FiUser, FiCalendar, FiPhone, FiMail, FiCamera } from "react-icons/fi";
+import { FiEdit2, FiCheck, FiUser, FiCalendar, FiPhone, FiMail, FiCamera, FiX } from "react-icons/fi";
 import { useAuth } from "../../Hook/AuthContext";
 import { TbPlugConnected } from "react-icons/tb";
 import "../../styles/Perfil.css";
@@ -20,6 +20,10 @@ const Perfil = () => {
   const docLabel = tipoPessoa === "cpf" ? "CPF" : "CNPJ";
   const docPlaceholder = tipoPessoa === "cpf" ? "000.000.000-00" : "00.000.000/0000-00";
   const docMaxLength = tipoPessoa === "cpf" ? 14 : 18;
+
+  // --- NOVO ESTADO PARA O MODAL ---
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [dadosPessoais, setDadosPessoais] = useState({
     cpf: "",
@@ -77,25 +81,25 @@ const Perfil = () => {
   // FUNÇÃO CORRIGIDA PARA TRATAR IMAGENS DO GOOGLE
   const getImagemPerfilUrl = useCallback((imagemPerfil?: string) => {
     if (!imagemPerfil) return `${apiUrl}/uploads/blank_profile.png`;
-    
+
     // Se já é uma URL completa (Google, Facebook, etc), retorna diretamente
     if (imagemPerfil.startsWith('http')) {
       return imagemPerfil;
     }
-    
+
     // Se começa com /uploads, adiciona o apiUrl
     if (imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${imagemPerfil}`;
     }
-    
+
     // Caso contrário, assume que é um arquivo local em uploads
     return `${apiUrl}/uploads/${imagemPerfil}`;
-  },[apiUrl]);
+  }, [apiUrl]);
 
   useEffect(() => {
     if (user && user._id) {
       setNome(user.nome);
-      
+
       // CORREÇÃO: Usar a função getImagemPerfilUrl para todas as imagens
       setPreviewUrl(getImagemPerfilUrl(user.imagemPerfil));
 
@@ -139,6 +143,16 @@ const Perfil = () => {
     }
   }, [user, apiUrl, getImagemPerfilUrl]);
 
+  useEffect(() => {
+    if (showSuccessModal) {
+      const timer = setTimeout(() => {
+        setShowSuccessModal(false);
+      }, 3000); // Fecha após 3 segundos
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessModal]);
+
   const handleSalvarLogin = async () => {
     if (!user) return;
     const formData = new FormData();
@@ -161,10 +175,13 @@ const Perfil = () => {
       localStorage.setItem("userName", nome);
       localStorage.setItem("imagemPerfil", data.user.imagemPerfil || "");
 
-      alert("Nome e foto de perfil atualizados com sucesso!");
+      // --- MOSTRAR MODAL DE SUCESSO ---
+      setSuccessMessage("Nome e foto de perfil atualizados com sucesso!");
+      setShowSuccessModal(true);
+
       setEditando(false);
       setImagem(null);
-      window.location.reload();
+
     } catch (error) {
       console.error("Erro ao atualizar os dados de login:", error);
       if (error instanceof Error) {
@@ -210,9 +227,12 @@ const Perfil = () => {
         throw new Error("Erro ao salvar dados de perfil: " + errorData.message);
       }
 
-      alert("Dados pessoais atualizados com sucesso!");
+      // --- MOSTRAR MODAL DE SUCESSO ---
+      setSuccessMessage("Dados pessoais atualizados com sucesso!");
+      setShowSuccessModal(true);
+
       setEditandoDadosAdicionais(false);
-      window.location.reload();
+
     } catch (error) {
       console.error("Erro ao salvar os dados de perfil:", error);
       if (error instanceof Error) {
@@ -478,7 +498,7 @@ const Perfil = () => {
                       <input
                         className="perfil-input"
                         maxLength={15}
-                        placeholder="Ex: 12345678 ou 001.234-A" 
+                        placeholder="Ex: 12345678 ou 001.234-A"
                         value={dadosOrganizacao.inscricaoMunicipal}
                         onChange={(e) => {
                           setDadosOrganizacao({ ...dadosOrganizacao, inscricaoMunicipal: e.target.value });
@@ -573,6 +593,24 @@ const Perfil = () => {
               {editandoDadosAdicionais ? "Salvar Dados Pessoais" : "Editar Dados Pessoais"}
             </button>
           </div>
+
+          {/* --- MODAL DE SUCESSO --- */}
+          {showSuccessModal && (
+            <div className="perfil-modal-overlay">
+              <div className="perfil-modal">
+                <div className="perfil-modal-content">
+                  <div className="perfil-modal-icon">
+                    <FiCheck />
+                  </div>
+                  <h3 className="perfil-modal-title">Sucesso!</h3>
+                  <p className="perfil-modal-message">{successMessage}</p>
+                  <div className="perfil-modal-progress">
+                    <div className="perfil-modal-progress-bar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

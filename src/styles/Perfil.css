@@ -247,3 +247,126 @@ div.perfil-card.full-width {
   max-width: none; /* Remove qualquer limitação de largura anterior */
   flex-basis: 100%; /* Garante que ele ocupe 100% do espaço flexível */
 }
+
+/* --- MODAL DE SUCESSO --- */
+/* --- MODAL DE SUCESSO --- */
+.perfil-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.perfil-modal {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 380px;
+  animation: perfil-modal-appear 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes perfil-modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.perfil-modal-content {
+  padding: 30px 25px 25px;
+  text-align: center;
+  position: relative;
+}
+
+.perfil-modal-icon {
+  width: 70px;
+  height: 70px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: white;
+  font-size: 28px;
+  animation: perfil-modal-icon-bounce 0.5s ease-out;
+}
+
+@keyframes perfil-modal-icon-bounce {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.perfil-modal-title {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.perfil-modal-message {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.perfil-modal-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e2e8f0;
+}
+
+.perfil-modal-progress-bar {
+  height: 100%;
+  background: #10b981;
+  animation: perfil-modal-progress 3s linear forwards;
+}
+
+@keyframes perfil-modal-progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Adicione também um efeito de fade out quando o modal estiver fechando */
+.perfil-modal.fade-out {
+  animation: perfil-modal-disappear 0.3s ease-in forwards;
+}
+
+@keyframes perfil-modal-disappear {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+}
