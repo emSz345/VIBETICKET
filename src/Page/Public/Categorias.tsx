@@ -17,6 +17,7 @@ import rs from "./../../assets/estados/estado_rgs.jpg";
 import df from "./../../assets/estados/estado_df.jpg";
 import ChatBot from "../../components/sections/Chatbot/Chatbot";
 
+
 const mapeamentoEstados = {
     SP: { nome: "São Paulo", img: sp, id: "SP" },
     RJ: { nome: "Rio de Janeiro", img: rj, id: "RJ" },
@@ -36,6 +37,7 @@ interface Evento {
     dataInicio: string;
     cidade: string;
     estado: string;
+    rua?: string;
 }
 
 interface Estado {
@@ -64,16 +66,19 @@ const Categorias: React.FC = () => {
     const [filtrosAbertos, setFiltrosAbertos] = useState(false);
 
     useEffect(() => {
+        // Scroll para o topo quando a página carregar
+        window.scrollTo(0, 0);
+        
         const fetchEstados = async () => {
             try {
                 setCarregandoEstados(true);
                 const response = await axios.get(`${apiUrl}/api/eventos/estados`);
                 const siglasDosEstados: string[] = response.data;
-
+    
                 const estadosCompletos = siglasDosEstados
                     .map(sigla => mapeamentoEstados[sigla.toUpperCase() as keyof typeof mapeamentoEstados])
                     .filter(Boolean);
-
+    
                 setEstadosDisponiveis(estadosCompletos);
             } catch (err) {
                 console.error("Erro ao buscar estados:", err);
@@ -176,18 +181,47 @@ const Categorias: React.FC = () => {
                                 ) : erro ? (
                                     <p className="categorias-erro">{erro}</p>
                                 ) : eventos.length > 0 ? (
-                                    <div className="lista-de-eventos">
+                                    <div className="categorias-lista-eventos">
                                         {eventos.map(evento => (
                                             <div
                                                 key={evento._id}
-                                                className="evento-card-placeholder"
-                                                style={{ cursor: 'pointer' }}
+                                                className="categorias-card-evento"
                                                 onClick={() => handleEventoClick(evento._id)}
                                             >
-                                                <img src={`${apiUrl}/uploads/${evento.imagem}`} alt={evento.nome} />
-                                                <h3>{evento.nome}</h3>
-                                                <p>{`${evento.cidade} - ${evento.estado}`}</p>
-                                                <p>{new Date(evento.dataInicio).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</p>
+                                                <div className="categorias-card-imagem-wrapper">
+                                                    <img
+                                                        src={`${apiUrl}/uploads/${evento.imagem}`}
+                                                        alt={evento.nome}
+                                                        className="categorias-card-imagem"
+                                                    />
+                                                    <span className="categorias-card-data">
+                                                        {new Date(evento.dataInicio).toLocaleDateString("pt-BR", {
+                                                            day: "2-digit",
+                                                            month: "short"
+                                                        })}
+                                                    </span>
+                                                </div>
+
+                                                <div className="categorias-card-conteudo">
+                                                    <span className="categorias-card-data-completa">
+                                                        {new Date(evento.dataInicio).toLocaleDateString("pt-BR", {
+                                                            weekday: "long",
+                                                            day: "2-digit",
+                                                            month: "long"
+                                                        }).toUpperCase()}
+                                                    </span>
+
+                                                    <h4 className="categorias-card-titulo">{evento.nome}</h4>
+
+                                                    <div className="categorias-card-info">
+                                                        <p className="categorias-card-local">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                                            </svg>
+                                                            {evento.cidade} - {evento.estado}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

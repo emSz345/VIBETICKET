@@ -89,7 +89,7 @@ const Login: React.FC = () => {
       localStorage.setItem('token', token);
 
       // Usar o método de login do contexto para atualizar o estado global
-      authContext.login(user);
+      authContext.login(user,token);
 
       // Redirecionar
       navigate("/Home");
@@ -178,7 +178,7 @@ const Login: React.FC = () => {
       // SALVAR O TOKEN NO LOCAL STORAGE
       localStorage.setItem('token', token);
 
-      authContext.login(user);
+      authContext.login(user,token);
       navigate("/Home");
 
     } catch (error: any) {

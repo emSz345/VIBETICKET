@@ -198,7 +198,7 @@ const Detalhes: React.FC = () => {
         );
     };
 
-    // FUNÇÃO CORRIGIDA: Com tratamento de erro assíncrono
+    // FUNÇÃO CORRIGIDA: Agora funciona sem login
     const adicionarAoCarrinho = async (ingresso: TicketType) => {
         if (ingresso.quantidade === 0) {
             setModalMessage("Selecione pelo menos um ingresso.");
@@ -206,35 +206,37 @@ const Detalhes: React.FC = () => {
             return;
         }
 
-        if (!currentUser) {
-            setModalMessage("Você precisa estar logado para adicionar ingressos ao carrinho.");
-            setIsModalOpen(true);
-            return;
+        // VERIFICAÇÃO DE ESTOQUE APENAS PARA USUÁRIOS LOGADOS
+        if (currentUser) {
+            try {
+                const response = await fetch(`${apiUrl}/api/eventos/verificar-estoque/${evento?._id}`);
+                if (!response.ok) {
+                    setModalMessage('Não foi possível verificar a disponibilidade de ingressos.');
+                    setIsModalOpen(true);
+                    return;
+                }
+
+                const estoque = await response.json();
+                const itemExistente = cartItems.find((item: CarrinhoItem) => item.eventoId === evento?._id && item.tipoIngresso === ingresso.tipo);
+                const quantidadeNoCarrinho = itemExistente ? itemExistente.quantidade : 0;
+                const totalSolicitado = ingresso.quantidade + quantidadeNoCarrinho;
+
+                let estoqueDisponivel = ingresso.tipo === 'Inteira' ? estoque.quantidadeInteira : estoque.quantidadeMeia;
+
+                if (totalSolicitado > estoqueDisponivel) {
+                    setModalMessage(`Desculpe, não há ingressos ${ingresso.tipo} suficientes disponíveis. Disponível: ${estoqueDisponivel}`);
+                    setIsModalOpen(true);
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar estoque:', error);
+                // Continua mesmo com erro de verificação de estoque
+            }
         }
 
         try {
-            const response = await fetch(`${apiUrl}/api/eventos/verificar-estoque/${evento?._id}`);
-            if (!response.ok) {
-                setModalMessage('Não foi possível verificar a disponibilidade de ingressos.');
-                setIsModalOpen(true);
-                return;
-            }
-
-            const estoque = await response.json();
-            const itemExistente = cartItems.find((item: CarrinhoItem) => item.eventoId === evento?._id && item.tipoIngresso === ingresso.tipo);
-            const quantidadeNoCarrinho = itemExistente ? itemExistente.quantidade : 0;
-            const totalSolicitado = ingresso.quantidade + quantidadeNoCarrinho;
-
-            let estoqueDisponivel = ingresso.tipo === 'Inteira' ? estoque.quantidadeInteira : estoque.quantidadeMeia;
-
-            if (totalSolicitado > estoqueDisponivel) {
-                setModalMessage(`Desculpe, não há ingressos ${ingresso.tipo} suficientes disponíveis. Disponível: ${estoqueDisponivel}`);
-                setIsModalOpen(true);
-                return;
-            }
-
             const novoItem: CarrinhoItem = {
-                id: `${evento?._id}-${ingresso.tipo}`, // ID temporário
+                id: `${evento?._id}-${ingresso.tipo}-${Date.now()}`, // ID único para o carrinho local
                 eventoId: evento?._id || '',
                 nomeEvento: evento?.nome || '',
                 tipoIngresso: ingresso.tipo,
@@ -245,7 +247,6 @@ const Detalhes: React.FC = () => {
                 localEvento: `${evento?.rua}, ${evento?.numero}, ${evento?.bairro} - ${evento?.cidade}, ${evento?.estado}`
             };
 
-            // 🔥 AGORA é assíncrono e pode lançar erros
             await addItemToCart(novoItem);
 
             setModalMessage(`${ingresso.quantidade} ingresso(s) do tipo "${ingresso.tipo}" foram adicionados ao seu carrinho.`);
@@ -310,6 +311,16 @@ const Detalhes: React.FC = () => {
                         </div>
                         <div className="modal-body">
                             <p>{modalMessage}</p>
+                            {!currentUser && (
+                                <div style={{marginTop: '15px', padding: '10px', backgroundColor: '#fff3cd', borderRadius: '5px'}}>
+                                    <p style={{margin: 0, color: '#856404'}}>
+                                        💡 <strong>Você não está logado.</strong> Os ingressos foram salvos localmente. 
+                                        <Link to="/login" style={{marginLeft: '5px', color: '#0969fb', fontWeight: 'bold'}}>
+                                            Faça login para sincronizar seu carrinho
+                                        </Link>
+                                    </p>
+                                </div>
+                            )}
                         </div>
                         <div className="modal-actions">
                             <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>

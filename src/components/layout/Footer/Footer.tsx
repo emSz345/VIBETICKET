@@ -1,5 +1,5 @@
 import React from "react";
-import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaWhatsapp, FaArrowRight } from "react-icons/fa";
 import { FaXTwitter } from 'react-icons/fa6';
 import { Link } from "react-router-dom";
 import "./Footer.css";
@@ -48,7 +48,14 @@ const Footer: React.FC = () => {
                 <HashLink to="#eletronica" className="footer-link">Eventos Eletrônicos</HashLink>
               </li>
               <li className="footer-section-item">
-                <Link to="/categorias" className="footer-link footer-link-highlight">Todos os Eventos →</Link>
+                <Link
+                  to="/categorias"
+                  className="footer-link footer-link-highlight"
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  Todos os Eventos
+                  <FaArrowRight size={15} />
+                </Link>
               </li>
             </ul>
           </div>
@@ -70,7 +77,14 @@ const Footer: React.FC = () => {
                 <Link to="/categorias?estado=PR" className="footer-link">Paraná</Link>
               </li>
               <li className="footer-section-item">
-                <Link to="/categorias" className="footer-link footer-link-highlight">Ver todos os estados →</Link>
+                <Link
+                  to="/categorias"
+                  className="footer-link footer-link-highlight"
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  Ver todos os estados
+                  <FaArrowRight size={15} />
+                </Link>
               </li>
             </ul>
           </div>
@@ -80,7 +94,7 @@ const Footer: React.FC = () => {
             <h4 className="footer-section-title">Produtores</h4>
             <ul className="footer-section-list">
               <li className="footer-section-item"><Link to="/criarEeventos" className="footer-link">Criar Evento</Link></li>
-              <li className="footer-section-item"><Link to="/gerenciar-eventos" className="footer-link">Gerenciar Eventos</Link></li>     
+              <li className="footer-section-item"><Link to="/gerenciar-eventos" className="footer-link">Gerenciar Eventos</Link></li>
             </ul>
           </div>
 

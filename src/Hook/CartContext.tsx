@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { CarrinhoService } from '../services/carrinhoService';
 import { CarrinhoItem } from '../types/carrinho';
+import { useAuth } from '../Hook/AuthContext';
+import { useCallback } from 'react';
 
-// Define a interface para o que o contexto irá fornecer
+
 interface CartContextType {
     cartItemsCount: number;
     cartItems: CarrinhoItem[];
@@ -14,12 +16,11 @@ interface CartContextType {
     clearCart: () => Promise<void>;
     getCartItems: () => CarrinhoItem[];
     refreshCart: () => Promise<void>;
+    syncLocalCartToServer: () => Promise<void>;
 }
 
-// Cria o contexto com um valor inicial indefinido
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Hook personalizado para facilitar o acesso ao contexto do carrinho
 export const useCart = () => {
     const context = useContext(CartContext);
     if (context === undefined) {
@@ -28,19 +29,60 @@ export const useCart = () => {
     return context;
 };
 
-// Componente Provedor do Contexto
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // Estado para a contagem de itens no carrinho
-    const [cartItemsCount, setCartItemsCount] = useState(0);
-    // Estado para armazenar os itens do carrinho
     const [cartItems, setCartItems] = useState<CarrinhoItem[]>([]);
-    // Estado para loading
+    const [cartItemsCount, setCartItemsCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const { isAuthenticated, user } = useAuth();
 
-    // 🔥 CORRIGIDO: Carregar carrinho completo do BACKEND ao inicializar
+     const syncLocalCartToServer = useCallback(async () => {
+        if (!isAuthenticated) return;
+
+        try {
+            const localCart = localStorage.getItem('localCart');
+            if (localCart) {
+                const localItems = JSON.parse(localCart) as CarrinhoItem[];
+                
+                if (localItems.length > 0) {
+                    console.log('Sincronizando carrinho local com servidor...', localItems);
+                    
+                    // Para cada item local, adicionar ao carrinho do servidor
+                    for (const item of localItems) {
+                        try {
+                            await CarrinhoService.adicionarItem({
+                                eventoId: item.eventoId,
+                                tipoIngresso: item.tipoIngresso,
+                                quantidade: item.quantidade
+                            });
+                        } catch (error) {
+                            console.error(`Erro ao sincronizar item ${item.eventoId}:`, error);
+                        }
+                    }
+                    
+                    // Limpar carrinho local após sincronização bem-sucedida
+                    localStorage.removeItem('localCart');
+                    console.log('Carrinho local sincronizado e limpo');
+                }
+                
+                // Recarregar carrinho do servidor
+                await loadCartFromBackend();
+            } else {
+                // Se não há carrinho local, apenas carregar do backend
+                await loadCartFromBackend();
+            }
+        } catch (error) {
+            console.error('Erro na sincronização do carrinho:', error);
+            // Em caso de erro, manter o carrinho local
+            loadCartFromLocalStorage();
+        }
+    },[isAuthenticated]);
+
+    // 🔥 CORREÇÃO: Sincronizar carrinho quando o usuário fizer login
     useEffect(() => {
-        loadCartFromBackend();
-    }, []);
+        if (isAuthenticated && user) {
+            syncLocalCartToServer();
+        }
+    }, [isAuthenticated, user, syncLocalCartToServer]);
 
     const loadCartFromBackend = async () => {
         try {
@@ -49,92 +91,176 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setCartItems(items);
             updateCartCount(items);
         } catch (error) {
-            console.error('Erro ao carregar carrinho:', error);
+            console.error('Erro ao carregar carrinho do backend:', error);
             setCartItems([]);
         } finally {
             setIsLoading(false);
         }
     };
 
-    // 🔥 NOVA FUNÇÃO: Recarregar carrinho do backend
-    const refreshCart = async () => {
-        await loadCartFromBackend();
+    const loadCartFromLocalStorage = () => {
+        try {
+            const localCart = localStorage.getItem('localCart');
+            if (localCart) {
+                const items = JSON.parse(localCart) as CarrinhoItem[];
+                setCartItems(items);
+                updateCartCount(items);
+            } else {
+                setCartItems([]);
+                setCartItemsCount(0);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar carrinho local:', error);
+            setCartItems([]);
+            setCartItemsCount(0);
+        }
     };
 
-    // Funções para manipular a contagem do carrinho
+    const saveCartToLocalStorage = (items: CarrinhoItem[]) => {
+        try {
+            localStorage.setItem('localCart', JSON.stringify(items));
+        } catch (error) {
+            console.error('Erro ao salvar carrinho local:', error);
+        }
+    };
+
+    // 🔥 CORREÇÃO: Função de sincronização melhorada
+   
+
     const updateCartCount = (items?: CarrinhoItem[]) => {
         const cartItemsToCount = items || cartItems;
         const totalCount = cartItemsToCount.reduce((sum: number, item) => sum + item.quantidade, 0);
         setCartItemsCount(totalCount);
     };
 
-    // 🔥 CORRIGIDA: Função assíncrona para adicionar um item ao carrinho
+    // 🔥 CORREÇÃO: Carregar carrinho baseado no status de autenticação
+    useEffect(() => {
+        if (isAuthenticated) {
+            loadCartFromBackend();
+        } else {
+            loadCartFromLocalStorage();
+        }
+    }, [isAuthenticated, loadCartFromBackend]);
+
     const addItemToCart = async (item: CarrinhoItem) => {
-        try {
-            setIsLoading(true);
-            const novoCarrinho = await CarrinhoService.adicionarItem(item);
-            setCartItems(novoCarrinho);
-            updateCartCount(novoCarrinho);
-        } catch (error) {
-            console.error('Erro ao adicionar item:', error);
-            throw error; // Propaga o erro para o componente
-        } finally {
-            setIsLoading(false);
+        if (isAuthenticated) {
+            // Usuário logado: salvar no servidor
+            try {
+                setIsLoading(true);
+                await CarrinhoService.adicionarItem({
+                    eventoId: item.eventoId,
+                    tipoIngresso: item.tipoIngresso,
+                    quantidade: item.quantidade
+                });
+                // Recarregar carrinho completo após adicionar
+                await loadCartFromBackend();
+            } catch (error) {
+                console.error('Erro ao adicionar item:', error);
+                throw error;
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            // Usuário não logado: salvar localmente
+            const newItems = [...cartItems];
+            const existingItemIndex = newItems.findIndex(i => 
+                i.eventoId === item.eventoId && i.tipoIngresso === item.tipoIngresso
+            );
+
+            if (existingItemIndex !== -1) {
+                // Atualizar quantidade do item existente
+                newItems[existingItemIndex].quantidade += item.quantidade;
+            } else {
+                // Adicionar novo item
+                newItems.push({
+                    ...item,
+                    id: `${item.eventoId}-${item.tipoIngresso}-${Date.now()}`
+                });
+            }
+
+            setCartItems(newItems);
+            updateCartCount(newItems);
+            saveCartToLocalStorage(newItems);
         }
     };
 
-    // 🔥 CORRIGIDA: Função assíncrona para remover item
-    const removeItemFromCart = async (id: string) => {
-        try {
-            setIsLoading(true);
-            const novoCarrinho = await CarrinhoService.removerItem(id);
-            setCartItems(novoCarrinho);
-            updateCartCount(novoCarrinho);
-        } catch (error) {
-            console.error('Erro ao remover item:', error);
-            throw error;
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // 🔥 CORRIGIDA: Função assíncrona para atualizar quantidade
     const updateItemQuantity = async (id: string, quantity: number) => {
         if (quantity <= 0) {
             await removeItemFromCart(id);
             return;
         }
 
-        try {
-            setIsLoading(true);
-            const novoCarrinho = await CarrinhoService.atualizarQuantidade(id, quantity);
-            setCartItems(novoCarrinho);
-            updateCartCount(novoCarrinho);
-        } catch (error) {
-            console.error('Erro ao atualizar quantidade:', error);
-            throw error;
-        } finally {
-            setIsLoading(false);
+        if (isAuthenticated) {
+            try {
+                setIsLoading(true);
+                await CarrinhoService.atualizarQuantidade(id, quantity);
+                await loadCartFromBackend();
+            } catch (error) {
+                console.error('Erro ao atualizar quantidade:', error);
+                throw error;
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            const newItems = cartItems.map(item => 
+                item.id === id ? { ...item, quantidade: quantity } : item
+            );
+            setCartItems(newItems);
+            updateCartCount(newItems);
+            saveCartToLocalStorage(newItems);
         }
     };
 
-    // 🔥 CORRIGIDA: Função assíncrona para limpar carrinho
+    const removeItemFromCart = async (id: string) => {
+        if (isAuthenticated) {
+            try {
+                setIsLoading(true);
+                await CarrinhoService.removerItem(id);
+                await loadCartFromBackend();
+            } catch (error) {
+                console.error('Erro ao remover item:', error);
+                throw error;
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            const newItems = cartItems.filter(item => item.id !== id);
+            setCartItems(newItems);
+            updateCartCount(newItems);
+            saveCartToLocalStorage(newItems);
+        }
+    };
+
     const clearCart = async () => {
-        try {
-            setIsLoading(true);
-            await CarrinhoService.limparCarrinho();
+        if (isAuthenticated) {
+            try {
+                setIsLoading(true);
+                await CarrinhoService.limparCarrinho();
+                setCartItems([]);
+                setCartItemsCount(0);
+            } catch (error) {
+                console.error('Erro ao limpar carrinho:', error);
+                throw error;
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
             setCartItems([]);
             setCartItemsCount(0);
-        } catch (error) {
-            console.error('Erro ao limpar carrinho:', error);
-            throw error;
-        } finally {
-            setIsLoading(false);
+            localStorage.removeItem('localCart');
         }
     };
 
     const getCartItems = (): CarrinhoItem[] => {
         return cartItems;
+    };
+
+    const refreshCart = async () => {
+        if (isAuthenticated) {
+            await loadCartFromBackend();
+        } else {
+            loadCartFromLocalStorage();
+        }
     };
 
     const value: CartContextType = {
@@ -147,7 +273,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         updateItemQuantity,
         clearCart,
         getCartItems,
-        refreshCart
+        refreshCart,
+        syncLocalCartToServer
     };
 
     return (

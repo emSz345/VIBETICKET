@@ -1,190 +1,136 @@
-// services/carrinhoService.ts - ATUALIZADO
+import api from './api';
 import { CarrinhoItem } from '../types/carrinho';
 
-const API_URL = process.env.REACT_APP_API_URL;
+export class CarrinhoService {
+    static async getCarrinho(): Promise<CarrinhoItem[]> {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                return [];
+            }
 
-// 🔥 FUNÇÃO PARA OBTER TOKEN (do localStorage ou de onde você salva)
-const getToken = (): string | null => {
-  // Tenta pegar do localStorage (que é onde você está salvando pelo contexto)
-  return localStorage.getItem('token');
-};
-
-export const CarrinhoService = {
-  // 🔥 OBTER CARRINHO DO BACKEND
-  getCarrinho: async (): Promise<CarrinhoItem[]> => {
-    try {
-      const token = getToken();
-      if (!token) {
-        console.log('❌ Nenhum token encontrado para buscar carrinho');
-        return [];
-      }
-
-      const response = await fetch(`${API_URL}/api/carrinho`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+            const response = await api.get('/api/carrinho', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            // 🔥 CORREÇÃO: Garantir que sempre retorne um array
+            if (response.data && response.data.itens) {
+                return response.data.itens.map((item: any) => ({
+                    id: item._id || item.id,
+                    eventoId: item.eventoId,
+                    nomeEvento: item.nomeEvento,
+                    tipoIngresso: item.tipoIngresso,
+                    preco: item.preco,
+                    quantidade: item.quantidade,
+                    imagem: item.imagem,
+                    dataEvento: item.dataEvento,
+                    localEvento: item.localEvento
+                }));
+            }
+            return [];
+        } catch (error) {
+            console.error('Erro ao buscar carrinho:', error);
+            return [];
         }
-      });
-
-      if (response.ok) {
-        const carrinhoData = await response.json();
-        console.log('✅ Carrinho carregado do backend:', carrinhoData.itens);
-        
-        // Converter para formato padrão
-        return carrinhoData.itens.map((item: any) => ({
-          id: item._id, // 🔥 AGORA usa o _id do MongoDB
-          eventoId: item.eventoId._id || item.eventoId,
-          nomeEvento: item.nomeEvento,
-          tipoIngresso: item.tipoIngresso,
-          preco: item.preco,
-          quantidade: item.quantidade,
-          imagem: item.imagem,
-          dataEvento: item.dataEvento,
-          localEvento: item.localEvento
-        }));
-      } else {
-        console.error('❌ Erro ao buscar carrinho:', response.status);
-        return [];
-      }
-    } catch (error) {
-      console.error('Erro ao buscar carrinho:', error);
-      return [];
     }
-  },
 
-  // 🔥 ADICIONAR ITEM VIA BACKEND
-  adicionarItem: async (novoItem: CarrinhoItem): Promise<CarrinhoItem[]> => {
-    try {
-      const token = getToken();
-      if (!token) throw new Error('Usuário não autenticado');
+    static async adicionarItem(itemData: {
+        eventoId: string;
+        tipoIngresso: string;
+        quantidade: number;
+    }): Promise<void> {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
 
-      const response = await fetch(`${API_URL}/api/carrinho/itens`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          eventoId: novoItem.eventoId,
-          tipoIngresso: novoItem.tipoIngresso,
-          quantidade: novoItem.quantidade
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao adicionar item');
-      }
-
-      const carrinhoData = await response.json();
-      return carrinhoData.itens.map((item: any) => ({
-        id: item._id,
-        eventoId: item.eventoId._id || item.eventoId,
-        nomeEvento: item.nomeEvento,
-        tipoIngresso: item.tipoIngresso,
-        preco: item.preco,
-        quantidade: item.quantidade,
-        imagem: item.imagem,
-        dataEvento: item.dataEvento,
-        localEvento: item.localEvento
-      }));
-    } catch (error) {
-      console.error('Erro ao adicionar item:', error);
-      throw error;
-    }
-  },
-
-  // ... (as outras funções permanecem iguais ao exemplo anterior)
-  atualizarQuantidade: async (itemId: string, quantidade: number): Promise<CarrinhoItem[]> => {
-    try {
-      const token = getToken();
-      if (!token) throw new Error('Usuário não autenticado');
-
-      const response = await fetch(`${API_URL}/api/carrinho/itens/${itemId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ quantidade })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao atualizar quantidade');
-      }
-
-      const carrinhoData = await response.json();
-      return carrinhoData.itens.map((item: any) => ({
-        id: item._id,
-        eventoId: item.eventoId._id || item.eventoId,
-        nomeEvento: item.nomeEvento,
-        tipoIngresso: item.tipoIngresso,
-        preco: item.preco,
-        quantidade: item.quantidade,
-        imagem: item.imagem,
-        dataEvento: item.dataEvento,
-        localEvento: item.localEvento
-      }));
-    } catch (error) {
-      console.error('Erro ao atualizar quantidade:', error);
-      throw error;
-    }
-  },
-
-  removerItem: async (itemId: string): Promise<CarrinhoItem[]> => {
-    try {
-      const token = getToken();
-      if (!token) throw new Error('Usuário não autenticado');
-
-      const response = await fetch(`${API_URL}/api/carrinho/itens/${itemId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
+            await api.post('/api/carrinho/itens', itemData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+        } catch (error) {
+            console.error('Erro ao adicionar item:', error);
+            throw error;
         }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao remover item');
-      }
-
-      const carrinhoData = await response.json();
-      return carrinhoData.itens.map((item: any) => ({
-        id: item._id,
-        eventoId: item.eventoId._id || item.eventoId,
-        nomeEvento: item.nomeEvento,
-        tipoIngresso: item.tipoIngresso,
-        preco: item.preco,
-        quantidade: item.quantidade,
-        imagem: item.imagem,
-        dataEvento: item.dataEvento,
-        localEvento: item.localEvento
-      }));
-    } catch (error) {
-      console.error('Erro ao remover item:', error);
-      throw error;
     }
-  },
 
-  limparCarrinho: async (): Promise<void> => {
-    try {
-      const token = getToken();
-      if (!token) throw new Error('Usuário não autenticado');
+    static async atualizarQuantidade(itemId: string, quantidade: number): Promise<void> {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
 
-      const response = await fetch(`${API_URL}/api/carrinho`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
+            await api.put(`/api/carrinho/itens/${itemId}`, { 
+                quantidade 
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+        } catch (error) {
+            console.error('Erro ao atualizar quantidade:', error);
+            throw error;
         }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao limpar carrinho');
-      }
-    } catch (error) {
-      console.error('Erro ao limpar carrinho:', error);
-      throw error;
     }
-  }
-};
+
+    static async removerItem(itemId: string): Promise<void> {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            await api.delete(`/api/carrinho/itens/${itemId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+        } catch (error) {
+            console.error('Erro ao remover item:', error);
+            throw error;
+        }
+    }
+
+    static async limparCarrinho(): Promise<void> {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            await api.delete('/api/carrinho', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+        } catch (error) {
+            console.error('Erro ao limpar carrinho:', error);
+            throw error;
+        }
+    }
+
+    // 🔥 CORREÇÃO: Método para sincronizar múltiplos itens de uma vez
+    static async sincronizarCarrinho(itens: CarrinhoItem[]): Promise<void> {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Usuário não autenticado');
+            }
+
+            // Primeiro limpa o carrinho atual no servidor
+            await this.limparCarrinho();
+
+            // Depois adiciona todos os itens do carrinho local
+            for (const item of itens) {
+                try {
+                    await this.adicionarItem({
+                        eventoId: item.eventoId,
+                        tipoIngresso: item.tipoIngresso,
+                        quantidade: item.quantidade
+                    });
+                } catch (error) {
+                    console.error(`Erro ao sincronizar item ${item.eventoId}:`, error);
+                    // Continua com os próximos itens mesmo se um falhar
+                }
+            }
+        } catch (error) {
+            console.error('Erro na sincronização do carrinho:', error);
+            throw error;
+        }
+    }
+}

@@ -1,3 +1,4 @@
+
 :root {
   --cor-primaria: #0969fb;
   --cor-secundaria: #0756cc;
@@ -15,7 +16,7 @@
   --transicao-rapida: all 0.2s ease;
 }
 
-/* Reset e Estilos Base */
+/* ===== RESET E ESTILOS BASE ===== */
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   margin: 0;
@@ -31,13 +32,13 @@ body {
   padding: 0 20px;
 }
 
-/* Header do Evento */
+/* ===== HEADER DO EVENTO ===== */
 .detalhes-header {
   background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);
   color: white;
   padding: 40px 0;
   margin-bottom: 40px;
-  margin-top: 140px;
+  margin-top: 120px;
   border-radius: 0 0 var(--borda-arredondada) var(--borda-arredondada);
   box-shadow: var(--sombra-media);
 }
@@ -51,6 +52,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  position: relative;
 }
 
 .detalhes-titulo-evento {
@@ -98,7 +100,28 @@ body {
   aspect-ratio: 16/9;
 }
 
-/* Conteúdo Principal */
+/* Botão Compartilhar */
+.share-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicao-rapida);
+}
+
+.share-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ===== CONTEÚDO PRINCIPAL ===== */
 .detalhes-main-content {
   display: flex;
   gap: 40px;
@@ -106,7 +129,7 @@ body {
   flex-wrap: wrap;
 }
 
-/* Seção de Ingressos */
+/* ===== SEÇÃO DE INGRESSOS ===== */
 .detalhes-ingressos-box {
   flex: 1;
   min-width: 300px;
@@ -257,7 +280,7 @@ body {
   font-size: 1.3rem;
 }
 
-/* Seção de Informações */
+/* ===== SEÇÃO DE INFORMAÇÕES ===== */
 .detalhes-info-container {
   flex: 2;
   min-width: 300px;
@@ -293,6 +316,12 @@ body {
   padding: 10px 0;
 }
 
+.detalhes-descricao {
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
+  white-space: pre-wrap; 
+}
+
 .detalhes-descricao p {
   margin-bottom: 1.5em;
   color: var(--cor-texto-medio);
@@ -307,7 +336,7 @@ body {
   color: var(--cor-texto-medio);
 }
 
-/* Mapa */
+/* ===== MAPA ===== */
 .detalhes-bloco {
   margin: 60px 0;
 }
@@ -330,19 +359,13 @@ body {
   box-shadow: var(--sombra-media);
 }
 
-.detalhes-descricao {
-  word-wrap: break-word; 
-  overflow-wrap: break-word; 
-  white-space: pre-wrap; 
-}
-
 .detalhes-mapa {
   width: 100%;
   height: 100%;
   border: none;
 }
 
-/* Organizador */
+/* ===== ORGANIZADOR ===== */
 .detalhes-container-organizador {
   background-color: var(--cor-fundo-cinza);
   padding: 40px;
@@ -409,80 +432,13 @@ body {
   font-weight: 700;
 }
 
-/* Botão Compartilhar */
-.share-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 30px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transicao-rapida);
-}
-
-.share-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .detalhes-header-content {
-    flex-direction: column-reverse;
-  }
-  
-  .detalhes-imagem-evento {
-    max-width: 100%;
-  }
-  
-  .detalhes-main-content {
-    flex-direction: column;
-  }
-  
-  .detalhes-ingressos-box {
-    max-width: 100%;
-    position: static;
-  }
-  
-  .detalhes-organizador {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .detalhes-contato {
-    justify-content: center;
-  }
-}
-
-/* Mensagem de erro */
-.evento-nao-encontrado {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.evento-nao-encontrado h2 {
-  color: var(--cor-texto-escuro);
-  margin-bottom: 20px;
-}
-
-.evento-nao-encontrado p {
-  color: var(--cor-texto-medio);
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-/* Container principal */
+/* Container organizador atualizado */
 .organizador-container {
   background: linear-gradient(135deg, var(--cor-fundo-cinza) 0%, #f8f9fa 100%);
   padding: 2.5rem;
   border-radius: 1.5rem;
   margin: 3.75rem 0;
-  border: 1px solid var(--cor-borda-suave);
+  border: 1px solid var(--cor-borda);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -492,7 +448,6 @@ body {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-/* Título */
 .organizador-titulo {
   font-size: 1.625rem;
   font-weight: 700;
@@ -505,7 +460,6 @@ body {
   gap: 0.75rem;
 }
 
-/* Conteúdo - layout flex responsivo */
 .organizador-conteudo {
   display: flex;
   align-items: center;
@@ -514,7 +468,6 @@ body {
   justify-content: center;
 }
 
-/* Avatar */
 .organizador-avatar {
   width: 120px;
   height: 120px;
@@ -529,7 +482,6 @@ body {
   transform: scale(1.05);
 }
 
-/* Container de informações */
 .organizador-info {
   flex: 1;
   min-width: 280px;
@@ -538,7 +490,6 @@ body {
   gap: 1rem;
 }
 
-/* Nome do organizador */
 .organizador-nome {
   font-size: 1.375rem;
   font-weight: 600;
@@ -547,7 +498,6 @@ body {
   line-height: 1.4;
 }
 
-/* Contatos */
 .organizador-contato {
   display: flex;
   align-items: center;
@@ -563,7 +513,6 @@ body {
   color: var(--cor-primaria);
 }
 
-/* Estado de erro */
 .organizador-erro {
   background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
   border-color: #fc8181;
@@ -577,62 +526,12 @@ body {
   font-size: 1rem;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .organizador-container {
-    padding: 1.5rem;
-    margin: 2.5rem 0;
-  }
-  
-  .organizador-conteudo {
-    gap: 1.5rem;
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .organizador-avatar {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .organizador-titulo {
-    font-size: 1.375rem;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .organizador-info {
-    min-width: auto;
-    align-items: center;
-  }
-  
-  .organizador-contato {
-    justify-content: center;
-  }
-}
+/* ===== MODAIS ===== */
 
-@media (max-width: 480px) {
-  .organizador-container {
-    padding: 1.25rem;
-    border-radius: 1rem;
-  }
-  
-  .organizador-titulo {
-    font-size: 1.25rem;
-  }
-  
-  .organizador-nome {
-    font-size: 1.125rem;
-  }
-}
-
-/* ========================================= */
-/* Estilos da Modal de Sucesso (Atualizado) */
-/* ========================================= */
-
+/* Modal de Sucesso */
 .success-modal {
   position: fixed;
-  top: 150px; /* Aumentado para evitar colisão com a navbar */
+  top: 150px;
   right: 20px;
   z-index: 1000;
   background-color: var(--cor-sucesso);
@@ -653,56 +552,137 @@ body {
   gap: 10px;
 }
 
-.modal-icon {
-  font-size: 24px;
+/* Modal de Confirmação */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
 }
 
-.modal-message {
-  font-weight: bold;
+.Detalhes-modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  transform: translateY(-50px);
+  animation: slideIn 0.3s forwards;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.modal-title {
   margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
 }
 
-/* Animações */
-@keyframes fadeIn {
-  from {
-      opacity: 0;
-      transform: translateY(-20px);
-  }
-  to {
-      opacity: 1;
-      transform: translateY(0);
-  }
+.modal-icon {
+  color: #28a745;
+  margin-right: 10px;
+  font-size: 1.8rem;
 }
 
-@keyframes fadeOut {
-  from {
-      opacity: 1;
-      transform: translateY(0);
-  }
-  to {
-      opacity: 0;
-      transform: translateY(-20px);
-  }
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #aaa;
+  line-height: 1;
 }
 
-/* Responsividade para a modal */
-@media (max-width: 768px) {
-  .success-modal {
-      top: auto;
-      bottom: 20px;
-      left: 50%;
-      right: auto;
-      transform: translateX(-50%);
-      width: 90%;
-      text-align: center;
-      flex-direction: column;
-      padding: 15px;
-  }
+.modal-close-button:hover {
+  color: #333;
 }
 
-/* Estilos para o aviso de evento encerrado */
+.modal-body p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions .btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* ===== ESTADOS E AVISOS ===== */
+
+/* Evento não encontrado */
+.evento-nao-encontrado {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.evento-nao-encontrado h2 {
+  color: var(--cor-texto-escuro);
+  margin-bottom: 20px;
+}
+
+.evento-nao-encontrado p {
+  color: var(--cor-texto-medio);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Aviso de evento encerrado */
 .evento-encerrado-aviso {
-  background-color: #d9534f; /* Vermelho */
+  background-color: #d9534f;
   color: white;
   text-align: center;
   padding: 10px;
@@ -714,13 +694,7 @@ body {
   z-index: 10;
 }
 
-/* Ajuste no header para acomodar o aviso */
-.detalhes-header-content {
-  position: relative;
-  padding-top: 40px; /* Adiciona espaço para o aviso acima */
-}
-
-/* Estilos para o aviso de vendas encerradas */
+/* Aviso de vendas encerradas */
 .vendas-encerradas-aviso {
   text-align: center;
   padding: 40px 20px;
@@ -744,40 +718,27 @@ body {
   color: #666;
 }
 
-/* modal */
-
-/* --- ESTILOS DO MODAL DE CONFIRMAÇÃO --- */
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  animation: fadeIn 0.3s forwards;
-}
-
+/* ===== ANIMAÇÕES ===== */
 @keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.Detalhes-modal-content {
-  background-color: white;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  width: 90%;
-  max-width: 500px;
-  transform: translateY(-50px);
-  animation: slideIn 0.3s forwards;
-  position: relative;
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes slideIn {
@@ -786,83 +747,155 @@ body {
   }
 }
 
-.modal-header {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
-}
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  /* Header */
+  .detalhes-header {
+    margin-top: 80px;
+    padding: 25px 0;
+  }
 
-.modal-title {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #333;
-  display: flex;
-  align-items: center;
-  flex-grow: 1; /* Faz o título ocupar o espaço disponível */
-}
+  .detalhes-header-content {
+    flex-direction: column-reverse;
+    gap: 25px;
+  }
 
-.modal-icon {
-  color: #28a745; /* Verde sucesso */
-  margin-right: 10px;
-  font-size: 1.8rem;
-}
+  .detalhes-titulo-evento {
+    font-size: 1.8rem;
+    text-align: center;
+  }
 
-.modal-close-button {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  font-weight: bold;
-  cursor: pointer;
-  color: #aaa;
-  line-height: 1;
-}
+  .detalhes-info-linha {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
 
-.modal-close-button:hover {
-    color: #333;
-}
+  .detalhes-label {
+    min-width: auto;
+    margin-bottom: 2px;
+  }
 
-.modal-body p {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 20px;
-}
+  .detalhes-imagem-evento {
+    max-width: 100%;
+  }
 
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
+  /* Conteúdo Principal */
+  .detalhes-main-content {
+    flex-direction: column;
+  }
 
-.modal-actions .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  .detalhes-ingressos-box {
+    max-width: 100%;
+    position: static;
+    margin-bottom: 25px;
+  }
+
+  /* Ingressos */
+  .detalhes-ingresso-card {
+    padding: 18px;
+  }
+
+  .ingresso-controls {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .ingresso-selector {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .ingresso-selector button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .detalhes-btn-comprar {
+    width: 100%;
+    padding: 14px;
     font-size: 1rem;
-    font-weight: bold;
-    text-decoration: none; /* Remove sublinhado de links */
-    display: inline-block; /* Alinhamento correto */
-    transition: background-color 0.2s;
+  }
+
+  /* Tabs */
+  .tab-button {
+    padding: 14px 20px;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  /* Mapa */
+  .detalhes-container-mapa {
+    height: 300px;
+  }
+
+  /* Organizador */
+  .detalhes-organizador,
+  .organizador-conteudo {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .detalhes-contato,
+  .organizador-contato {
+    justify-content: center;
+  }
+
+  .organizador-container {
+    margin: 40px 0;
+    padding: 25px;
+  }
+
+  .organizador-info {
+    align-items: center;
+  }
+
+  .organizador-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  /* Modais */
+  .success-modal {
+    top: auto;
+    bottom: 20px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 
-.btn-secondary {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ddd;
-}
-
-.btn-secondary:hover {
-    background-color: #e0e0e0;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
+/* Correções para telas muito pequenas */
+@media (max-width: 480px) {
+  .detalhes-titulo-evento {
+    font-size: 1.6rem;
+  }
+  
+  .organizador-container {
+    padding: 1.25rem;
+    border-radius: 1rem;
+  }
+  
+  .organizador-titulo {
+    font-size: 1.25rem;
+  }
+  
+  .organizador-nome {
+    font-size: 1.125rem;
+  }
 }

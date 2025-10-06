@@ -106,17 +106,17 @@ export default function NavBar3() {
     if (!user?.imagemPerfil) {
       return `${apiUrl}/uploads/blank_profile.png`;
     }
-    
+
     // Se já é uma URL completa (Google, Facebook, etc), retorna diretamente
     if (/^https?:\/\//.test(user.imagemPerfil)) {
       return user.imagemPerfil;
     }
-    
+
     // Se começa com /uploads, adiciona o apiUrl
     if (user.imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${user.imagemPerfil}`;
     }
-    
+
     // Caso contrário, assume que é um arquivo local em uploads
     return `${apiUrl}/uploads/${user.imagemPerfil}`;
   };
@@ -319,7 +319,7 @@ export default function NavBar3() {
                   <button onClick={() => navigate('/Meus-eventos')}><FaClipboardList /><span>Meus eventos</span></button>
                   <button onClick={() => navigate('/duvidas')}><FaHeadphones /><span>Central de Duvidas</span></button>
                   <button
-                    className="logout-btn"
+                    className="user-menu__logout-button"
                     onClick={() => {
                       logout();
                       navigate('/');

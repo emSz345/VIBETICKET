@@ -1,6 +1,6 @@
-NavBar.css
-
-
+/* ============================ */
+/* VARIÁVEIS GLOBAIS           */
+/* ============================ */
 :root {
   --primary: #0969fb;
   --primary-dark: #0756cc;
@@ -14,7 +14,9 @@ NavBar.css
   --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-* { box-sizing: border-box; }
+* { 
+  box-sizing: border-box; 
+}
 
 body {
   margin: 0;
@@ -24,9 +26,60 @@ body {
 }
 
 /* ============================ */
+/* ANIMAÇÕES GLOBAIS           */
+/* ============================ */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(8px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes fadeOut {
+  to { 
+    opacity: 0; 
+    transform: translateY(8px); 
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ============================ */
 /* NAVBAR PRINCIPAL            */
 /* ============================ */
-
 .nav {
   position: fixed;
   inset: 0 0 auto 0;
@@ -48,20 +101,34 @@ body {
   box-shadow: 0 1px 5px rgb(0 0 0 / 0.15);
 }
 
-/* logo usado no teu TSX */
+/* ============================ */
+/* LOGO                        */
+/* ============================ */
 .app-header__logo {
   width: 150px;
   cursor: pointer;
   user-select: none;
 }
-.nav--scrolled .app-header__logo { width: 120px; }
 
-/* (mantive a classe caso ainda exista em outros pontos) */
-.nav__logo { width: 140px; cursor: pointer; user-select: none; }
-.nav--scrolled .nav__logo { width: 120px; }
+.nav--scrolled .app-header__logo { 
+  width: 120px; 
+}
 
+.nav__logo { 
+  width: 140px; 
+  cursor: pointer; 
+  user-select: none; 
+}
+
+.nav--scrolled .nav__logo { 
+  width: 120px; 
+}
+
+/* ============================ */
+/* BARRA DE PESQUISA           */
+/* ============================ */
 .nav__search {
-  position: relative; /* Adicionado para servir como referência para os resultados */
+  position: relative;
   max-width: 450px;
   flex-grow: 1;
   display: flex;
@@ -72,6 +139,7 @@ body {
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   transition: box-shadow var(--transition-speed);
 }
+
 .nav_input {
   width: 100%;
   border: none;
@@ -86,7 +154,16 @@ body {
   transition: all 0.3s ease;
 }
 
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
 
+/* ============================ */
+/* AÇÕES DA NAVBAR             */
+/* ============================ */
 .nav__actions {
   display: flex;
   align-items: center;
@@ -108,6 +185,7 @@ body {
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s, box-shadow 0.2s;
 }
+
 .nav__cta:hover,
 .nav__cta:focus-visible {
   background-color: #fff;
@@ -116,19 +194,55 @@ body {
   outline: none;
 }
 
+/* ============================ */
+/* ÍCONE DO CARRINHO E BADGE   */
+/* ============================ */
 .cart-icon {
+  position: relative;
   cursor: pointer;
   color: #fff;
   transition: transform 0.2s, color 0.3s;
   display: flex;
   align-items: center;
 }
-.cart-icon:hover { transform: scale(1.1); color: #dbe9ff; }
+
+.cart-icon:hover { 
+  transform: scale(1.1); 
+  color: #dbe9ff; 
+}
+
+.cart-badge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  color: white;
+  border-radius: 14px;
+  min-width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 3px solid var(--primary);
+  box-shadow: 0 4px 12px rgba(229, 46, 113, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  animation: bounce 1.5s infinite;
+}
+
+.cart-badge-empty {
+  display: none;
+}
+
+.cart-badge-new {
+  animation: pop 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* ============================ */
-/* LOGIN / CADASTRO            */
+/* AUTENTICAÇÃO                */
 /* ============================ */
-
 .nav__auth > button {
   background: transparent;
   color: #fff;
@@ -143,6 +257,7 @@ body {
   align-items: center;
   gap: 8px;
 }
+
 .nav__auth > button:hover {
   background: #fff;
   color: var(--primary);
@@ -150,11 +265,15 @@ body {
 }
 
 /* ============================ */
-/* DROPDOWN MENU               */
+/* DROPDOWN MENU - USUÁRIO     */
 /* ============================ */
+.user-dropdown { 
+  position: relative; 
+}
 
-.user-dropdown { position: relative; } /* ancora o absolute */
-.user-info { cursor: pointer; }
+.user-info { 
+  cursor: pointer; 
+}
 
 .dropdown-menu {
   position: absolute;
@@ -173,9 +292,8 @@ body {
   gap: 8px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+.dropdown-menu.closing {
+  animation: fadeOut 0.18s ease-in forwards;
 }
 
 .dropdown-header,
@@ -193,6 +311,7 @@ body {
   object-fit: cover;
   border: 2px solid var(--primary);
 }
+
 .avatar-placeholder {
   width: 42px;
   height: 42px;
@@ -211,8 +330,16 @@ body {
   align-items: flex-start;
   font-size: 14px;
 }
-.user-header strong { color: #333; font-size: 15px; }
-.user-header small  { color: #777; font-size: 12px; }
+
+.user-header strong { 
+  color: #333; 
+  font-size: 15px; 
+}
+
+.user-header small { 
+  color: #777; 
+  font-size: 12px; 
+}
 
 .dropdown-menu button {
   display: flex;
@@ -227,263 +354,29 @@ body {
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
+
 .dropdown-menu button:hover {
   background-color: #f0f2f5;
   color: var(--primary);
 }
 
-.logout-btn { color: #d63636; }
+.logout-btn { 
+  color: #d63636; 
+}
+
 .logout-btn:hover {
   background-color: #ffe6e6;
   color: #b22222;
 }
 
 /* ============================ */
-/* SCROLL COMPORTAMENTO        */
+/* RESULTADOS DA PESQUISA      */
 /* ============================ */
-
-.nav--scrolled .nav__search {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.4);
-  box-shadow: none;
-}
-.nav__search svg {
-  flex-shrink: 0; /* Impede que o ícone diminua */
-  transition: none; /* Remove qualquer transição do ícone */
-  margin-right: 8px; /* Espaçamento consistente */
-}
-
-.nav--scrolled .nav__search svg { color: #fff; }
-.nav--scrolled .nav__search input { color: #fff; }
-.nav--scrolled .nav__search input::placeholder { color: #dbe9ff; }
-
-.nav--scrolled .nav__cta {
-  background: #fff;
-  color: var(--primary);
-  border: 2px solid #fff;
-}
-.nav--scrolled .nav__cta:hover { background: #dbe9ff; color: #074bb5; }
-.nav--scrolled .cart-icon { color: #dbe9ff; }
-
-.nav--scrolled .nav__auth .nav_login_cadastro {
-  background: transparent;
-  color: #fff;
-  border: 2px solid #fff;
-}
-.nav--scrolled .nav__auth button {
-  background: transparent;
-  color: #000;
-}
-.nav--scrolled .nav__auth button:hover {
-  background: #fff;
-  color: var(--primary);
-}
-
-/* Adicione estas regras ao seu arquivo CSS */
-
-/* Overlay quando menu mobile está aberto */
-.mobile-menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 10500;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.mobile-menu-overlay.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-/* Melhorias no menu mobile */
-.mobile-menu {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 85%;
-  max-width: 300px;
-  height: 100dvh;
-  background: #fff;
-  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.18);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 20px 0;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 11000;
-  overflow-y: auto;
-}
-
-.mobile-menu.open {
-  right: 0;
-}
-
-.mobile-menu button {
-  background: none;
-  border: none;
-  font-size: 15px;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  cursor: pointer;
-  color: #333;
-  transition: background-color 0.2s;
-  width: 100%;
-}
-
-.mobile-menu button:hover {
-  background-color: #f5f5f5;
-}
-
-.mobile-menu .logout-btn {
-  color: #d63636;
-  margin-top: 8px;
-  border-top: 1px solid #eee;
-  padding-top: 16px;
-}
-
-/* Header do menu mobile */
-.mobile-menu-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px 12px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 8px;
-}
-
-.mobile-menu-header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--primary);
-}
-
-.mobile-menu-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-}
-
-/* ============================ */
-/* HELPERS P/ MOBILE TOGGLE    */
-/* ============================ */
-
-.hide-mobile { display: flex; }
-.show-mobile { display: none; }
-
-/* ============================ */
-/* MOBILE (<= 768px)           */
-/* ============================ */
-
-@media (max-width: 768px) {
-  .nav { gap: 16px; padding: 0 16px; }
-
-  /* esconder partes de desktop qdo usar .hide-mobile */
-  .hide-mobile { display: none !important; }
-  .show-mobile { display: block !important; }
-
-  /* já escondias a busca — mantive */
-  .nav__search { display: none; }
-
-  .nav__cta { padding: 6px 14px; font-size: 14px; }
-  .nav__auth { font-size: 0.85rem; }
-
-  /* Ícone do menu (hambúrguer/fechar) */
-  .mobile-menu-icon {
-    margin-left: auto;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    height: 40px;
-  }
-
-  /* Off-canvas */
-  .mobile-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 78%;
-    max-width: 360px;
-    height: 100dvh;
-    background: #fff;
-    color: #333;
-    box-shadow: -2px 0 16px rgba(0,0,0,0.18);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 88px 20px 20px;
-    transition: right 0.3s ease-in-out;
-    z-index: 11000; /* acima da navbar e dropdown */
-    overflow-y: auto;
-  }
-  .mobile-menu.open { right: 0; }
-
-  .mobile-menu button {
-    background: none;
-    border: none;
-    font-size: 16px;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 8px;
-    border-radius: 10px;
-    cursor: pointer;
-    color: #333;
-  }
-  .mobile-menu button:hover { background: #f4f6fb; color: var(--primary); }
-
-  .mobile-menu .logout-btn { color: #d63636; }
-  .mobile-menu .logout-btn:hover { background: #ffe6e6; color: #b22222; }
-}
-
-/* CABEÇALHO DO MENU MOBILE COM "MENU" NA ESQUERDA E "X" NA DIREITA */
-.mobile-menu-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 12px;
-}
-
-.mobile-menu-header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.mobile-menu-close {
-  cursor: pointer;
-  color: #666;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.mobile-menu-close:hover {
-  background-color: #f5f5f5;
-}
-
 .search-results-container {
   position: absolute;
-  top: calc(100% + 4px); /* Posiciona logo abaixo da barra de pesquisa */
+  top: calc(100% + 4px);
   left: 0;
-  width: 100%; /* Ocupa a mesma largura que o container pai */
+  width: 100%;
   background: white;
   border-radius: 0 0 8px 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -492,8 +385,6 @@ body {
   z-index: 10001;
 }
 
-
-/* Item individual do resultado */
 .search-result-item {
   display: flex;
   align-items: center;
@@ -512,7 +403,6 @@ body {
   background-color: #f8f9fa;
 }
 
-/* Imagem do evento */
 .search-result-image {
   width: 50px;
   height: 50px;
@@ -521,7 +411,6 @@ body {
   margin-right: 12px;
 }
 
-/* Informações do evento */
 .search-result-info {
   flex: 1;
 }
@@ -536,45 +425,6 @@ body {
   margin: 0;
   font-size: 12px;
   color: #666;
-}
-
-/* Ajuste para quando a navbar está com scroll */
-.nav--scrolled .search-results-container {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-}
-
-/* Para dispositivos móveis */
-@media (max-width: 768px) {
-  .search-results-container {
-    position: fixed;
-    top: var(--header-height-scrolled);
-    left: 0;
-    right: 0;
-    bottom: 0;
-    max-height: unset;
-    border-radius: 0;
-  }
-}
-
-/* ============================ */
-/* (Opcional) Suavizar saída   */
-/* ============================ */
-
-.dropdown-menu.closing {
-  animation: fadeOut 0.18s ease-in forwards;
-}
-@keyframes fadeOut {
-  to { opacity: 0; transform: translateY(8px); }
-}
-
-/* Adicione estas classes ao seu arquivo CSS existente */
-
-.search-input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
 }
 
 .search-loading-indicator {
@@ -631,12 +481,282 @@ body {
   margin: 2px 0;
 }
 
-.search-result-item:hover {
-  background-color: #f9f9f9;
+/* ============================ */
+/* MENU MOBILE                 */
+/* ============================ */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-/* Melhorias na barra de pesquisa mobile */
+.mobile-menu-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 85%;
+  max-width: 300px;
+  height: 100dvh;
+  background: #fff;
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 0;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 11000;
+  overflow-y: auto;
+}
+
+.mobile-menu.open {
+  right: 0;
+}
+
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 12px;
+}
+
+.mobile-menu-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.mobile-menu-close {
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  background: none;
+  border: none;
+  font-size: 24px;
+}
+
+.mobile-menu-close:hover {
+  background-color: #f5f5f5;
+}
+
+.mobile-menu button {
+  background: none;
+  border: none;
+  font-size: 15px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s;
+  width: 100%;
+  position: relative;
+}
+
+.mobile-menu button:hover {
+  background-color: #f5f5f5;
+}
+
+.mobile-menu .logout-btn {
+  color: #d63636;
+  margin-top: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+/* ============================ */
+/* COMPORTAMENTO NO SCROLL     */
+/* ============================ */
+.nav--scrolled .nav__search {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: none;
+}
+
+.nav__search svg {
+  flex-shrink: 0;
+  transition: none;
+  margin-right: 8px;
+}
+
+.nav--scrolled .nav__search svg { 
+  color: #fff; 
+}
+
+.nav--scrolled .nav__search input { 
+  color: #fff; 
+}
+
+.nav--scrolled .nav__search input::placeholder { 
+  color: #dbe9ff; 
+}
+
+.nav--scrolled .nav__cta {
+  background: #fff;
+  color: var(--primary);
+  border: 2px solid #fff;
+}
+
+.nav--scrolled .nav__cta:hover { 
+  background: #dbe9ff; 
+  color: #074bb5; 
+}
+
+.nav--scrolled .cart-icon { 
+  color: #dbe9ff; 
+}
+
+.nav--scrolled .cart-badge {
+  border: 3px solid white;
+}
+
+.nav--scrolled .nav__auth .nav_login_cadastro {
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.nav--scrolled .nav__auth button {
+  background: transparent;
+  color: #000;
+}
+
+.nav--scrolled .nav__auth button:hover {
+  background: #fff;
+  color: var(--primary);
+}
+
+.nav--scrolled .search-results-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+/* ============================ */
+/* HELPERS RESPONSIVOS         */
+/* ============================ */
+.hide-mobile { 
+  display: flex; 
+}
+
+.show-mobile { 
+  display: none; 
+}
+
+/* ============================ */
+/* RESPONSIVIDADE - MOBILE     */
+/* ============================ */
 @media (max-width: 768px) {
+  .nav { 
+    gap: 16px; 
+    padding: 0 16px; 
+  }
+
+  .hide-mobile { 
+    display: none !important; 
+  }
+
+  .show-mobile { 
+    display: block !important; 
+  }
+
+  .nav__search { 
+    display: none; 
+  }
+
+  .nav__cta { 
+    padding: 6px 14px; 
+    font-size: 14px; 
+  }
+
+  .nav__auth { 
+    font-size: 0.85rem; 
+  }
+
+  .mobile-menu-icon {
+    margin-left: auto;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    height: 40px;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 78%;
+    max-width: 360px;
+    height: 100dvh;
+    background: #fff;
+    color: #333;
+    box-shadow: -2px 0 16px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 88px 20px 20px;
+    transition: right 0.3s ease-in-out;
+    z-index: 11000;
+    overflow-y: auto;
+  }
+
+  .mobile-menu.open { 
+    right: 0; 
+  }
+
+  .mobile-menu button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #333;
+  }
+
+  .mobile-menu button:hover { 
+    background: #f4f6fb; 
+    color: var(--primary); 
+  }
+
+  .mobile-menu .logout-btn { 
+    color: #d63636; 
+  }
+
+  .mobile-menu .logout-btn:hover { 
+    background: #ffe6e6; 
+    color: #b22222; 
+  }
+
+  .cart-badge {
+    display: none;
+  }
+
   .search-results-container {
     position: fixed;
     top: var(--header-height-scrolled);
@@ -647,21 +767,49 @@ body {
     border-radius: 0;
     z-index: 12000;
   }
-  
+
   .search-result-item {
     padding: 16px;
   }
-  
+
   .search-result-image {
     width: 60px;
     height: 60px;
   }
-  
+
   .search-result-info h4 {
     font-size: 16px;
   }
-  
+
   .search-result-info p {
     font-size: 14px;
+  }
+
+  .user-info-mobile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 0 20px 12px;
+  }
+
+  .user-info-mobile .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+  }
+
+  .user-info-mobile strong {
+    font-size: 16px;
+    color: #333;
+  }
+
+  .user-info-mobile small {
+    font-size: 12px;
+    color: #666;
   }
 }

@@ -132,7 +132,7 @@ const Cadastro: React.FC = () => {
       // SALVAR O TOKEN NO LOCAL STORAGE
       localStorage.setItem('token', token);
 
-      login(user);
+      login(user,token);
       navigate("/Home");
 
     } catch (error: any) {

@@ -14,7 +14,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: UserData | null;
   isLoading: boolean;
-  login: (userData: UserData) => void;
+  login: (userData: UserData, token: string) => void;
   logout: () => Promise<void>;
   updateUser: (newUserData: UserData) => void;
   updateUserProfileImage: (newImageUrl: string) => void;
@@ -29,16 +29,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const verifySession = async () => {
       try {
-        const response = await api.get('/api/users/me'); 
-        
-        if (response.data && response.data._id) {
-          setUser(response.data);
-          localStorage.setItem('user', JSON.stringify(response.data));
+        const token = localStorage.getItem('token');
+        if (token) {
+          // 🔥 CORREÇÃO: Usar o endpoint check-auth que não requer token no header
+          const response = await api.get('/api/users/check-auth');
           
-          // Verificar se existe token no localStorage, se não, buscar da resposta
-          const existingToken = localStorage.getItem('token');
-          if (!existingToken && response.data.token) {
-            localStorage.setItem('token', response.data.token);
+          if (response.data && response.data.user) {
+            setUser(response.data.user);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
           }
         }
       } catch (error) {
@@ -54,9 +52,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     verifySession();
   }, []);
 
-  const login = useCallback((userData: UserData) => {
+  const login = useCallback((userData: UserData, token: string) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', token);
+    
+    // 🔥 CORREÇÃO: Disparar evento personalizado para sincronização do carrinho
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('userLoggedIn', { 
+        detail: { user: userData } 
+      }));
+    }, 100);
   }, []);
 
   const logout = useCallback(async () => {
@@ -68,6 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       localStorage.removeItem('user');
       localStorage.removeItem('token');
+      localStorage.removeItem('localCart'); // 🔥 Limpa carrinho local no logout
       window.location.href = '/login'; 
     }
   }, []);

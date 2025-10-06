@@ -1,4 +1,21 @@
-/* === CONFIGURAÇÕES GERAIS E LAYOUT === */
+/* ============================ */
+/* VARIÁVEIS E CONFIGURAÇÕES GERAIS */
+/* ============================ */
+:root {
+  --cor-primaria: #0969fb;
+  --cor-texto: #1a1a1a;
+  --cor-texto-secundario: #666;
+  --cor-borda: #e0e0e0;
+  --cor-fundo: #f8f9fa;
+  --cor-destaque: #e8f4ff;
+  --sombra-suave: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --sombra-destaque: 0 8px 25px rgba(0, 0, 0, 0.2);
+  --border-radius: 12px;
+}
+
+/* ============================ */
+/* LAYOUT PRINCIPAL */
+/* ============================ */
 .categorias-container {
   max-width: 1400px;
   margin: 40px auto;
@@ -12,29 +29,29 @@
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--cor-borda);
 }
 
 .categorias-titulo {
   font-size: 2rem;
-  color: #1a1a1a;
+  color: var(--cor-texto);
   font-weight: 700;
 }
 
 .categorias-layout {
   display: grid;
   grid-template-columns: 1fr;
-  /* Layout de uma coluna para mobile-first */
   gap: 30px;
 }
 
-/* --- FILTROS LATERAIS (DESKTOP) --- */
+/* ============================ */
+/* FILTROS LATERAIS - DESKTOP */
+/* ============================ */
 .categorias-filtros-desktop {
   display: none;
-  /* Escondido em telas pequenas */
-  background-color: #f8f9fa;
+  background-color: var(--cor-fundo);
   padding: 24px;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   height: fit-content;
 }
 
@@ -43,7 +60,7 @@
   margin-top: 0;
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--cor-borda);
   color: #333;
   font-weight: 600;
 }
@@ -54,7 +71,6 @@
   gap: 8px;
 }
 
-/* Estilo de cada item da lista (estado) */
 .categorias-filtro-estado {
   display: flex;
   align-items: center;
@@ -63,22 +79,17 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  border: 2px solid #e0e0e0;
-  /* <-- BORDA VISÍVEL O TEMPO TODO */
+  border: 2px solid var(--cor-borda);
 }
 
-/* Efeito ao passar o mouse */
 .categorias-filtro-estado:hover {
   background-color: #e9ecef;
   border-color: #b0b0b0;
-  /* Escurece um pouco a borda no hover */
 }
 
-/* Estilo do item selecionado */
 .categorias-filtro-estado-selecionado {
-  background-color: #e8f4ff;
-  border-color: #0969fb;
-  /* A borda fica azul quando selecionado */
+  background-color: var(--cor-destaque);
+  border-color: var(--cor-primaria);
 }
 
 .categorias-filtro-estado-imagem {
@@ -95,13 +106,13 @@
 }
 
 .categorias-filtro-estado-selecionado .categorias-filtro-estado-nome {
-  color: #0969fb;
+  color: var(--cor-primaria);
   font-weight: 600;
 }
 
 .categorias-filtro-botoes {
   margin-top: 24px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--cor-borda);
   padding-top: 24px;
 }
 
@@ -121,72 +132,15 @@
   border-color: #bbb;
 }
 
-
-/* --- CONTEÚDO PRINCIPAL (EVENTOS) --- */
-
-/* Estilos para o grid de eventos e o card */
-.lista-de-eventos {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.evento-card-placeholder {
-  background-color: white;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
-}
-
-.evento-card-placeholder:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.evento-card-placeholder img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-}
-
-.evento-card-placeholder h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 12px 16px 4px;
-  color: #1a1a1a;
-}
-
-.evento-card-placeholder p {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0 16px 16px;
-}
-
-/* Mensagens de feedback */
-.categorias-resultados .categorias-lista-titulo {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-}
-
-.categorias-resultados .categorias-lista-descricao {
-  font-size: 1rem;
-  color: #666;
-}
-
-/* --- RESPONSIVIDADE --- */
-
-/* Botão de Filtro para Mobile */
+/* ============================ */
+/* FILTROS MOBILE */
+/* ============================ */
 .categorias-btn-filtros {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background-color: #0969fb;
+  background-color: var(--cor-primaria);
   color: white;
   border: none;
   border-radius: 6px;
@@ -194,7 +148,6 @@
   cursor: pointer;
 }
 
-/* Modal de Filtros para Mobile */
 .categorias-filtros-mobile {
   position: fixed;
   top: 0;
@@ -212,35 +165,206 @@
 .categorias-filtros-conteudo {
   background-color: white;
   padding: 24px;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
 }
 
-/* Telas maiores (a partir de tablets) */
+/* ============================ */
+/* LISTA DE EVENTOS E CARDS */
+/* ============================ */
+.categorias-lista-eventos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.categorias-card-evento {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--sombra-suave);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 300px;
+  height: 310px;
+  cursor: pointer;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-decoration: none;
+  color: inherit;
+}
+
+.categorias-card-evento:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-destaque);
+}
+
+/* Imagem com badge da data */
+.categorias-card-imagem-wrapper {
+  position: relative;
+  height: 160px;
+  flex-shrink: 0;
+}
+
+.categorias-card-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.categorias-card-data {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #3060ff, #4c1bff);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Conteúdo do card */
+.categorias-card-conteudo {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.categorias-card-data-completa {
+  font-size: 0.75em;
+  font-weight: 600;
+  color: #6e8efb;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+}
+
+.categorias-card-titulo {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.categorias-card-info {
+  margin-top: auto;
+}
+
+.categorias-card-local {
+  font-size: 0.85em;
+  color: #718096;
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================ */
+/* MENSAGENS DE FEEDBACK */
+/* ============================ */
+.categorias-resultados .categorias-lista-titulo {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.categorias-resultados .categorias-lista-descricao {
+  font-size: 1rem;
+  color: var(--cor-texto-secundario);
+}
+
+/* ============================ */
+/* ESTILOS OBSOLETOS (REMOVER) */
+/* ============================ */
+.evento-card-placeholder {
+  display: none;
+}
+
+.lista-de-eventos {
+  display: none;
+}
+
+/* ============================ */
+/* RESPONSIVIDADE */
+/* ============================ */
+
+/* Telas maiores (tablets e desktop) */
 @media (min-width: 768px) {
   .categorias-layout {
-    /* Layout de 2 colunas */
     grid-template-columns: 280px 1fr;
     gap: 40px;
   }
 
   .categorias-btn-filtros {
     display: none;
-    /* Esconde o botão de filtro mobile */
   }
 
   .categorias-filtros-desktop {
     display: block;
-    /* Mostra a sidebar de filtros */
   }
 }
 
-/* Ajuste de título para telas menores */
+/* Tablets e telas menores */
 @media (max-width: 767px) {
   .categorias-titulo {
     font-size: 1.75rem;
+  }
+}
+
+/* Tablets menores */
+@media (max-width: 768px) {
+  .categorias-lista-eventos {
+    gap: 15px;
+    padding: 15px 0;
+  }
+  
+  .categorias-card-evento {
+    width: 280px;
+    height: 300px;
+  }
+
+  .categorias-card-imagem-wrapper {
+    height: 150px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .categorias-lista-eventos {
+    gap: 10px;
+    padding: 10px 0;
+  }
+  
+  .categorias-card-evento {
+    width: 260px;
+    height: 290px;
+  }
+
+  .categorias-card-imagem-wrapper {
+    height: 140px;
+  }
+
+  .categorias-card-conteudo {
+    padding: 12px;
   }
 }
