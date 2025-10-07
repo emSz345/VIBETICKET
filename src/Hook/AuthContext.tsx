@@ -74,7 +74,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       localStorage.removeItem('user');
       localStorage.removeItem('token');
-      localStorage.removeItem('localCart'); // 🔥 Limpa carrinho local no logout
+      // 🔥 REMOVIDO: Não limpa mais o carrinho local no logout
+      // localStorage.removeItem('localCart');
       window.location.href = '/login'; 
     }
   }, []);
