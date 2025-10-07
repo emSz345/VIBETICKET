@@ -43,7 +43,7 @@ const EditarEvento = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
-  
+
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [evento, setEvento] = useState<Evento | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +51,7 @@ const EditarEvento = () => {
   const [erros, setErros] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState('');
   const [modalAberto, setModalAberto] = useState(false);
-  
+
   // Estados do formulário
   const [nomeEvento, setNomeEvento] = useState('');
   const [categoriaEvento, setCategoriaEvento] = useState('');
@@ -81,7 +81,11 @@ const EditarEvento = () => {
   const [valorDoacao, setValorDoacao] = useState('');
   const [termosAceitos, setTermosAceitos] = useState(false);
 
- useEffect(() => {
+  // --- Estados do Modal ---
+  const [modalSucessoAberto, setModalSucessoAberto] = useState(false);
+
+
+  useEffect(() => {
     const fetchEvento = async () => {
       try {
         const response = await fetch(`${apiUrl}/api/eventos/${id}`, {
@@ -90,33 +94,33 @@ const EditarEvento = () => {
             'Content-Type': 'application/json'
           }
         });
-        
+
         if (response.status === 401) {
           navigate('/login');
           return;
         }
-        
+
         if (response.status === 404) {
           setErrorMessage('Evento não encontrado');
           setLoading(false);
           return;
         }
-        
+
         if (response.status === 403) {
           setErrorMessage('Acesso negado - você não é o dono deste evento');
           setLoading(false);
           return;
         }
-        
+
         if (!response.ok) {
           throw new Error(`Erro ${response.status}: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
         setEvento(data);
-        
+
         // Preencher os campos do formulário com os dados do evento
-       setNomeEvento(data.nome);
+        setNomeEvento(data.nome);
         setCategoriaEvento(data.categoria);
         setDescricao(data.descricao);
         setCep(data.cep);
@@ -139,9 +143,9 @@ const EditarEvento = () => {
         setTemMeia(data.temMeia ? 'true' : 'false');
         setQuerDoar(data.querDoar);
         setValorDoacao(data.valorDoacao?.toString() || '');
-        
+
         // Carregar preview da imagem
-      if (data.imagem) {
+        if (data.imagem) {
           setImagePreviewUrl(`${apiUrl}/uploads/${data.imagem}`);
         }
       } catch (error) {
@@ -155,7 +159,7 @@ const EditarEvento = () => {
     if (id) {
       fetchEvento();
     }
-   }, [id, apiUrl, navigate]);
+  }, [id, apiUrl, navigate]);
 
   const handleAbrirModal = () => {
     setModalAberto(true);
@@ -357,61 +361,64 @@ const EditarEvento = () => {
       return;
     }
 
-  setSaving(true);
-  
-  const formData = new FormData();
-  
-  // Adicionar todos os campos ao FormData
-  formData.append("nome", nomeEvento);
-  if (image) formData.append('imagem', image);
-  formData.append("categoria", categoriaEvento);
-  formData.append("descricao", descricao);
-  formData.append("cep", cep.replace(/\D/g, ''));
-  formData.append("rua", rua);
-  formData.append("bairro", bairro);
-  formData.append("numero", numero);
-  formData.append("complemento", complemento);
-  formData.append("cidade", cidade);
-  formData.append("estado", estado);
-  formData.append("linkMaps", linkMaps);
-  formData.append("dataInicio", dataInicio);
-  formData.append("horaInicio", horaInicio);
-  formData.append("horaTermino", horaTermino);
-  formData.append("dataFimVendas", dataFimVendas); // Este será mapeado para dataFim no backend
-  formData.append("dataInicioVendas", dataInicioVendas);
-  formData.append("valorIngressoInteira", valorIngressoInteira);
-  formData.append("valorIngressoMeia", temMeia === 'true' ? valorIngressoMeia : '0');
-  formData.append("quantidadeInteira", quantidadeInteira);
-  formData.append("quantidadeMeia", temMeia === 'true' ? quantidadeMeia : '0');
-  formData.append("temMeia", temMeia);
-  formData.append("querDoar", String(querDoar));
-  formData.append("valorDoacao", querDoar ? valorDoacao : '0');
-  formData.append("status", "em_reanalise");
+    setSaving(true);
 
-  try {
+    const formData = new FormData();
+
+    // Adicionar todos os campos ao FormData
+    formData.append("nome", nomeEvento);
+    if (image) formData.append('imagem', image);
+    formData.append("categoria", categoriaEvento);
+    formData.append("descricao", descricao);
+    formData.append("cep", cep.replace(/\D/g, ''));
+    formData.append("rua", rua);
+    formData.append("bairro", bairro);
+    formData.append("numero", numero);
+    formData.append("complemento", complemento);
+    formData.append("cidade", cidade);
+    formData.append("estado", estado);
+    formData.append("linkMaps", linkMaps);
+    formData.append("dataInicio", dataInicio);
+    formData.append("horaInicio", horaInicio);
+    formData.append("horaTermino", horaTermino);
+    formData.append("dataFimVendas", dataFimVendas); // Este será mapeado para dataFim no backend
+    formData.append("dataInicioVendas", dataInicioVendas);
+    formData.append("valorIngressoInteira", valorIngressoInteira);
+    formData.append("valorIngressoMeia", temMeia === 'true' ? valorIngressoMeia : '0');
+    formData.append("quantidadeInteira", quantidadeInteira);
+    formData.append("quantidadeMeia", temMeia === 'true' ? quantidadeMeia : '0');
+    formData.append("temMeia", temMeia);
+    formData.append("querDoar", String(querDoar));
+    formData.append("valorDoacao", querDoar ? valorDoacao : '0');
+    formData.append("status", "em_reanalise");
+
+    try {
       const response = await fetch(`${apiUrl}/api/eventos/${id}/editar`, {
         method: 'PUT',
-        credentials: 'include', // ADICIONAR: para enviar cookies
-        // REMOVER headers com Authorization
+        credentials: 'include',
         body: formData,
       });
 
-     if (!response.ok) {
+      if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `Erro do servidor: ${response.status}`);
       }
 
-    const _ = await response.json();
-      alert('Evento atualizado com sucesso e enviado para reanálise!');
-      navigate('/meus-eventos');
+      const _ = await response.json();
+      // Abre o modal de sucesso em vez do alert
+      setModalSucessoAberto(true);
 
-
-  } catch (error: any) {
+    } catch (error: any) {
       console.error('Erro ao editar evento:', error);
       alert(error.message || 'Erro ao editar evento');
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleFecharModalSucesso = () => {
+    setModalSucessoAberto(false);
+    navigate('/meus-eventos');
   };
 
   const getError = (fieldName: string) => erros[fieldName];
@@ -1016,6 +1023,30 @@ const EditarEvento = () => {
             </button>
           )}
         </div>
+        {/* Modal de Sucesso */}
+        {modalSucessoAberto && (
+          <div className="editarEvento-modal-overlay">
+            <div className="editarEvento-modal">
+              <div className="editarEvento-modal-content">
+                <div className="editarEvento-modal-icon">
+                  ✓
+                </div>
+                <h3 className="editarEvento-modal-title">Seu evento foi editado com sucesso!</h3>
+                <p className="editarEvento-modal-message">
+                  Com isso seu evento foi para reanálise, tem chance de ser aprovado ou ser reprovado.
+                </p>
+                <div className="editarEvento-modal-botoes">
+                  <button
+                    className="editarEvento-modal-btn-entendi"
+                    onClick={handleFecharModalSucesso}
+                  >
+                    Entendi
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
