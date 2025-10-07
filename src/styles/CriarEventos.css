@@ -835,78 +835,214 @@
 /* ==========================================================================
    MODAL DE SUCESSO (FECHAMENTO AUTOMÁTICO)
    ========================================================================== */
-   .criar-modal-sucesso {
-    text-align: center;
-    padding: 2.5rem;
-    max-width: 450px;
-    animation: criar-modal-aparecer 0.3s ease-out;
+.criar-modal-sucesso {
+  text-align: center;
+  padding: 2.5rem;
+  max-width: 450px;
+  animation: criar-modal-aparecer 0.3s ease-out;
+}
+
+@keyframes criar-modal-aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
   }
-  
-  @keyframes criar-modal-aparecer {
-    from {
-      opacity: 0;
-      transform: scale(0.9) translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
-  
-  .criar-modal-sucesso-conteudo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+}
+
+.criar-modal-sucesso-conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.criar-modal-sucesso-imagem {
+  width: 180px;
+  height: 185px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.criar-modal-sucesso-titulo {
+  color: #28a745;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.criar-modal-sucesso-mensagem {
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  color: #666;
+}
+
+.criar-modal-sucesso-progresso {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+.criar-modal-sucesso-barra {
+  height: 100%;
+  background: #28a745;
+  animation: criar-modal-progresso 3s linear forwards;
+}
+
+@keyframes criar-modal-progresso {
+  from {
+    width: 100%;
   }
-  
-  .criar-modal-sucesso-imagem {
-    width: 180px;
-    height: 185px;
-    object-fit: contain;
-    margin-bottom: 0.5rem;
+
+  to {
+    width: 0%;
   }
-  
-  .criar-modal-sucesso-titulo {
-    color: #28a745;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-    font-weight: 600;
+}
+
+/* Remove o botão OK do modal de sucesso */
+.criar-modal-sucesso .criar-modal-botoes {
+  display: none;
+}
+
+/* ========================
+   MODAL DE SUCESSO - EDITAR EVENTO
+======================== */
+.editarEvento-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.editarEvento-modal {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 400px;
+  animation: editarEvento-modal-appear 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes editarEvento-modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
   }
-  
-  .criar-modal-sucesso-mensagem {
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
-    color: #666;
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
-  
-  .criar-modal-sucesso-progresso {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: #e2e8f0;
-    border-radius: 0 0 8px 8px;
-    overflow: hidden;
+}
+
+.editarEvento-modal-content {
+  padding: 30px 25px 25px;
+  text-align: center;
+  position: relative;
+}
+
+.editarEvento-modal-icon {
+  width: 70px;
+  height: 70px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: white;
+  font-size: 28px;
+  animation: editarEvento-modal-icon-bounce 0.5s ease-out;
+}
+
+@keyframes editarEvento-modal-icon-bounce {
+  0% {
+    transform: scale(0);
   }
-  
-  .criar-modal-sucesso-barra {
-    height: 100%;
-    background: #28a745;
-    animation: criar-modal-progresso 3s linear forwards;
+
+  60% {
+    transform: scale(1.1);
   }
-  
-  @keyframes criar-modal-progresso {
-    from {
-      width: 100%;
-    }
-    to {
-      width: 0%;
-    }
+
+  100% {
+    transform: scale(1);
   }
-  
-  /* Remove o botão OK do modal de sucesso */
-  .criar-modal-sucesso .criar-modal-botoes {
-    display: none;
+}
+
+.editarEvento-modal-title {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.editarEvento-modal-message {
+  margin: 0 0 25px 0;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.editarEvento-modal-botoes {
+  display: flex;
+  justify-content: center;
+}
+
+.editarEvento-modal-btn-entendi {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.editarEvento-modal-btn-entendi:hover {
+  background: #059669;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .editarEvento-modal {
+    width: 95%;
+    max-width: 350px;
   }
+
+  .editarEvento-modal-content {
+    padding: 25px 20px 20px;
+  }
+
+  .editarEvento-modal-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .editarEvento-modal-title {
+    font-size: 18px;
+  }
+
+  .editarEvento-modal-message {
+    font-size: 14px;
+  }
+}
