@@ -33,22 +33,58 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoading, setIsLoading] = useState(false);
     const { isAuthenticated, user } = useAuth();
 
-    // 🔥 CORREÇÃO: Memoizar a função de carregar do backend
+    // 🔥 CORREÇÃO: Função para salvar no localStorage
+    const saveCartToLocalStorage = useCallback((items: CarrinhoItem[]) => {
+        try {
+            localStorage.setItem('localCart', JSON.stringify(items));
+            console.log('Carrinho salvo no localStorage:', items);
+        } catch (error) {
+            console.error('Erro ao salvar carrinho local:', error);
+        }
+    }, []);
+
+    // 🔥 CORREÇÃO: Função para carregar do localStorage
+    const loadCartFromLocalStorage = useCallback(() => {
+        try {
+            const localCart = localStorage.getItem('localCart');
+            if (localCart) {
+                const items = JSON.parse(localCart) as CarrinhoItem[];
+                console.log('Carrinho carregado do localStorage:', items);
+                setCartItems(items);
+                const totalCount = items.reduce((sum, item) => sum + item.quantidade, 0);
+                setCartItemsCount(totalCount);
+                return items;
+            }
+        } catch (error) {
+            console.error('Erro ao carregar carrinho local:', error);
+        }
+        return [];
+    }, []);
+
+    // 🔥 CORREÇÃO: Função para carregar do backend
     const loadCartFromBackend = useCallback(async () => {
         try {
             setIsLoading(true);
             const items = await CarrinhoService.getCarrinho();
+            console.log('Carrinho carregado do backend:', items);
             setCartItems(items);
-            updateCartCount(items);
+            const totalCount = items.reduce((sum, item) => sum + item.quantidade, 0);
+            setCartItemsCount(totalCount);
+            
+            // 🔥 IMPORTANTE: Salva também no localStorage como backup
+            if (items.length > 0) {
+                saveCartToLocalStorage(items);
+            }
         } catch (error) {
             console.error('Erro ao carregar carrinho do backend:', error);
             setCartItems([]);
+            setCartItemsCount(0);
         } finally {
             setIsLoading(false);
         }
-    }, []); // 🔥 Removidas dependências desnecessárias
+    }, [saveCartToLocalStorage]);
 
-    // 🔥 CORREÇÃO: Memoizar a função de sincronização
+    // 🔥 CORREÇÃO: Sincronização inteligente - MERGE do carrinho local com servidor
     const syncLocalCartToServer = useCallback(async () => {
         if (!isAuthenticated || !user) return;
 
@@ -58,9 +94,42 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 const localItems = JSON.parse(localCart) as CarrinhoItem[];
                 
                 if (localItems.length > 0) {
-                    console.log('Sincronizando carrinho local com servidor...', localItems);
+                    console.log('Fazendo MERGE do carrinho local com servidor...', localItems);
                     
-                    for (const item of localItems) {
+                    // 🔥 CORREÇÃO: Primeiro carrega o carrinho do servidor
+                    const serverItems = await CarrinhoService.getCarrinho();
+                    console.log('Carrinho atual do servidor:', serverItems);
+                    
+                    // 🔥 CORREÇÃO: Faz merge dos dois carrinhos
+                    const mergedItemsMap = new Map();
+                    
+                    // Adiciona itens do servidor primeiro
+                    serverItems.forEach(item => {
+                        const key = `${item.eventoId}-${item.tipoIngresso}`;
+                        mergedItemsMap.set(key, { ...item });
+                    });
+                    
+                    // Adiciona/atualiza com itens locais
+                    localItems.forEach(localItem => {
+                        const key = `${localItem.eventoId}-${localItem.tipoIngresso}`;
+                        if (mergedItemsMap.has(key)) {
+                            // Se já existe no servidor, mantém a maior quantidade
+                            const existing = mergedItemsMap.get(key);
+                            const maxQuantity = Math.max(existing.quantidade, localItem.quantidade);
+                            mergedItemsMap.set(key, { ...existing, quantidade: maxQuantity });
+                        } else {
+                            // Se não existe, adiciona do local
+                            mergedItemsMap.set(key, { ...localItem });
+                        }
+                    });
+                    
+                    const mergedItems = Array.from(mergedItemsMap.values());
+                    console.log('Carrinho após merge:', mergedItems);
+                    
+                    // 🔥 CORREÇÃO: Limpa o carrinho no servidor e adiciona os itens merged
+                    await CarrinhoService.limparCarrinho();
+                    
+                    for (const item of mergedItems) {
                         try {
                             await CarrinhoService.adicionarItem({
                                 eventoId: item.eventoId,
@@ -72,69 +141,54 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                         }
                     }
                     
-                    localStorage.removeItem('localCart');
-                    console.log('Carrinho local sincronizado e limpo');
+                    // 🔥 CORREÇÃO: Atualiza o localStorage com o carrinho merged
+                    saveCartToLocalStorage(mergedItems);
+                    console.log('Merge concluído - carrinho local limpo');
                 }
                 
+                // 🔥 CORREÇÃO: Agora carrega o carrinho final do servidor
                 await loadCartFromBackend();
             } else {
+                // Se não tem carrinho local, apenas carrega do servidor
                 await loadCartFromBackend();
             }
         } catch (error) {
             console.error('Erro na sincronização do carrinho:', error);
+            // Em caso de erro, mantém o carrinho local
             loadCartFromLocalStorage();
         }
-    }, [isAuthenticated, user, loadCartFromBackend]); // 🔥 Dependências corretas
+    }, [isAuthenticated, user, loadCartFromBackend, loadCartFromLocalStorage, saveCartToLocalStorage]);
 
-    const loadCartFromLocalStorage = useCallback(() => {
-        try {
-            const localCart = localStorage.getItem('localCart');
-            if (localCart) {
-                const items = JSON.parse(localCart) as CarrinhoItem[];
-                setCartItems(items);
-                updateCartCount(items);
-            } else {
-                setCartItems([]);
-                setCartItemsCount(0);
-            }
-        } catch (error) {
-            console.error('Erro ao carregar carrinho local:', error);
-            setCartItems([]);
-            setCartItemsCount(0);
-        }
-    }, []);
-
-    const saveCartToLocalStorage = useCallback((items: CarrinhoItem[]) => {
-        try {
-            localStorage.setItem('localCart', JSON.stringify(items));
-        } catch (error) {
-            console.error('Erro ao salvar carrinho local:', error);
-        }
-    }, []);
-
-    const updateCartCount = useCallback((items?: CarrinhoItem[]) => {
-        const cartItemsToCount = items || cartItems;
-        const totalCount = cartItemsToCount.reduce((sum: number, item) => sum + item.quantidade, 0);
-        setCartItemsCount(totalCount);
-    }, [cartItems]);
-
-    // 🔥 CORREÇÃO: Effect único para gerenciar o carrinho baseado na autenticação
+    // 🔥 CORREÇÃO: Effect para gerenciar autenticação e carrinho
     useEffect(() => {
-        if (isAuthenticated) {
-            loadCartFromBackend();
-        } else {
-            loadCartFromLocalStorage();
-        }
-    }, [isAuthenticated, loadCartFromBackend, loadCartFromLocalStorage]);
-
-    // 🔥 CORREÇÃO: Effect separado para sincronização quando usuário faz login
-    useEffect(() => {
+        console.log('Estado de autenticação mudou:', { isAuthenticated, user: user?.email });
+        
         if (isAuthenticated && user) {
+            // Usuário fez LOGIN - sincroniza carrinho
+            console.log('Usuário logado, sincronizando carrinho...');
             syncLocalCartToServer();
+        } else {
+            // Usuário fez LOGOUT - carrega carrinho local
+            console.log('Usuário deslogado, carregando carrinho local...');
+            loadCartFromLocalStorage();
         }
-    }, [isAuthenticated, user, syncLocalCartToServer]);
+    }, [isAuthenticated, user, syncLocalCartToServer, loadCartFromLocalStorage]);
+
+    // 🔥 CORREÇÃO: Effect para salvar automaticamente no localStorage quando o carrinho muda
+    useEffect(() => {
+        if (cartItems.length > 0) {
+            console.log('Carrinho modificado, salvando no localStorage:', cartItems);
+            saveCartToLocalStorage(cartItems);
+            
+            // Atualiza contagem
+            const totalCount = cartItems.reduce((sum, item) => sum + item.quantidade, 0);
+            setCartItemsCount(totalCount);
+        }
+    }, [cartItems, saveCartToLocalStorage]);
 
     const addItemToCart = async (item: CarrinhoItem) => {
+        console.log('Adicionando item ao carrinho:', item, 'Usuário logado:', isAuthenticated);
+        
         if (isAuthenticated) {
             try {
                 setIsLoading(true);
@@ -166,8 +220,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
 
             setCartItems(newItems);
-            updateCartCount(newItems);
-            saveCartToLocalStorage(newItems);
+            console.log('Item adicionado ao carrinho local:', newItems);
         }
     };
 
@@ -193,8 +246,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 item.id === id ? { ...item, quantidade: quantity } : item
             );
             setCartItems(newItems);
-            updateCartCount(newItems);
-            saveCartToLocalStorage(newItems);
         }
     };
 
@@ -213,8 +264,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } else {
             const newItems = cartItems.filter(item => item.id !== id);
             setCartItems(newItems);
-            updateCartCount(newItems);
-            saveCartToLocalStorage(newItems);
         }
     };
 
@@ -225,6 +274,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 await CarrinhoService.limparCarrinho();
                 setCartItems([]);
                 setCartItemsCount(0);
+                saveCartToLocalStorage([]);
             } catch (error) {
                 console.error('Erro ao limpar carrinho:', error);
                 throw error;
@@ -234,7 +284,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } else {
             setCartItems([]);
             setCartItemsCount(0);
-            localStorage.removeItem('localCart');
+            saveCartToLocalStorage([]);
         }
     };
 
@@ -249,6 +299,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             loadCartFromLocalStorage();
         }
     };
+
+    const updateCartCount = useCallback(() => {
+        const totalCount = cartItems.reduce((sum, item) => sum + item.quantidade, 0);
+        setCartItemsCount(totalCount);
+    }, [cartItems]);
 
     const value: CartContextType = {
         cartItemsCount,
