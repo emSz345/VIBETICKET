@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiTrash2, FiPlus, FiMinus, FiArrowLeft } from 'react-icons/fi';
 import AppHeader from '../../components/layout/Header/AppHeader';
@@ -84,7 +84,7 @@ const Carrinho = () => {
 
       const userId = user._id;
 
-      const response = await fetch(`${apiUrl}/api/pagamento/ingressos/user`, {
+      const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

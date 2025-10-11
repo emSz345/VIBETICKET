@@ -3,6 +3,19 @@ import { CarrinhoService } from '../services/carrinhoService';
 import { CarrinhoItem } from '../types/carrinho';
 import { useAuth } from '../Hook/AuthContext';
 
+// Assumindo que esta interface CarrinhoItem é a correta
+// type CarrinhoItem = {
+//     id: string; // ID local ou do item no DB
+//     eventoId: string;
+//     nomeEvento: string;
+//     tipoIngresso: string;
+//     preco: number;
+//     quantidade: number;
+//     imagem: string;
+//     dataEvento: string;
+//     localEvento: string;
+// };
+
 interface CartContextType {
     cartItemsCount: number;
     cartItems: CarrinhoItem[];
@@ -33,23 +46,21 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoading, setIsLoading] = useState(false);
     const { isAuthenticated, user } = useAuth();
 
-    // 🔥 CORREÇÃO: Função para salvar no localStorage
+    // Função para salvar no localStorage
     const saveCartToLocalStorage = useCallback((items: CarrinhoItem[]) => {
         try {
             localStorage.setItem('localCart', JSON.stringify(items));
-            console.log('Carrinho salvo no localStorage:', items);
         } catch (error) {
             console.error('Erro ao salvar carrinho local:', error);
         }
     }, []);
 
-    // 🔥 CORREÇÃO: Função para carregar do localStorage
+    // Função para carregar do localStorage
     const loadCartFromLocalStorage = useCallback(() => {
         try {
             const localCart = localStorage.getItem('localCart');
             if (localCart) {
                 const items = JSON.parse(localCart) as CarrinhoItem[];
-                console.log('Carrinho carregado do localStorage:', items);
                 setCartItems(items);
                 const totalCount = items.reduce((sum, item) => sum + item.quantidade, 0);
                 setCartItemsCount(totalCount);
@@ -58,153 +69,145 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } catch (error) {
             console.error('Erro ao carregar carrinho local:', error);
         }
+        setCartItems([]);
+        setCartItemsCount(0);
         return [];
     }, []);
 
-    // 🔥 CORREÇÃO: Função para carregar do backend
+    // Função para carregar do backend
     const loadCartFromBackend = useCallback(async () => {
         try {
             setIsLoading(true);
             const items = await CarrinhoService.getCarrinho();
-            console.log('Carrinho carregado do backend:', items);
             setCartItems(items);
             const totalCount = items.reduce((sum, item) => sum + item.quantidade, 0);
             setCartItemsCount(totalCount);
             
-            // 🔥 IMPORTANTE: Salva também no localStorage como backup
-            if (items.length > 0) {
-                saveCartToLocalStorage(items);
-            }
+            // Salva no localStorage como backup ou para consistência
+            saveCartToLocalStorage(items);
         } catch (error) {
-            console.error('Erro ao carregar carrinho do backend:', error);
-            setCartItems([]);
-            setCartItemsCount(0);
+            console.error('Erro ao carregar carrinho do backend. Tentando carregar local...', error);
+            // Em caso de falha no backend, garante que o local é carregado como fallback
+            loadCartFromLocalStorage();
         } finally {
             setIsLoading(false);
         }
-    }, [saveCartToLocalStorage]);
+    }, [saveCartToLocalStorage, loadCartFromLocalStorage]);
 
-    // 🔥 CORREÇÃO: Sincronização inteligente - MERGE do carrinho local com servidor
+    // 🔥 Lógica de Sincronização Corrigida e Otimizada
     const syncLocalCartToServer = useCallback(async () => {
         if (!isAuthenticated || !user) return;
 
         try {
+            setIsLoading(true);
             const localCart = localStorage.getItem('localCart');
-            if (localCart) {
-                const localItems = JSON.parse(localCart) as CarrinhoItem[];
-                
-                if (localItems.length > 0) {
-                    console.log('Fazendo MERGE do carrinho local com servidor...', localItems);
-                    
-                    // 🔥 CORREÇÃO: Primeiro carrega o carrinho do servidor
-                    const serverItems = await CarrinhoService.getCarrinho();
-                    console.log('Carrinho atual do servidor:', serverItems);
-                    
-                    // 🔥 CORREÇÃO: Faz merge dos dois carrinhos
-                    const mergedItemsMap = new Map();
-                    
-                    // Adiciona itens do servidor primeiro
-                    serverItems.forEach(item => {
-                        const key = `${item.eventoId}-${item.tipoIngresso}`;
-                        mergedItemsMap.set(key, { ...item });
-                    });
-                    
-                    // Adiciona/atualiza com itens locais
-                    localItems.forEach(localItem => {
-                        const key = `${localItem.eventoId}-${localItem.tipoIngresso}`;
-                        if (mergedItemsMap.has(key)) {
-                            // Se já existe no servidor, mantém a maior quantidade
-                            const existing = mergedItemsMap.get(key);
-                            const maxQuantity = Math.max(existing.quantidade, localItem.quantidade);
-                            mergedItemsMap.set(key, { ...existing, quantidade: maxQuantity });
-                        } else {
-                            // Se não existe, adiciona do local
-                            mergedItemsMap.set(key, { ...localItem });
-                        }
-                    });
-                    
-                    const mergedItems = Array.from(mergedItemsMap.values());
-                    console.log('Carrinho após merge:', mergedItems);
-                    
-                    // 🔥 CORREÇÃO: Limpa o carrinho no servidor e adiciona os itens merged
-                    await CarrinhoService.limparCarrinho();
-                    
-                    for (const item of mergedItems) {
-                        try {
-                            await CarrinhoService.adicionarItem({
-                                eventoId: item.eventoId,
-                                tipoIngresso: item.tipoIngresso,
-                                quantidade: item.quantidade
-                            });
-                        } catch (error) {
-                            console.error(`Erro ao sincronizar item ${item.eventoId}:`, error);
-                        }
-                    }
-                    
-                    // 🔥 CORREÇÃO: Atualiza o localStorage com o carrinho merged
-                    saveCartToLocalStorage(mergedItems);
-                    console.log('Merge concluído - carrinho local limpo');
-                }
-                
-                // 🔥 CORREÇÃO: Agora carrega o carrinho final do servidor
+            const localItems = localCart ? (JSON.parse(localCart) as CarrinhoItem[]) : [];
+            
+            // Se não há itens locais, apenas carrega do backend
+            if (localItems.length === 0) {
                 await loadCartFromBackend();
-            } else {
-                // Se não tem carrinho local, apenas carrega do servidor
-                await loadCartFromBackend();
+                return;
             }
+            
+            // 1. Carrega itens atuais do servidor
+            const serverItems = await CarrinhoService.getCarrinho();
+            
+            // 2. Faz o merge dos dois carrinhos (local tem precedência na quantidade)
+            const mergedItemsMap = new Map<string, CarrinhoItem>();
+            
+            // Adiciona itens do servidor
+            serverItems.forEach(item => {
+                const key = `${item.eventoId}-${item.tipoIngresso}`;
+                mergedItemsMap.set(key, { ...item });
+            });
+            
+            // Adiciona/atualiza com itens locais
+            localItems.forEach(localItem => {
+                const key = `${localItem.eventoId}-${localItem.tipoIngresso}`;
+                if (mergedItemsMap.has(key)) {
+                    // Item existe em ambos, soma as quantidades
+                    const existing = mergedItemsMap.get(key)!;
+                    const maxQuantity = Math.max(existing.quantidade, localItem.quantidade);
+                    mergedItemsMap.set(key, { ...existing, quantidade: maxQuantity });
+                } else {
+                    // Item só existe localmente, adiciona
+                    mergedItemsMap.set(key, { ...localItem });
+                }
+            });
+            
+            const mergedItems = Array.from(mergedItemsMap.values());
+            
+            // 3. Sincroniza item por item de forma segura (Assumindo backend corrigido)
+            await CarrinhoService.limparCarrinho(); // Limpa o carrinho do servidor
+            
+            for (const item of mergedItems) {
+                 // Chama o addItemToCart, que contém a lógica de backend
+                 // Se o backend estiver corrigido, isso apenas adiciona o item ao array de itens do usuário.
+                 await CarrinhoService.adicionarItem({ 
+                    eventoId: item.eventoId, 
+                    tipoIngresso: item.tipoIngresso, 
+                    quantidade: item.quantidade 
+                 });
+            }
+
+            // 4. Carrega o estado final do backend e limpa o local
+            await loadCartFromBackend();
+            saveCartToLocalStorage([]); // Limpa o local após sincronização de sucesso
+
         } catch (error) {
             console.error('Erro na sincronização do carrinho:', error);
-            // Em caso de erro, mantém o carrinho local
-            loadCartFromLocalStorage();
+            // Em caso de erro, apenas carrega o que puder do servidor (ou local)
+            loadCartFromBackend(); 
+        } finally {
+            setIsLoading(false);
         }
-    }, [isAuthenticated, user, loadCartFromBackend, loadCartFromLocalStorage, saveCartToLocalStorage]);
+    }, [isAuthenticated, user, loadCartFromBackend, saveCartToLocalStorage]);
 
-    // 🔥 CORREÇÃO: Effect para gerenciar autenticação e carrinho
+    // Effect para gerenciar autenticação e carrinho
     useEffect(() => {
-        console.log('Estado de autenticação mudou:', { isAuthenticated, user: user?.email });
-        
         if (isAuthenticated && user) {
             // Usuário fez LOGIN - sincroniza carrinho
-            console.log('Usuário logado, sincronizando carrinho...');
             syncLocalCartToServer();
         } else {
-            // Usuário fez LOGOUT - carrega carrinho local
-            console.log('Usuário deslogado, carregando carrinho local...');
+            // Usuário fez LOGOUT/Não logado - carrega carrinho local
             loadCartFromLocalStorage();
         }
+        // Dependências atualizadas para loadCartFromLocalStorage
     }, [isAuthenticated, user, syncLocalCartToServer, loadCartFromLocalStorage]);
 
-    // 🔥 CORREÇÃO: Effect para salvar automaticamente no localStorage quando o carrinho muda
+    // Effect para atualizar contagem e salvar no localStorage (para não logados)
     useEffect(() => {
-        if (cartItems.length > 0) {
-            console.log('Carrinho modificado, salvando no localStorage:', cartItems);
-            saveCartToLocalStorage(cartItems);
-            
-            // Atualiza contagem
-            const totalCount = cartItems.reduce((sum, item) => sum + item.quantidade, 0);
-            setCartItemsCount(totalCount);
-        }
-    }, [cartItems, saveCartToLocalStorage]);
-
-    const addItemToCart = async (item: CarrinhoItem) => {
-        console.log('Adicionando item ao carrinho:', item, 'Usuário logado:', isAuthenticated);
+        const totalCount = cartItems.reduce((sum, item) => sum + item.quantidade, 0);
+        setCartItemsCount(totalCount);
         
+        // Se o usuário não está logado, salva no local toda vez que o estado muda
+        if (!isAuthenticated) {
+            saveCartToLocalStorage(cartItems);
+        }
+    }, [cartItems, isAuthenticated, saveCartToLocalStorage]);
+    
+    // 🔥 Função de Adicionar Item
+    const addItemToCart = async (item: CarrinhoItem) => {
+        // Se estiver autenticado, chama o serviço do backend
         if (isAuthenticated) {
             try {
                 setIsLoading(true);
+                // ESTE É O PONTO CRÍTICO: Esta função DEVE ATUALIZAR o item no array de itens do carrinho
+                // no banco de dados do usuário logado.
                 await CarrinhoService.adicionarItem({
                     eventoId: item.eventoId,
                     tipoIngresso: item.tipoIngresso,
                     quantidade: item.quantidade
                 });
-                await loadCartFromBackend();
+                await loadCartFromBackend(); // Recarrega o carrinho atualizado
             } catch (error) {
-                console.error('Erro ao adicionar item:', error);
+                console.error('Erro ao adicionar item via backend:', error);
                 throw error;
             } finally {
                 setIsLoading(false);
             }
         } else {
+            // Lógica para usuários não logados: gerencia o estado local
             const newItems = [...cartItems];
             const existingItemIndex = newItems.findIndex(i => 
                 i.eventoId === item.eventoId && i.tipoIngresso === item.tipoIngresso
@@ -215,14 +218,17 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             } else {
                 newItems.push({
                     ...item,
-                    id: `${item.eventoId}-${item.tipoIngresso}-${Date.now()}`
+                    id: `${item.eventoId}-${item.tipoIngresso}-${Date.now()}` // Garante um ID único local
                 });
             }
 
             setCartItems(newItems);
-            console.log('Item adicionado ao carrinho local:', newItems);
+            // O useEffect acima irá salvar automaticamente no localStorage
         }
     };
+
+    // As funções de remoção e atualização foram mantidas,
+    // mas dependem da correção do backend (uso do ID correto do item no DB)
 
     const updateItemQuantity = async (id: string, quantity: number) => {
         if (quantity <= 0) {
@@ -233,6 +239,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (isAuthenticated) {
             try {
                 setIsLoading(true);
+                // ID aqui deve ser o ID do item DENTRO do array 'itens' do carrinho no DB
                 await CarrinhoService.atualizarQuantidade(id, quantity);
                 await loadCartFromBackend();
             } catch (error) {
