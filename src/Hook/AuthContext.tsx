@@ -1,3 +1,5 @@
+// src/Hook/AuthContext.js
+
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import api from '../services/api';
 
@@ -31,16 +33,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          // 🔥 CORREÇÃO: Usar o endpoint check-auth que não requer token no header
+          // A API precisa estar configurada para enviar o token automaticamente
+          // ou você pode adicionar o header aqui.
+          // Ex: api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           const response = await api.get('/api/users/check-auth');
           
           if (response.data && response.data.user) {
             setUser(response.data.user);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
+          } else {
+            // Token inválido, limpa tudo
+            throw new Error("Sessão inválida");
           }
         }
       } catch (error) {
-        console.log("Nenhuma sessão válida encontrada.");
+        console.log("Nenhuma sessão válida encontrada.", error);
         setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('token');
@@ -56,13 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', token);
-    
-    // 🔥 CORREÇÃO: Disparar evento personalizado para sincronização do carrinho
-    setTimeout(() => {
-      window.dispatchEvent(new CustomEvent('userLoggedIn', { 
-        detail: { user: userData } 
-      }));
-    }, 100);
+    // O CartContext irá reagir automaticamente à mudança de 'isAuthenticated'
   }, []);
 
   const logout = useCallback(async () => {
@@ -74,9 +74,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       localStorage.removeItem('user');
       localStorage.removeItem('token');
-      // 🔥 REMOVIDO: Não limpa mais o carrinho local no logout
-      // localStorage.removeItem('localCart');
-      window.location.href = '/login'; 
+      // Corretamente, NÃO limpamos o 'localCart' aqui,
+      // para que o usuário não perca seus itens se fizer login novamente.
+      window.location.href = '/login'; // Um hard refresh no logout é aceitável
     }
   }, []);
 
@@ -88,7 +88,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const updateUserProfileImage = useCallback((newImageUrl: string) => {
     setUser(prevUser => {
       if (!prevUser) return null;
-      
       const updatedUser = { ...prevUser, imagemPerfil: newImageUrl };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
@@ -107,7 +106,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider value={contextValue}>
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

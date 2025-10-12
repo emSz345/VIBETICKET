@@ -1,0 +1,76 @@
+/* Local: src/components/sections/User/IngressoParaPdf/IngressoParaPdf.css (NOVO ARQUIVO) */
+
+.ingresso-pdf-template {
+    width: 105mm; /* Largura de um A6 */
+    height: 148mm; /* Altura de um A6 */
+    padding: 10mm;
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+    color: #333;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.ingresso-pdf-header {
+    text-align: center;
+    border-bottom: 2px solid #0969fb;
+    padding-bottom: 5mm;
+    margin-bottom: 10mm;
+}
+
+.ingresso-pdf-event-name {
+    font-size: 1.6rem;
+    margin: 0;
+    color: #111827;
+}
+
+.ingresso-pdf-details {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 4mm;
+    margin-bottom: 4mm;
+}
+
+.detail-row svg {
+    color: #0969fb;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.detail-divider {
+    border: 0;
+    border-top: 1px dashed #ccc;
+    margin: 6mm 0;
+}
+
+.ingresso-pdf-qrcode-section {
+    flex-grow: 1; /* Ocupa o espaço restante para empurrar o rodapé para baixo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10mm 0;
+}
+
+.ingresso-pdf-id {
+    font-size: 0.75rem;
+    text-align: center;
+    margin-top: 4mm;
+    color: #777;
+    word-break: break-all; /* Quebra o ID se for muito longo */
+}
+
+.ingresso-pdf-footer {
+    font-size: 0.8rem;
+    text-align: center;
+    margin-top: auto; /* Empurra para o final da página */
+    color: #555;
+    padding-top: 5mm;
+    border-top: 1px dashed #ccc;
+}

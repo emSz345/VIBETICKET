@@ -1,30 +1,30 @@
-// Local: ../../types/Ingresso.ts (ou onde estiver sua interface)
+// Local: src/types/Ingresso.ts
 
 export interface Ingresso {
-    // 🔥 CRÍTICO: Campos do MongoDB
-    _id: string; // O ID real retornado pelo Mongo
-    id: string;  // Campo que será usado no React para a 'key' (mapeado de _id)
-    createdAt: string; 
-    updatedAt: string;
-    
-    // 🔥 Campos do Usuário e Pagamento
-    userId: string;
-    paymentId: string;
-    
-    // 🔥 Campos do Evento (Puxados do Model 'Event' no Webhook)
-    eventoId: string;
-    localEvento: string; // Ex: 'Rua ABC, 123 - Centro, São Paulo, SP'
-    tipoIngresso: 'Inteira' | 'Meia'; 
-    
-    // Campos principais do Ingresso
-    nomeEvento: string;
-    dataEvento: string;
-    valor: number;
-    status: 'Pago' | 'Pendente' | 'Cancelado';
+  // --- Campos do MongoDB ---
+  _id: string; // O ID real do banco de dados
+  id: string;  // Mapeado de _id, usado como 'key' no React
+  createdAt?: string; 
+  
+  // --- IDs de Relação ---
+  userId: string;
+  eventoId: string;
+  paymentId: string;
+  
+  // --- Dados do Ingresso (Denormalizados do Evento) ---
+  nomeEvento: string;
+  localEvento: string;
+  dataEvento: string; // Ex: "2025-12-25T18:00:00.000Z"
+  tipoIngresso: 'Inteira' | 'Meia'; 
+  valor: number;
+  status: 'Pago' | 'Pendente' | 'Cancelado';
 
-    // Se você tiver cliente/email no frontend, eles viriam de uma população de 'userId',
-    // mas por enquanto, esses campos abaixo não estão no seu model Mongoose:
-    // cliente?: string;
-    // email?: string;
-    // dataCompra?: string; 
+  // 🔥 MELHORIA FUTURA: O ideal é que seu backend popule estes campos.
+  // O código abaixo funcionará mesmo sem eles, mas com eles, fica mais robusto.
+  comprador?: {
+    nome: string;
+  };
+  evento?: {
+    nome: string;
+  };
 }

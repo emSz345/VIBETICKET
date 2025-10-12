@@ -1,0 +1,95 @@
+/* Local: src/components/sections/User/QrCodeModal/QrCodeModal.css */
+
+.qr-modal__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999; 
+}
+
+.qr-modal__content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 350px;
+    width: 90%;
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.qr-modal__close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
+}
+.qr-modal__close-button:hover {
+    color: #333;
+}
+
+.qr-modal__title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.qr-modal__qr-container {
+    padding: 15px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.qr-modal__details {
+    margin-bottom: 25px;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.qr-modal__details p {
+    margin: 5px 0;
+}
+
+.qr-modal__email-button {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #0969fb;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.qr-modal__email-button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.qr-modal__email-button:disabled {
+    background-color: #a0c7ff;
+    cursor: not-allowed;
+}
