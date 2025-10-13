@@ -61,7 +61,7 @@ const Login: React.FC = () => {
     setEmailError("");
     setSenhaError("");
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (!email || !senha) {
       if (!email) setEmailError("Digite seu e-mail.");
       if (!senha) setSenhaError("Digite sua senha.");
