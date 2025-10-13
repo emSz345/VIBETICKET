@@ -13,6 +13,9 @@ const Perfil = () => {
   const [nome, setNome] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>("");
+  
+  // ESTADO PARA ERROS DO NOME
+  const [nomeError, setNomeError] = useState("");
 
   const [_hasPerfilSaved, setHasPerfilSaved] = useState(false);
 
@@ -21,7 +24,7 @@ const Perfil = () => {
   const docPlaceholder = tipoPessoa === "cpf" ? "000.000.000-00" : "00.000.000/0000-00";
   const docMaxLength = tipoPessoa === "cpf" ? 14 : 18;
 
-  // --- NOVO ESTADO PARA O MODAL ---
+  // --- ESTADO PARA O MODAL ---
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -43,9 +46,19 @@ const Perfil = () => {
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  // --- NOVOS ESTADOS PARA O MERCADO PAGO ---
+  // --- ESTADOS PARA O MERCADO PAGO ---
   const [mercadopagoConnected, setMercadopagoConnected] = useState(false);
   const [mercadopagoAccountId, setMercadopagoAccountId] = useState("");
+
+  // FUNÇÃO DE VALIDAÇÃO DO NOME
+  const validateNome = (nome: string): boolean => {
+    if (!/^[a-zA-ZÀ-ÿ\s]{2,50}$/.test(nome.trim())) {
+      setNomeError("Nome deve conter apenas letras e espaços (2-50 caracteres).");
+      return false;
+    }
+    setNomeError("");
+    return true;
+  };
 
   const formatCpf = (value: string) => {
     if (!value) return "";
@@ -155,8 +168,14 @@ const Perfil = () => {
 
   const handleSalvarLogin = async () => {
     if (!user) return;
+    
+    // VALIDAÇÃO DO NOME ANTES DE SALVAR
+    if (!validateNome(nome)) {
+      return; // Não prossegue se o nome for inválido
+    }
+
     const formData = new FormData();
-    formData.append("nome", nome);
+    formData.append("nome", nome.trim()); // Remove espaços extras
     if (imagem) formData.append("imagemPerfil", imagem);
 
     try {
@@ -189,6 +208,16 @@ const Perfil = () => {
       } else {
         alert("Ocorreu um erro desconhecido ao atualizar os dados de login.");
       }
+    }
+  };
+
+  const handleNomeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const novoNome = e.target.value;
+    setNome(novoNome);
+    
+    // Validação em tempo real (opcional)
+    if (editando) {
+      validateNome(novoNome);
     }
   };
 
@@ -251,7 +280,7 @@ const Perfil = () => {
     }
   };
 
-  // --- NOVA FUNÇÃO PARA CONECTAR O MERCADO PAGO ---
+  // --- FUNÇÃO PARA CONECTAR O MERCADO PAGO ---
   const handleConnectMercadoPago = async () => {
     if (!user) {
       alert("Usuário não encontrado. Por favor, faça login novamente.");
@@ -352,11 +381,18 @@ const Perfil = () => {
               </label>
               <input
                 type="text"
-                className="perfil-input"
+                className={`perfil-input ${nomeError ? 'perfil-input-error' : ''}`}
                 disabled={!editando}
                 value={nome}
-                onChange={(e) => setNome(e.target.value)}
+                onChange={handleNomeChange}
+                placeholder="Digite seu nome completo"
               />
+              {/* MENSAGEM DE ERRO DO NOME */}
+              {nomeError && (
+                <div className="perfil-error-message">
+                  {nomeError}
+                </div>
+              )}
             </div>
 
             <div className="perfil-form-group">
@@ -374,7 +410,14 @@ const Perfil = () => {
 
             <button
               className={`perfil-btn-primary ${editando ? 'perfil-btn-save' : ''}`}
-              onClick={() => { if (editando) handleSalvarLogin(); else setEditando(true); }}
+              onClick={() => { 
+                if (editando) {
+                  handleSalvarLogin(); 
+                } else {
+                  setEditando(true);
+                  setNomeError(""); // Limpa erro ao entrar em modo edição
+                }
+              }}
             >
               {editando ? <FiCheck /> : <FiEdit2 />}
               {editando ? "Salvar login" : "Editar perfil"}
