@@ -340,6 +340,23 @@ div.perfil-card.full-width {
   background: #e2e8f0;
 }
 
+/* Estilos para validação do nome */
+.perfil-input-error {
+  border-color: #ff4444 !important;
+  box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.1) !important;
+}
+
+.perfil-error-message {
+  color: #ff4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Resto do seu CSS existente... */
+
 .perfil-modal-progress-bar {
   height: 100%;
   background: #10b981;
