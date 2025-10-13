@@ -50,10 +50,10 @@ const Cadastro: React.FC = () => {
       alert("Você deve aceitar os termos e políticas para continuar.");
       return false;
     }
-    if (!/^[a-zA-ZÀ-ÿ\s]{10,}$/.test(formData.nome)) {
-      newErrors.nome = "É necessário inserir o seu nome completo.";
+    if (!/^[a-zA-ZÀ-ÿ\s]{2,50}$/.test(formData.nome.trim())) {
+      newErrors.nome = "Nome deve conter apenas letras";
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(formData.email)) {
       newErrors.email = "Email deve estar em formato válido.";
     }
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{6,}$/.test(formData.senha)) {
@@ -132,7 +132,7 @@ const Cadastro: React.FC = () => {
       // SALVAR O TOKEN NO LOCAL STORAGE
       localStorage.setItem('token', token);
 
-      login(user,token);
+      login(user, token);
       navigate("/Home");
 
     } catch (error: any) {
