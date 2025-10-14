@@ -1,32 +1,31 @@
+// pages/MeusIngressos.tsx
+
 import React, { useState, useEffect } from 'react';
-import { IngressoCard } from '../../components/sections/User/IngressoCard/IngresseCard';
-import { QrCodeModal } from '../../components/sections/User/QrCodeModal/QrCodeModal'; // Novo componente
+import { IngressoCard } from '../../components/sections/User/IngressoCard/IngresseCard'; // Ajuste o caminho se necessário
 import '../../styles/Meus-Ingressos.css';
 import { Ingresso } from '../../types/Ingresso';
 import { useAuth } from '../../Hook/AuthContext';
+import { useNavigate } from 'react-router-dom'; // 🔥 Importar hook de navegação
 
 const MeusIngressos: React.FC = () => {
     const { user, isLoading: isAuthLoading } = useAuth();
     const apiUrl = process.env.REACT_APP_API_URL;
+    const navigate = useNavigate(); // 🔥 Hook para redirecionar
 
     const [ingressos, setIngressos] = useState<Ingresso[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    // Estado para controlar a modal
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedIngresso, setSelectedIngresso] = useState<Ingresso | null>(null);
-    const [isSendingEmail, setIsSendingEmail] = useState(false);
+    const [isSendingEmail, setIsSendingEmail] = useState(false); // 🔥 Controla envio de email
 
     useEffect(() => {
         const fetchIngressos = async () => {
             setLoading(true);
             setError(null);
-            
+
             const token = localStorage.getItem('token');
             if (!token) {
                 setLoading(false);
-                setError("Você não está logado. Token de autenticação não encontrado.");
+                setError("Você não está logado. Faça login para ver seus ingressos.");
                 return;
             }
 
@@ -43,8 +42,7 @@ const MeusIngressos: React.FC = () => {
                 const ingressosMapeados = data.map(item => ({ ...item, id: item._id }));
                 setIngressos(ingressosMapeados);
             } catch (err) {
-                const errorMessage = err instanceof Error ? err.message : "Ocorreu um erro desconhecido.";
-                setError(errorMessage);
+                setError(err instanceof Error ? err.message : "Ocorreu um erro.");
             } finally {
                 setLoading(false);
             }
@@ -54,22 +52,9 @@ const MeusIngressos: React.FC = () => {
             fetchIngressos();
         } else if (!isAuthLoading && !user) {
             setLoading(false);
-            setError("Faça login para ver seus ingressos.");
         }
     }, [user, isAuthLoading, apiUrl]);
 
-    // Funções para controlar a modal
-    const handleOpenQrModal = (ingresso: Ingresso) => {
-        setSelectedIngresso(ingresso);
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setSelectedIngresso(null);
-    };
-    
-    // Função para enviar o e-mail (requer backend)
     const handleSendEmail = async (ingressoId: string) => {
         setIsSendingEmail(true);
         const token = localStorage.getItem('token');
@@ -84,19 +69,17 @@ const MeusIngressos: React.FC = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Falha ao enviar o e-mail.');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Falha ao enviar o e-mail.');
             }
 
             alert('E-mail enviado com sucesso!');
-            handleCloseModal();
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Ocorreu um erro desconhecido.";
-            alert(`Erro: ${errorMessage}`);
+            alert(`Erro: ${err instanceof Error ? err.message : "Ocorreu um erro desconhecido."}`);
         } finally {
             setIsSendingEmail(false);
         }
     };
-
 
     if (loading) {
         return <div className="meus-ingressos-carregando">Carregando seus ingressos...</div>;
@@ -104,30 +87,29 @@ const MeusIngressos: React.FC = () => {
 
     return (
         <div className="meus-ingressos-pagina-meus-ingressos">
-             <h2>Meus Ingressos</h2>
+            {/* 🔥 Cabeçalho da página */}
+            <div className="meus-ingressos-header">
+                <h1 className="meus-ingressos-titulo">Meus Ingressos</h1>
+                <button className="meus-ingressos-botao-voltar" onClick={() => navigate('/')}>
+                    Voltar para o Início
+                </button>
+            </div>
+
             {error && <div className="meus-ingressos-erro">Erro: {error}</div>}
-            
-            {!error && ingressos.length === 0 ? (
+
+            {!error && ingressos.length === 0 && !loading ? (
                 <p className="meus-ingressos-mensagem-vazia">Você ainda não comprou nenhum ingresso.</p>
             ) : (
                 <div className="meus-ingressos-lista-ingressos">
                     {ingressos.map((ingresso) => (
-                        <IngressoCard 
+                        <IngressoCard
                             key={ingresso.id}
                             ingresso={ingresso}
-                            onOpenQrModal={() => handleOpenQrModal(ingresso)}
-                        /> 
+                            onSendEmail={handleSendEmail}
+                            isSendingEmail={isSendingEmail}
+                        />
                     ))}
                 </div>
-            )}
-
-            {isModalOpen && selectedIngresso && (
-                <QrCodeModal 
-                    ingresso={selectedIngresso}
-                    onClose={handleCloseModal}
-                    onSendEmail={handleSendEmail}
-                    isSending={isSendingEmail}
-                />
             )}
         </div>
     );

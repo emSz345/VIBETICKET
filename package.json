@@ -26,6 +26,7 @@
     "jspdf": "^3.0.3",
     "lucide-react": "^0.483.0",
     "mongoose": "^8.12.1",
+    "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -63,6 +64,7 @@
     ]
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.5",
     "@types/react-router-hash-link": "^2.4.9",
     "typescript": "^5.8.2"
   }

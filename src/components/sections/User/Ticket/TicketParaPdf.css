@@ -1,0 +1,150 @@
+/* Local: src/components/sections/User/Ticket/TicketParaPdf.css (VERSÃO FINAL COM LAYOUT RÍGIDO) */
+
+.pdf-ticket-wrapper {
+    width: 105mm;
+    /* Largura A6 */
+    height: 148mm;
+    /* Altura A6 */
+    box-sizing: border-box;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f7f6;
+    position: relative;
+    /* Contexto para posicionamento absoluto */
+    overflow: hidden;
+    /* Garante que nada vaze */
+}
+
+/* --- SEÇÃO SUPERIOR (AZUL ESCURO) --- */
+.pdf-ticket-top-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 65mm;
+    /* Altura fixa para a parte de cima */
+    background-color: #2c3e50;
+    color: #ffffff;
+    padding: 8mm;
+    box-sizing: border-box;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.pdf-label-digital {
+    font-size: 8pt;
+    letter-spacing: 1.5px;
+    color: #bdc3c7;
+    margin-bottom: 2mm;
+}
+
+.pdf-event-name-top {
+    font-size: 22pt;
+    font-weight: bold;
+    color: #3498db;
+    margin: 0 0 8mm 0;
+    line-height: 1.1;
+}
+
+.pdf-qr-code-area {
+    background-color: #ffffff;
+    padding: 2mm;
+    border: 2px dashed #bbbbbb;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* --- SEÇÃO INFERIOR (CLARA) --- */
+.pdf-ticket-bottom-section {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 83mm;
+    /* Altura restante (148mm - 65mm) */
+    background-color: #f4f7f6;
+    padding: 8mm;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* A linha azul agora é uma borda superior desta seção */
+    border-top: 4mm solid #3498db;
+}
+
+.pdf-detail-group-header {
+    width: 100%;
+    text-align: center;
+    margin-top: 5mm;
+    /* Espaço após a linha azul */
+    margin-bottom: 5mm;
+    padding-bottom: 5mm;
+    border-bottom: 1px dashed #cccccc;
+}
+
+.pdf-detail-label-header {
+    font-size: 8pt;
+    color: #7f8c8d;
+    letter-spacing: 1px;
+    margin-bottom: 2mm;
+    display: block;
+}
+
+.pdf-detail-value-header {
+    font-size: 14pt;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.pdf-ticket-id-box {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #dfe6e9;
+    border-radius: 4px;
+    padding: 3mm;
+    font-size: 9pt;
+    color: #636e72;
+    text-align: center;
+    font-family: monospace;
+    margin-bottom: 6mm;
+    word-break: break-all;
+}
+
+.pdf-details-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5mm;
+    /* Reduzindo o espaçamento para garantir que caiba */
+    text-align: left;
+}
+
+.pdf-detail-cell {
+    background-color: #ffffff;
+    padding: 3mm 4mm;
+    /* Reduzindo padding para economizar espaço */
+    border-left: 3mm solid #3498db;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.pdf-detail-cell .pdf-detail-label {
+    font-size: 7pt;
+    color: #7f8c8d;
+    margin-bottom: 1.5mm;
+    display: block;
+    text-transform: uppercase;
+}
+
+.pdf-detail-cell .pdf-detail-value {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.pdf-detail-value.status--aprovado,
+.pdf-detail-value.status--pago {
+    color: #27ae60;
+}

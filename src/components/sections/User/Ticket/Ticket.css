@@ -1,0 +1,299 @@
+/* === 🎟️ Ticket Premium Realista === */
+.ticket-classic {
+  position: relative;
+  max-width: 440px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fffdf9;
+  background-image: radial-gradient(circle at top left, #ffffff, #f8f8f8);
+  border: 1px solid #dcdcdc;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.15),
+    inset 0 0 6px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', sans-serif;
+  animation: ticket-appear 0.5s ease-out;
+  transition: all 0.3s ease;
+}
+
+/* === Parte Superior === */
+.ticket-top-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, #111827, #1f2937 50%, #374151);
+  color: #ffffff;
+  border-bottom: 3px solid #0969fb;
+  position: relative;
+  text-align: center;
+}
+
+
+.ticket-scan-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #0969fb;
+  text-align: center;
+  border: 1px solid #0969fb;
+  padding: 5px 10px;
+  display: inline-block;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.ticket-main-title {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.ticket-event-type {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.ticket-event-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0969fb;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ticket-details-section {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border-left: 3px solid #0969fb;
+}
+
+.ticket-details-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #0969fb;
+  margin-bottom: 4px;
+}
+
+.ticket-details-text {
+  font-size: 0.75rem;
+  color: #f1f5f9;
+  line-height: 1.4;
+}
+
+.ticket-personal-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.info-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #d1d5db;
+  font-weight: 700;
+}
+
+.info-code {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #0969fb;
+  letter-spacing: 1px;
+}
+
+/* === Linha de Perfuração com Efeito Real === */
+.ticket-perforation-line {
+  position: relative;
+  height: 22px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.perforation-dots {
+  width: 100%;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 6px,
+    #d1d5db 6px,
+    #d1d5db 12px
+  );
+}
+
+/* Cantos perfurados */
+.ticket-classic::before,
+.ticket-classic::after {
+  content: '';
+  position: absolute;
+  left: -10px;
+  width: 20px;
+  height: 20px;
+  background: #f8f9fa;
+  border-radius: 50%;
+  top: 49%;
+  box-shadow: 340px 0 #f8f9fa;
+  z-index: 2;
+}
+
+/* === Parte Inferior === */
+.ticket-bottom-section {
+  padding: 24px 20px;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.ticket-bottom-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px dashed #d1d5db;
+}
+
+.ticket-event-name-small {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.ticket-barcode-section {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.ticket-number {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+  font-family: 'Courier New', monospace;
+}
+
+.barcode-placeholder {
+  background: white;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.barcode-lines {
+  height: 40px;
+  background: repeating-linear-gradient(
+    90deg,
+    #111827,
+    #111827 2px,
+    transparent 2px,
+    transparent 4px
+  );
+}
+
+.ticket-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.info-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border-left: 3px solid #3b82f6;
+}
+
+.cell-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6b7280;
+}
+
+.cell-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.ticket-footer-note {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #dc2626;
+  padding: 8px;
+  background: #fef2f2;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+}
+
+/* === QR Code Integrado === */
+.ticket-qr-floating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.ticket-qr-floating svg {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 12px;
+  padding: 8px;
+  background: #ffffff;
+  border: 2px dashed #0969fb;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+
+/* === Hover === */
+.ticket-classic:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.25),
+    inset 0 0 6px rgba(255, 255, 255, 0.2);
+}
+
+/* === Responsivo === */
+@media (max-width: 480px) {
+  .ticket-classic {
+    max-width: 280px;
+    margin: 0 10px;
+  }
+  .ticket-qr-floating {
+    right: 8px;
+    top: 60%;
+    padding: 6px;
+  }
+}
+
+/* === Animação === */
+@keyframes ticket-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) rotateX(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotateX(0);
+  }
+}
