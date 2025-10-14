@@ -9,15 +9,14 @@ import logo from "../../assets/logo.png";
 import "../../styles/Painel.css";
 
 const apiUrl = process.env.REACT_APP_API_URL;
-const email = localStorage.getItem('userName');
 
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
 
 const Painel: React.FC = () => {
-    const { logout } = useAuth();
+    // 🔥 CORREÇÃO: Pega o objeto 'user' completo do AuthContext
+    const { user, logout } = useAuth();
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [status, setStatusFilter] = useState<EventoStatus>("em_analise");
-    const [_, setUsuarioLogado] = useState(false);
     const navigate = useNavigate();
 
     const fetchEventosByStatus = (status: EventoStatus) => {
@@ -54,7 +53,6 @@ const Painel: React.FC = () => {
     const handleRejeitar = (id: string, motivo: { titulo: string, descricao: string }) =>
         updateEventoStatus(id, "rejeitado", motivo);
 
-    // LÓGICA DE TRANSIÇÃO (Regras do Usuário)
     const getAcoesPermitidas = (currentStatus: EventoStatus) => {
         let aceitar = undefined;
         let rejeitar = undefined;
@@ -62,19 +60,15 @@ const Painel: React.FC = () => {
 
         switch (currentStatus) {
             case "em_analise":
-                // se o evento estiver em analise ele so pode ser aprovado ou rejeitado
                 aceitar = handleAceitar;
                 rejeitar = handleRejeitar;
                 break;
             case "aprovado":
-                // se estiver aprovado ele so pode ser rejeitado
                 rejeitar = handleRejeitar;
                 break;
             case "rejeitado":
-                // se estiver rejeitado nao pode nenhum
                 break;
             case "em_reanalise":
-                // se estiver em reanalise pode ser rejeitado ou aprovado
                 aceitar = handleAceitar;
                 rejeitar = handleRejeitar;
                 break;
@@ -95,18 +89,24 @@ const Painel: React.FC = () => {
                         </Link>
                     </div>
                 </div>
-                <div className="">
-                    <Link to="/CarrosselAdm" className="btn-gerenciar-carrossel">
-                        <FaImages />
-                        <p>Gerenciar Carrossel</p>
-                    </Link>
-                    <Link to="/AdicionarAdm" className="btn-gerenciar-carrossel">
-                        <FaUserPlus />
-                        <p>Adicionar Admin</p>
-                    </Link>
+                {/* 🔥 CORREÇÃO: Lógica de exibição dos botões de admin */}
+                <div className="painel-sidebar-nav">
+                    {/* Botão visível para SUPER_ADMIN e MANAGER_SITE */}
+                    {user && (user.role === 'SUPER_ADMIN' || user.role === 'MANAGER_SITE') && (
+                        <Link to="/CarrosselAdm" className="btn-gerenciar-carrossel">
+                            <FaImages />
+                            <p>Gerenciar Carrossel</p>
+                        </Link>
+                    )}
+                    {/* Botão visível APENAS para SUPER_ADMIN */}
+                    {user && user.role === 'SUPER_ADMIN' && (
+                        <Link to="/AdicionarAdm" className="btn-gerenciar-carrossel">
+                            <FaUserPlus />
+                            <p>Gerenciar Admin</p>
+                        </Link>
+                    )}
                     <button className="btn-gerenciar-carrossel" onClick={() => {
                         logout();
-                        setUsuarioLogado(false);
                         navigate('/');
                         window.location.reload();
                     }}>
@@ -148,7 +148,8 @@ const Painel: React.FC = () => {
                     </div>
                     <div className="header-right">
                         <strong>Administrador</strong>
-                        <p>{email}</p>
+                        {/* 🔥 CORREÇÃO: Usa o email do contexto, que é mais seguro */}
+                        <p>{user?.email}</p> 
                     </div>
                 </header>
 
@@ -165,7 +166,6 @@ const Painel: React.FC = () => {
                                     status: (evento as any).status as EventoStatus,
                                     temMeia: (evento as any).temMeia as boolean,
                                 }}
-                                // Passa a função de manipulação ou undefined para o EventoCard
                                 onAceitar={acoes.aceitar} 
                                 onRejeitar={acoes.rejeitar}
                                 onReanalise={acoes.reanalise} 
@@ -177,6 +177,5 @@ const Painel: React.FC = () => {
         </div>
     );
 };
-
 
 export default Painel;

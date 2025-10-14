@@ -15,6 +15,7 @@ import { useCart } from "../../Hook/CartContext";
 import NavBar3 from "../../components/sections/Home/NavBar3/NavBar3";
 import ChatBot from "../../components/sections/Chatbot/Chatbot";
 
+// ... (suas interfaces permanecem as mesmas)
 interface CriadorUsuario {
     email: string;
     imagemPerfil: string;
@@ -49,8 +50,11 @@ const Detalhes: React.FC = () => {
     const apiUrl = process.env.REACT_APP_API_URL;
     const { id } = useParams<{ id: string }>();
     const { state } = useLocation();
-    const { user: currentUser } = useAuth();
+
+    // 🔥 CORREÇÃO AQUI: 'user' vem apenas do useAuth()
     const { addItemToCart, cartItems } = useCart();
+    const { user: authUser } = useAuth(); // Esta é a variável correta para o usuário
+
     const [evento, setEvento] = useState<EventoComCriador | null>(state as EventoComCriador || null);
     const [criadorUsuario, setCriadorUsuario] = useState<CriadorUsuario | null>(null);
     const [criadorPerfil, setCriadorPerfil] = useState<CriadorPerfil | null>(null);
@@ -59,10 +63,12 @@ const Detalhes: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'descricao' | 'politicas'>('descricao');
     const [eventoEncerrado, setEventoEncerrado] = useState(false);
     const [vendasEncerradas, setVendasEncerradas] = useState(false);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
 
+    const isUserAdmin = authUser && (authUser.role === 'SUPER_ADMIN' || authUser.role === 'MANAGER_SITE');
+
+    // ... (o resto do seu código permanece o mesmo)
     useEffect(() => {
         if (evento) {
             const agora = new Date();
@@ -84,17 +90,17 @@ const Detalhes: React.FC = () => {
         if (imagemPerfil.includes('/')) return `${apiUrl}/${imagemPerfil}`;
         return `${apiUrl}/uploads/perfil-img/${imagemPerfil}`;
     };
-
+    
     useEffect(() => {
         const forceUpdateImage = async () => {
-            if (!evento?.criadoPor || !currentUser) return;
+            if (!evento?.criadoPor || !authUser) return;
             try {
                 const criadorId = typeof evento.criadoPor === 'string'
                     ? evento.criadoPor
                     : (evento.criadoPor as CriadorPopulado)._id;
 
-                if (criadorId === currentUser._id) {
-                    const response = await fetch(`${apiUrl}/api/users/${currentUser._id}`);
+                if (criadorId === authUser._id) {
+                    const response = await fetch(`${apiUrl}/api/users/${authUser._id}`);
                     if (response.ok) {
                         const latestUserData = await response.json();
                         if (criadorUsuario) {
@@ -116,7 +122,7 @@ const Detalhes: React.FC = () => {
 
         const timer = setTimeout(forceUpdateImage, 500);
         return () => clearTimeout(timer);
-    }, [currentUser, evento?.criadoPor, apiUrl, criadorUsuario]);
+    }, [authUser, evento?.criadoPor, apiUrl, criadorUsuario]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -136,8 +142,8 @@ const Detalhes: React.FC = () => {
                         imagemPerfil: criadorPopulado.imagemPerfil || ''
                     };
                     setCriadorUsuario(criadorData);
-                    if (currentUser && criadorPopulado._id === currentUser._id) {
-                        setCriadorUsuario(prev => ({ ...prev!, imagemPerfil: currentUser.imagemPerfil || prev!.imagemPerfil }));
+                    if (authUser && criadorPopulado._id === authUser._id) {
+                        setCriadorUsuario(prev => ({ ...prev!, imagemPerfil: authUser.imagemPerfil || prev!.imagemPerfil }));
                     }
                 } else if (eventoData.criadoPor) {
                     const [userRes, perfilRes] = await Promise.allSettled([
@@ -148,8 +154,8 @@ const Detalhes: React.FC = () => {
                     if (userRes.status === 'fulfilled' && userRes.value.ok) {
                         const userData: CriadorUsuario = await userRes.value.json();
                         let imagemFinal = userData.imagemPerfil;
-                        if (currentUser && eventoData.criadoPor === currentUser._id) {
-                            imagemFinal = currentUser.imagemPerfil || userData.imagemPerfil;
+                        if (authUser && eventoData.criadoPor === authUser._id) {
+                            imagemFinal = authUser.imagemPerfil || userData.imagemPerfil;
                         }
                         setCriadorUsuario({ ...userData, imagemPerfil: imagemFinal });
                     }
@@ -180,7 +186,7 @@ const Detalhes: React.FC = () => {
         } else {
             setIsLoading(false);
         }
-    }, [id, apiUrl, currentUser]);
+    }, [id, apiUrl, authUser]);
 
     const aumentarQuantidade = (index: number) => {
         setTiposIngresso(prev =>
@@ -198,7 +204,6 @@ const Detalhes: React.FC = () => {
         );
     };
 
-    // FUNÇÃO CORRIGIDA: Agora funciona sem login
     const adicionarAoCarrinho = async (ingresso: TicketType) => {
         if (ingresso.quantidade === 0) {
             setModalMessage("Selecione pelo menos um ingresso.");
@@ -206,8 +211,7 @@ const Detalhes: React.FC = () => {
             return;
         }
 
-        // VERIFICAÇÃO DE ESTOQUE APENAS PARA USUÁRIOS LOGADOS
-        if (currentUser) {
+        if (authUser) {
             try {
                 const response = await fetch(`${apiUrl}/api/eventos/verificar-estoque/${evento?._id}`);
                 if (!response.ok) {
@@ -230,13 +234,12 @@ const Detalhes: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Erro ao verificar estoque:', error);
-                // Continua mesmo com erro de verificação de estoque
             }
         }
 
         try {
             const novoItem: CarrinhoItem = {
-                id: `${evento?._id}-${ingresso.tipo}-${Date.now()}`, // ID único para o carrinho local
+                id: `${evento?._id}-${ingresso.tipo}-${Date.now()}`,
                 eventoId: evento?._id || '',
                 nomeEvento: evento?.nome || '',
                 tipoIngresso: ingresso.tipo,
@@ -252,7 +255,6 @@ const Detalhes: React.FC = () => {
             setModalMessage(`${ingresso.quantidade} ingresso(s) do tipo "${ingresso.tipo}" foram adicionados ao seu carrinho.`);
             setIsModalOpen(true);
 
-            // Reseta a quantidade do ingresso selecionado para 0
             setTiposIngresso(prev =>
                 (prev || []).map(ing => ing.tipo === ingresso.tipo ? { ...ing, quantidade: 0 } : ing)
             );
@@ -298,6 +300,7 @@ const Detalhes: React.FC = () => {
     const getCriadorEmail = () => criadorUsuario?.email || (typeof evento.criadoPor === 'object' && evento.criadoPor.email) || '';
     const getCriadorImagem = () => criadorUsuario?.imagemPerfil || (typeof evento.criadoPor === 'object' && evento.criadoPor.imagemPerfil) || '';
 
+
     return (
         <>
             {isModalOpen && (
@@ -311,7 +314,7 @@ const Detalhes: React.FC = () => {
                         </div>
                         <div className="modal-body">
                             <p>{modalMessage}</p>
-                            {!currentUser && (
+                            {!authUser && (
                                 <div style={{marginTop: '15px', padding: '10px', backgroundColor: '#fff3cd', borderRadius: '5px'}}>
                                     <p style={{margin: 0, color: '#856404'}}>
                                         💡 <strong>Você não está logado.</strong> Os ingressos foram salvos localmente. 
@@ -360,38 +363,45 @@ const Detalhes: React.FC = () => {
                                 <p>A venda de ingressos para este evento foi encerrada.</p>
                             </div>
                         ) : (
-                            <>
-                                <h3 className="detalhes-title-ingresso"><IoTicket /> Escolha seus ingressos</h3>
-                                <div className="detalhes-ingressos-tipos">
-                                    {tiposIngresso?.map((ingresso, index) => (
-                                        <div key={index} className="detalhes-ingresso-card">
-                                            <div className="ingresso-header">
-                                                <span className="tipo"><IoTicket /> {ingresso.tipo}</span>
-                                                <span className="preco">{ingresso.valor === 0 ? 'Grátis' : `R$ ${ingresso.valor.toFixed(2)}`}</span>
-                                            </div>
-                                            {ingresso.descricao && <p className="ingresso-descricao">{ingresso.descricao}</p>}
-                                            <div className="ingresso-controls">
-                                                <div className="ingresso-selector">
-                                                    <button onClick={() => diminuirQuantidade(index)} disabled={ingresso.quantidade === 0}><FiMinus /></button>
-                                                    <span>{ingresso.quantidade}</span>
-                                                    <button onClick={() => aumentarQuantidade(index)} disabled={ingresso.quantidade >= 8}><FiPlus /></button>
+                            isUserAdmin ? (
+                                <div className="admin-purchase-warning">
+                                    <p><strong>Ações de compra desabilitadas</strong></p>
+                                    <span>Contas de administrador não podem adicionar itens ao carrinho. Para comprar, acesse com uma conta de usuário.</span>
+                                </div>
+                            ) : (
+                                <>
+                                    <h3 className="detalhes-title-ingresso"><IoTicket /> Escolha seus ingressos</h3>
+                                    <div className="detalhes-ingressos-tipos">
+                                        {tiposIngresso?.map((ingresso, index) => (
+                                            <div key={index} className="detalhes-ingresso-card">
+                                                <div className="ingresso-header">
+                                                    <span className="tipo"><IoTicket /> {ingresso.tipo}</span>
+                                                    <span className="preco">{ingresso.valor === 0 ? 'Grátis' : `R$ ${ingresso.valor.toFixed(2)}`}</span>
                                                 </div>
-                                                <button 
-                                                    className="detalhes-btn-comprar" 
-                                                    onClick={() => adicionarAoCarrinho(ingresso)} 
-                                                    disabled={ingresso.quantidade === 0}
-                                                >
-                                                    Adicionar ao Carrinho
-                                                </button>
+                                                {ingresso.descricao && <p className="ingresso-descricao">{ingresso.descricao}</p>}
+                                                <div className="ingresso-controls">
+                                                    <div className="ingresso-selector">
+                                                        <button onClick={() => diminuirQuantidade(index)} disabled={ingresso.quantidade === 0}><FiMinus /></button>
+                                                        <span>{ingresso.quantidade}</span>
+                                                        <button onClick={() => aumentarQuantidade(index)} disabled={ingresso.quantidade >= 8}><FiPlus /></button>
+                                                    </div>
+                                                    <button 
+                                                        className="detalhes-btn-comprar" 
+                                                        onClick={() => adicionarAoCarrinho(ingresso)} 
+                                                        disabled={ingresso.quantidade === 0}
+                                                    >
+                                                        Adicionar ao Carrinho
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="ingresso-total">
-                                    <span>Total:</span>
-                                    <span className="total-valor">R$ {calcularTotal()}</span>
-                                </div>
-                            </>
+                                        ))}
+                                    </div>
+                                    <div className="ingresso-total">
+                                        <span>Total:</span>
+                                        <span className="total-valor">R$ {calcularTotal()}</span>
+                                    </div>
+                                </>
+                            )
                         )}
                     </div>
 

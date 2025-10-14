@@ -2,26 +2,29 @@
 
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from './AuthContext'; // Importe o seu hook useAuth
+import { useAuth } from './AuthContext';
 
-const AdminRoute = () => {
-  // Pega as informações de usuário e autenticação DIRETAMENTE do contexto.
-  const { isAuthenticated, user, isLoading } = useAuth();
+// 1. Definimos as propriedades que o componente vai aceitar
+interface AdminRouteProps {
+  allowedRoles: string[]; // Um array de strings, ex: ['SUPER_ADMIN']
+}
 
-  // 1. A verificação de carregamento é sempre a primeira e mais importante.
+const RotaDoAdm = ({ allowedRoles }: AdminRouteProps) => {
+  const { user, isAuthenticated, isLoading } = useAuth();
+
   if (isLoading) {
-    return <div>Carregando...</div>; // Ou um spinner de carregamento
+    return <div>Carregando...</div>;
   }
 
-  // 2. Verificamos se o usuário está logado E se ele é um administrador.
-  // A verificação `user?.isAdmin` usa "optional chaining" para evitar erros caso `user` seja nulo.
-  if (!isAuthenticated || !user?.isAdmin) {
-    // Se não for um admin, redireciona para a home page (ou uma página de "acesso negado").
+  // 2. A lógica principal agora é mais inteligente e flexível
+  // Se não está autenticado OU a role do usuário NÃO ESTÁ na lista de permitidas...
+  if (!isAuthenticated || !user || !allowedRoles.includes(user.role)) {
+    // Redireciona para a home (ou para o painel, se preferir)
     return <Navigate to="/home" replace />;
   }
 
-  // 3. Se for um admin autenticado, renderiza a rota de admin.
+  // Se passou na verificação, permite o acesso
   return <Outlet />;
 };
 
-export default AdminRoute;
+export default RotaDoAdm;

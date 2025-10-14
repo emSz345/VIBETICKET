@@ -127,7 +127,7 @@ export default function AppHeader() {
                   <button onClick={() => navigate('/')}><FaHome /><span>Home</span></button>
                   <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
                   <button onClick={() => navigate('/perfil')}><FaUserCircle /><span>Minha conta</span></button>
-                  {user?.isAdmin && (
+                  {user && (user.role === 'SUPER_ADMIN' || user.role === 'MANAGER_SITE') && (
                     <button onClick={() => navigate('/Painel')}>
                       <FaUserShield />
                       <span>Painel Admin</span>
@@ -197,7 +197,7 @@ export default function AppHeader() {
             <button onClick={() => { navigate('/perfil'); setMobileOpen(false); }}>
               <FaUserCircle /> Minha conta
             </button>
-            {user?.isAdmin && (
+            {user && (user.role === 'SUPER_ADMIN' || user.role === 'MANAGER_SITE') && (
               <button onClick={() => { navigate('/Painel'); setMobileOpen(false); }}>
                 <FaUserShield /> Painel Admin
               </button>

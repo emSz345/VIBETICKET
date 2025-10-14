@@ -7,7 +7,7 @@ interface UserData {
   _id: string;
   nome: string;
   email: string;
-  isAdmin: boolean;
+  role: string; 
   isVerified: boolean;
   imagemPerfil?: string;
 }

@@ -3,43 +3,43 @@ import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-
 
 // Seus componentes de navegação
 import NavBar3 from './components/sections/Home/NavBar3/NavBar3';
-import AppHeader from './components/layout/Header/AppHeader';// **Ajuste o caminho para o seu AppHeader**
+import AppHeader from './components/layout/Header/AppHeader';
 import './App.css';
 
 // ROTA AUTH
 import Cadastro from "./Page/Auth/Cadastro";
 import Login from './Page/Auth/Login';
-import MeusEventos from './Page/User/Meus-eventos';
-import EditarEvento from './Page/User/EditarEvento';
+import ResetPassword from './Page/Auth/ResetPassword';
 
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
-import AdminRoute from './Hook/RotaDoAdm';
-import CookieNotice from './components/layout/CookieNotice/CookieNotice';
-import ProtectedRoute from './Hook/RotaProtegida';
 import { AuthProvider } from './Hook/AuthContext';
 import { CartProvider } from './Hook/CartContext';
+import RotaDoUsuario from './Hook/RotaDoUsuario'; // O protetor de rotas de usuário
+import AdminRoute from './Hook/RotaDoAdm'; // O protetor de rotas de admin
+import CookieNotice from './components/layout/CookieNotice/CookieNotice';
 
 // Suas outras páginas
-import CarrosselAdm from './Page/Admin/CarrosselAdm';
-import Detalhes from './Page/Eventos/Detalhes';
-import CriarEventos from './Page/Eventos/CriarEventos';
 import Home from './Page/Public/Home';
+import Detalhes from './Page/Eventos/Detalhes';
 import Categorias from "./Page/Public/Categorias";
 import Termos from './Page/Public/Termos';
 import PoliticaReembolso from './Page/Public/PoliticaReembolso';
 import Duvidas from './Page/Public/Duvidas';
+// Páginas de Usuário
+import CriarEventos from './Page/Eventos/CriarEventos';
+import EditarEvento from './Page/User/EditarEvento';
+import MeusEventos from './Page/User/Meus-eventos';
 import Perfil from './Page/User/Perfil';
 import Carrinho from './Page/User/Carrinho';
 import MeusIngressos from './Page/User/Meus-Ingressos';
+// Páginas de Admin
 import Painel from './Page/Admin/Painel';
+import CarrosselAdm from './Page/Admin/CarrosselAdm';
 import AdicionarAdm from "./Page/Admin/AdicionarAdm";
-import ResetPassword from './Page/Auth/ResetPassword';
 
 // ==================================================================
-// COMPONENTES DE LAYOUT
+// COMPONENTES DE LAYOUT (Estes permanecem iguais)
 // ==================================================================
-
-// Layout com a NavBar3
 function LayoutWithNavBar3() {
     return (
         <div>
@@ -51,7 +51,6 @@ function LayoutWithNavBar3() {
     );
 }
 
-// Layout com apenas o AppHeader
 function LayoutWithAppHeader() {
     return (
         <div>
@@ -63,67 +62,70 @@ function LayoutWithAppHeader() {
     );
 }
 
-// Layout sem nenhuma navbar
-function LayoutWithoutHeader() {
-    return (
-        <main className="main-content full-screen">
-            <Outlet />
-        </main>
-    );
-}
-
 // ==================================================================
-// COMPONENTE DE ROTAS
+// COMPONENTE DE ROTAS (Com o Grupo 3 Corrigido)
 // ==================================================================
 function AppRoutes() {
     return (
         <Routes>
-            {/* ROTAS PROTEGIDAS SEM NENHUM CABEÇALHO */}
+            {/* ======================================= */}
+            {/* GRUPO 1: ROTAS PÚBLICAS (Acessíveis a todos) */}
+            {/* ======================================= */}
+
+            {/* Rotas públicas com a NavBar3 */}
             <Route path="/evento/:id" element={<Detalhes />} />
-            <Route element={<ProtectedRoute />}>
+            <Route element={<LayoutWithNavBar3 />}>
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/categorias" element={<Categorias />} />
+            </Route>
+
+            {/* Rotas públicas com o AppHeader */}
+            <Route element={<LayoutWithAppHeader />}>
+                <Route path="/termos" element={<Termos />} />
+                <Route path="/PoliticaReembolso" element={<PoliticaReembolso />} />
+            </Route>
+
+            {/* Rotas públicas sem layout específico */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/duvidas" element={<Duvidas />} />
+
+
+            {/* ================================================= */}
+            {/* GRUPO 2: ROTAS PROTEGIDAS PARA USUÁRIOS (Admins são bloqueados) */}
+            {/* ================================================= */}
+            <Route element={<RotaDoUsuario />}>
+                {/* Rotas de usuário com a NavBar3 */}
+                <Route element={<LayoutWithNavBar3 />}>
+                    <Route path="/perfil" element={<Perfil />} />
+                    <Route path="/meus-eventos" element={<MeusEventos />} />
+                    <Route path="/meus-ingressos" element={<MeusIngressos />} />
+                </Route>
+
+                {/* Rotas de usuário sem layout específico */}
+                <Route path="/carrinho" element={<Carrinho />} />
                 <Route path="/CriarEventos" element={<CriarEventos />} />
                 <Route path="/editar-evento/:id" element={<EditarEvento />} />
             </Route>
 
-            <Route element={<AdminRoute />}>
+
+            {/* ================================================== */}
+            {/* GRUPO 3: ROTAS PROTEGIDAS PARA ADMINS (Com permissões específicas) */}
+            {/* ================================================== */}
+            
+            {/* Rotas que AMBOS os admins podem acessar */}
+            <Route element={<AdminRoute allowedRoles={['SUPER_ADMIN', 'MANAGER_SITE']} />}>
                 <Route path="/painel" element={<Painel />} />
                 <Route path="/CarrosselAdm" element={<CarrosselAdm />} />
+            </Route>
+
+            {/* Rotas que APENAS o SUPER_ADMIN pode acessar */}
+            <Route element={<AdminRoute allowedRoles={['SUPER_ADMIN']} />}>
                 <Route path="/AdicionarAdm" element={<AdicionarAdm />} />
             </Route>
 
-            <Route path="/duvidas" element={<Duvidas />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/cadastro" element={<Cadastro />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-
-            {/* ROTAS SEM NENHUM CABEÇALHO */}
-            <Route element={<LayoutWithoutHeader />}>
-                <Route path="/carrinho" element={<Carrinho />} />
-            </Route>
-
-            {/* ROTAS COM A NAVBART3 */}
-            <Route element={<LayoutWithNavBar3 />}>
-                <Route path="/" element={<Navigate to="/home" replace />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/evento/:id" element={<Detalhes />} />
-                <Route path="/categorias" element={<Categorias />} />
-
-                {/* Rotas protegidas com NavBar3 */}
-                <Route element={<ProtectedRoute />}>
-                    <Route path="/perfil" element={<Perfil />} />
-                </Route>
-            </Route>
-
-            {/* ROTAS COM APENAS O AppHeader */}
-            <Route element={<LayoutWithAppHeader />}>
-                <Route path="/termos" element={<Termos />} />
-                <Route path="/PoliticaReembolso" element={<PoliticaReembolso />} />
-                {/* Rota protegida com AppHeader */}
-                <Route element={<ProtectedRoute />}>
-                    <Route path="/meus-eventos" element={<MeusEventos />} />
-                    <Route path="/meus-ingressos" element={<MeusIngressos />} />
-                </Route>
-            </Route>
 
             {/* Redirecionamento de fallback para qualquer rota não encontrada */}
             <Route path="*" element={<Navigate to="/home" replace />} />
@@ -132,7 +134,7 @@ function AppRoutes() {
 }
 
 // ==================================================================
-// COMPONENTE PRINCIPAL APP
+// COMPONENTE PRINCIPAL APP (Permanece igual)
 // ==================================================================
 function App() {
     return (

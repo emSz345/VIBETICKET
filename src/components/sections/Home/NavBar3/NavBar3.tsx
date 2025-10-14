@@ -101,23 +101,16 @@ export default function NavBar3() {
     window.location.reload();
   };
 
-  // FUNÇÃO CORRIGIDA PARA TRATAR IMAGENS DO GOOGLE
   const getProfileImageUrl = () => {
     if (!user?.imagemPerfil) {
       return `${apiUrl}/uploads/blank_profile.png`;
     }
-
-    // Se já é uma URL completa (Google, Facebook, etc), retorna diretamente
     if (/^https?:\/\//.test(user.imagemPerfil)) {
       return user.imagemPerfil;
     }
-
-    // Se começa com /uploads, adiciona o apiUrl
     if (user.imagemPerfil.startsWith('/uploads')) {
       return `${apiUrl}${user.imagemPerfil}`;
     }
-
-    // Caso contrário, assume que é um arquivo local em uploads
     return `${apiUrl}/uploads/${user.imagemPerfil}`;
   };
 
@@ -226,15 +219,19 @@ export default function NavBar3() {
       </div>
 
       <div className="nav__actions hide-mobile">
-        <button className="nav__cta" onClick={() => navigate("/CriarEventos")}>
-          <FaPlusCircle size={20} />
-          CRIE SEU EVENTO
-        </button>
+        {user && user.role === 'USER' && (
+          <button className="nav__cta" onClick={() => navigate("/CriarEventos")}>
+            <FaPlusCircle size={20} />
+            CRIE SEU EVENTO
+          </button>
+        )}
 
-        <div className="cart-icon" title="Carrinho de compras" aria-label="Carrinho de compras" onClick={() => navigate("/Carrinho")}>
-          <FaShoppingCart size={24} />
-          {cartItemsCount > 0 && <span className="cart-badge">{cartItemsCount}</span>}
-        </div>
+        {user && user.role === 'USER' && (
+          <div className="cart-icon" title="Carrinho de compras" aria-label="Carrinho de compras" onClick={() => navigate("/Carrinho")}>
+            <FaShoppingCart size={24} />
+            {cartItemsCount > 0 && <span className="cart-badge">{cartItemsCount}</span>}
+          </div>
+        )}
 
         <div className="nav__auth">
           {!isAuthenticated ? (
@@ -308,16 +305,24 @@ export default function NavBar3() {
                   </div>
                   <hr />
                   <button onClick={() => voltar()}><FaHome /> <span>Início</span></button>
-                  <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
-                  <button onClick={() => navigate('/perfil')}><FaUserCircle /><span>Minha conta</span></button>
-                  {user?.isAdmin === true && (
+
+                  {user && user.role === 'USER' && (
+                    <>
+                      <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
+                      <button onClick={() => navigate('/perfil')}><FaUserCircle /><span>Minha conta</span></button>
+                      <button onClick={() => navigate('/Meus-eventos')}><FaClipboardList /><span>Meus eventos</span></button>
+                      <button onClick={() => navigate('/duvidas')}><FaHeadphones /><span>Central de Duvidas</span></button>
+                    </>
+                  )}
+
+                  {/* // <-- CORREÇÃO 1 AQUI */}
+                  {user && (user.role === 'SUPER_ADMIN' || user.role === 'MANAGER_SITE') && (
                     <button onClick={() => navigate('/Painel')}>
                       <FaUserShield />
-                      <span>Painel de Admin</span>
+                      <span>Painel do Admin</span>
                     </button>
                   )}
-                  <button onClick={() => navigate('/Meus-eventos')}><FaClipboardList /><span>Meus eventos</span></button>
-                  <button onClick={() => navigate('/duvidas')}><FaHeadphones /><span>Central de Duvidas</span></button>
+
                   <button
                     className="user-menu__logout-button"
                     onClick={() => {
@@ -380,11 +385,14 @@ export default function NavBar3() {
             <button onClick={() => { navigate('/perfil'); setMobileOpen(false); }}>
               <FaUserCircle /> Minha conta
             </button>
-            {user?.isAdmin && (
+
+            {/* // <-- CORREÇÃO 2 AQUI */}
+            {user && (user.role === 'SUPER_ADMIN' || user.role === 'MANAGER_SITE') && (
               <button onClick={() => { navigate('/Painel'); setMobileOpen(false); }}>
                 <FaUserShield /> Painel Admin
               </button>
             )}
+
             <button onClick={() => { navigate('/Meus-eventos'); setMobileOpen(false); }}>
               <FaClipboardList /> Meus eventos
             </button>
