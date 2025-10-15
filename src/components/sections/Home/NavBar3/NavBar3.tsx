@@ -219,14 +219,14 @@ export default function NavBar3() {
       </div>
 
       <div className="nav__actions hide-mobile">
-        {user && user.role === 'USER' && (
+        {(!isAuthenticated || (user && user.role === 'USER')) && (
           <button className="nav__cta" onClick={() => navigate("/CriarEventos")}>
             <FaPlusCircle size={20} />
             CRIE SEU EVENTO
           </button>
         )}
 
-        {user && user.role === 'USER' && (
+        {(!isAuthenticated || (user && user.role === 'USER')) && (
           <div className="cart-icon" title="Carrinho de compras" aria-label="Carrinho de compras" onClick={() => navigate("/Carrinho")}>
             <FaShoppingCart size={24} />
             {cartItemsCount > 0 && <span className="cart-badge">{cartItemsCount}</span>}

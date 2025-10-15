@@ -1,80 +1,128 @@
-import React, { useState } from 'react';
+// src/Page/Admin/AdicionarAdm.tsx
+
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
-import "../../styles/AdicionarAdm.css"; // Vamos criar este arquivo de CSS depois
+import { useAuth } from '../../Hook/AuthContext'; // Precisamos saber quem é o admin logado
+import api from '../../services/api'; // Usaremos a instância do axios configurada
+import "../../styles/AdicionarAdm.css";
 
-const apiUrl = process.env.REACT_APP_API_URL;
+// Interface para definir a estrutura do objeto de usuário
+interface User {
+    _id: string;
+    nome: string;
+    email: string;
+    role: 'USER' | 'MANAGER_SITE' | 'SUPER_ADMIN';
+}
 
-const PromoverAdmin: React.FC = () => {
-    const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
+const AdicionarAdm: React.FC = () => {
+    // Pega o usuário logado para evitar que ele mude a própria role
+    const { user: currentUser } = useAuth();
+    const navigate = useNavigate();
+
+    // Estados para gerenciar a UI
+    const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-    const navigate = useNavigate();
+    // Função para buscar todos os usuários da API
+    const fetchUsers = useCallback(async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/api/admin/users'); // Rota que busca todos os usuários
+            setUsers(response.data);
+        } catch (err) {
+            setError('Falha ao carregar a lista de usuários.');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
-    const handlePromoverAdmin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
+    // Busca os usuários quando o componente é montado
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
+
+    // Função para lidar com a mudança de cargo de um usuário
+    const handleRoleChange = async (email: string, newRole: User['role']) => {
         setError(null);
         setSuccess(null);
 
         try {
-            const response = await fetch(`${apiUrl}/api/auth/promover-admin`, {
-                method: 'PATCH', // Usamos PATCH para atualizar um recurso
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Pode ser necessário incluir um token de autenticação aqui, se o seu backend exigir
-                },
-                body: JSON.stringify({ email }),
-            });
+            const response = await api.patch('/api/admin/update-role', { email, newRole });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                setSuccess('Usuário promovido a administrador com sucesso!');
-                setEmail('');
-            } else {
-                setError(data.message || 'Erro ao promover o usuário. Verifique se o e-mail está correto.');
+            if (response.status === 200) {
+                setSuccess(response.data.message);
+                // Atualiza a lista de usuários localmente para refletir a mudança instantaneamente
+                setUsers(prevUsers =>
+                    prevUsers.map(user =>
+                        user.email === email ? { ...user, role: newRole } : user
+                    )
+                );
             }
-        } catch (err) {
-            console.error('Erro na requisição:', err);
-            setError('Não foi possível conectar ao servidor. Tente novamente mais tarde.');
-        } finally {
-            setLoading(false);
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Erro ao atualizar o cargo do usuário.');
         }
     };
 
+    if (loading) {
+        return <div className="loading-container">Carregando usuários...</div>;
+    }
+
     return (
-        <div className="promover-admin-container">
-            <header className="promover-admin-header">
-                <button style={{display:"flex", position:"absolute", left:"40px", top:"40px"}} onClick={() => navigate(-1)} className="back-button">
-                    <FaArrowLeft /> Voltar
+        <div className="gerenciar-admin-container">
+            <header className="gerenciar-admin-header">
+                <button onClick={() => navigate(-1)} className="back-button">
+                    <FaArrowLeft /> Voltar ao Painel
                 </button>
-                <h2>Promover a Administrador</h2>
+                <h2>Gerenciar Administradores</h2>
             </header>
 
-            <form onSubmit={handlePromoverAdmin} className="promover-admin-form">
-                <p>Digite o e-mail da conta que você deseja promover para administrador.</p>
-                <div className="form-group">
-                    <label htmlFor="email">E-mail do Usuário:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit" disabled={loading} className="submit-button">
-                    {loading ? 'Promovendo...' : 'Promover'}
-                </button>
+            {error && <p className="error-message">{error}</p>}
+            {success && <p className="success-message">{success}</p>}
 
-                {error && <p className="error-message">{error}</p>}
-                {success && <p className="success-message">{success}</p>}
-            </form>
+            <div className="user-list-container">
+                <table className="user-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Cargo Atual</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user) => (
+                            <tr key={user._id}>
+                                <td>{user.nome}</td>
+                                <td>{user.email}</td>
+                                <td>
+                                    <span className={`role-badge role-${user.role.toLowerCase()}`}>
+                                        {user.role}
+                                    </span>
+                                </td>
+                                <td>
+                                    <select
+                                        value={user.role}
+                                        onChange={(e) => handleRoleChange(user.email, e.target.value as User['role'])}
+                                        // Desabilita a alteração para o próprio SUPER_ADMIN logado
+                                        disabled={currentUser?.email === user.email}
+                                        className="role-select"
+                                    >
+                                        <option value="USER">Usuário</option>
+                                        <option value="MANAGER_SITE">Manager (Site)</option>
+                                        <option value="SUPER_ADMIN">Super Admin</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
 
-export default PromoverAdmin;
+export default AdicionarAdm;

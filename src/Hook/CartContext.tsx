@@ -53,14 +53,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                     // 2. USUÁRIO ESTÁ LOGADO
                     const localItemsJSON = localStorage.getItem('localCart');
                     const localItems = localItemsJSON ? JSON.parse(localItemsJSON) : [];
-                    
+
                     if (localItems.length > 0) {
                         // Se há itens locais, sincroniza com o backend
                         await CarrinhoService.sincronizarCarrinho(localItems);
                         // Limpa o local APÓS a sincronização bem-sucedida
                         localStorage.removeItem('localCart');
                     }
-                    
+
                     // Carrega o carrinho final e atualizado do backend
                     const serverItems = await CarrinhoService.getCarrinho();
                     setCartItems(serverItems);
@@ -100,7 +100,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             } else {
                 // Lógica para usuário deslogado
                 const currentItems = [...cartItems];
-                const existingItemIndex = currentItems.findIndex(i => 
+                const existingItemIndex = currentItems.findIndex(i =>
                     i.eventoId === item.eventoId && i.tipoIngresso === item.tipoIngresso
                 );
 
@@ -109,7 +109,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 } else {
                     currentItems.push({ ...item, id: `${item.eventoId}-${item.tipoIngresso}` });
                 }
-                
+
                 setCartItems(currentItems);
                 localStorage.setItem('localCart', JSON.stringify(currentItems));
             }
@@ -120,7 +120,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setIsLoading(false);
         }
     };
-    
+
     const updateItemQuantity = async (id: string, quantity: number) => {
         if (quantity < 1) {
             return removeItemFromCart(id);
@@ -132,7 +132,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 const updatedCart = await CarrinhoService.getCarrinho();
                 setCartItems(updatedCart);
             } else {
-                const newItems = cartItems.map(item => 
+                const newItems = cartItems.map(item =>
                     item.id === id ? { ...item, quantidade: quantity } : item
                 );
                 setCartItems(newItems);
@@ -142,7 +142,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setIsLoading(false);
         }
     };
-    
+
     const removeItemFromCart = async (id: string) => {
         setIsLoading(true);
         try {
@@ -159,7 +159,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setIsLoading(false);
         }
     };
-    
+
     const clearCart = async () => {
         setIsLoading(true);
         try {
@@ -172,7 +172,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setIsLoading(false);
         }
     };
-    
+
     const refreshCart = async () => {
         if (isAuthLoading) return;
         setIsLoading(true);

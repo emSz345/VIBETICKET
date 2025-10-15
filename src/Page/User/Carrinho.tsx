@@ -204,7 +204,7 @@ const Carrinho = () => {
             <button
               className="carrinho-btn-voltar"
               onClick={() => navigate('/eventos')}
-              disabled={isLoading} 
+              disabled={isLoading}
             >
               <FiArrowLeft /> Ver Eventos
             </button>

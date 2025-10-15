@@ -7,9 +7,10 @@ interface UserData {
   _id: string;
   nome: string;
   email: string;
-  role: string; 
+  role: string;
   isVerified: boolean;
   imagemPerfil?: string;
+  mercadoPagoAccountId?: string | null;
 }
 
 interface AuthContextType {
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // ou você pode adicionar o header aqui.
           // Ex: api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           const response = await api.get('/api/users/check-auth');
-          
+
           if (response.data && response.data.user) {
             setUser(response.data.user);
           } else {

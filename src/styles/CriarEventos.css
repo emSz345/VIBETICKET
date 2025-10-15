@@ -218,7 +218,7 @@
   --cor-primaria: #007bff;
   --cor-sucesso: #28a745;
   --cor-perigo: #dc3545;
-  --cor-aviso: #ffc107;
+  --cor-aviso: #ff0707;
   --cor-cinza-escuro: #333;
   --cor-cinza-claro: #666;
   --cor-fundo: #f8f9fa;
@@ -733,11 +733,11 @@
 
 
 .alerta-amarelo {
-  background-color: #fff3cd;
+  background-color: #ffcdcd;
   /* Cor de fundo amarela clara */
-  color: #856404;
+  color: #850404;
   /* Cor do texto amarelo escuro */
-  border: 1px solid #ffeeba;
+  border: 1px solid #ffbaba;
   /* Borda amarela */
   border-radius: 5px;
   /* Bordas arredondadas */
@@ -748,7 +748,7 @@
 }
 
 .alerta-amarelo a {
-  color: #004085;
+  color: #850404;
   /* Cor azul escura */
   font-weight: bold;
   text-decoration: underline;

@@ -6,6 +6,7 @@ import { IoSend } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import Conclusao from "../../assets/img-conclusao.png"
+import { useAuth } from '../../Hook/AuthContext';
 
 import { Link } from 'react-router-dom';
 import { GoAlertFill } from "react-icons/go";
@@ -14,6 +15,8 @@ import { FaTrashAlt } from "react-icons/fa";
 function CriarEventos() {
   const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
+
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   const [etapaAtual, setEtapaAtual] = useState(1);
 
@@ -379,6 +382,22 @@ function CriarEventos() {
     return Object.keys(novosErros).length === 0;
   };
 
+  useEffect(() => {
+    // Só executa a lógica depois que o AuthContext terminou de verificar a sessão
+    if (!isAuthLoading) {
+      // Se o usuário está logado, mas NÃO tem a conta do MP conectada...
+      if (user && !user.mercadoPagoAccountId) {
+        // ...redireciona ele para a página de perfil com uma mensagem de alerta.
+        navigate('/perfil', {
+          replace: true, // Impede o usuário de voltar para a página de criação
+          state: {
+            alerta: 'Para criar um evento, você precisa primeiro vincular sua conta do Mercado Pago.'
+          }
+        });
+      }
+    }
+  }, [isAuthLoading, user, navigate]);
+
 
   // ALTERADO 
   const handleEnviarAnalise = async () => {
@@ -397,19 +416,10 @@ function CriarEventos() {
       return;
     }
 
-    const userDataString = localStorage.getItem('user');
 
-    if (!userDataString) {
+    if (!user) {
       alert('Usuário não autenticado. Por favor, faça login para criar um evento.');
       navigate('/login');
-      return;
-    }
-
-    const usuario = JSON.parse(userDataString);
-    const userId = usuario?._id;
-
-    if (!userId) {
-      alert('Não foi possível encontrar o ID do usuário. Por favor, faça login novamente.');
       return;
     }
 
@@ -436,7 +446,7 @@ function CriarEventos() {
     formData.append("quantidadeInteira", quantidadeInteira);
     formData.append("quantidadeMeia", temMeia ? quantidadeMeia : '0');
     formData.append("temMeia", temMeia ? 'true' : 'false');
-    formData.append("criadoPor", userId);
+    formData.append("criadoPor", user._id);
 
     setIsSubmitting(true);
 
@@ -470,8 +480,16 @@ function CriarEventos() {
     }
   };
 
+  if (isAuthLoading || (user && !user.mercadoPagoAccountId)) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        Verificando seu perfil de criador...
+      </div>
+    );
+  }
+
   // Adicione a função para fechar o modal de sucesso e navegar
-  
+
 
   const getError = (fieldName: string) => erros[fieldName];
 
@@ -524,8 +542,11 @@ function CriarEventos() {
       <div className="criar-form">
         {perfilCarregado && !perfilCompleto && (
           <div className="alerta-amarelo">
-            <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
-            preencher suas informações pessoais. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
+            <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o <strong>pagamento</strong> do seu evento, é <strong>obrigatório</strong><br />
+            preencher suas <strong>informações pessoais e vincular sua conta do mercado pago</strong> ao site. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
+            <p></p>
+            <br></br>
+            <strong>Observação: o valor recebido sobre o ingresso antes da conexão com mercado pago não será resarcido</strong>
           </div>
         )}
 
@@ -982,6 +1003,8 @@ function CriarEventos() {
             </div>
           </div>
         )}
+
+
 
         {etapaAtual === 6 && (
           <div className="informacoes-basicas-container">

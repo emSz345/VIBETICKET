@@ -1,188 +1,225 @@
-
-
-
-
-:root{
-  --primary:#0969fb;
-  --primary-dark:#0756cc;
-  --bg:#f9fbfd;
-  --text:#333;
-  --muted:#64748b;
-  --card:#ffffff;
-  --input-bg:#f8fafc;
-  --border:#e2e8f0;
-  --shadow:0 4px 20px rgba(0,0,0,0.08);
+:root {
+  --primary: #0969fb;
+  --primary-dark: #0756cc;
+  --success: #10b981;
+  --success-dark: #059669;
+  --error: #ef4444;
+  --alert: #ffc107;
+  --bg: #f9fbfd;
+  --text: #333;
+  --muted: #64748b;
+  --card: #ffffff;
+  --input-bg: #f8fafc;
+  --border: #e2e8f0;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transicao-rapida: all 0.2s ease;
 }
 
-body{ background:var(--bg); }
+body {
+  background: var(--bg);
+}
 
 /* Container geral */
-.perfil-container{
-  max-width:1200px;
-  margin:0 auto;
-  padding:30px 20px;
-  color:var(--text);
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.perfil-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  color: var(--text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.perfil-header{ margin-bottom:30px; text-align:center; }
-.perfil-header h1{ font-size:28px; font-weight:600; color:#2c3e50; margin-bottom:8px; }
-.perfil-header p{ color:var(--muted); font-size:16px; }
+.perfil-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.perfil-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.perfil-header p {
+  color: var(--muted);
+  font-size: 16px;
+}
 
 /* Layout 2 colunas */
-.perfil-content{ display:flex; gap:30px; }
-.perfil-left{ flex:1; min-width:350px; }
-.perfil-right{ flex:2; }
+.perfil-content {
+  display: flex;
+  gap: 30px;
+}
+
+.perfil-left {
+  flex: 1;
+  min-width: 350px;
+}
+
+.perfil-right {
+  flex: 2;
+}
 
 /* Card */
-.perfil-card{
-  background:var(--card);
-  border-radius:12px;
-  box-shadow:var(--shadow);
-  padding:25px;
-  margin-bottom:20px;
+.perfil-card {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 25px;
+  margin-bottom: 20px;
+}
+
+.perfil-card.full-width {
+  width: 100%;
+  max-width: none;
+  flex-basis: 100%;
 }
 
 /* Avatar */
-.perfil-avatar-section{
-  display:flex; flex-direction:column; align-items:center; margin-bottom:25px;
-}
-.perfil-avatar-wrapper{ position:relative; margin-bottom:15px; }
-.perfil-avatar{
-  width:150px; height:150px; border-radius:50%; object-fit:cover;
-  border:4px solid #f1f5f9; box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-.perfil-avatar-edit{
-  position:absolute; bottom:10px; right:10px;
-  background:var(--primary); color:#fff; width:36px; height:36px;
-  border-radius:50%; display:flex; align-items:center; justify-content:center;
-  cursor:pointer; transition:.2s;
-}
-.perfil-avatar-edit:hover{ background:var(--primary-dark); transform:scale(1.1); }
-.perfil-email{ color:var(--muted); font-size:14px; margin-top:5px; }
-
-/* Inputs */
-.perfil-form-group{ margin-bottom:20px; }
-.perfil-input-label{
-  display:flex; align-items:center; margin-bottom:8px;
-  font-size:14px; font-weight:500; color:#475569;
-}
-.perfil-input-icon{ margin-right:10px; color:var(--muted); }
-
-.perfil-input{
-  width:100%; padding:12px 15px; font-size:14px;
-  border:1px solid var(--border); border-radius:8px;
-  background:var(--input-bg); transition:.2s;
-}
-.perfil-input:focus{
-  outline:none; border-color:var(--primary);
-  box-shadow:0 0 0 2px rgba(9,105,251,.2); background:#fff;
-}
-.perfil-input:disabled{ background:#f1f5f9; color:var(--muted); }
-
-/* Botões */
-.perfil-btn-primary{
-  width:100%; padding:12px; border:none; border-radius:8px;
-  background:var(--primary); color:#fff; font-size:14px; font-weight:600;
-  display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; transition:.2s;
-}
-.perfil-btn-primary:hover{ background:var(--primary-dark); }
-.perfil-btn-save{ background:#10b981; }
-.perfil-btn-save:hover{ background:#059669; }
-
-/* Tabs */
-.perfil-tabs{ display:flex; border-bottom:1px solid var(--border); margin-bottom:20px; }
-.perfil-tab{
-  padding:12px 20px; background:none; border:none; font-size:14px; font-weight:500;
-  color:var(--muted); cursor:pointer; display:flex; align-items:center; gap:8px;
-  position:relative; transition:.2s;
-}
-.perfil-tab:hover{ color:var(--primary); }
-.perfil-tab.active{ color:var(--primary); }
-.perfil-tab.active::after{
-  content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--primary);
-}
-.perfil-tab-icon{ font-size:16px; }
-.perfil-tab-content{ padding:5px; }
-
-/* Grid */
-.perfil-form-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
-.full-width{ grid-column:span 2; }
-
-/* Radio CPF/CNPJ (estilo pill) */
-.perfil-radio-group{ display:flex; gap:10px; flex-wrap:wrap; }
-.perfil-radio-pill{
-  position:relative; display:inline-flex; align-items:center; cursor:pointer;
-}
-.perfil-radio-pill input{ position:absolute; opacity:0; pointer-events:none; }
-.perfil-radio-pill span{
-  padding:8px 14px; border:1px solid var(--border); border-radius:999px;
-  background:#fff; color:#334155; font-size:14px; transition:.2s;
-}
-.perfil-radio-pill input:checked + span{
-  background:var(--primary); color:#fff; border-color:var(--primary);
-  box-shadow:0 0 0 2px rgba(9,105,251,.15);
+.perfil-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
 }
 
-/* Estados */
-.perfil-loading, .perfil-error{
-  text-align:center; padding:40px; font-size:16px; color:var(--muted);
-}
-.perfil-error{ color:#ef4444; }
-
-/* Responsivo */
-@media (max-width: 992px){
-  .perfil-content{ flex-direction:column; }
-  .perfil-left{ min-width:auto; }
-  .perfil-form-grid{ grid-template-columns:1fr; }
-  .full-width{ grid-column:span 1; }
+.perfil-avatar-wrapper {
+  position: relative;
+  margin-bottom: 15px;
 }
 
-/* Cabeçalho Secundário */
+.perfil-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #f1f5f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.perfil-avatar-edit {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: var(--primary);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.perfil-avatar-edit:hover {
+  background: var(--primary-dark);
+  transform: scale(1.1);
+}
+
+.perfil-email {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* Cabeçalho Secundário (Dados Pessoais, Conexão MP) */
 .perfil-header-secondary {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
 }
+
 .perfil-header-secondary h3 {
   font-size: 20px;
   font-weight: 600;
   margin: 0;
   color: #2c3e50;
 }
+
 .perfil-tab-icon {
   font-size: 20px;
   color: var(--primary);
 }
 
-/* Grid */
+.perfil-tab-content {
+  padding: 5px;
+}
+
+/* Forms e Inputs */
+.perfil-form-group {
+  margin-bottom: 20px;
+}
+
+.perfil-input-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.perfil-input-icon {
+  margin-right: 10px;
+  color: var(--muted);
+}
+
+.perfil-input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  transition: .2s;
+}
+
+.perfil-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(9, 105, 251, .2);
+  background: #fff;
+}
+
+.perfil-input:disabled {
+  background: #f1f5f9;
+  color: var(--muted);
+}
+
+/* Grid para Formulários */
 .perfil-form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
+
 .full-width {
   grid-column: span 2;
 }
 
-/* Radio CPF/CNPJ (estilo pill) */
+/* Radio CPF/CNPJ */
 .perfil-radio-group {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
+
 .perfil-radio-pill {
   position: relative;
   display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
+
 .perfil-radio-pill input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
+
 .perfil-radio-pill span {
   padding: 8px 14px;
   border: 1px solid var(--border);
@@ -192,63 +229,161 @@ body{ background:var(--bg); }
   font-size: 14px;
   transition: .2s;
 }
-.perfil-radio-pill input:checked + span {
+
+.perfil-radio-pill input:checked+span {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(9, 105, 251, .15);
 }
 
-/* Estados */
-.perfil-loading, .perfil-error {
+/* Botões */
+.perfil-btn-primary {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.perfil-btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.perfil-btn-save {
+  background: var(--success);
+}
+
+.perfil-btn-save:hover {
+  background: var(--success-dark);
+}
+
+/* ===== Notificações e Status (Novos Estilos) ===== */
+.notification {
+  padding: 15px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  border-left: 5px solid;
+}
+
+.notification--success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-color: #4caf50;
+}
+
+.notification--error {
+  background-color: #ffebee;
+  color: #c62828;
+  border-color: #f44336;
+}
+
+.notification--alert {
+  background-color: #fff8e1;
+  color: #856404;
+  border-color: var(--alert);
+}
+
+.perfil-connection-status {
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.perfil-connection-status.connected {
+  background-color: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  color: #2e7d32;
+}
+
+.perfil-connection-status.connected p {
+  font-weight: bold;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.perfil-connection-status.connected small {
+  font-weight: normal;
+}
+
+
+.perfil-connection-status.disconnected {
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+}
+
+.perfil-connection-status.disconnected p {
+  margin: 0 0 15px 0;
+  color: var(--muted);
+}
+
+.perfil-connection-status.disconnected .perfil-btn-primary {
+  width: auto;
+  align-self: flex-start;
+  padding: 10px 20px;
+}
+
+.btn-desvincular {
+  background: none;
+  border: 1px solid #d9534f;
+  color: #d9534f;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-top: 15px;
+  transition: all 0.2s ease;
+}
+
+.btn-desvincular:hover {
+  background-color: #d9534f;
+  color: white;
+}
+
+/* Mensagens de erro de validação */
+.perfil-input-error {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1) !important;
+}
+
+.perfil-error-message {
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-top: 5px;
+}
+
+/* Estados de carregamento e erro */
+.perfil-loading,
+.perfil-error {
   text-align: center;
   padding: 40px;
   font-size: 16px;
   color: var(--muted);
 }
+
 .perfil-error {
-  color: #ef4444;
+  color: var(--error);
 }
 
-/* Responsivo */
-@media (max-width: 992px) {
-  .perfil-content {
-      flex-direction: column;
-  }
-  .perfil-left {
-      min-width: auto;
-  }
-  .perfil-form-grid {
-      grid-template-columns: 1fr;
-  }
-  .full-width {
-      grid-column: span 1;
-  }
-}
-
-.perfil-notice {
-  background-color: #fffacd; /* Amarelo bem claro, tipo limão */
-  border: 1px solid #ffc107 !important; /* Amarelo da borda */
-  color: #856404; /* Cor do texto, um marrom escuro para contraste */
-  padding: 12px;
-  border-radius: 8px;
-  margin-top: 15px;
-  margin-bottom: 20px;
-  font-size: 0.9em;
-  line-height: 1.4;
-}
-
-.perfil-notice strong {
-  color: #ffc107; /* Amarelo mais vibrante para a palavra "Atenção" */
-}
-
-div.perfil-card.full-width {
-  width: 100%;
-  max-width: none; /* Remove qualquer limitação de largura anterior */
-  flex-basis: 100%; /* Garante que ele ocupe 100% do espaço flexível */
-}
-
-/* --- MODAL DE SUCESSO --- */
 /* --- MODAL DE SUCESSO --- */
 .perfil-modal-overlay {
   position: fixed;
@@ -273,17 +408,6 @@ div.perfil-card.full-width {
   overflow: hidden;
 }
 
-@keyframes perfil-modal-appear {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
 .perfil-modal-content {
   padding: 30px 25px 25px;
   text-align: center;
@@ -293,7 +417,7 @@ div.perfil-card.full-width {
 .perfil-modal-icon {
   width: 70px;
   height: 70px;
-  background: #10b981;
+  background: var(--success);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -302,18 +426,6 @@ div.perfil-card.full-width {
   color: white;
   font-size: 28px;
   animation: perfil-modal-icon-bounce 0.5s ease-out;
-}
-
-@keyframes perfil-modal-icon-bounce {
-  0% {
-    transform: scale(0);
-  }
-  60% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
 }
 
 .perfil-modal-title {
@@ -340,50 +452,63 @@ div.perfil-card.full-width {
   background: #e2e8f0;
 }
 
-/* Estilos para validação do nome */
-.perfil-input-error {
-  border-color: #ff4444 !important;
-  box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.1) !important;
-}
-
-.perfil-error-message {
-  color: #ff4444;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-/* Resto do seu CSS existente... */
-
 .perfil-modal-progress-bar {
   height: 100%;
-  background: #10b981;
+  background: var(--success);
   animation: perfil-modal-progress 3s linear forwards;
+}
+
+@keyframes perfil-modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes perfil-modal-icon-bounce {
+  0% {
+    transform: scale(0);
+  }
+
+  60% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes perfil-modal-progress {
   from {
     width: 100%;
   }
+
   to {
     width: 0%;
   }
 }
 
-/* Adicione também um efeito de fade out quando o modal estiver fechando */
-.perfil-modal.fade-out {
-  animation: perfil-modal-disappear 0.3s ease-in forwards;
-}
-
-@keyframes perfil-modal-disappear {
-  from {
-    opacity: 1;
-    transform: scale(1) translateY(0);
+/* Responsivo */
+@media (max-width: 992px) {
+  .perfil-content {
+    flex-direction: column;
   }
-  to {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
+
+  .perfil-left {
+    min-width: auto;
+  }
+
+  .perfil-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: span 1;
   }
 }
