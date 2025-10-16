@@ -458,6 +458,106 @@ body {
   animation: perfil-modal-progress 3s linear forwards;
 }
 
+.perfil-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.perfil-modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 450px;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.perfil-modal-content {
+  padding: 2rem;
+  text-align: center;
+}
+
+.perfil-modal-icon-alert {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background-color: #fff1f2;
+  /* Fundo vermelho bem claro */
+  color: #ef4444;
+  /* Vermelho */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.perfil-modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.perfil-modal-message {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.perfil-modal-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* Botões da Modal */
+.perfil-btn-secondary,
+.perfil-btn-danger {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  flex: 1;
+}
+
+.perfil-btn-secondary {
+  background-color: #f3f4f6;
+  /* Cinza claro */
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.perfil-btn-secondary:hover {
+  background-color: #e5e7eb;
+}
+
+.perfil-btn-danger {
+  background-color: #ef4444;
+  /* Vermelho */
+  color: #fff;
+}
+
+.perfil-btn-danger:hover {
+  background-color: #dc2626;
+  /* Vermelho mais escuro */
+}
+
 @keyframes perfil-modal-appear {
   from {
     opacity: 0;
