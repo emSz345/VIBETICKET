@@ -23,23 +23,11 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: npm install and build
-        run: |
-          npm install --legacy-peer-deps
-          CI=false npm run build
-
-      - name: Create release artifact
-        run: |
-          mkdir release
-          cp -R build ./release
-          cp package.json ./release
-          cp package-lock.json ./release
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./release # <-- Aponta para a pasta que acabamos de criar
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,7 +41,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-          
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -67,4 +55,4 @@ jobs:
         with:
           app-name: 'Vibe-Front'
           slot-name: 'Production'
-          package: . # <-- 'package: .' está correto, pois ele usa o artefato baixado
+          package: .
