@@ -398,7 +398,6 @@ function CriarEventos() {
     }
   }, [isAuthLoading, user, navigate]);
 
-
   // ALTERADO 
   const handleEnviarAnalise = async () => {
     if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5)) {
@@ -423,6 +422,14 @@ function CriarEventos() {
       return;
     }
 
+    // **** MUDANÇA ETAPA 1: CALCULE OS VALORES FINAIS AQUI ****
+    // Use a sua função auxiliar que já existe para calcular os valores com 10% de taxa
+    const valorFinalInteiraCalculado = calcularValorFinalComTaxa(valorIngressoInteira);
+    const valorFinalMeiaCalculado = temMeia ? calcularValorFinalComTaxa(valorIngressoMeia) : 0;
+
+    // Sua função `calcularValorFinalComTaxa` retorna um NÚMERO (ex: 110.50),
+    // que é o formato ideal para o MongoDB.
+
     const formData = new FormData();
     formData.append("nome", nomeEvento);
     if (image) formData.append('imagem', image);
@@ -441,8 +448,22 @@ function CriarEventos() {
     formData.append("horaTermino", horaTermino);
     formData.append("dataFimVendas", dataFimVendas);
     formData.append("dataInicioVendas", dataInicioVendas);
-    formData.append("valorIngressoInteira", valorIngressoInteira);
-    formData.append("valorIngressoMeia", temMeia ? valorIngressoMeia : '0');
+
+    // **** MUDANÇA ETAPA 2: SUBSTITUA OS VALORES NO FORMDATA ****
+
+    // CÓDIGO ANTIGO (Comentado):
+    // formData.append("valorIngressoInteira", valorIngressoInteira);
+    // formData.append("valorIngressoMeia", temMeia ? valorIngressoMeia : '0');
+
+    // CÓDIGO NOVO:
+    // Use as variáveis que você acabou de calcular.
+    // O .toString() converte o número (ex: 110.5) para string ("110.5")
+    // para ser enviado no FormData. O backend salvará isso como Número.
+    formData.append("valorIngressoInteira", valorFinalInteiraCalculado.toString());
+    formData.append("valorIngressoMeia", valorFinalMeiaCalculado.toString());
+
+    // **** FIM DAS MUDANÇAS ****
+
     formData.append("quantidadeInteira", quantidadeInteira);
     formData.append("quantidadeMeia", temMeia ? quantidadeMeia : '0');
     formData.append("temMeia", temMeia ? 'true' : 'false');
@@ -487,6 +508,25 @@ function CriarEventos() {
       </div>
     );
   }
+
+  const calcularValorFinalComTaxa = (valorBaseString: string) => {
+    if (!valorBaseString) {
+      return 0;
+    }
+    // 1. Converte a string "100,50" para o número 100.50
+    const valorNumerico = parseFloat(valorBaseString.replace(',', '.'));
+
+    if (isNaN(valorNumerico)) {
+      return 0;
+    }
+
+    // 2. Calcula o valor com 10% de taxa
+    const valorFinal = valorNumerico * 1.1;
+
+    // 3. Arredonda para 2 casas decimais para evitar problemas de ponto flutuante
+    // e retorna como um NÚMERO (que é o ideal para o MongoDB)
+    return parseFloat(valorFinal.toFixed(2));
+  };
 
   // Adicione a função para fechar o modal de sucesso e navegar
 

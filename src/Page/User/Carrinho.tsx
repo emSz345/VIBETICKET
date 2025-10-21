@@ -66,7 +66,6 @@ const Carrinho = () => {
       return;
     }
 
-    // Sua verificação de login mais robusta
     if (!user || !user._id) {
       alert("Você precisa estar logado para finalizar a compra.");
       navigate('/login');
@@ -74,33 +73,31 @@ const Carrinho = () => {
     }
 
     try {
-      setIsLoading(true); // Adicionado loading para o fetch
+      setIsLoading(true);
 
-      const items = carrinho.map(item => ({
-        title: item.nomeEvento,
-        quantity: item.quantidade,
-        unit_price: item.preco,
-      }));
+      // REMOVA A CRIAÇÃO DOS 'items' E 'userId' DAQUI
+      // const items = carrinho.map(item => ({ ... })); // REMOVIDO
+      // const userId = user._id; // REMOVIDO
 
-      const userId = user._id;
-
-      const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, {
+      // 1. Mude a URL da rota
+      const response = await fetch(`${apiUrl}/api/pagamento/iniciar-pagamento`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        // Sua CORREÇÃO CRÍTICA para cookies
         credentials: 'include',
-        body: JSON.stringify({ items, userId }),
+        // 2. REMOVA O BODY
+        // O backend agora pega o carrinho direto do banco de dados
+        // usando o seu cookie/token de autenticação.
+        // body: JSON.stringify({ items, userId }), // <-- REMOVIDO
       });
 
       if (response.ok) {
         const data = await response.json();
         window.open(data.preference_url, '_blank');
       } else {
-        // Seu tratamento de erro melhorado
         const errorData = await response.json().catch(() => ({ message: response.statusText }));
-        console.error('Falha ao criar preferência:', response.status, errorData);
+        console.error('Falha ao iniciar pagamento:', response.status, errorData);
 
         if (response.status === 401 || response.status === 403) {
           alert("Sessão expirada. Por favor, faça login novamente.");
@@ -108,7 +105,12 @@ const Carrinho = () => {
           return;
         }
 
-        alert(`Erro ao iniciar o pagamento: ${errorData.message || response.statusText}. Tente novamente.`);
+        // Trata o erro de carrinho vazio que o backend pode retornar
+        if (response.status === 400 && errorData.error) {
+          alert(errorData.error); // Ex: "Carrinho vazio."
+        } else {
+          alert(`Erro ao iniciar o pagamento: ${errorData.message || response.statusText}. Tente novamente.`);
+        }
       }
     } catch (error) {
       console.error('Erro de rede ou desconhecido:', error);

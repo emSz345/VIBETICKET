@@ -4,7 +4,15 @@
   border: none;
   padding: 0;
   margin: 0 16px 16px 16px;
+  /* Ajustado margem */
   cursor: pointer;
+  /* Cursor padrão aqui, será sobrescrito se inativo */
+  display: block;
+  /* Garante que ocupa espaço corretamente */
+  outline: none;
+  /* Remove foco padrão */
+  -webkit-tap-highlight-color: transparent;
+  /* Remove highlight em mobile */
 }
 
 .IngressoCard-ticket {
@@ -13,14 +21,48 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
+  /* Transição mais suave */
 }
 
-.IngressoCard-ticket:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+/* Efeito Hover apenas para cards ativos */
+.IngressoCard--active .IngressoCard-ticket:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  /* Sombra mais pronunciada */
   border-color: #d1d5db;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  /* Leve levantamento */
 }
+
+/* --- ESTADO INATIVO --- */
+.IngressoCard--inactive {
+  cursor: not-allowed !important;
+  /* Força o cursor */
+}
+
+.IngressoCard--inactive .IngressoCard-ticket {
+  opacity: 0.65;
+  /* Deixa o card um pouco transparente */
+  /* Remove o hover para inativos */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transform: none;
+  border-color: #e5e7eb;
+}
+
+/* Botões desabilitados dentro do card inativo */
+.IngressoCard--inactive .IngressoCard-ticket-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #e5e7eb !important;
+  /* Sobrescreve gradientes/cores */
+  color: #9ca3af !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* --- FIM ESTADO INATIVO --- */
+
 
 /* Header do Comprovante */
 .IngressoCard-ticket-header {
@@ -29,31 +71,53 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-
-
 .IngressoCard-ticket-title {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  /* Alinha ID à direita */
   gap: 12px;
 }
 
 .IngressoCard-ticket-title h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  /* Levemente menor */
   font-weight: 700;
   color: #1f2937;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
+  /* Ajustado espaçamento */
 }
 
 .IngressoCard-ticket-id {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  /* Levemente menor */
   color: #6b7280;
   background: #f8fafc;
-  padding: 4px 12px;
+  padding: 4px 10px;
+  /* Ajustado padding */
   border-radius: 6px;
   font-weight: 600;
   border: 1px solid #e5e7eb;
+  white-space: nowrap;
+  /* Evita quebra de linha no ID */
+}
+
+/* Dica de clique (opcional) */
+.ingressHint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-left: auto;
+  /* Empurra para a direita, mas antes do ID */
+  padding-right: 10px;
+  display: none;
+  /* Escondido por padrão */
+}
+
+/* Mostra dica apenas no card ativo e em hover */
+.IngressoCard--active:hover .ingressHint {
+  display: inline;
 }
 
 /* Informações do Evento */
@@ -63,10 +127,12 @@
 }
 
 .IngressoCard-event-name {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
+  /* Ajustado */
   font-weight: 700;
   color: #111827;
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0;
+  /* Reduzido margem inferior */
   line-height: 1.3;
 }
 
@@ -80,17 +146,25 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  overflow: hidden;
+  /* Evita que texto longo vaze */
 }
 
 .IngressoCard-event-location,
 .IngressoCard-event-date {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  /* Ajustado */
   color: #374151;
   font-weight: 500;
   margin: 0;
+  white-space: nowrap;
+  /* Evita quebra de linha inicial */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Adiciona "..." se for muito longo */
 }
 
-/* Informações em Linha */
+/* Informações em Linha (Secundárias) */
 .IngressoCard-ticket-secondary {
   padding: 16px 20px;
 }
@@ -105,11 +179,13 @@
 .IngressoCard-info-item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+  /* Ajustado */
 }
 
 .IngressoCard-info-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  /* Ajustado */
   color: #9ca3af;
   font-weight: 500;
   text-transform: uppercase;
@@ -117,104 +193,147 @@
 }
 
 .IngressoCard-info-value {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  /* Ajustado */
   color: #374151;
   font-weight: 500;
 }
 
 .IngressoCard-info-price {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #059669;
+  /* Verde mais escuro */
   font-weight: 600;
 }
 
+/* Estilos de STATUS */
 .IngressoCard-info-status {
-  font-size: 0.75rem;
-  padding: 4px 8px;
+  font-size: 0.7rem;
+  /* Menor */
+  padding: 3px 8px;
+  /* Ajustado */
   border-radius: 6px;
-  font-weight: 600;
+  font-weight: 700;
+  /* Mais forte */
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  /* Mais espaçado */
   width: fit-content;
   text-align: center;
+  border: 1px solid transparent;
+  /* Borda padrão transparente */
 }
 
 .IngressoCard-info-status--pago {
-  background: #f0fdf4;
-  color: #166534;
-  border: 1px solid #dcfce7;
-}
-
-.IngressoCard-info-status--usado {
-  background: #fffbeb;
-  color: #92400e;
-  border: 1px solid #fef3c7;
-}
-
-.IngressoCard-info-status--cancelado {
-  background: #fef2f2;
-  color: #991b1b;
-  border: 1px solid #fee2e2;
+  /* APROVADO */
+  background: #E6FFFA;
+  /* Verde bem claro */
+  color: #2F855A;
+  /* Verde escuro */
+  border-color: #B2F5EA;
+  /* Verde claro borda */
 }
 
 .IngressoCard-info-status--pendente {
-  background: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #dbeafe;
+  background: #FEFBC0;
+  /* Amarelo bem claro */
+  color: #9A6B00;
+  /* Amarelo escuro */
+  border-color: #F6E05E;
+  /* Amarelo borda */
 }
 
-/* Ações - Botão Visualizar Ingresso */
+.IngressoCard-info-status--recusado,
+.IngressoCard-info-status--cancelado {
+  background: #FED7D7;
+  /* Vermelho bem claro */
+  color: #C53030;
+  /* Vermelho escuro */
+  border-color: #FEB2B2;
+  /* Vermelho borda */
+}
+
+/* Ações - Botão Baixar PDF */
 .IngressoCard-ticket-actions {
   padding: 12px 20px 16px 20px;
   border-top: 1px solid #f3f4f6;
-  background: #fafafa;
+  background: #f9fafb;
+  /* Fundo levemente diferente */
 }
 
 .IngressoCard-ticket-btn {
   width: 100%;
-  padding: 12px 16px;
+  padding: 11px 16px;
+  /* Ajustado padding */
   background: #ffffff;
-  border: 1.5px solid #eb2525;
-  border-radius: 10px;
-  font-size: 0.9rem;
+  border: 1.5px solid #d1d5db;
+  /* Borda cinza padrão */
+  border-radius: 8px;
+  /* Borda menos redonda */
+  font-size: 0.85rem;
+  /* Ajustado */
   font-weight: 600;
-  color: #eb2525;
+  color: #374151;
+  /* Cor cinza escuro */
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  /* Transição mais rápida */
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
-.IngressoCard-ticket-btn:hover {
-  background: #eb2525;
-  color: white;
+.IngressoCard-ticket-btn:not(:disabled):hover {
+  /* Hover apenas se não desabilitado */
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #1f2937;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(235, 37, 37, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.IngressoCard-ticket-btn:active {
+.IngressoCard-ticket-btn:not(:disabled):active {
   transform: translateY(0);
+  background: #f3f4f6;
+  box-shadow: none;
 }
 
+/* Estilo específico botão download (azul) */
 .IngressoCard-ticket-btn--secondary {
-  background: linear-gradient(135deg, #6371f1 0%, #5ca4f6 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  /* Azul gradiente */
   color: white;
   border: none;
 }
 
-.IngressoCard-ticket-btn--secondary:hover {
-  background: linear-gradient(135deg, #5b9edc 0%, #4d8ef0 100%);
-  box-shadow: 0 6px 20px rgba(99, 101, 241, 0.3);
-  transform: translateY(-1px);
+.IngressoCard-ticket-btn--secondary:not(:disabled):hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  color: white;
+  /* Garante cor no hover */
+  border: none;
 }
 
-.IngressoCard-ticket-btn-icon {
-  font-size: 1.2rem;
-  width: 20px;
-  height: 20px;
+.IngressoCard-ticket-btn--secondary:not(:disabled):active {
+  transform: translateY(0);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: none;
 }
+
+/* Ícone dentro do botão */
+.IngressoCard-ticket-btn-icon {
+  font-size: 1.1rem;
+  /* Ajustado */
+  width: 18px;
+  /* Ajustado */
+  height: 18px;
+  /* Ajustado */
+  margin-top: -1px;
+  /* Alinhamento vertical fino */
+}
+
 
 /* ===== MODAL DO INGRESSO ===== */
 .IngressoCard-modal {
@@ -223,33 +342,43 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(15, 23, 42, 0.8);
+  background-color: rgba(17, 24, 39, 0.8);
+  /* Fundo mais escuro */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 99991;
-  backdrop-filter: blur(8px);
-  padding: 20px;
+  z-index: 1050;
+  /* Z-index comum para modais */
+  backdrop-filter: blur(5px);
+  /* Menos blur */
+  padding: 16px;
+  /* Padding geral */
+  overflow-y: auto;
+  /* Permite scroll se conteúdo for maior */
 }
 
 .IngressoCard-modal-content {
-  background: white;
-  border-radius: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  /* Menos redondo */
   padding: 0;
   width: 100%;
-  max-width: 560px;
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  animation: IngressoCard-modal-appear 0.3s ease-out;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 480px;
+  /* Largura máxima menor */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  /* Sombra mais suave */
+  animation: IngressoCard-modal-appear 0.25s ease-out;
+  max-height: calc(100vh - 40px);
+  /* Altura máxima com margem */
+  display: flex;
+  /* Flex container para body e actions */
+  flex-direction: column;
 }
 
 @keyframes IngressoCard-modal-appear {
   from {
     opacity: 0;
-    transform: scale(0.9) translateY(-10px);
+    transform: scale(0.95) translateY(-10px);
   }
 
   to {
@@ -262,20 +391,29 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 20px 24px 8px 24px;
-  border-bottom: none;
+  padding: 12px 16px;
+  /* Menor padding */
+  border-bottom: 1px solid #e5e7eb;
+  /* Linha separadora */
+  flex-shrink: 0;
+  /* Não encolhe */
 }
 
 .IngressoCard-modal-close {
-  background: #f1f5f9;
+  background: transparent;
+  /* Sem fundo */
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  /* Maior */
   cursor: pointer;
-  color: #64748b;
+  color: #9ca3af;
+  /* Cinza claro */
   padding: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  /* Menor */
+  border-radius: 50%;
+  /* Círculo */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,557 +421,262 @@
 }
 
 .IngressoCard-modal-close:hover {
-  background: #e2e8f0;
-  color: #475569;
+  background: #f3f4f6;
+  /* Fundo suave no hover */
+  color: #4b5563;
+  /* Cinza mais escuro */
   transform: rotate(90deg);
+  /* Mantém rotação */
 }
 
 .IngressoCard-modal-body {
-  padding: 0;
+  padding: 20px;
+  /* Padding interno para o ticket */
+  overflow-y: auto;
+  /* Scroll apenas no corpo se necessário */
+  flex-grow: 1;
+  /* Ocupa espaço disponível */
 }
 
 /* Ações do Ingresso no Modal */
 .IngressoCard-ticket-modal-actions {
   display: flex;
   gap: 12px;
-  padding: 0 24px 24px 24px;
-  background: white;
+  padding: 16px 20px;
+  /* Padding ajustado */
+  background: #f9fafb;
+  /* Fundo levemente diferente */
+  border-top: 1px solid #e5e7eb;
+  /* Linha separadora */
   justify-content: center;
-  margin-top: 20px;
+  flex-shrink: 0;
+  /* Não encolhe */
+  border-bottom-left-radius: 16px;
+  /* Arredonda cantos inferiores */
+  border-bottom-right-radius: 16px;
 }
 
 .IngressoCard-ticket-modal-action {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 24px;
+  gap: 8px;
+  /* Menor gap */
+  padding: 10px 18px;
+  /* Padding ajustado */
   background: white;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 0.9rem;
+  border: 1px solid #d1d5db;
+  /* Borda padrão */
+  border-radius: 8px;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: #4b5563;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   justify-content: center;
   flex: 1;
-  max-width: 200px;
+  max-width: 180px;
+  /* Largura máxima */
 }
 
-.IngressoCard-ticket-modal-action:hover {
+.IngressoCard-ticket-modal-action:not(:disabled):hover {
   background: #f9fafb;
-  border-color: #cbd5e1;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .IngressoCard-ticket-modal-action--primary {
-  background: linear-gradient(135deg, #6371f1 0%, #5ca4f6 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
   color: white;
   border: none;
 }
 
-.IngressoCard-ticket-modal-action--primary:hover {
-  background: linear-gradient(135deg, #5b9edc 0%, #4d8ef0 100%);
-  box-shadow: 0 6px 20px rgba(99, 101, 241, 0.3);
+.IngressoCard-ticket-modal-action--primary:not(:disabled):hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
   transform: translateY(-2px);
+  color: white;
+  border: none;
+}
+
+/* Botão da modal desabilitado */
+.IngressoCard-ticket-modal-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  border-color: #d1d5db !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 .IngressoCard-ticket-modal-action-icon {
-  font-size: 1.2rem;
-  width: 20px;
-  height: 20px;
+  font-size: 1.1rem;
+  width: 18px;
+  height: 18px;
+  margin-top: -1px;
 }
 
-/* ===== TICKET EXCLUSIVO ===== */
-.ticket-exclusivo {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  border-radius: 24px;
-  overflow: hidden;
-  position: relative;
-  color: white;
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  max-width: 380px;
-  margin: 0 auto;
-  backdrop-filter: blur(10px);
-}
 
-/* Header com efeito glow */
-.ticket-header-exclusivo {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
-  padding: 24px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
+/* --- REMOVIDO ESTILOS DO TICKET EXCLUSIVO PARA SIMPLICIDADE --- */
+/* Se precisar deles de volta, me avise */
 
-.ticket-glow {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-  animation: glow-rotate 8s linear infinite;
-}
-
-@keyframes glow-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.ticket-title-exclusivo {
-  font-size: 1.4rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  margin: 0 0 12px 0;
-  position: relative;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.ticket-event-badge {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 8px 20px;
-  border-radius: 25px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  display: inline-block;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  font-size: 0.8rem;
-}
-
-/* Corpo do ticket */
-.ticket-body-exclusivo {
-  padding: 0;
-}
-
-.ticket-event-header {
-  padding: 28px 24px 20px 24px;
-}
-
-.ticket-event-name-exclusivo {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0 0 16px 0;
-  line-height: 1.3;
-  text-align: center;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.ticket-event-underline {
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, #f59e0b, transparent);
-  margin: 0 auto;
-  border-radius: 2px;
-}
-
-/* Grid de informações */
-.ticket-info-grid-exclusivo {
-  padding: 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.ticket-info-item-exclusivo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.ticket-info-item-exclusivo:hover {
-  background: rgba(255, 255, 255, 0.05);
-  margin: 0 -24px;
-  padding: 20px 24px;
-}
-
-.ticket-info-item-exclusivo:last-child {
-  border-bottom: none;
-}
-
-.ticket-info-icon {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-.ticket-info-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-}
-
-.ticket-info-label {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.ticket-info-value {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #f1f5f9;
-}
-
-/* Seção QR Code */
-.ticket-qr-section-exclusivo {
-  padding: 32px 24px;
-  background: rgba(0, 0, 0, 0.3);
-  text-align: center;
-  position: relative;
-}
-
-.ticket-qr-frame {
-  position: relative;
-  display: inline-block;
-  margin-bottom: 20px;
-}
-
-.qr-background {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  position: relative;
-  z-index: 2;
-}
-
-.ticket-qr-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120%;
-  height: 120%;
-  background: linear-gradient(45deg, #6366f1, #8b5cf6, #d946ef, #6366f1);
-  border-radius: 20px;
-  filter: blur(20px);
-  opacity: 0.4;
-  z-index: 1;
-  animation: qr-glow 3s ease-in-out infinite alternate;
-}
-
-@keyframes qr-glow {
-  0% {
-    opacity: 0.3;
-  }
-
-  100% {
-    opacity: 0.6;
-  }
-}
-
-.ticket-validation-info {
-  position: relative;
-  z-index: 2;
-}
-
-.validation-text {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #fbbf24;
-  margin-bottom: 8px;
-}
-
-.ticket-id-exclusivo {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #cbd5e1;
-  font-family: 'Courier New', monospace;
-}
-
-/* Footer */
-.ticket-footer-exclusivo {
-  padding: 0 24px 24px 24px;
-  text-align: center;
-}
-
-.ticket-perforation {
-  height: 1px;
-  background: repeating-linear-gradient(90deg,
-      transparent,
-      transparent 8px,
-      rgba(255, 255, 255, 0.3) 8px,
-      rgba(255, 255, 255, 0.3) 16px);
-  margin: 0 0 16px 0;
-}
-
-.ticket-security-note {
-  font-size: 0.7rem;
-  color: #64748b;
-  font-weight: 500;
-}
 
 /* ===== RESPONSIVIDADE ===== */
 
 /* Tablet */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
+
+  /* Ajustado breakpoint */
+  .IngressoCard {
+    margin: 0 12px 16px 12px;
+  }
+
   .IngressoCard-ticket-row {
     grid-template-columns: repeat(2, 1fr);
+    /* 2 colunas */
     gap: 12px;
   }
 
   .IngressoCard-event-details {
     grid-template-columns: 1fr;
+    /* 1 coluna */
     gap: 12px;
+  }
+
+  .IngressoCard-ticket-header,
+  .IngressoCard-ticket-main,
+  .IngressoCard-ticket-secondary,
+  .IngressoCard-ticket-actions {
+    padding: 16px;
+    /* Padding uniforme */
+  }
+
+  .IngressoCard-event-name {
+    font-size: 1.15rem;
   }
 }
 
 /* Mobile */
-@media (max-width: 640px) {
+@media (max-width: 480px) {
 
-  /* Card do Ingresso */
+  /* Ajustado breakpoint */
+  .IngressoCard {
+    margin: 0 8px 12px 8px;
+    /* Menor margem */
+  }
+
   .IngressoCard-ticket-row {
     grid-template-columns: 1fr;
+    /* 1 coluna sempre */
     gap: 10px;
   }
 
   .IngressoCard-ticket-header,
   .IngressoCard-ticket-main,
-  .IngressoCard-ticket-secondary {
-    padding: 14px 16px;
-  }
-
+  .IngressoCard-ticket-secondary,
   .IngressoCard-ticket-actions {
-    padding: 10px 16px 14px 16px;
+    padding: 12px 14px;
+    /* Padding menor */
   }
 
   .IngressoCard-ticket-title {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 6px;
   }
 
+  .IngressoCard-ticket-id {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+
+  .ingressHint {
+    display: none !important;
+  }
+
+  /* Esconde dica em mobile */
+
   .IngressoCard-event-name {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
   }
 
   .IngressoCard-event-details {
-    gap: 8px;
+    gap: 10px;
   }
 
-  .IngressoCard {
-    margin: 0 12px 16px 12px;
-  }
-
-  /* Modal */
-  .IngressoCard-modal {
-    padding: 10px;
-  }
-
-  .IngressoCard-modal-content {
-    max-width: 100%;
-    border-radius: 20px;
-  }
-
-  .IngressoCard-modal-header {
-    padding: 16px 20px 8px 20px;
-  }
-
-  .IngressoCard-ticket-modal-actions {
-    padding: 0 20px 20px 20px;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .IngressoCard-ticket-modal-action {
-    max-width: 100%;
-    width: 100%;
-  }
-
-  /* Ticket Exclusivo - Mobile */
-  .ticket-exclusivo {
-    border-radius: 20px;
-    max-width: 100%;
-    margin: 0 16px;
-  }
-
-  .ticket-header-exclusivo {
-    padding: 20px;
-  }
-
-  .ticket-title-exclusivo {
-    font-size: 1.2rem;
-    letter-spacing: 3px;
-  }
-
-  .ticket-event-header {
-    padding: 24px 20px 16px 20px;
-  }
-
-  .ticket-event-name-exclusivo {
-    font-size: 1.3rem;
-  }
-
-  .ticket-info-grid-exclusivo {
-    padding: 0 20px;
-  }
-
-  .ticket-info-item-exclusivo:hover {
-    margin: 0 -20px;
-    padding: 16px 20px;
-  }
-
-  .ticket-qr-section-exclusivo {
-    padding: 24px 20px;
-  }
-
-  .qr-background {
-    padding: 16px;
-  }
-
-  .ticket-footer-exclusivo {
-    padding: 0 20px 20px 20px;
-  }
-
-  .ticket-info-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
-  }
-}
-
-/* Mobile Pequeno */
-@media (max-width: 480px) {
-  .IngressoCard-modal-content {
-    border-radius: 16px;
-  }
-
-  .IngressoCard-modal-header {
-    padding: 14px 16px 6px 16px;
-  }
-
-  .IngressoCard-modal-close {
-    width: 36px;
-    height: 36px;
-    font-size: 1.3rem;
-  }
-
-  .IngressoCard-ticket-modal-actions {
-    padding: 0 16px 18px 16px;
-  }
-
-  .IngressoCard-ticket-modal-action {
-    padding: 12px 20px;
+  .IngressoCard-event-location,
+  .IngressoCard-event-date {
     font-size: 0.85rem;
   }
 
-  .IngressoCard-ticket-modal-action-icon {
-    font-size: 1.1rem;
-    width: 18px;
-    height: 18px;
+  .IngressoCard-info-label {
+    font-size: 0.65rem;
   }
 
-  /* Botões mobile */
+  .IngressoCard-info-value,
+  .IngressoCard-info-price {
+    font-size: 0.8rem;
+  }
+
+  .IngressoCard-info-status {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+
+  /* Botões menores */
   .IngressoCard-ticket-btn {
     padding: 10px 14px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   .IngressoCard-ticket-btn-icon {
-    font-size: 1.1rem;
-    width: 18px;
-    height: 18px;
+    font-size: 1rem;
+    width: 16px;
+    height: 16px;
   }
 
-  /* Ticket Exclusivo - Mobile Pequeno */
-  .ticket-exclusivo {
-    border-radius: 16px;
-    margin: 0 12px;
+  /* Modal Mobile */
+  .IngressoCard-modal {
+    padding: 8px;
   }
 
-  .ticket-header-exclusivo {
+  .IngressoCard-modal-content {
+    max-width: calc(100% - 16px);
+    border-radius: 12px;
+    max-height: calc(100vh - 30px);
+  }
+
+  .IngressoCard-modal-header {
+    padding: 10px 12px;
+  }
+
+  .IngressoCard-modal-close {
+    width: 30px;
+    height: 30px;
+    font-size: 1.5rem;
+  }
+
+  .IngressoCard-modal-body {
     padding: 16px;
   }
 
-  .ticket-title-exclusivo {
-    font-size: 1.1rem;
-    letter-spacing: 2px;
+  .IngressoCard-ticket-modal-actions {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .ticket-event-badge {
-    font-size: 0.75rem;
-    padding: 6px 16px;
+  .IngressoCard-ticket-modal-action {
+    max-width: 100%;
+    padding: 10px 16px;
+    font-size: 0.8rem;
   }
 
-  .ticket-event-header {
-    padding: 20px 16px 14px 16px;
-  }
-
-  .ticket-event-name-exclusivo {
-    font-size: 1.1rem;
-  }
-
-  .ticket-info-grid-exclusivo {
-    padding: 0 16px;
-  }
-
-  .ticket-info-item-exclusivo {
-    padding: 16px 0;
-    gap: 12px;
-  }
-
-  .ticket-info-item-exclusivo:hover {
-    margin: 0 -16px;
-    padding: 16px 16px;
-  }
-
-  .ticket-info-icon {
-    width: 36px;
-    height: 36px;
+  .IngressoCard-ticket-modal-action-icon {
     font-size: 1rem;
-  }
-
-  .ticket-info-value {
-    font-size: 0.9rem;
-  }
-
-  .ticket-qr-section-exclusivo {
-    padding: 20px 16px;
-  }
-
-  .qr-background {
-    padding: 14px;
-  }
-
-  .ticket-footer-exclusivo {
-    padding: 0 16px 16px 16px;
-  }
-
-  .validation-text {
-    font-size: 0.7rem;
-    letter-spacing: 1.5px;
+    width: 16px;
+    height: 16px;
   }
 }

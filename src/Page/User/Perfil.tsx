@@ -51,14 +51,35 @@ const Perfil = () => {
 
         if (perfilRes.data) {
           const perfilData = perfilRes.data;
-          const dataNascimentoFormatada = perfilData.dadosPessoais?.dataNascimento ? new Date(perfilData.dadosPessoais.dataNascimento).toISOString().slice(0, 10) : "";
+
+          let dataNascimentoFormatadaDDMMAAAA = "";
+          const dataIsoBackend = perfilData.dadosPessoais?.dataNascimento; // Ex: "1990-10-25T00:00:00.000Z" ou "1990-10-25"
+
+          if (dataIsoBackend) {
+            try {
+              // Cria um objeto Date (ignora a parte da hora/fuso horário local)
+              // Usar substring(0, 10) garante que pegamos apenas YYYY-MM-DD
+              const dateObj = new Date(dataIsoBackend.substring(0, 10) + 'T00:00:00Z'); // Força UTC meia-noite
+
+              if (!isNaN(dateObj.getTime())) {
+                const dia = String(dateObj.getUTCDate()).padStart(2, '0');
+                const mes = String(dateObj.getUTCMonth() + 1).padStart(2, '0'); // Mês é 0-indexado
+                const ano = dateObj.getUTCFullYear();
+                dataNascimentoFormatadaDDMMAAAA = `${dia}/${mes}/${ano}`; // Formato DD/MM/AAAA
+              } else {
+                console.warn("Data de nascimento inválida vinda do backend:", dataIsoBackend);
+              }
+            } catch (e) {
+              console.error("Erro ao formatar data de nascimento do backend:", dataIsoBackend, e);
+            }
+          }
 
           setTipoPessoa(perfilData.tipoPessoa || "cpf");
           setDadosPessoais({
             cpf: formatCpf(perfilData.dadosPessoais?.cpf || ""),
             cnpj: formatCnpj(perfilData.dadosPessoais?.cnpj || ""),
             nomeCompleto: perfilData.dadosPessoais?.nomeCompleto || "",
-            dataNascimento: dataNascimentoFormatada,
+            dataNascimento: dataNascimentoFormatadaDDMMAAAA,
             telefone: formatTelefone(perfilData.dadosPessoais?.telefone || ""),
             endereco: perfilData.dadosPessoais?.endereco || ""
           });
@@ -181,6 +202,38 @@ const Perfil = () => {
   const handleSalvarDadosAdicionais = async () => {
     if (!user?._id) return;
 
+    let dataNascimentoParaSalvar = "";
+    const dataFormatadaInput = dadosPessoais.dataNascimento; // Ex: "25/10/1990"
+
+    if (dataFormatadaInput && /^\d{2}\/\d{2}\/\d{4}$/.test(dataFormatadaInput)) { // Verifica formato DD/MM/AAAA
+      const parts = dataFormatadaInput.split('/');
+      // Reorganiza para YYYY-MM-DD
+      dataNascimentoParaSalvar = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+      // Validação extra (opcional mas recomendada): Verifica se a data é válida
+      const dateObj = new Date(dataNascimentoParaSalvar + 'T00:00:00Z');
+      if (isNaN(dateObj.getTime())) {
+        alert("Data de nascimento inválida. Verifique o dia, mês e ano.");
+        return; // Impede o salvamento
+      }
+      // Poderia adicionar mais validações aqui (ex: data não pode ser futura)
+      const hoje = new Date();
+      // Cria a data do 18º aniversário (subtrai 18 anos da data de hoje)
+      const dataMinimaNascimento = new Date(hoje.getFullYear() - 18, hoje.getMonth(), hoje.getDate());
+
+      // Compara a data de nascimento inserida com a data mínima
+      // Se a data de nascimento for POSTERIOR à data mínima, a pessoa tem MENOS de 18 anos.
+      // (Usamos getTime() para comparar os milissegundos)
+      if (dateObj.getTime() > dataMinimaNascimento.getTime()) {
+        alert("É necessário ter pelo menos 18 anos para se cadastrar.");
+        return; // Impede o salvamento
+      }
+
+    } else if (dataFormatadaInput) { // Se não está vazio mas o formato está errado
+      alert("Formato da data de nascimento inválido. Use DD/MM/AAAA.");
+      return; // Impede o salvamento
+    }
+
     const dadosParaSalvar = {
       tipoPessoa,
       dadosPessoais: { ...dadosPessoais, cpf: dadosPessoais.cpf.replace(/\D/g, ""), cnpj: dadosPessoais.cnpj.replace(/\D/g, ""), telefone: dadosPessoais.telefone.replace(/\D/g, "") },
@@ -246,6 +299,24 @@ const Perfil = () => {
         setShowDisconnectModal(false);
       }
     }
+  };
+
+  const formatDataNascimento = (value: string): string => {
+    if (!value) return "";
+    // 1. Remove tudo que não for dígito
+    value = value.replace(/\D/g, "");
+    // 2. Limita a 8 dígitos (DDMMAAAA)
+    value = value.slice(0, 8);
+    // 3. Adiciona as barras
+    if (value.length > 4) {
+      // Formato DD/MM/AAAA (ex: 12/34/5678)
+      value = value.replace(/(\d{2})(\d{2})(\d{1,4})/, "$1/$2/$3");
+    } else if (value.length > 2) {
+      // Formato DD/MM (ex: 12/34)
+      value = value.replace(/(\d{2})(\d{1,2})/, "$1/$2");
+    }
+    // Se tiver 2 dígitos ou menos, retorna apenas os dígitos (ex: 12)
+    return value;
   };
 
   if (isLoading) return <div className="perfil-loading">Carregando perfil...</div>;
@@ -402,8 +473,19 @@ const Perfil = () => {
                       <FiCalendar className="perfil-input-icon" />
                       <span>Data de nascimento</span>
                     </label>
-                    <input type="date" className="perfil-input" value={dadosPessoais.dataNascimento} onChange={(e) => setDadosPessoais(prevState => ({ ...prevState, dataNascimento: e.target.value }))} disabled={!editandoDadosAdicionais} />
-                  </div>
+                    <input
+                      type="text" // <-- MUDOU de 'date' para 'text'
+                      inputMode="numeric" // <-- Sugere teclado numérico em mobile
+                      placeholder="DD/MM/AAAA" // <-- Placeholder útil
+                      maxLength={10} // <-- Limita o total (DD/MM/AAAA)
+                      className="perfil-input"
+                      value={dadosPessoais.dataNascimento} // <-- Continua usando o mesmo estado
+                      onChange={(e) => {
+                        const formattedValue = formatDataNascimento(e.target.value); // <-- USA A NOVA FUNÇÃO
+                        setDadosPessoais(prevState => ({ ...prevState, dataNascimento: formattedValue }));
+                      }}
+                      disabled={!editandoDadosAdicionais}
+                    />                  </div>
                 )}
 
                 {/* AQUI ESTÃO OS CAMPOS RESTAURADOS DO CNPJ */}
@@ -485,10 +567,16 @@ const Perfil = () => {
                         <span>Data de nascimento do Sócio</span>
                       </label>
                       <input
-                        type="date"
+                        type="text" // <-- MUDOU de 'date' para 'text'
+                        inputMode="numeric" // <-- Sugere teclado numérico em mobile
+                        placeholder="DD/MM/AAAA" // <-- Placeholder útil
+                        maxLength={10} // <-- Limita o total (DD/MM/AAAA)
                         className="perfil-input"
-                        value={dadosPessoais.dataNascimento}
-                        onChange={(e) => setDadosPessoais(prev => ({ ...prev, dataNascimento: e.target.value }))}
+                        value={dadosPessoais.dataNascimento} // <-- Continua usando o mesmo estado
+                        onChange={(e) => {
+                          const formattedValue = formatDataNascimento(e.target.value); // <-- USA A NOVA FUNÇÃO
+                          setDadosPessoais(prev => ({ ...prev, dataNascimento: formattedValue }));
+                        }}
                         disabled={!editandoDadosAdicionais}
                       />
                     </div>
