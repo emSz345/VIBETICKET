@@ -23,6 +23,12 @@ jobs:
         with:
           node-version: '22.x'
 
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npm run build --if-present
+          npm run test --if-present
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -45,9 +51,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A1C4DE1EC0D841FF9DBAB64C751B687B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F9B90CE593334868AFB9079547391D6E }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A4D14490B0B14B6ABDBA40FE481BC814 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0E8F91D5A60D41DBB79451A140EF5C7F }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9C77A96ECA0F46E8837704FB59CE8A63 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8C0796CE9A64496D9E59A7683A31134E }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -56,3 +62,4 @@ jobs:
           app-name: 'Vibe-Front'
           slot-name: 'Production'
           package: .
+          
