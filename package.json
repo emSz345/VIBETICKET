@@ -35,11 +35,12 @@
     "react-router-dom": "^7.3.0",
     "react-router-hash-link": "^2.4.3",
     "react-scripts": "5.0.1",
+    "serve": "^14.2.5",
     "swiper": "^11.2.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "serve -s .",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
