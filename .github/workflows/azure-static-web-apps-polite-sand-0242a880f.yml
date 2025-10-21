@@ -44,7 +44,7 @@ jobs:
           
           # Configurações do App
           app_location: "/" 
-          api_location: "api"
+          api_location: ""
           output_location: "build" 
           
           # Removido o 'app_build_command' para evitar redundância e conflitos
@@ -61,3 +61,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_SAND_0242A880F }}
           action: "close"
+
