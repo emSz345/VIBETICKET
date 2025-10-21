@@ -20,20 +20,13 @@ jobs:
           submodules: true
           lfs: false
       
-      # 1. Configura a versão do Node.js
+      # 1. Configura a versão do Node.js (Isso é mantido para garantir a versão)
       - name: Set up Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: '22.x' # Defina a versão que você usa
+          node-version: '22.x' 
 
-      # 2. Instala dependências e executa o Build do React
-      - name: Install dependencies and run build
-        run: |
-          npm install --legacy-peer-deps
-          # Adiciona CI=false para evitar que os warnings do ESLint quebrem o build
-          CI=false npm run build 
-
-      # 3. Deploy para o Static Web App (usa a pasta 'build' que foi gerada acima)
+      # 2. Deploy para o Static Web App (AQUI está a correção do build)
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -41,12 +34,18 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_SKY_0966C640F }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
+          
+          # Configurações do App
           app_location: "/" 
           api_location: ""
-          output_location: "build" # Garante que ele procure a pasta 'build'
+          output_location: "build" 
+
+          # COMANDO DE BUILD CORRIGIDO: 
+          # Sobrescreve o build padrão do Oryx para usar a flag de compatibilidade.
+          # Adiciona CI=false para evitar que os warnings do ESLint/Typescript quebrem o build.
+          app_build_command: "npm install --legacy-peer-deps && CI=false npm run build" 
           
-  # ---
-          
+  # Job de Fechar PR
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
