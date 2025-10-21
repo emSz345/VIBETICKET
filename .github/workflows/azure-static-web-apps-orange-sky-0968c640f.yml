@@ -14,19 +14,26 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    
+    # VARIÁVEIS DE AMBIENTE PARA CORRIGIR ERROS DE DEPENDÊNCIA (ERESOLVE)
+    env:
+      NPM_CONFIG_LEGACY_PEER_DEPS: true # Força a aceitação de conflitos de dependência
+      CI: false # Ignora warnings do ESLint/Typescript durante o build (evita falhas)
+
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
       
-      # 1. Configura a versão do Node.js (Isso é mantido para garantir a versão)
+      # 1. Configura a versão do Node.js (Versão LTS recomendada)
       - name: Set up Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: '22.x' 
+          node-version: '20.x' # Versão LTS recomendada
 
-      # 2. Deploy para o Static Web App (AQUI está a correção do build)
+      # 2. Deploy para o Static Web App
+      # O Oryx usará as flags de 'env' para executar: npm install && npm run build
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -39,11 +46,8 @@ jobs:
           app_location: "/" 
           api_location: ""
           output_location: "build" 
-
-          # COMANDO DE BUILD CORRIGIDO: 
-          # Sobrescreve o build padrão do Oryx para usar a flag de compatibilidade.
-          # Adiciona CI=false para evitar que os warnings do ESLint/Typescript quebrem o build.
-          app_build_command: "npm install --legacy-peer-deps && CI=false npm run build" 
+          
+          # Removido o 'app_build_command' para evitar redundância e conflitos
           
   # Job de Fechar PR
   close_pull_request_job:
