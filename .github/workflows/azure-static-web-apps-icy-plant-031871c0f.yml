@@ -20,15 +20,15 @@ jobs:
           submodules: true
           lfs: false
       
-      # ETAPA 1: Instalar dependências (com nossa correção)
+      # ETAPA 1: Instalar dependências (JÁ FUNCIONOU)
       - name: Install Dependencies
         run: npm i --legacy-peer-deps
 
-      # ETAPA 2: Buildar a aplicação (com nossa correção)
+      # ETAPA 2: Buildar a aplicação (JÁ FUNCIONOU)
       - name: Build Application
         run: CI=false npm run build
 
-      # ETAPA 3: Fazer o Deploy (agora pulando o build)
+      # ETAPA 3: Fazer o Deploy (AGORA CORRIGIDO)
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -38,10 +38,10 @@ jobs:
           action: "upload"
           
           ###### Nossas Configurações ######
-          app_location: "/" 
+          app_location: "build"  # <--- MUDANÇA AQUI (Aponta para a pasta 'build')
           api_location: "" 
-          output_location: "build" # A pasta que queremos enviar
-          skip_app_build: true   # <--- A MUDANÇA MÁGICA: Pular o build do Azure
+          output_location: ""    # <--- MUDANÇA AQUI (Limpamos isso para evitar confusão)
+          skip_app_build: true   # (Isto está correto e funcionou)
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
