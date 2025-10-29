@@ -66,7 +66,9 @@ const Carrinho = () => {
       return;
     }
 
-    if (!user || !user._id) {
+    const token = localStorage.getItem('token');
+
+    if (!user || !user._id || !token) {
       alert("Você precisa estar logado para finalizar a compra.");
       navigate('/login');
       return;
@@ -75,26 +77,25 @@ const Carrinho = () => {
     try {
       setIsLoading(true);
 
-      // REMOVA A CRIAÇÃO DOS 'items' E 'userId' DAQUI
-      // const items = carrinho.map(item => ({ ... })); // REMOVIDO
-      // const userId = user._id; // REMOVIDO
-
-      // 1. Mude a URL da rota
       const response = await fetch(`${apiUrl}/api/pagamento/iniciar-pagamento`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         credentials: 'include',
-        // 2. REMOVA O BODY
-        // O backend agora pega o carrinho direto do banco de dados
-        // usando o seu cookie/token de autenticação.
-        // body: JSON.stringify({ items, userId }), // <-- REMOVIDO
       });
 
       if (response.ok) {
         const data = await response.json();
-        window.open(data.preference_url, '_blank');
+
+        // ================================================
+        // 🔥 ALTERAÇÃO AQUI 🔥
+        // Isso redireciona a aba ATUAL para o Mercado Pago
+        // Em vez de abrir uma nova.
+        window.location.href = data.preference_url;
+        // ================================================
+
       } else {
         const errorData = await response.json().catch(() => ({ message: response.statusText }));
         console.error('Falha ao iniciar pagamento:', response.status, errorData);
@@ -105,10 +106,13 @@ const Carrinho = () => {
           return;
         }
 
-        // Trata o erro de carrinho vazio que o backend pode retornar
-        if (response.status === 400 && errorData.error) {
-          alert(errorData.error); // Ex: "Carrinho vazio."
-        } else {
+        if (response.status === 400 && errorData.message) {
+          alert(errorData.message);
+        }
+        else if (response.status === 400 && errorData.error) {
+          alert(errorData.error);
+        }
+        else {
           alert(`Erro ao iniciar o pagamento: ${errorData.message || response.statusText}. Tente novamente.`);
         }
       }

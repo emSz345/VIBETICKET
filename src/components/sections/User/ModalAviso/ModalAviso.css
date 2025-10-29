@@ -1,0 +1,138 @@
+.modal-aviso-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+  }
+  
+  .modal-aviso-content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 450px;
+    overflow: hidden;
+    transform: scale(0.9);
+    animation: zoomIn 0.3s forwards;
+  }
+  
+  /* Animações */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes zoomIn { from { transform: scale(0.9); } to { transform: scale(1); } }
+  
+  .modal-aviso-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+  }
+  
+  .modal-aviso-icon {
+    font-size: 20px;
+    margin-right: 12px;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Tema Perigo (Vermelho) */
+  .modal-aviso--perigo .modal-aviso-icon {
+    color: #c0392b;
+    background-color: #fbe9e7;
+  }
+  .modal-aviso--perigo .modal-btn-principal {
+    background-color: #e74c3c;
+    color: white;
+  }
+  .modal-aviso--perigo .modal-btn-principal:hover {
+    background-color: #c0392b;
+  }
+  
+  /* Tema Info (Default/Lixeira - usaremos cinza) */
+  .modal-aviso--info .modal-aviso-icon {
+    color: #555;
+    background-color: #f0f0f0;
+  }
+  .modal-aviso--info .modal-btn-principal {
+    background-color: #e74c3c; /* Mantendo vermelho para deleção */
+    color: white;
+  }
+  .modal-aviso--info .modal-btn-principal:hover {
+    background-color: #c0392b;
+  }
+  
+  
+  .modal-aviso-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .modal-aviso-close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #888;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px;
+  }
+  .modal-aviso-close-btn:hover {
+    color: #333;
+  }
+  
+  .modal-aviso-body {
+    padding: 20px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  .modal-aviso-body p {
+    margin: 0 0 10px 0;
+  }
+  
+  .modal-aviso-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 20px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #eee;
+  }
+  
+  .modal-aviso-footer button {
+    border: none;
+    border-radius: 5px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .modal-aviso-footer button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .modal-aviso-footer .modal-btn-cancelar {
+    background-color: #f0f0f0;
+    color: #555;
+    margin-right: 10px;
+  }
+  .modal-aviso-footer .modal-btn-cancelar:hover {
+    background-color: #e0e0e0;
+  }

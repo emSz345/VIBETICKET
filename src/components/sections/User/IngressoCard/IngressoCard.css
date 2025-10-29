@@ -258,30 +258,41 @@
   padding: 12px 20px 16px 20px;
   border-top: 1px solid #f3f4f6;
   background: #f9fafb;
-  /* Fundo levemente diferente */
+
+  /* 🔥 MUDANÇAS AQUI 👇 */
+  display: flex;
+  /* Coloca os botões em linha */
+  gap: 10px;
+  /* Espaço entre os botões */
+  justify-content: center;
+  /* Centraliza se houver espaço sobrando (opcional) */
 }
 
 .IngressoCard-ticket-btn {
-  width: 100%;
+  /* width: 100%; */
+  /* <-- REMOVIDO */
+  flex-grow: 1;
+  /* 🔥 ADICIONADO: Faz os botões dividirem o espaço */
+  flex-basis: 0;
+  /* 🔥 ADICIONADO: Base flexível para o grow funcionar bem */
+
   padding: 11px 16px;
-  /* Ajustado padding */
   background: #ffffff;
   border: 1.5px solid #d1d5db;
-  /* Borda cinza padrão */
   border-radius: 8px;
-  /* Borda menos redonda */
   font-size: 0.85rem;
-  /* Ajustado */
   font-weight: 600;
   color: #374151;
-  /* Cor cinza escuro */
   cursor: pointer;
   transition: all 0.2s ease;
-  /* Transição mais rápida */
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  text-align: center;
+  /* Garante texto centralizado */
+  white-space: nowrap;
+  /* Evita quebra de linha no texto do botão */
 }
 
 .IngressoCard-ticket-btn:not(:disabled):hover {
@@ -347,7 +358,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1050;
+  z-index: 99999;
   /* Z-index comum para modais */
   backdrop-filter: blur(5px);
   /* Menos blur */
@@ -679,4 +690,51 @@
     width: 16px;
     height: 16px;
   }
+}
+
+.IngressoCard-ticket-btn--reembolsar {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  /* Vermelho gradiente */
+  color: white;
+  border: none;
+}
+
+.IngressoCard-ticket-btn--reembolsar:not(:disabled):hover {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+  color: white;
+  border: none;
+}
+
+.IngressoCard-ticket-btn--reembolsar:not(:disabled):active {
+  transform: translateY(0);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: none;
+}
+
+/* Animação de Spin para o ícone de Loading (FiLoader) */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mensagem de status (quando não está ativo) */
+.IngressoCard-status-message {
+  width: 100%;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
+  /* Cinza */
+  padding: 10px 0;
 }

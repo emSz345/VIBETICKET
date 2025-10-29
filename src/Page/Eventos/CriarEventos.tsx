@@ -90,48 +90,55 @@ function CriarEventos() {
 
   // Função para doação direta (SEM MODAL)
   const handleDoacaoDireta = async (valor: number) => {
+    // 1. Pega o Token (ESSENCIAL)
+    const token = localStorage.getItem('token');
+
+    // 2. Pega os dados do usuário (apenas para verificar se está logado)
     const userDataString = localStorage.getItem('user');
-    if (!userDataString) {
+
+    if (!userDataString || !token) { // Verifica os dois
       alert('Usuário não autenticado. Por favor, faça login para fazer uma doação.');
       navigate('/login');
       return;
     }
 
-    const usuario = JSON.parse(userDataString);
-    const userId = usuario?._id;
-
-    if (!userId) {
-      alert('Não foi possível encontrar o ID do usuário. Por favor, faça login novamente.');
-      return;
-    }
-
+    // 3. Monta o body (APENAS com os itens, sem userId)
     const doacaoData = {
       items: [{
-        title: "Doação para Evento",
+        title: "Doação para Evento", // O backend pode ignorar isso, mas é bom ter
         quantity: 1,
-        unit_price: valor,
+        unit_price: valor, // O backend vai validar isso
       }],
-      userId: userId,
     };
 
     try {
-      const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, {
+      // 4. Faz o fetch para a ROTA NOVA
+      const response = await fetch(`${apiUrl}/api/pagamento/create-preference`, { // Rota correta
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // 5. 🔥 ENVIA O TOKEN
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(doacaoData),
+        // 'credentials: 'include'' (Opcional, mas pode manter se usar)
       });
 
       if (!response.ok) {
         const errorData = await response.json();
+        // Trata erro de token
+        if (response.status === 401 || response.status === 403) {
+          alert("Sessão expirada. Faça login novamente.");
+          navigate('/login');
+          return;
+        }
         throw new Error(errorData.error || `Erro do servidor: ${response.status}`);
       }
 
       const responseData = await response.json();
       const url = responseData.preference_url;
 
-      window.open(url, '_blank');
+      window.open(url, '_blank'); // Abre a tela de pagamento
 
     } catch (error: any) {
       console.error('Erro na doação:', error);
@@ -472,15 +479,38 @@ function CriarEventos() {
     setIsSubmitting(true);
 
     try {
+      // 1. 🔥 PEGUE O TOKEN (igual você faz no carrinho)
+      const token = localStorage.getItem('token');
+
+      // 2. 🔥 VERIFIQUE O TOKEN
+      if (!token) {
+        alert("Sessão expirada. Por favor, faça login novamente.");
+        navigate('/login'); // 'navigate' precisa estar disponível no seu componente
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 3. 🔥 ADICIONE O 'headers' NA REQUISIÇÃO
       const response = await fetch(`${apiUrl}/api/eventos/criar`, {
         method: 'POST',
         body: formData,
+        // 'credentials: 'include'' é para cookies, o 'Authorization' é para token.
+        // É bom manter os dois se seu auth usa ambos.
         credentials: 'include',
+        headers: {
+          // NÃO defina o 'Content-Type' quando usar FormData
+          'Authorization': `Bearer ${token}` // <-- A LINHA QUE FALTAVA
+        }
       });
 
       const responseData = await response.json();
 
       if (!response.ok) {
+        // Se o token for inválido (expirado), o servidor pode retornar 403
+        if (response.status === 401 || response.status === 403) {
+          alert("Sessão expirada ou inválida. Faça login novamente.");
+          navigate('/login');
+        }
         throw new Error(responseData.message || `Erro do servidor: ${response.status}`);
       }
 
@@ -495,7 +525,13 @@ function CriarEventos() {
       setCooldownTimeLeft(Math.floor(cooldownDuration / 1000));
 
     } catch (error: any) {
-      alert(error.message);
+      // Verifica se o erro é o 401 que já tratamos
+      if (error.message.includes('401') || error.message.includes('403')) {
+        // O alerta já foi disparado, apenas loga
+        console.error("Erro de autenticação ao criar evento.");
+      } else {
+        alert(error.message);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -1052,6 +1088,7 @@ function CriarEventos() {
             <p className="criar-doacao-descricao">
               Se deseja apoiar a causa, por favor, digite o valor que deseja doar e clique no botão abaixo para fazer uma doação.
             </p>
+            <p className='observacao-doacao'>Obs: A doação não terá influencia sobre a aprovação do seu evento</p>
 
             <div className="container-doacao-principal">
               <div className="campo">

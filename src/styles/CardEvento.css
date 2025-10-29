@@ -1,4 +1,4 @@
-/* CardEvento.css - Versão com tamanho fixo */
+/* CardEvento.css - Versão responsiva com horizontal no mobile */
 .cardEvento {
     display: flex;
     flex-direction: column;
@@ -8,11 +8,11 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     width: 300px;
-    /* Largura fixa */
     height: 310px;
-    /* Altura fixa */
     margin: 15px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    flex-shrink: 0;
+    /* Importante para scroll horizontal */
 }
 
 .cardEvento:hover {
@@ -24,9 +24,7 @@
 .cardEvento-imageWrapper {
     position: relative;
     height: 160px;
-    /* Altura fixa para a imagem */
     flex-shrink: 0;
-    /* Impede que a imagem redimensione */
 }
 
 .cardEvento-image {
@@ -56,12 +54,10 @@
     flex-direction: column;
     flex-grow: 1;
     overflow: hidden;
-    /* Impede que o conteúdo transborde */
 }
 
 .cardEvento-data {
     font-size: 0.75em;
-    /* Um pouco menor */
     font-weight: 600;
     color: #6e8efb;
     text-transform: uppercase;
@@ -101,7 +97,7 @@
     overflow: hidden;
 }
 
-/* Container de lista */
+/* Container de lista - DESKTOP */
 .lista-eventos-container {
     display: flex;
     flex-wrap: wrap;
@@ -114,23 +110,71 @@
     text-decoration: none;
 }
 
-/* MOBILE - Mantém a altura fixa mas ajusta a largura */
+/* MOBILE - Layout horizontal com scroll */
 @media (max-width: 768px) {
+    .lista-eventos-container {
+        display: flex;
+        flex-wrap: nowrap;
+        /* Impede quebra de linha */
+        overflow-x: auto;
+        /* Scroll horizontal */
+        overflow-y: hidden;
+        gap: 15px;
+        padding: 20px 15px;
+        justify-content: flex-start;
+        /* Alinha à esquerda */
+        scrollbar-width: thin;
+        /* Firefox */
+        -webkit-overflow-scrolling: touch;
+        /* Scroll suave no iOS */
+    }
+
+    /* Custom scrollbar para Webkit */
+    .lista-eventos-container::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .lista-eventos-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .lista-eventos-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+    }
+
+    .lista-eventos-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
     .cardEvento {
         width: 280px;
-        height: 30px;
+        height: 310px;
+        /* Mantém a altura original */
         margin: 0;
+        /* Remove margem lateral */
+        flex-shrink: 0;
+        /* Impede que os cards encolham */
     }
 
     .cardEvento-imageWrapper {
         height: 150px;
+    }
+
+    /* Adiciona um pouco de padding no final para melhor visualização */
+    .lista-eventos-container::after {
+        content: '';
+        padding-right: 10px;
+        flex-shrink: 0;
     }
 }
 
 @media (max-width: 480px) {
     .cardEvento {
         width: 260px;
-        height: 360px;
+        height: 300px;
+        /* Altura um pouco menor para mobile */
     }
 
     .cardEvento-imageWrapper {
@@ -139,5 +183,22 @@
 
     .cardEvento-content {
         padding: 12px;
+    }
+
+    .lista-eventos-container {
+        gap: 12px;
+        padding: 15px 12px;
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 360px) {
+    .cardEvento {
+        width: 240px;
+        height: 290px;
+    }
+
+    .cardEvento-imageWrapper {
+        height: 130px;
     }
 }

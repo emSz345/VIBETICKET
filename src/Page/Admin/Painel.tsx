@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import EventoCard from "../../components/sections/Adm/EventoCard/EventoCard";
-import { Evento } from "../../types/evento";
+import { Evento as EventoBaseType } from "../../types/evento";
 import { FaSignOutAlt, FaImages, FaUserPlus } from 'react-icons/fa';
 import { useAuth } from "../../Hook/AuthContext";
 import { useNavigate, Link } from 'react-router-dom';
+import { CriadorPopulado } from "../../components/sections/Adm/EventoCard/EventoCard";
 
 import logo from "../../assets/logo.png";
 import "../../styles/Painel.css";
@@ -12,17 +13,24 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
 
+type EventoComCriadorPopulado = Omit<EventoBaseType, 'criadoPor'> & {
+    criadoPor: CriadorPopulado;
+    // Adicione status e temMeia se não estiverem no EventoBaseType
+    status: EventoStatus;
+    temMeia: boolean;
+};
+
 const Painel: React.FC = () => {
     // 🔥 CORREÇÃO: Pega o objeto 'user' completo do AuthContext
     const { user, logout } = useAuth();
-    const [eventos, setEventos] = useState<Evento[]>([]);
+    const [eventos, setEventos] = useState<EventoComCriadorPopulado[]>([]);
     const [status, setStatusFilter] = useState<EventoStatus>("em_analise");
     const navigate = useNavigate();
 
     const fetchEventosByStatus = (status: EventoStatus) => {
         fetch(`${apiUrl}/api/eventos/listar/${status}`)
             .then((res) => res.json())
-            .then((data) => setEventos(data))
+            .then((data: EventoComCriadorPopulado[]) => setEventos(data))
             .catch((err) => console.error(`Erro ao buscar eventos ${status}:`, err));
     };
 
@@ -43,7 +51,7 @@ const Painel: React.FC = () => {
             });
 
             setEventos((prevEventos) => prevEventos.filter((evento) => evento._id !== id));
-            
+
         } catch (err) {
             console.error("Erro ao atualizar status do evento:", err);
         }
@@ -78,7 +86,7 @@ const Painel: React.FC = () => {
 
         return { aceitar, rejeitar, reanalise };
     };
-    
+
     return (
         <div className="painel-wrapper">
             <aside className="painel-sidebar">
@@ -149,7 +157,7 @@ const Painel: React.FC = () => {
                     <div className="header-right">
                         <strong>Administrador</strong>
                         {/* 🔥 CORREÇÃO: Usa o email do contexto, que é mais seguro */}
-                        <p>{user?.email}</p> 
+                        <p>{user?.email}</p>
                     </div>
                 </header>
 
@@ -160,15 +168,15 @@ const Painel: React.FC = () => {
                         return (
                             <EventoCard
                                 key={evento._id}
+                                // 👇 Não precisa mais fazer a conversão aqui, pois 'evento' já tem o tipo certo
                                 evento={{
-                                    ...evento,
+                                    ...evento, // Passa o objeto evento diretamente
+                                    // A imagem ainda precisa ser montada
                                     imagem: `${apiUrl}/uploads/${evento.imagem}`,
-                                    status: (evento as any).status as EventoStatus,
-                                    temMeia: (evento as any).temMeia as boolean,
                                 }}
-                                onAceitar={acoes.aceitar} 
+                                onAceitar={acoes.aceitar}
                                 onRejeitar={acoes.rejeitar}
-                                onReanalise={acoes.reanalise} 
+                                onReanalise={acoes.reanalise}
                             />
                         );
                     })}

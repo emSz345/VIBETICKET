@@ -12,6 +12,79 @@ interface Notification {
   message: string;
 }
 
+const validarCPF = (cpf: string): boolean => {
+  if (!cpf) return false;
+  const cpfLimpo = cpf.replace(/\D/g, ""); // Remove tudo que não for dígito
+
+  // 1. Verifica se tem 11 dígitos
+  // 2. Verifica se não é uma sequência de dígitos iguais (ex: 111.111.111-11)
+  if (cpfLimpo.length !== 11 || /^(\d)\1+$/.test(cpfLimpo)) {
+    return false;
+  }
+
+  let soma = 0;
+  let resto;
+
+  // Validação do 1º Dígito Verificador
+  for (let i = 1; i <= 9; i++) {
+    soma += parseInt(cpfLimpo.substring(i - 1, i)) * (11 - i);
+  }
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpfLimpo.substring(9, 10))) return false;
+
+  soma = 0;
+  // Validação do 2º Dígito Verificador
+  for (let i = 1; i <= 10; i++) {
+    soma += parseInt(cpfLimpo.substring(i - 1, i)) * (12 - i);
+  }
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpfLimpo.substring(10, 11))) return false;
+
+  return true; // CPF é válido
+};
+
+const validarCNPJ = (cnpj: string): boolean => {
+  if (!cnpj) return false;
+  const cnpjLimpo = cnpj.replace(/\D/g, ""); // Remove tudo que não for dígito
+
+  // 1. Verifica se tem 14 dígitos
+  // 2. Verifica se não é uma sequência de dígitos iguais (ex: 00.000.000/0000-00)
+  if (cnpjLimpo.length !== 14 || /^(\d)\1+$/.test(cnpjLimpo)) {
+    return false;
+  }
+
+  let tamanho = cnpjLimpo.length - 2;
+  let numeros = cnpjLimpo.substring(0, tamanho);
+  const digitos = cnpjLimpo.substring(tamanho);
+  let soma = 0;
+  let pos = tamanho - 7;
+
+  // Validação do 1º Dígito Verificador
+  for (let i = tamanho; i >= 1; i--) {
+    soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
+    if (pos < 2) pos = 9;
+  }
+  let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+  if (resultado !== parseInt(digitos.charAt(0))) return false;
+
+  tamanho = tamanho + 1;
+  numeros = cnpjLimpo.substring(0, tamanho);
+  soma = 0;
+  pos = tamanho - 7;
+
+  // Validação do 2º Dígito Verificador
+  for (let i = tamanho; i >= 1; i--) {
+    soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
+    if (pos < 2) pos = 9;
+  }
+  resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+  if (resultado !== parseInt(digitos.charAt(1))) return false;
+
+  return true; // CNPJ é válido
+};
+
 const Perfil = () => {
   const { user, isLoading, updateUser } = useAuth();
   const navigate = useNavigate();
@@ -25,6 +98,9 @@ const Perfil = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
+
+  const [docError, setDocError] = useState("");
+  const [cpfSocioError, setCpfSocioError] = useState("");
 
   const [nome, setNome] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
@@ -202,41 +278,93 @@ const Perfil = () => {
   const handleSalvarDadosAdicionais = async () => {
     if (!user?._id) return;
 
+    // --- VALIDAÇÃO ANTES DE SALVAR ---
+    let hasError = false;
+
+    // 1. Validar CPF/CNPJ principal
+    if (tipoPessoa === "cpf") {
+      const cpfLimpo = dadosPessoais.cpf.replace(/\D/g, "");
+      if (cpfLimpo.length === 0) {
+        setDocError("O CPF é obrigatório.");
+        hasError = true;
+      } else if (!validarCPF(cpfLimpo)) {
+        setDocError("CPF inválido. Verifique os dígitos.");
+        hasError = true;
+      } else {
+        setDocError("");
+      }
+    } else { // tipoPessoa === "cnpj"
+      const cnpjLimpo = dadosPessoais.cnpj.replace(/\D/g, "");
+      if (cnpjLimpo.length === 0) {
+        setDocError("O CNPJ é obrigatório.");
+        hasError = true;
+      } else if (!validarCNPJ(cnpjLimpo)) {
+        setDocError("CNPJ inválido. Verifique os dígitos.");
+        hasError = true;
+      } else {
+        setDocError("");
+      }
+
+      // 2. Validar CPF do Sócio (APENAS se for CNPJ)
+      const cpfSocioLimpo = dadosOrganizacao.cpfSocio.replace(/\D/g, "");
+      if (cpfSocioLimpo.length === 0) {
+        setCpfSocioError("O CPF do Sócio é obrigatório.");
+        hasError = true;
+      } else if (!validarCPF(cpfSocioLimpo)) {
+        setCpfSocioError("CPF do Sócio inválido. Verifique os dígitos.");
+        hasError = true;
+      } else {
+        setCpfSocioError("");
+      }
+    } // <-- Fim do bloco if/else do tipoPessoa
+
+    // 3. Validar Data de Nascimento (Executa para AMBOS os tipos)
     let dataNascimentoParaSalvar = "";
     const dataFormatadaInput = dadosPessoais.dataNascimento; // Ex: "25/10/1990"
 
-    if (dataFormatadaInput && /^\d{2}\/\d{2}\/\d{4}$/.test(dataFormatadaInput)) { // Verifica formato DD/MM/AAAA
+    if (dataFormatadaInput && /^\d{2}\/\d{2}\/\d{4}$/.test(dataFormatadaInput)) {
       const parts = dataFormatadaInput.split('/');
-      // Reorganiza para YYYY-MM-DD
-      dataNascimentoParaSalvar = `${parts[2]}-${parts[1]}-${parts[0]}`;
+      dataNascimentoParaSalvar = `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
 
-      // Validação extra (opcional mas recomendada): Verifica se a data é válida
       const dateObj = new Date(dataNascimentoParaSalvar + 'T00:00:00Z');
       if (isNaN(dateObj.getTime())) {
         alert("Data de nascimento inválida. Verifique o dia, mês e ano.");
-        return; // Impede o salvamento
-      }
-      // Poderia adicionar mais validações aqui (ex: data não pode ser futura)
-      const hoje = new Date();
-      // Cria a data do 18º aniversário (subtrai 18 anos da data de hoje)
-      const dataMinimaNascimento = new Date(hoje.getFullYear() - 18, hoje.getMonth(), hoje.getDate());
+        hasError = true;
+      } else {
+        const hoje = new Date();
+        // Cria a data do 18º aniversário (subtrai 18 anos da data de hoje)
+        const dataMinimaNascimento = new Date(hoje.getFullYear() - 18, hoje.getMonth(), hoje.getDate());
 
-      // Compara a data de nascimento inserida com a data mínima
-      // Se a data de nascimento for POSTERIOR à data mínima, a pessoa tem MENOS de 18 anos.
-      // (Usamos getTime() para comparar os milissegundos)
-      if (dateObj.getTime() > dataMinimaNascimento.getTime()) {
-        alert("É necessário ter pelo menos 18 anos para se cadastrar.");
-        return; // Impede o salvamento
+        // Se a data de nascimento for POSTERIOR à data mínima, a pessoa tem MENOS de 18 anos.
+        if (dateObj.getTime() > dataMinimaNascimento.getTime()) {
+          const labelData = tipoPessoa === 'cpf' ? 'nascimento' : 'nascimento do Sócio';
+          alert(`É necessário ter pelo menos 18 anos para se cadastrar (data de ${labelData}).`);
+          hasError = true;
+        }
       }
-
     } else if (dataFormatadaInput) { // Se não está vazio mas o formato está errado
       alert("Formato da data de nascimento inválido. Use DD/MM/AAAA.");
-      return; // Impede o salvamento
+      hasError = true;
+    } else { // Se está vazio
+      alert("A data de nascimento é obrigatória.");
+      hasError = true;
     }
+
+    // Se houver qualquer erro, não continua o salvamento
+    if (hasError) return;
+
+    // --- FIM DA VALIDAÇÃO ---
 
     const dadosParaSalvar = {
       tipoPessoa,
-      dadosPessoais: { ...dadosPessoais, cpf: dadosPessoais.cpf.replace(/\D/g, ""), cnpj: dadosPessoais.cnpj.replace(/\D/g, ""), telefone: dadosPessoais.telefone.replace(/\D/g, "") },
+      // Garante que a data correta está sendo enviada
+      dadosPessoais: {
+        ...dadosPessoais,
+        cpf: dadosPessoais.cpf.replace(/\D/g, ""),
+        cnpj: dadosPessoais.cnpj.replace(/\D/g, ""),
+        telefone: dadosPessoais.telefone.replace(/\D/g, ""),
+        dataNascimento: dataNascimentoParaSalvar // Envia no formato YYYY-MM-DD
+      },
       dadosOrganizacao: { ...dadosOrganizacao, cpfSocio: dadosOrganizacao.cpfSocio.replace(/\D/g, "") }
     };
 
@@ -251,6 +379,10 @@ const Perfil = () => {
       setSuccessMessage("Dados pessoais atualizados com sucesso!");
       setShowSuccessModal(true);
       setEditandoDadosAdicionais(false);
+
+      // Recarregar os dados para exibir a data formatada corretamente
+      fetchProfileAndUser();
+
     } catch (error) {
       console.error("Erro ao salvar os dados de perfil:", error);
     }
@@ -437,11 +569,24 @@ const Perfil = () => {
                   </div>
                   <div className="perfil-radio-group" role="radiogroup" aria-label="Tipo de documento">
                     <label className="perfil-radio-pill">
-                      <input type="radio" name="tipoPessoa" value="cpf" checked={tipoPessoa === "cpf"} onChange={() => setTipoPessoa("cpf")} disabled={!editandoDadosAdicionais} />
+                      <input type="radio" name="tipoPessoa" value="cpf" checked={tipoPessoa === "cpf"}
+                        onChange={() => {
+                          setTipoPessoa("cpf");
+                          setDocError(""); // Limpa o erro
+                          setDadosPessoais(prev => ({ ...prev, cnpj: "" })); // Limpa o valor do CNPJ
+                        }}
+                        disabled={!editandoDadosAdicionais} />
                       <span>CPF</span>
                     </label>
                     <label className="perfil-radio-pill">
-                      <input type="radio" name="tipoPessoa" value="cnpj" checked={tipoPessoa === "cnpj"} onChange={() => setTipoPessoa("cnpj")} disabled={!editandoDadosAdicionais} />
+                      <input type="radio" name="tipoPessoa" value="cnpj" checked={tipoPessoa === "cnpj"}
+                        onChange={() => {
+                          setTipoPessoa("cnpj");
+                          setDocError(""); // Limpa o erro
+                          setDadosPessoais(prev => ({ ...prev, cpf: "" })); // Limpa o valor do CPF
+                          setCpfSocioError(""); // Limpa o erro do sócio também
+                        }}
+                        disabled={!editandoDadosAdicionais} />
                       <span>CNPJ</span>
                     </label>
                   </div>
@@ -452,20 +597,45 @@ const Perfil = () => {
                     <span>{docLabel}</span>
                   </label>
                   <input
-                    className="perfil-input"
+                    className={`perfil-input ${docError ? 'perfil-input-error' : ''}`} // Adiciona classe de erro
                     placeholder={docPlaceholder}
                     inputMode="numeric"
                     maxLength={docMaxLength}
                     value={tipoPessoa === "cpf" ? dadosPessoais.cpf : dadosPessoais.cnpj}
                     onChange={(e) => {
-                      const formattedValue = tipoPessoa === "cpf" ? formatCpf(e.target.value) : formatCnpj(e.target.value);
-                      setDadosPessoais(prevState => ({
-                        ...prevState,
-                        [tipoPessoa]: formattedValue
-                      }));
+                      const value = e.target.value;
+                      const cleanValue = value.replace(/\D/g, "");
+                      let formattedValue = "";
+
+                      if (tipoPessoa === "cpf") {
+                        formattedValue = formatCpf(value);
+                        setDadosPessoais(prevState => ({ ...prevState, cpf: formattedValue }));
+
+                        // Validação em tempo real
+                        if (cleanValue.length === 11) {
+                          setDocError(validarCPF(cleanValue) ? "" : "CPF inválido.");
+                        } else if (cleanValue.length > 0) {
+                          setDocError("CPF incompleto.");
+                        } else {
+                          setDocError("");
+                        }
+                      } else { // tipoPessoa === "cnpj"
+                        formattedValue = formatCnpj(value);
+                        setDadosPessoais(prevState => ({ ...prevState, cnpj: formattedValue }));
+
+                        // Validação em tempo real
+                        if (cleanValue.length === 14) {
+                          setDocError(validarCNPJ(cleanValue) ? "" : "CNPJ inválido.");
+                        } else if (cleanValue.length > 0) {
+                          setDocError("CNPJ incompleto.");
+                        } else {
+                          setDocError("");
+                        }
+                      }
                     }}
                     disabled={!editandoDadosAdicionais}
                   />
+                  {docError && (<div className="perfil-error-message">{docError}</div>)}
                 </div>
                 {tipoPessoa === "cpf" && (
                   <div className="perfil-form-group">
@@ -537,7 +707,7 @@ const Perfil = () => {
                         <span>CPF do Sócio/Representante</span>
                       </label>
                       <input
-                        className="perfil-input"
+                        className={`perfil-input ${cpfSocioError ? 'perfil-input-error' : ''}`} // Adiciona classe de erro
                         placeholder="000.000.000-00"
                         inputMode="numeric"
                         maxLength={14}
@@ -545,9 +715,20 @@ const Perfil = () => {
                         onChange={(e) => {
                           const formattedCpf = formatCpf(e.target.value);
                           setDadosOrganizacao(prev => ({ ...prev, cpfSocio: formattedCpf }));
+
+                          // Validação em tempo real
+                          const cleanCpf = formattedCpf.replace(/\D/g, "");
+                          if (cleanCpf.length === 11) {
+                            setCpfSocioError(validarCPF(cleanCpf) ? "" : "CPF do Sócio inválido.");
+                          } else if (cleanCpf.length > 0) {
+                            setCpfSocioError("CPF do Sócio incompleto.");
+                          } else {
+                            setCpfSocioError("");
+                          }
                         }}
                         disabled={!editandoDadosAdicionais}
                       />
+                      {cpfSocioError && (<div className="perfil-error-message">{cpfSocioError}</div>)}
                     </div>
                     <div className="perfil-form-group">
                       <label className="perfil-input-label">

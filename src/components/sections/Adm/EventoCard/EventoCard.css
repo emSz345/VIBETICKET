@@ -1,25 +1,32 @@
 /* Estilo Base do Card */
 .evento-card {
     background-color: #ffffff;
-    border-radius: 12px; /* Cantos mais arredondados */
+    border-radius: 12px;
+    /* Cantos mais arredondados */
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra mais profunda e suave */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    /* Sombra mais profunda e suave */
     display: flex;
     flex-direction: column;
-    cursor: pointer; /* Indica que é clicável */
+    cursor: pointer;
+    /* Indica que é clicável */
     transition: all 0.3s ease;
-    border: 1px solid #e0e0e0; /* Borda sutil */
+    border: 1px solid #e0e0e0;
+    /* Borda sutil */
 }
 
 .evento-card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Sombra mais intensa no hover */
-    transform: translateY(-3px); /* Leve levantamento para feedback */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    /* Sombra mais intensa no hover */
+    transform: translateY(-3px);
+    /* Leve levantamento para feedback */
 }
 
 /* Cabeçalho (Imagem e Tag de Status) */
 .evento-cabecalho {
     position: relative;
-    height: 180px; /* Altura da imagem um pouco maior */
+    height: 180px;
+    /* Altura da imagem um pouco maior */
     overflow: hidden;
 }
 
@@ -31,7 +38,8 @@
 }
 
 .evento-card:hover .evento-imagem {
-    transform: scale(1.05); /* Zoom sutil na imagem no hover */
+    transform: scale(1.05);
+    /* Zoom sutil na imagem no hover */
 }
 
 /* Tag de Status */
@@ -51,28 +59,33 @@
 /* Cores do Status - Adapte conforme suas necessidades */
 .evento-status-tag.status-em-analise {
     /* Cor para 'em_analise' */
-    background-color: #ff9800; /* Laranja */
+    background-color: #ff9800;
+    /* Laranja */
 }
 
 .evento-status-tag.status-aprovado {
     /* Cor para 'aprovado' */
-    background-color: #4CAF50; /* Verde */
+    background-color: #4CAF50;
+    /* Verde */
 }
 
 .evento-status-tag.status-rejeitado {
     /* Cor para 'rejeitado' */
-    background-color: #F44336; /* Vermelho */
+    background-color: #F44336;
+    /* Vermelho */
 }
 
 .evento-status-tag.status-em-reanalise {
     /* Cor para 'em_reanalise' */
-    background-color: #2196F3; /* Azul */
+    background-color: #2196F3;
+    /* Azul */
 }
 
 /* Corpo (Nome e Detalhes) */
 .evento-corpo {
     padding: 15px;
-    flex-grow: 1; /* Permite que o corpo ocupe o espaço extra */
+    flex-grow: 1;
+    /* Permite que o corpo ocupe o espaço extra */
 }
 
 .evento-nome {
@@ -107,8 +120,9 @@
 /* Estilos de Botões (Mantidos, mas não visíveis no card principal - estão no Modal) */
 .evento-botoes {
     /* Mantenha se for usar em outro contexto, mas não necessário para este card */
-    display: none; 
+    display: none;
 }
+
 /* Estilos para os botões Aceitar/Rejeitar podem ser mantidos para uso no Modal */
 
 /* Estilos de Mídia (Opcional: para melhor responsividade) */
@@ -122,3 +136,48 @@
     }
 }
 */
+
+.evento-rodape {
+    /* Mantenha seus estilos existentes e adicione: */
+    display: flex;
+    /* Para alinhar o nome e o aviso */
+    justify-content: space-between;
+    /* Coloca um em cada ponta */
+    align-items: center;
+    /* Alinha verticalmente */
+    flex-wrap: wrap;
+    /* Permite quebrar linha se não couber */
+    gap: 8px;
+    /* Espaço entre nome e aviso se quebrar linha */
+}
+
+.evento-criador-aviso {
+    display: inline-flex;
+    /* Alinha ícone e texto */
+    align-items: center;
+    gap: 5px;
+    /* Espaço entre ícone e texto */
+    background-color: #fffbeb;
+    /* Amarelo bem claro */
+    color: #b45309;
+    /* Amarelo/Laranja escuro */
+    font-size: 0.75rem;
+    /* Pequeno */
+    font-weight: 600;
+    padding: 3px 8px;
+    /* Padding interno */
+    border-radius: 6px;
+    /* Bordas arredondadas */
+    border: 1px solid #fef3c7;
+    /* Borda amarela clara */
+}
+
+.evento-criador-aviso .aviso-icon {
+    /* O ícone já tem cor, só ajusta o tamanho se necessário */
+    font-size: 0.8rem;
+}
+
+/* Opcional: Efeito hover para mostrar o 'title' */
+.evento-criador-aviso:hover {
+    cursor: help;
+}

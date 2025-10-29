@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Ingresso } from '../../../../types/Ingresso'; // <-- Certifique-se que esta é a interface ATUALIZADA
-import { FiMail, FiDownload } from 'react-icons/fi';
+import { FiMail, FiDownload, FiXCircle, FiLoader } from 'react-icons/fi';
 import { Ticket } from '../Ticket/Ticket'; // <-- Lembre-se de atualizar este componente também
 import './IngressoCard.css';
 
@@ -13,6 +13,9 @@ interface Props {
   ingresso: Ingresso;
   onSendEmail: (ingressoId: string) => Promise<void>;
   isSendingEmail: boolean;
+  // 🔥 Adicione as novas props
+  onReembolsar: (pedidoId: string) => void;
+  isReembolsando: boolean;
 }
 
 // --- FUNÇÕES HELPER DE FORMATAÇÃO (Mova para um arquivo utils/formatters.ts se preferir) ---
@@ -63,7 +66,13 @@ const formatarLocal = (evento?: Ingresso['eventoId']): string => {
 // --- FIM DAS FUNÇÕES HELPER ---
 
 
-export const IngressoCard: React.FC<Props> = ({ ingresso, onSendEmail, isSendingEmail }) => {
+export const IngressoCard: React.FC<Props> = ({
+  ingresso,
+  onSendEmail,
+  isSendingEmail,
+  onReembolsar,      // <-- Nova prop
+  isReembolsando     // <-- Nova prop
+}) => {
   const [showIngressoModal, setShowIngressoModal] = useState(false);
 
   // --- ACESSANDO DADOS POPULADOS DO EVENTO ---
@@ -280,13 +289,35 @@ export const IngressoCard: React.FC<Props> = ({ ingresso, onSendEmail, isSending
             <button
               className="IngressoCard-ticket-btn IngressoCard-ticket-btn--secondary"
               onClick={handleGerarPdf}
-              disabled={!isTicketActive} // Desabilita se status não for 'Pago'
+              disabled={!isTicketActive || isSendingEmail || isReembolsando} // Desabilita se status não for 'Pago'
               aria-label={isTicketActive ? "Baixar Comprovante em PDF" : "PDF indisponível para este status"} // Melhora acessibilidade
             >
               <FiDownload className="IngressoCard-ticket-btn-icon" />
               Baixar Comprovante (PDF)
             </button>
-            {/* Opcional: Poderia ter um botão de "Enviar Email" aqui também, se fizesse sentido */}
+            {isTicketActive && ( // Só mostra se o ingresso estiver 'Pago'
+              <button
+                className="IngressoCard-ticket-btn IngressoCard-ticket-btn--reembolsar"
+                onClick={() => onReembolsar(ingresso.pedidoId)}
+                // Desabilita se já estiver reembolsando OU enviando email
+                disabled={isReembolsando || isSendingEmail}
+                aria-label="Cancelar pedido e solicitar reembolso"
+              >
+                {isReembolsando ? (
+                  <FiLoader className="IngressoCard-ticket-btn-icon spin" /> // Ícone de loading
+                ) : (
+                  <FiXCircle className="IngressoCard-ticket-btn-icon" />
+                )}
+                {isReembolsando ? 'Processando...' : 'Reembolso'}
+              </button>
+            )}
+
+            {/* Mensagem se o status for outro (ex: Reembolsado) */}
+            {!isTicketActive && (
+              <div className="IngressoCard-status-message">
+                Ações indisponíveis (Status: {ingresso.status})
+              </div>
+            )}
           </div>
         </div>
       </div>

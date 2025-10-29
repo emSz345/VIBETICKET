@@ -15,8 +15,10 @@
     background-color: white;
     border-radius: 10px;
     width: 90%;
-    max-width: 700px; /* Tamanho confortável para visualização */
-    max-height: 90vh; /* Limite de altura */
+    max-width: 700px;
+    /* Tamanho confortável para visualização */
+    max-height: 90vh;
+    /* Limite de altura */
     overflow-y: auto;
     position: relative;
     padding: 25px;
@@ -54,7 +56,8 @@
     height: 120px;
     object-fit: cover;
     border-radius: 8px;
-    flex-shrink: 0; /* Impede que a imagem encolha */
+    flex-shrink: 0;
+    /* Impede que a imagem encolha */
 }
 
 .modal-evento-info-basica {
@@ -89,7 +92,7 @@
 .modal-evento-item {
     margin-bottom: 15px;
     /* Para a seção de colunas */
-    flex: 1; 
+    flex: 1;
 }
 
 .modal-evento-item.full-width {
@@ -108,7 +111,8 @@
 .modal-evento-texto {
     font-size: 15px;
     color: #555;
-    white-space: pre-wrap; /* Mantém quebras de linha e formatação */
+    white-space: pre-wrap;
+    /* Mantém quebras de linha e formatação */
 }
 
 .modal-evento-link {
@@ -161,7 +165,8 @@
 
 /* NOVO ESTILO: Reanálise */
 .modal-evento-btn-reanalise {
-    background-color: #FFC107; /* Amarelo/Âmbar */
+    background-color: #FFC107;
+    /* Amarelo/Âmbar */
     color: #333;
 }
 
@@ -176,7 +181,8 @@
     display: block;
     font-size: 16px;
     font-weight: bold;
-    color: #007bff; /* Cor para destacar o título da seção */
+    color: #007bff;
+    /* Cor para destacar o título da seção */
     margin: 15px 0 10px 0;
     padding-bottom: 5px;
     border-bottom: 1px solid #eee;
@@ -188,7 +194,8 @@
 
 /* Garante que o item de data de venda ocupe 2 colunas para alinhar com a meia-entrada (se for o caso) */
 .ingressos-inteira .modal-evento-item:last-child {
-    flex: 1.5; /* Faz com que o item de data/fim de vendas ocupe um pouco mais de espaço */
+    flex: 1.5;
+    /* Faz com que o item de data/fim de vendas ocupe um pouco mais de espaço */
 }
 
 .ingressos-meia .modal-evento-item {
@@ -200,4 +207,49 @@
     opacity: 0.6;
     cursor: not-allowed;
     box-shadow: none;
+}
+
+.modal-criador-status {
+    display: inline-flex;
+    /* Alinha ícone e texto */
+    align-items: center;
+    gap: 6px;
+    /* Espaço entre ícone e texto */
+    font-size: 0.8rem;
+    /* Tamanho pequeno */
+    font-weight: 600;
+    padding: 4px 10px;
+    /* Padding interno */
+    border-radius: 15px;
+    /* Bem arredondado */
+    margin-top: 8px;
+    /* Espaço acima */
+    border: 1px solid transparent;
+    /* Borda padrão */
+}
+
+/* Estilo para Dados Verificados (Verde) */
+.modal-criador-status.verificado {
+    background-color: #e6fffa;
+    /* Verde bem claro */
+    color: #2f855a;
+    /* Verde escuro */
+    border-color: #b2f5ea;
+    /* Borda verde clara */
+}
+
+/* Estilo para Dados Pendentes (Amarelo/Laranja) */
+.modal-criador-status.pendente {
+    background-color: #fffbeb;
+    /* Amarelo bem claro */
+    color: #b45309;
+    /* Amarelo/Laranja escuro */
+    border-color: #fef3c7;
+    /* Borda amarela clara */
+}
+
+/* Ajusta o tamanho do ícone dentro do status */
+.modal-criador-status svg {
+    font-size: 0.9em;
+    /* Ligeiramente menor que o texto */
 }

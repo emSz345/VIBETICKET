@@ -913,6 +913,10 @@
   display: none;
 }
 
+.observacao-doacao{
+  color: #ada30e;
+}
+
 /* ========================
    MODAL DE SUCESSO - EDITAR EVENTO
 ======================== */

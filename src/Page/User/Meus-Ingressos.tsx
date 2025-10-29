@@ -6,6 +6,7 @@ import { IngressoCard } from '../../components/sections/User/IngressoCard/Ingres
 import '../../styles/Meus-Ingressos.css';
 import { Ingresso } from '../../types/Ingresso'; // <-- Importe a interface atualizada
 import { useAuth } from '../../Hook/AuthContext';
+import ModalAviso from '../../components/sections/User/ModalAviso/ModalAviso';
 import { useNavigate } from 'react-router-dom';
 
 const MeusIngressos: React.FC = () => {
@@ -17,6 +18,13 @@ const MeusIngressos: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+    const [isReembolsando, setIsReembolsando] = useState(false);
+
+    const [modalReembolsoOpen, setModalReembolsoOpen] = useState(false);
+    const [pedidoParaReembolsar, setPedidoParaReembolsar] = useState<string | null>(null);
+    const [modalAvisoOpen, setModalAvisoOpen] = useState(false); // Para erros
+    const [modalAvisoMensagem, setModalAvisoMensagem] = useState({ title: '', message: '' });
 
     useEffect(() => {
         const fetchIngressos = async () => {
@@ -105,6 +113,71 @@ const MeusIngressos: React.FC = () => {
         }
     };
 
+    const handleAbrirConfirmacaoReembolso = (pedidoId: string) => {
+        setPedidoParaReembolsar(pedidoId); // Guarda o ID do pedido
+        setModalReembolsoOpen(true);     // Abre o modal
+    };
+
+    // 🔥 4. FUNÇÃO QUE FAZ O REEMBOLSO (CHAMADA PELO MODAL)
+    const handleConfirmarReembolso = async () => {
+        if (!pedidoParaReembolsar || isReembolsando) return; // Segurança
+
+        // REMOVIDO: o window.confirm
+        // if (!window.confirm(...)) { return; }
+
+        setIsReembolsando(true);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`${apiUrl}/api/pagamento/reembolsar`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ pedidoId: pedidoParaReembolsar })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Erro ao solicitar reembolso.");
+            }
+
+            // Sucesso!
+            setModalAvisoMensagem({ title: 'Sucesso', message: 'Pedido reembolsado com sucesso!' });
+            setModalAvisoOpen(true); // Mostra o modal de sucesso
+
+            // Atualiza a lista local
+            setIngressos(prevIngressos =>
+                prevIngressos.map(ing =>
+                    ing.pedidoId === pedidoParaReembolsar ? { ...ing, status: 'Reembolsado' } : ing
+                )
+            );
+
+            // Fecha o modal de confirmação e limpa
+            setModalReembolsoOpen(false);
+            setPedidoParaReembolsar(null);
+
+        } catch (err: any) {
+            // 🔥 TRATAMENTO DE ERRO: Abre o modal de aviso de erro
+            setModalAvisoMensagem({
+                title: 'Reembolso Falhou',
+                message: (err instanceof Error ? err.message : 'Ocorreu um erro desconhecido.')
+            });
+            setModalAvisoOpen(true);
+
+            // Fecha o modal de confirmação mesmo se falhar
+            setModalReembolsoOpen(false);
+        } finally {
+            setIsReembolsando(false);
+        }
+    };
+
     if (loading) {
         return <div className="meus-ingressos-carregando">Carregando seus ingressos...</div>;
     }
@@ -146,10 +219,39 @@ const MeusIngressos: React.FC = () => {
                             ingresso={ingresso} // Passa o objeto ingresso COMPLETO
                             onSendEmail={handleSendEmail}
                             isSendingEmail={isSendingEmail}
+
+                            onReembolsar={handleAbrirConfirmacaoReembolso}
+                            isReembolsando={isReembolsando}
                         />
                     ))}
                 </div>
             )}
+
+            <ModalAviso
+                isOpen={modalReembolsoOpen}
+                onClose={() => setModalReembolsoOpen(false)}
+                onConfirm={handleConfirmarReembolso} // Chama a função que faz o fetch
+                type="confirmacao"
+                theme="perigo" // Vermelho para cancelamento
+                title="Confirmar Cancelamento"
+                labelConfirmar="Sim, Cancelar"
+                isLoading={isReembolsando}
+            >
+                <p>Tem certeza que deseja cancelar este pedido?</p>
+                <p>O valor total será estornado no método de pagamento original.</p>
+            </ModalAviso>
+
+            {/* Modal de Aviso (para Erros ou Sucesso) */}
+            <ModalAviso
+                isOpen={modalAvisoOpen}
+                onClose={() => setModalAvisoOpen(false)}
+                type="aviso"
+                // O tema pode variar (info para sucesso, perigo para erro), mas 'perigo' cobre a maioria
+                theme={modalAvisoMensagem.title === 'Sucesso' ? 'info' : 'perigo'}
+                title={modalAvisoMensagem.title}
+            >
+                <p>{modalAvisoMensagem.message}</p>
+            </ModalAviso>
         </div>
     );
 };

@@ -32,7 +32,7 @@ export interface Ingresso {
   // --- Dados do Ingresso ---
   tipoIngresso: 'Inteira' | 'Meia';
   valor: number;
-  status: 'Pago' | 'Pendente' | 'Cancelado' | 'Recusado'; // <-- Adicionado 'Recusado'
+  status: 'Pago' | 'Pendente' | 'Cancelado' | 'Recusado' | 'Reembolsado' | 'Expirado'; // <-- Adicionado 'Recusado'
 
   // --- Campos REMOVIDOS (agora virão de eventoId) ---
   // nomeEvento: string;

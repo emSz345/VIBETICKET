@@ -345,6 +345,8 @@ const Detalhes: React.FC = () => {
                         <div className="detalhes-info-evento">
                             <h1 className="detalhes-titulo-evento">{evento.nome}</h1>
                             <div className="detalhes-meta-info">
+                                <div className="detalhes-info-linha"><span className="detalhes-label">Quantidade:</span><span>{evento.quantidadeInteira}</span></div>
+
                                 <div className="detalhes-info-linha"><span className="detalhes-label"><FaCalendarAlt /> Data:</span><span>{evento.dataInicio}</span></div>
                                 <div className="detalhes-info-linha"><span className="detalhes-label"><IoTime /> Hora:</span><span>{evento.horaInicio} - {evento.horaTermino}</span></div>
                                 <div className="detalhes-info-linha"><span className="detalhes-label"><FaMapMarkerAlt /> Local:</span><span>{`${evento.rua}, ${evento.numero}, ${evento.bairro} - ${evento.cidade}, ${evento.estado}`}</span></div>
