@@ -94,11 +94,11 @@ const Cidades: React.FC = () => {
 
   return (
     <div className="cidades-container" id="estados">
-      <h3 className="cidades-title">Estados com mais shows</h3>
+      <h3 className="cidades-title">A Vibe de Cada Estado</h3>
       <div className="cidades-grid" ref={containerRef}>
         {cidades.map((cidade, i) => (
-          <div 
-            key={`${cidade.nome}-${i}`} 
+          <div
+            key={`${cidade.nome}-${i}`}
             className="cidade-card"
             onClick={handleEstadoClick} // Sempre manda para /categorias
             role="button"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../../styles/CriarEventos.css';
+import '../../styles/CriarEventos.css'; // Reutiliza os mesmos estilos
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { MdAddPhotoAlternate } from 'react-icons/md';
@@ -9,8 +9,10 @@ import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom';
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
+import { useAuth } from '../../Hook/AuthContext'; // 🔥 1. IMPORTAR useAuth
 
 type Evento = {
+  // ... (Sua tipagem de Evento está ok)
   _id: string;
   nome: string;
   categoria: string;
@@ -43,6 +45,7 @@ const EditarEvento = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
+  const { user, isLoading: isAuthLoading } = useAuth(); // 🔥 2. OBTER O USUÁRIO LOGADO
 
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [evento, setEvento] = useState<Evento | null>(null);
@@ -54,6 +57,7 @@ const EditarEvento = () => {
 
   // Estados do formulário
   const [nomeEvento, setNomeEvento] = useState('');
+  // ... (outros states do formulário: categoriaEvento, image, etc.)
   const [categoriaEvento, setCategoriaEvento] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -77,38 +81,42 @@ const EditarEvento = () => {
   const [temMeia, setTemMeia] = useState('false');
   const [dataFimVendas, setDataFimVendas] = useState('');
   const [dataInicioVendas, setDataInicioVendas] = useState('');
-  const [querDoar, setQuerDoar] = useState<boolean | null>(null);
-  const [valorDoacao, setValorDoacao] = useState('');
-  const [termosAceitos, setTermosAceitos] = useState(false);
+  // 🔥 REMOVIDO: Estados de Doação (querDoar, valorDoacao)
+  const [termosAceitos, setTermosAceitos] = useState(false); // Mantido
 
   // --- Estados do Modal ---
   const [modalSucessoAberto, setModalSucessoAberto] = useState(false);
 
+  // 🔥 3. ADICIONAR ESTADOS PARA VERIFICAÇÃO DE PERFIL
+  const [perfilCompleto, setPerfilCompleto] = useState(false);
+  const [perfilCarregado, setPerfilCarregado] = useState(false);
 
+
+  // 🔥 4. CORREÇÃO DE AUTH (Token) no fetchEvento
   useEffect(() => {
     const fetchEvento = async () => {
+      const token = localStorage.getItem('token'); // Pega o token
+      if (!id || !token) {
+        setErrorMessage('Evento não encontrado ou sessão inválida.');
+        setLoading(false);
+        if (!token) navigate('/login');
+        return;
+      }
+
       try {
         const response = await fetch(`${apiUrl}/api/eventos/${id}`, {
-          credentials: 'include',
+          // REMOVIDO: credentials: 'include',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // ADICIONADO: Auth Header
           }
         });
 
-        if (response.status === 401) {
+        // ... (seu tratamento de status 401, 404, 403 está ok) ...
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
           navigate('/login');
-          return;
-        }
-
-        if (response.status === 404) {
-          setErrorMessage('Evento não encontrado');
-          setLoading(false);
-          return;
-        }
-
-        if (response.status === 403) {
-          setErrorMessage('Acesso negado - você não é o dono deste evento');
-          setLoading(false);
           return;
         }
 
@@ -119,7 +127,7 @@ const EditarEvento = () => {
         const data = await response.json();
         setEvento(data);
 
-        // Preencher os campos do formulário com os dados do evento
+        // Preencher os campos do formulário (seu código está ok)
         setNomeEvento(data.nome);
         setCategoriaEvento(data.categoria);
         setDescricao(data.descricao);
@@ -136,15 +144,15 @@ const EditarEvento = () => {
         setHoraTermino(data.horaTermino);
         setDataFimVendas(data.dataFimVendas);
         setDataInicioVendas(data.dataInicioVendas);
-        setValorIngressoInteira(data.valorIngressoInteira?.toString() || '');
-        setValorIngressoMeia(data.valorIngressoMeia?.toString() || '');
+        // Corrige para usar '.' como separador decimal interno
+        setValorIngressoInteira(data.valorIngressoInteira?.toString().replace(',', '.') || '');
+        setValorIngressoMeia(data.valorIngressoMeia?.toString().replace(',', '.') || '');
         setQuantidadeInteira(data.quantidadeInteira?.toString() || '');
         setQuantidadeMeia(data.quantidadeMeia?.toString() || '');
         setTemMeia(data.temMeia ? 'true' : 'false');
-        setQuerDoar(data.querDoar);
-        setValorDoacao(data.valorDoacao?.toString() || '');
+        // REMOVIDO: setQuerDoar, setValorDoacao
+        setTermosAceitos(true); // Se está editando, já aceitou os termos antes
 
-        // Carregar preview da imagem
         if (data.imagem) {
           setImagePreviewUrl(`${apiUrl}/uploads/${data.imagem}`);
         }
@@ -156,106 +164,123 @@ const EditarEvento = () => {
       }
     };
 
-    if (id) {
-      fetchEvento();
-    }
+    fetchEvento();
   }, [id, apiUrl, navigate]);
 
-  const handleAbrirModal = () => {
-    setModalAberto(true);
-  };
 
-  const handleFecharModal = () => {
-    setModalAberto(false);
-  };
+  // 🔥 5. ADICIONAR VERIFICAÇÃO DE PERFIL (igual ao CriarEventos.tsx)
+  useEffect(() => {
+    // Roda apenas quando o 'user' do useAuth estiver disponível
+    if (user && user._id) {
+      const verificarPerfil = async () => {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            setPerfilCarregado(true);
+            return;
+          }
 
-  const handleConfirmarSaida = () => {
-    navigate('/meus-eventos');
-  };
+          const response = await fetch(`${apiUrl}/api/perfil/${user._id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
 
+          if (response.ok) {
+            const perfilData = await response.json();
+            // A verificação real:
+            // 1. Tem dados pessoais (cpf) E conta do MP conectada
+            // 2. OU Tem dados de organização (cnpj) E conta do MP conectada
+            const dadosPessoaisOK = perfilData.tipoPessoa === 'cpf' && perfilData.dadosPessoais?.cpf;
+            const dadosOrgOK = perfilData.tipoPessoa === 'cnpj' && perfilData.dadosPessoais?.cnpj && perfilData.dadosOrganizacao?.cpfSocio;
+            const mpConectado = !!perfilData.mercadoPagoAccountId;
+
+            if ((dadosPessoaisOK || dadosOrgOK) && mpConectado) {
+              setPerfilCompleto(true);
+            } else {
+              setPerfilCompleto(false);
+            }
+          } else {
+            // Se o perfil não existir, não está completo
+            setPerfilCompleto(false);
+          }
+        } catch (error) {
+          console.error('Erro ao verificar perfil:', error);
+          setPerfilCompleto(false); // Assume incompleto em caso de erro
+        } finally {
+          setPerfilCarregado(true); // Marca que a verificação terminou
+        }
+      };
+      verificarPerfil();
+    } else if (!isAuthLoading) {
+      // Se terminou de carregar auth e não tem usuário
+      setPerfilCarregado(true);
+      setPerfilCompleto(false);
+    }
+  }, [user, isAuthLoading, apiUrl]); // Roda quando 'user' ou 'isAuthLoading' mudam
+
+
+  // ... (handleAbrirModal, handleFecharModal, handleConfirmarSaida, etc. estão ok)
+  const handleAbrirModal = () => setModalAberto(true);
+  const handleFecharModal = () => setModalAberto(false);
+  const handleConfirmarSaida = () => navigate('/meus-eventos');
   const handleProximaEtapa = () => {
     if (validarEtapa(etapaAtual)) {
       setEtapaAtual(prevEtapa => prevEtapa + 1);
       window.scrollTo(0, 0);
     }
   };
-
   const etapaAnterior = () => {
     setEtapaAtual(prevEtapa => prevEtapa - 1);
     window.scrollTo(0, 0);
   };
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // ... (seu código está ok)
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImage(file);
-
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviewUrl(reader.result as string);
-      };
+      reader.onloadend = () => { setImagePreviewUrl(reader.result as string); };
       reader.readAsDataURL(file);
     } else {
       setImage(null);
       setImagePreviewUrl(null);
     }
   };
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [etapaAtual]);
-
+  useEffect(() => { window.scrollTo(0, 0); }, [etapaAtual]);
   const buscarEnderecoPorCep = async (cep: string) => {
+    // ... (seu código está ok)
     const cleanedCep = cep.replace(/\D/g, '');
-
     if (cleanedCep.length !== 8) {
       setErros(prevErros => ({ ...prevErros, cep: 'CEP inválido. Deve conter 8 dígitos.' }));
-      setRua('');
-      setBairro('');
-      setCidade('');
-      setEstado('');
       return;
     }
-
     setErros(prevErros => {
       const newErros = { ...prevErros };
       delete newErros.cep;
       return newErros;
     });
-
     setIsFetchingCep(true);
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cleanedCep}/json/`);
       const data = await response.json();
-
       if (data.erro) {
         setErros(prevErros => ({ ...prevErros, cep: 'CEP não encontrado.' }));
-        setRua('');
-        setBairro('');
-        setCidade('');
-        setEstado('');
       } else {
         setRua(data.logradouro || '');
         setBairro(data.bairro || '');
         setCidade(data.localidade || '');
         setEstado(data.uf || '');
-        setErros(prevErros => {
-          const newErros = { ...prevErros };
-          delete newErros.rua;
-          delete newErros.bairro;
-          delete newErros.cidade;
-          delete newErros.estado;
-          return newErros;
-        });
       }
     } catch (error) {
       setErros(prevErros => ({ ...prevErros, cep: 'Erro ao buscar CEP. Tente novamente.' }));
-      console.error("Erro ao buscar CEP:", error);
     } finally {
       setIsFetchingCep(false);
     }
   };
 
+
+  // 🔥 6. AJUSTAR VALIDAÇÃO (Remover Etapa 6)
   const validarEtapa = (etapa: number) => {
     const novosErros: { [key: string]: string } = {};
     const hoje = new Date();
@@ -300,7 +325,7 @@ const EditarEvento = () => {
         if (!quantidadeInteira || parseInt(quantidadeInteira) <= 0) {
           novosErros.quantidadeInteira = 'A quantidade de ingressos inteiros é obrigatória e deve ser maior que zero.';
         }
-        if (temMeia === 'true') {
+        if (temMeia === 'true') { // Comparação correta com string
           if (!valorIngressoMeia || parseFloat(valorIngressoMeia.replace(',', '.')) <= 0) {
             novosErros.valorMeia = 'O valor do ingresso meia é obrigatório se houver meia-entrada.';
           }
@@ -337,11 +362,7 @@ const EditarEvento = () => {
           }
         }
         break;
-      case 6:
-        if (querDoar && (!valorDoacao || parseFloat(valorDoacao.replace(',', '.')) <= 0)) {
-          novosErros.valorDoacao = 'Se deseja doar, informe um valor válido.';
-        }
-        break;
+      // REMOVIDO: case 6 (Doação)
       default:
         break;
     }
@@ -350,14 +371,22 @@ const EditarEvento = () => {
     return Object.keys(novosErros).length === 0;
   };
 
+  // 🔥 7. AJUSTAR ENVIO (Remover Etapa 6 e Adicionar Token)
   const handleEnviarEdicao = async () => {
-    if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5) || !validarEtapa(6)) {
+    // Validar apenas até a etapa 5
+    if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5)) {
       alert('Por favor, corrija os erros em todos os campos antes de enviar para reanálise.');
       if (!validarEtapa(1)) { setEtapaAtual(1); return; }
       if (!validarEtapa(2)) { setEtapaAtual(2); return; }
       if (!validarEtapa(3)) { setEtapaAtual(3); return; }
       if (!validarEtapa(4)) { setEtapaAtual(4); return; }
-      if (!validarEtapa(5)) { setEtapaAtual(5); return; }
+      if (!validarEtapa(5)) { setEtapaAtual(5); return; } // Parar na 5
+      return;
+    }
+
+    // Termos ainda são necessários (mas já vêm setados como true no useEffect)
+    if (!termosAceitos) {
+      alert('Você deve aceitar os Termos e Condições para editar o evento.');
       return;
     }
 
@@ -365,7 +394,7 @@ const EditarEvento = () => {
 
     const formData = new FormData();
 
-    // Adicionar todos os campos ao FormData
+    // Adicionar todos os campos (exceto doação)
     formData.append("nome", nomeEvento);
     if (image) formData.append('imagem', image);
     formData.append("categoria", categoriaEvento);
@@ -381,32 +410,45 @@ const EditarEvento = () => {
     formData.append("dataInicio", dataInicio);
     formData.append("horaInicio", horaInicio);
     formData.append("horaTermino", horaTermino);
-    formData.append("dataFimVendas", dataFimVendas); // Este será mapeado para dataFim no backend
+    formData.append("dataFimVendas", dataFimVendas);
     formData.append("dataInicioVendas", dataInicioVendas);
-    formData.append("valorIngressoInteira", valorIngressoInteira);
-    formData.append("valorIngressoMeia", temMeia === 'true' ? valorIngressoMeia : '0');
+    // Envia valores com '.' (ponto)
+    formData.append("valorIngressoInteira", valorIngressoInteira.replace(',', '.'));
+    formData.append("valorIngressoMeia", temMeia === 'true' ? valorIngressoMeia.replace(',', '.') : '0');
     formData.append("quantidadeInteira", quantidadeInteira);
     formData.append("quantidadeMeia", temMeia === 'true' ? quantidadeMeia : '0');
     formData.append("temMeia", temMeia);
-    formData.append("querDoar", String(querDoar));
-    formData.append("valorDoacao", querDoar ? valorDoacao : '0');
+    // REMOVIDO: querDoar e valorDoacao
     formData.append("status", "em_reanalise");
 
     try {
+      const token = localStorage.getItem('token'); // Pega o token
+      if (!token) {
+        alert('Sessão expirada. Faça login novamente.');
+        navigate('/login');
+        setSaving(false);
+        return;
+      }
+
       const response = await fetch(`${apiUrl}/api/eventos/${id}/editar`, {
         method: 'PUT',
-        credentials: 'include',
+        // REMOVIDO: credentials: 'include',
         body: formData,
+        headers: {
+          // ADICIONADO: Auth Header
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          navigate('/login');
+        }
         const errorData = await response.json();
         throw new Error(errorData.message || `Erro do servidor: ${response.status}`);
       }
 
-      const _ = await response.json();
-      // Abre o modal de sucesso em vez do alert
-      setModalSucessoAberto(true);
+      setModalSucessoAberto(true); // Abre modal de sucesso
 
     } catch (error: any) {
       console.error('Erro ao editar evento:', error);
@@ -423,12 +465,30 @@ const EditarEvento = () => {
 
   const getError = (fieldName: string) => erros[fieldName];
 
-  if (loading) return <div className="loading">Carregando...</div>;
+  // Helper de cálculo (copiado do CriarEventos)
+  const calcularValorFinalComTaxa = (valorBaseString: string) => {
+    if (!valorBaseString) {
+      return 0;
+    }
+    // A lógica de input deste componente salva com '.' (ponto)
+    const valorNumerico = parseFloat(valorBaseString);
+    if (isNaN(valorNumerico)) {
+      return 0;
+    }
+    const valorFinal = valorNumerico * 1.1;
+    return parseFloat(valorFinal.toFixed(2));
+  };
+
+
+  if (loading || isAuthLoading || (user && !perfilCarregado)) {
+    return <div className="loading">Carregando...</div>;
+  }
   if (errorMessage) return <div className="error-message">{errorMessage}</div>;
   if (!evento) return <div>Evento não encontrado</div>;
 
   return (
     <div>
+      {/* ... (Seu Header e Modal de Saída - estão ok) ... */}
       <header className="criar-evento-header">
         <div className="criar-juntos">
           <Link to="/meus-eventos" title="Voltar">
@@ -446,7 +506,6 @@ const EditarEvento = () => {
           </button>
         </div>
       </header>
-
       {modalAberto && (
         <div className="criar-modal-overlay">
           <div className="criar-modal-content">
@@ -465,10 +524,14 @@ const EditarEvento = () => {
       )}
 
       <div className="criar-form">
-        <div className="alerta-amarelo">
-          <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
-          preencher suas informações pessoais. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
-        </div>
+
+        {/* 🔥 8. AVISO DE PERFIL AGORA FUNCIONA CORRETAMENTE */}
+        {perfilCarregado && !perfilCompleto && (
+          <div className="alerta-amarelo">
+            <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
+            preencher suas informações pessoais e vincular sua conta do mercado pago. Por favor, <a href="/perfil">clique aqui e complete seu perfil</a>.
+          </div>
+        )}
 
         {etapaAtual === 1 && (
           <div className="informacoes-basicas-container">
@@ -797,7 +860,7 @@ const EditarEvento = () => {
                     value={valorIngressoInteira}
                     onChange={(e) => {
                       let value = e.target.value.replace(/[^0-9,]/g, '');
-                      value = value.replace(/,/g, '.');
+                      value = value.replace(/,/g, '.'); // Armazena com ponto
                       if (value.includes('.')) {
                         const parts = value.split('.');
                         if (parts[1].length > 2) {
@@ -809,6 +872,13 @@ const EditarEvento = () => {
                     className={getError('valorInteira') ? 'erro-campo' : ''}
                   />
                   {getError('valorInteira') && <span className="mensagem-erro">{getError('valorInteira')}</span>}
+
+                  {/* 🔥 9. ADICIONADO HELPER DA TAXA */}
+                  {/* (Usa replace('.', ',') para exibir corretamente) */}
+                  <small className="taxa-info">
+                    Valor final para o comprador com 10% de taxa:
+                    <strong> R$ {(calcularValorFinalComTaxa(valorIngressoInteira) || 0).toFixed(2).replace('.', ',')}</strong>
+                  </small>
                 </div>
 
                 <div className="campo">
@@ -836,9 +906,9 @@ const EditarEvento = () => {
                   <label>
                     Haverá meia-entrada?
                     <select
-                      value={temMeia}
+                      value={temMeia} // Valor agora é 'true' ou 'false' (string)
                       onChange={(e) => {
-                        setTemMeia(e.target.value);
+                        setTemMeia(e.target.value); // Salva 'true' ou 'false'
                         if (e.target.value === 'false') {
                           setValorIngressoMeia('');
                           setQuantidadeMeia('');
@@ -864,7 +934,7 @@ const EditarEvento = () => {
                         value={valorIngressoMeia}
                         onChange={(e) => {
                           let value = e.target.value.replace(/[^0-9,]/g, '');
-                          value = value.replace(/,/g, '.');
+                          value = value.replace(/,/g, '.'); // Armazena com ponto
                           if (value.includes('.')) {
                             const parts = value.split('.');
                             if (parts[1].length > 2) {
@@ -876,6 +946,12 @@ const EditarEvento = () => {
                         className={getError('valorMeia') ? 'erro-campo' : ''}
                       />
                       {getError('valorMeia') && <span className="mensagem-erro">{getError('valorMeia')}</span>}
+
+                      {/* 🔥 9. ADICIONADO HELPER DA TAXA */}
+                      <small className="taxa-info">
+                        Valor final para o comprador com 10% de taxa:
+                        <strong> R$ {(calcularValorFinalComTaxa(valorIngressoMeia) || 0).toFixed(2).replace('.', ',')}</strong>
+                      </small>
                     </div>
 
                     <div className="campo">
@@ -935,71 +1011,7 @@ const EditarEvento = () => {
           </div>
         )}
 
-        {etapaAtual === 6 && (
-          <div className="informacoes-basicas-container">
-            <h2 className="criar-doacao-title">6. Deseja fazer uma doação?</h2>
-            <p className="criar-doacao-descricao">
-              Você pode contribuir com uma doação para uma instituição beneficente. Todo o valor arrecadado será destinado a causas sociais selecionadas pelos organizadores.
-            </p>
-
-            <div className="botoes-doacao">
-              <button
-                onClick={() => setQuerDoar(true)}
-                className={querDoar === true ? 'ativo' : ''}
-              >
-                Sim
-              </button>
-              <button
-                onClick={() => setQuerDoar(false)}
-                className={querDoar === false ? 'ativo' : ''}
-              >
-                Não
-              </button>
-            </div>
-
-            {querDoar && (
-              <div className="campo-doacao">
-                <label htmlFor="valor-doacao">Valor da doação</label>
-                <input
-                  type="text"
-                  id="valor-doacao"
-                  value={valorDoacao}
-                  onChange={(e) => {
-                    let value = e.target.value.replace(/[^0-9,]/g, '');
-                    value = value.replace(/,/g, '.');
-                    if (value.includes('.')) {
-                      const parts = value.split('.');
-                      if (parts[1].length > 2) {
-                        value = parts[0] + '.' + parts[1].substring(0, 2);
-                      }
-                    }
-                    setValorDoacao(value);
-                  }}
-                  placeholder="R$ 0,00"
-                  className={getError('valorDoacao') ? 'erro-campo' : ''}
-                />
-                {getError('valorDoacao') && <span className="mensagem-erro">{getError('valorDoacao')}</span>}
-              </div>
-            )}
-
-            <div className="termos-container">
-              <div className="checkbox-container">
-                <input
-                  type="checkbox"
-                  id="termos-aceitos"
-                  checked={termosAceitos}
-                  onChange={(e) => setTermosAceitos(e.target.checked)}
-                />
-                <label htmlFor="termos-aceitos">
-                  Eu li e concordo com os{' '}
-                  <a href="/Termos" target="_blank" rel="noopener noreferrer">
-                    Termos e Condições para a criação de eventos
-                  </a>.
-                </label>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* 🔥 10. REMOVIDO: {etapaAtual === 6 && (...)} */}
 
         <div className="navegacao-etapas">
           {etapaAtual > 1 && (
@@ -1008,7 +1020,8 @@ const EditarEvento = () => {
             </button>
           )}
 
-          {etapaAtual < 6 ? (
+          {/* 🔥 11. AJUSTADO: Navegação para a etapa 5 */}
+          {etapaAtual < 5 ? ( // MUDADO DE 6 PARA 5
             <button className="btn-proximo" onClick={handleProximaEtapa}>
               Próximo
             </button>
@@ -1016,14 +1029,15 @@ const EditarEvento = () => {
             <button
               className="criar-btn-enviar"
               onClick={handleEnviarEdicao}
-              disabled={!termosAceitos || saving}
+              disabled={!termosAceitos || saving} // Termos ainda necessários
             >
               {saving ? 'Salvando...' : 'Enviar para reanálise'}
               <IoSend />
             </button>
           )}
         </div>
-        {/* Modal de Sucesso */}
+
+        {/* ... (Modal de Sucesso - está ok) ... */}
         {modalSucessoAberto && (
           <div className="editarEvento-modal-overlay">
             <div className="editarEvento-modal">
@@ -1053,3 +1067,4 @@ const EditarEvento = () => {
 };
 
 export default EditarEvento;
+

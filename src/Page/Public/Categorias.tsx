@@ -15,6 +15,26 @@ import pr from "./../../assets/estados/estados-prn.jpg";
 import sc from "./../../assets/estados/estado_sc.jpg";
 import rs from "./../../assets/estados/estado_rgs.jpg";
 import df from "./../../assets/estados/estado_df.jpg";
+
+import ac from "./../../assets/estados/estado-ac.jpg";
+import al from "./../../assets/estados/estado-al.png";
+import ap from "./../../assets/estados/estado-ap.png";
+import am from "./../../assets/estados/estado-am.png";
+import ba from "./../../assets/estados/estado-ba.png";
+import ce from "./../../assets/estados/estado-ce.png";
+import es from "./../../assets/estados/estado-es.png";
+import go from "./../../assets/estados/estado-go.png";
+import mt from "./../../assets/estados/estado-mt.png";
+import ms from "./../../assets/estados/estado-ms.png";
+import pb from "./../../assets/estados/estado-pb.png";
+import pe from "./../../assets/estados/estado-pe.png";
+import pi from "./../../assets/estados/estado-pi.png";
+import rn from "./../../assets/estados/estado-rn.png";
+import ro from "./../../assets/estados/estado-ro.png";
+import rr from "./../../assets/estados/estado-rr.png";
+import se from "./../../assets/estados/estado-se.png";
+import to from "./../../assets/estados/estado-to.png";
+
 import ChatBot from "../../components/sections/Chatbot/Chatbot";
 
 
@@ -27,7 +47,26 @@ const mapeamentoEstados = {
     PR: { nome: "Paraná", img: pr, id: "PR" },
     SC: { nome: "Santa Catarina", img: sc, id: "SC" },
     RS: { nome: "Rio Grande do Sul", img: rs, id: "RS" },
-    DF: { nome: "Brasília", img: df, id: "DF" },
+    DF: { nome: "Distrito Federal", img: df, id: "DF" },
+
+    AC: { nome: "Acre", img: ac, id: "AC" },
+    AL: { nome: "Alagoas", img: al, id: "AL" },
+    AP: { nome: "Amapá", img: ap, id: "AP" },
+    AM: { nome: "Amazonas", img: am, id: "AM" },
+    BA: { nome: "Bahia", img: ba, id: "BA" },
+    CE: { nome: "Ceará", img: ce, id: "CE" },
+    ES: { nome: "Espírito Santo", img: es, id: "ES" },
+    GO: { nome: "Goiás", img: go, id: "GO" },
+    MT: { nome: "Mato Grosso", img: mt, id: "MT" },
+    MS: { nome: "Mato Grosso do Sul", img: ms, id: "MS" },
+    PB: { nome: "Paraíba", img: pb, id: "PB" },
+    PE: { nome: "Pernambuco", img: pe, id: "PE" },
+    PI: { nome: "Piauí", img: pi, id: "PI" },
+    RN: { nome: "Rio Grande do Norte", img: rn, id: "RN" },
+    RO: { nome: "Rondônia", img: ro, id: "RO" },
+    RR: { nome: "Roraima", img: rr, id: "RR" },
+    SE: { nome: "Sergipe", img: se, id: "SE" },
+    TO: { nome: "Tocantins", img: to, id: "TO" },
 };
 
 interface Evento {
@@ -68,17 +107,17 @@ const Categorias: React.FC = () => {
     useEffect(() => {
         // Scroll para o topo quando a página carregar
         window.scrollTo(0, 0);
-        
+
         const fetchEstados = async () => {
             try {
                 setCarregandoEstados(true);
                 const response = await axios.get(`${apiUrl}/api/eventos/estados`);
                 const siglasDosEstados: string[] = response.data;
-    
+
                 const estadosCompletos = siglasDosEstados
                     .map(sigla => mapeamentoEstados[sigla.toUpperCase() as keyof typeof mapeamentoEstados])
                     .filter(Boolean);
-    
+
                 setEstadosDisponiveis(estadosCompletos);
             } catch (err) {
                 console.error("Erro ao buscar estados:", err);
@@ -258,7 +297,7 @@ const FiltrosContent: React.FC<FiltrosContentProps> = ({ filtros, estados, onEst
 
     return (
         <>
-            <h3 className="categorias-filtros-titulo">Estados</h3>
+            <h3 className="categorias-filtros-titulo">Estados ativos</h3>
             <div className="categorias-filtro-estados">
                 {estados.map(estado => (
                     <div

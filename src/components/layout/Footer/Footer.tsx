@@ -94,7 +94,7 @@ const Footer: React.FC = () => {
             <h4 className="footer-section-title">Produtores</h4>
             <ul className="footer-section-list">
               <li className="footer-section-item"><Link to="/criarEeventos" className="footer-link">Criar Evento</Link></li>
-              <li className="footer-section-item"><Link to="/gerenciar-eventos" className="footer-link">Gerenciar Eventos</Link></li>
+              <li className="footer-section-item"><Link to="/meus-eventos" className="footer-link">Gerenciar Eventos</Link></li>
             </ul>
           </div>
 

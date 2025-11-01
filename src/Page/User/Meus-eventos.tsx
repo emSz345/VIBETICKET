@@ -154,53 +154,6 @@ const MeusEventos = () => {
     setModalAberta(true);
   };
 
-  // 🔥 =======================================================
-  // 🔥 FUNÇÃO CORRIGIDA (usando Token)
-  // 🔥 =======================================================
-  const handleDeleteEvento = useCallback(async (eventoId: string) => {
-    if (!window.confirm('Tem certeza que deseja deletar este evento?')) {
-      return;
-    }
-
-    try {
-      // 1. Pega o token
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Sessão expirada. Faça login novamente.');
-        navigate('/login');
-        return;
-      }
-
-      const response = await fetch(`${apiUrl}/api/eventos/${eventoId}`, {
-        method: 'DELETE',
-        // 2. REMOVIDO: 'credentials: "include"'
-        headers: {
-          // 3. ADICIONADO: O cabeçalho 'Authorization'
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.status === 401 || response.status === 403) {
-        alert('Sessão expirada. Faça login novamente.');
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        navigate('/login');
-        return;
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao deletar evento');
-      }
-
-      setEventos(prevEventos => prevEventos.filter(evento => evento._id !== eventoId));
-      alert('Evento deletado com sucesso!');
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Erro ao deletar evento');
-      console.error('Erro ao deletar evento:', err);
-    }
-  }, [apiUrl, navigate]); // Adicionado 'navigate'
-
   if (loading) {
     return (
       <div className="meus-ingressos-container">
