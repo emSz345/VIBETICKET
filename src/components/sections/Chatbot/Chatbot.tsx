@@ -160,30 +160,7 @@ const CategoriasLista: React.FC<CategoriasListaProps> = ({ categorias, onCategor
   );
 };
 
-const QuickReplies: React.FC<{ 
-  quickReplies: QuickReply[]; 
-  onQuickReplyClick: (action: string, itemId?: string) => void 
-}> = ({ quickReplies, onQuickReplyClick }) => {
-  if (!quickReplies || quickReplies.length === 0) return null;
 
-  return (
-    <div className="quick-replies">
-      <div className="quick-replies-titulo">💡 Ações rápidas:</div>
-      <div className="quick-replies-grid">
-        {quickReplies.map((qr, index) => (
-          <button
-            key={index}
-            className="quick-reply-btn"
-            onClick={() => onQuickReplyClick(qr.action, qr.itemId)}
-            data-action={qr.action}
-          >
-            {qr.text}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const CarrinhoLista: React.FC<{ 
   carrinho: CarrinhoItem[];
@@ -435,133 +412,159 @@ const ChatBot: React.FC = () => {
     };
   };
 
-  interface HuggingFaceResponse {
-    success: boolean;
-    reply: {
-      text: string;
-      intent?: string;
-      confidence?: number;
-      eventos?: Evento[];
-      categorias?: string[];
-      showCommands?: boolean;
-      state?: FiltroEstado & {
-        navegarPara?: string;
-      };
-      quickReplies?: QuickReply[];
-      carrinho?: CarrinhoItem[];
-    };
+ // Atualize a interface para incluir textoResposta
+interface ChatResponse {
+  success: boolean;
+  reply: {
+    // 🔥 ADICIONE ESTE CAMPO
+    textoResposta?: string;
+    text?: string; // Mantenha para compatibilidade
+    intent?: string;
+    confidence?: number;
+    eventos?: Evento[];
     categorias?: string[];
-  }
-
-  const sendMessage = async (messageText?: string) => {
-    if (!isEnabled) return;
-
-    const textToSend = messageText || inputValue;
-    if (!textToSend.trim()) return;
-
-    const newMessage: Mensagem = {
-      from: "user",
-      text: textToSend,
-      eventos: [],
-      state: filtroEstado
+    showCommands?: boolean;
+    state?: FiltroEstado & {
+      navegarPara?: string;
     };
+    quickReplies?: QuickReply[];
+    carrinho?: CarrinhoItem[];
+    necessitaAI?: boolean;
+    eventosEncontrados?: number;
+  };
+  categorias?: string[];
+}
 
-    setMessages(prev => [...prev, newMessage]);
-    setInputValue("");
-    setIsTyping(true);
-    setShowCommands(false);
+ const sendMessage = async (messageText?: string) => {
+  if (!isEnabled) return;
 
-    try {
-      const response = await fetch(`${apiUrl}/api/huggingface/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'User-ID': userId.current
-        },
-        body: JSON.stringify({
-          message: textToSend,
-          state: filtroEstado,
-          carrinho: carrinho
-        })
-      });
+  const textToSend = messageText || inputValue;
+  if (!textToSend.trim()) return;
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  const newMessage: Mensagem = {
+    from: "user",
+    text: textToSend,
+    eventos: [],
+    state: filtroEstado
+  };
+
+  setMessages(prev => [...prev, newMessage]);
+  setInputValue("");
+  setIsTyping(true);
+  setShowCommands(false);
+
+  try {
+    console.log("📤 [FRONTEND] Enviando mensagem para:", `${apiUrl}/api/chat/chat`);
+    
+    const response = await fetch(`${apiUrl}/api/chat/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-ID': userId.current
+      },
+      body: JSON.stringify({
+        message: textToSend,
+        state: filtroEstado,
+        carrinho: carrinho
+      })
+    });
+
+    console.log("📨 [FRONTEND] Resposta recebida, status:", response.status);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData: ChatResponse = await response.json();
+    console.log("📊 [FRONTEND] Dados da resposta:", responseData);
+
+    // 🔥 DEBUG: Mostrar todos os campos disponíveis
+    console.log("🔍 [FRONTEND] Campos disponíveis na resposta:", Object.keys(responseData.reply));
+    console.log("💬 [FRONTEND] textoResposta:", responseData.reply.textoResposta);
+    console.log("💬 [FRONTEND] text:", responseData.reply.text);
+
+    if (!responseData.reply) {
+      console.error("❌ [FRONTEND] Resposta sem estrutura 'reply'");
+      throw new Error("Resposta inválida do servidor");
+    }
+
+    if (responseData.reply.state?.navegarPara) {
+      const destino = responseData.reply.state.navegarPara;
+      const nomeDestino = destino.replace('/', '').replace('-', ' ');
+
+      const mensagemNavegacao: Mensagem = {
+        from: "bot",
+        text: `Te levando para ${nomeDestino}... 🚀`,
+        showCommands: false
+      };
+
+      setMessages(prev => [...prev, mensagemNavegacao]);
+
+      setTimeout(() => {
+        setIsOpen(false);
+        navigate(destino);
+      }, 1000);
+
+      setIsTyping(false);
+      return;
+    }
+
+    if (responseData.success) {
+      const botReply = responseData.reply;
+      
+      // 🔥 CORREÇÃO PRINCIPAL: Usar textoResposta OU text
+      const textoResposta = botReply.textoResposta || botReply.text || "E aí! 👋 Bora subir essa vibe hoje?";
+      
+      console.log("💬 [FRONTEND] Texto da resposta final:", textoResposta);
+
+      const botMessage: Mensagem = {
+        from: "bot",
+        text: textoResposta, // ← AGORA CORRETO
+        intent: botReply.intent,
+        confidence: botReply.confidence,
+        eventos: botReply.eventos || [],
+        categorias: botReply.categorias || [],
+        showCommands: botReply.showCommands !== undefined ? botReply.showCommands : true,
+        state: botReply.state,
+        quickReplies: botReply.quickReplies,
+        carrinho: botReply.carrinho
+      };
+
+      if (botReply.state) {
+        setFiltroEstado(botReply.state);
       }
 
-      const responseData: HuggingFaceResponse = await response.json();
-
-      if (responseData.reply.state?.navegarPara) {
-        const destino = responseData.reply.state.navegarPara;
-        const nomeDestino = destino.replace('/', '').replace('-', ' ');
-
-        const mensagemNavegacao: Mensagem = {
-          from: "bot",
-          text: `Te levando para ${nomeDestino}... 🚀`,
-          showCommands: false
-        };
-
-        setMessages(prev => [...prev, mensagemNavegacao]);
-
-        setTimeout(() => {
-          setIsOpen(false);
-          navigate(destino);
-        }, 1000);
-
-        setIsTyping(false);
-        return;
+      // Processar ações de carrinho da resposta
+      if (botReply.carrinho) {
+        setCarrinho(botReply.carrinho);
       }
 
-      if (responseData.success) {
-        const botReply = responseData.reply;
+      setMessages(prev => [...prev, botMessage]);
+      setShowCommands(botReply.showCommands !== undefined ? botReply.showCommands : true);
 
-        const botMessage: Mensagem = {
-          from: "bot",
-          text: botReply.text || "",
-          intent: botReply.intent,
-          confidence: botReply.confidence,
-          eventos: botReply.eventos || [],
-          categorias: botReply.categorias || [],
-          showCommands: botReply.showCommands,
-          state: botReply.state,
-          quickReplies: botReply.quickReplies,
-          carrinho: botReply.carrinho
-        };
-
-        if (botReply.state) {
-          setFiltroEstado(botReply.state);
-        }
-
-        // Processar ações de carrinho da resposta
-        if (botReply.carrinho) {
-          setCarrinho(botReply.carrinho);
-        }
-
-        setMessages(prev => [...prev, botMessage]);
-        setShowCommands(botReply.showCommands || false);
-
-      } else {
-        const errorMessage: Mensagem = {
-          from: "bot",
-          text: "Desculpe, tive um problema ao processar sua mensagem. Podemos tentar novamente?",
-          showCommands: true
-        };
-        setMessages(prev => [...prev, errorMessage]);
-        setShowCommands(true);
-      }
-    } catch (error) {
-      console.error("Erro ao enviar mensagem:", error);
+    } else {
+      console.error("❌ [FRONTEND] Resposta com success: false");
       const errorMessage: Mensagem = {
         from: "bot",
-        text: "Estou com dificuldades técnicas. Tente novamente em instantes! 🛠️",
+        text: "Desculpe, tive um problema ao processar sua mensagem. Podemos tentar novamente?",
         showCommands: true
       };
       setMessages(prev => [...prev, errorMessage]);
       setShowCommands(true);
-    } finally {
-      setIsTyping(false);
     }
-  };
+  } catch (error) {
+    console.error("❌ [FRONTEND] Erro ao enviar mensagem:", error);
+    const errorMessage: Mensagem = {
+      from: "bot",
+      text: "Estou com dificuldades técnicas. Tente novamente em instantes! 🛠️",
+      showCommands: true
+    };
+    setMessages(prev => [...prev, errorMessage]);
+    setShowCommands(true);
+  } finally {
+    setIsTyping(false);
+  }
+};
 
   const formatarData = (data: string) => {
     return new Date(data).toLocaleDateString('pt-BR');
@@ -760,13 +763,6 @@ const ChatBot: React.FC = () => {
                           </button>
                         </div>
                       </div>
-                    )}
-
-                    {msg.quickReplies && msg.quickReplies.length > 0 && (
-                      <QuickReplies 
-                        quickReplies={msg.quickReplies} 
-                        onQuickReplyClick={gerenciarCarrinho}
-                      />
                     )}
                   </motion.div>
                 );
