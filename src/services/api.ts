@@ -46,7 +46,7 @@ api.interceptors.response.use(
   (response) => response, // Se a resposta for OK, apenas a retorna
   (error) => {
     // Se o erro for 401 ou 403 (Não Autorizado/Proibido), desloga o usuário
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    if (error.response && (error.response.status === 401)) {
       console.error("🔒 Erro de autenticação detectado pelo interceptor:", error.response.status);
 
       // Limpa o storage
