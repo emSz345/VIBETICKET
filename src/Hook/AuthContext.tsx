@@ -37,12 +37,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const verifySession = async () => {
             try {
                 const token = localStorage.getItem('token');
-                
+
                 // Se não houver token no localStorage, não há sessão para verificar
                 if (!token) {
                     throw new Error("Token ausente no localStorage");
                 }
-                
+
                 // Tenta verificar a sessão, enviando o token do localStorage
                 // explicitamente via cabeçalho 'Authorization' como principal método
                 // de autenticação para esta rota, já que o cookie pode estar falhando.
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 } else {
                     console.error("❌ Nenhuma sessão válida encontrada.", error);
                 }
-                
+
                 // Limpa o estado e o armazenamento local em caso de falha
                 setUser(null);
                 localStorage.removeItem('user');
@@ -93,15 +93,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const logout = useCallback(async () => {
         try {
-            // Se o api.ts tem withCredentials: true, ele enviará o cookie de logout
+            // Remove do localStorage PRIMEIRO
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+
+            // Depois chama o backend
             await api.post('/api/users/logout');
         } catch (error) {
             console.error("Erro ao fazer logout no backend:", error);
+            // Continua mesmo com erro no backend
         } finally {
+            // Garante que o estado seja limpo
             setUser(null);
             localStorage.removeItem('user');
             localStorage.removeItem('token');
-            window.location.href = '/login'; 
+
+            // Redireciona forçadamente
+            window.location.href = '/login';
         }
     }, []);
 
