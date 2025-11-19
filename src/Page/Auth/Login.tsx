@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 import api from "../../services/api";
 import { useAuth } from "../../Hook/AuthContext";
 import { signInWithGoogle, signInWithFacebook } from '../../services/firebase';
 
+// --- Components --- //
 import Input from "../../components/ui/Input/Input";
 import Button from "../../components/ui/Button/Button";
 import SocialButton from "../../components/ui/SocialButton/SocialButton";
@@ -25,16 +27,21 @@ const Login: React.FC = () => {
   const authContext = useAuth();
   const navigate = useNavigate();
 
-  // --- Lógica de Bloqueio (sem alterações) ---
+  // --- Lógica de Bloqueio --- //
   const getUnlockTime = useCallback(() => parseInt(localStorage.getItem("unlockTime") || "0"), []);
   const getFalhas = useCallback(() => parseInt(localStorage.getItem("loginFalhas") || "0"), []);
   const getTentativas = useCallback(() => parseInt(localStorage.getItem("loginTentativas") || "0"), []);
 
-  // --- Estados do Modal ---
+  // --- Estados do Modal --- //
   const [showResetModal, setShowResetModal] = useState<boolean>(false);
   const [resetMessage, setResetMessage] = useState<string>("");
 
+  // --- Função para voltar para início --- //
+  const handleVoltarInicio = () => {
+    navigate("/");
+  };
 
+  // --- Função para bloquear o login após múltiplas tentativas falhas --- //
   const bloquearLogin = (falhasAtualizadas: number) => {
     const minutosBloqueio = falhasAtualizadas;
     const tempoBloqueioMs = minutosBloqueio * 60 * 1000;
@@ -52,6 +59,7 @@ const Login: React.FC = () => {
     alert(`Muitas tentativas falhas. Tente novamente em ${minutosBloqueio} minuto(s).`);
   };
 
+  // --- Função principal para realizar login local (email/senha) --- //
   const handleLocalLogin = useCallback(async () => {
     if (bloqueado) {
       alert("Login temporariamente bloqueado. Tente novamente em alguns segundos.");
@@ -82,16 +90,12 @@ const Login: React.FC = () => {
         senha,
       });
 
-      // CORREÇÃO: Extraia o token e o usuário da resposta
+      // Extraia o token e o usuário da resposta
       const { user, token } = response.data;
 
-      // SALVAR O TOKEN NO LOCAL STORAGE
       localStorage.setItem('token', token);
 
-      // Usar o método de login do contexto para atualizar o estado global
       authContext.login(user, token);
-
-      // Redirecionar
       navigate("/Home");
 
     } catch (error: any) {
@@ -105,6 +109,7 @@ const Login: React.FC = () => {
     }
   }, [email, senha, bloqueado, navigate, authContext, getTentativas, getFalhas]);
 
+  // --- Efeito para capturar tecla Enter e acionar login --- //
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === 'Enter' && !bloqueado) {
@@ -119,6 +124,7 @@ const Login: React.FC = () => {
     };
   }, [bloqueado, handleLocalLogin]);
 
+  // --- Efeito para verificar se há bloqueio ativo ao carregar o componente --- //
   useEffect(() => {
     const unlockTime = getUnlockTime();
     const now = Date.now();
@@ -135,6 +141,7 @@ const Login: React.FC = () => {
     }
   }, [getUnlockTime]);
 
+  // --- Efeito para contagem regressiva do tempo de bloqueio --- //
   useEffect(() => {
     if (!bloqueado || tempoRestante <= 0) return;
     const interval = setInterval(() => {
@@ -151,12 +158,14 @@ const Login: React.FC = () => {
     return () => clearInterval(interval);
   }, [bloqueado, tempoRestante]);
 
+  // --- Função para manipular mudanças nos campos de input --- //
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === "email") setEmail(value);
     if (name === "senha") setSenha(value);
   };
 
+  // --- Função para processar login social (Google/Facebook) --- //
   const handleSocialLogin = async (provider: 'google' | 'facebook', userData: any) => {
     setSocialLoading(true);
     try {
@@ -172,10 +181,9 @@ const Login: React.FC = () => {
           imagemPerfil: userData.photoURL || "",
         }
       });
-      // CORREÇÃO: Extraia o token e o usuário da resposta
+
       const { user, token } = response.data;
 
-      // SALVAR O TOKEN NO LOCAL STORAGE
       localStorage.setItem('token', token);
 
       authContext.login(user, token);
@@ -189,6 +197,7 @@ const Login: React.FC = () => {
     }
   };
 
+  // --- Função específica para login com Google --- //
   const handleGoogleSignIn = async () => {
     try {
       const userData = await signInWithGoogle();
@@ -198,6 +207,7 @@ const Login: React.FC = () => {
     }
   };
 
+  // ---Função específica para login com Facebook --- //
   const handleFacebookSignIn = async () => {
     try {
       const userData = await signInWithFacebook();
@@ -208,11 +218,10 @@ const Login: React.FC = () => {
     }
   };
 
-  // --- Função do Modal ---
+  // --- Função para lidar com solicitação de redefinição de senha --- //
   const handleReset = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
-    // Validação do email
     if (!email) {
       setEmailError("Digite seu e-mail para redefinir a senha");
       return;
@@ -225,7 +234,7 @@ const Login: React.FC = () => {
 
     // Abre o modal de carregamento
     setShowResetModal(true);
-    setResetMessage(""); // Mensagem vazia durante o envio
+    setResetMessage("");
 
     try {
       await api.post('/api/users/forgot-password', { email });
@@ -247,93 +256,147 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="login-container">
-      {bloqueado && (
-        <div className="login-bloqueado-msg">
-          <p>Login bloqueado. Tente novamente em <strong>{Math.ceil(tempoRestante / 1000)}</strong> segundo(s).</p>
-        </div>
-      )}
-      <div className="login-content">
-        <div className="logo-section">
-          <Link to='/Home' title="Voltar para Home">
-            <img src={logo} alt="Logo" className="logo-image" />
-          </Link>
-        </div>
-        <div className="form-section">
-          <h2 className="login-bemvido">Bem-vindo</h2>
-          <h3 className="login-title">Email</h3>
-          <Input
-            type="email"
-            name="email"
-            placeholder="seunome@email.com"
-            value={email}
-            onChange={handleChange}
-          />
-          <div className="login-container-error">
-            {emailError && <p className="error"> {emailError} </p>}
-          </div>
-          <h3 className="login-title">Senha</h3>
-          <Input
-            type="password"
-            name="senha"
-            placeholder="Digite sua senha"
-            value={senha}
-            onChange={handleChange}
-          />
-          <div className="login-container-error">
-            {senhaError && <p className="error"> {senhaError} </p>}
-          </div>
-          <div className="login-recuperar-senha">
-            <a
-              href="#redefinir"
-              onClick={handleReset}
-              style={{
-                textDecoration: 'none',
-                fontFamily: "sans-serif",
-                color: "#0969fb",
-                fontWeight: "bolder",
-                cursor: "pointer"
-              }}
-            >
-              Esqueci minha senha!
-            </a>
-          </div>
-          <br />
-          <Button
-            text="Entrar"
-            color="Blue"
-            onClick={handleLocalLogin}
-          />
-          <p className="ou">ou</p>
-          <div className="social-login">
-            <SocialButton icon={googleIcon} alt="Google" onClick={handleGoogleSignIn} disabled={socialLoading} />
-            <SocialButton icon={facebookIcon} alt="Facebook" onClick={handleFacebookSignIn} disabled={socialLoading} />
-          </div>
-          <p>Ainda não tem uma conta? <Link to="/Cadastro" className="crie-conta">Crie uma!</Link></p>
-        </div>
+    <>
+      {/* Botão Voltar para Início no canto superior esquerdo */}
+      <div 
+        className="login-voltarParaInicio"
+        onClick={handleVoltarInicio}
+        onKeyPress={(e) => e.key === 'Enter' && handleVoltarInicio()}
+        role="button"
+        tabIndex={0}
+      >
+        <FaArrowLeft className="login-voltarParaInicio-icon" />
+        <span className="login-voltarParaInicio-text">Voltar para tela inicial</span>
       </div>
-      {/* Modal de Redefinição de Senha */}
-      {showResetModal && (
-        <div className="login-modal-overlay">
-          <div className="login-modal">
-            <div className="login-modal-content">
-              <div className="login-modal-icon">
-                {resetMessage ? '✓' : <div className="login-modal-spinner"></div>}
-              </div>
-              <h3 className="login-modal-title">
-                {resetMessage ? 'E-mail Enviado!' : 'Enviando...'}
-              </h3>
-              {resetMessage && <p className="login-modal-message">{resetMessage}</p>}
+
+      <main className="login-container">
+        {/* Seção de alerta quando o login está bloqueado por tentativas excessivas */}
+        {bloqueado && (
+          <section className="login-bloqueado-msg">
+            <p>Login bloqueado. Tente novamente em <strong>{Math.ceil(tempoRestante / 1000)}</strong> segundo(s).</p>
+          </section>
+        )}
+
+        {/* Conteúdo principal do formulário de login */}
+        <section className="login-content">
+
+          {/* Cabeçalho com logo e navegação para home */}
+          <header className="logo-section">
+            <Link to='/Home' title="Voltar para Home">
+              <img src={logo} alt="Logo" className="logo-image" />
+            </Link>
+          </header>
+
+          {/* Seção do formulário de login */}
+          <section className="form-section">
+
+            {/* Título de boas-vindas */}
+            <h2 className="login-bemvido">Bem-vindo</h2>
+
+            {/* Campo de email */}
+            <h3 className="login-title">Email</h3>
+            <Input
+              type="email"
+              name="email"
+              placeholder="seunome@email.com"
+              value={email}
+              onChange={handleChange}
+            />
+            <div className="login-container-error">
+              {emailError && <p className="error"> {emailError} </p>}
             </div>
-            {resetMessage && (
-              <div className="login-modal-progress">
-                <div className="login-modal-progress-bar"></div>
+
+            {/* Campo de senha */}
+            <h3 className="login-title">Senha</h3>
+            <Input
+              type="password"
+              name="senha"
+              placeholder="Digite sua senha"
+              value={senha}
+              onChange={handleChange}
+            />
+            <div className="login-container-error">
+              {senhaError && <p className="error"> {senhaError} </p>}
+            </div>
+
+            {/* Link para recuperação de senha */}
+            <div className="login-recuperar-senha">
+              <a
+                href="#redefinir"
+                onClick={handleReset}
+                style={{
+                  textDecoration: 'none',
+                  fontFamily: "sans-serif",
+                  color: "#0969fb",
+                  fontWeight: "bolder",
+                  cursor: "pointer"
+                }}
+              >
+                Esqueci minha senha!
+              </a>
+            </div>
+
+            <br />
+
+            {/* Botão principal de login */}
+            <Button
+              text="Entrar"
+              color="Blue"
+              onClick={handleLocalLogin}
+            />
+
+            <p className="ou">ou</p>
+
+            {/* Seção de login com redes sociais */}
+            <div className="social-login">
+              <SocialButton
+                icon={googleIcon}
+                alt="Google"
+                onClick={handleGoogleSignIn}
+                disabled={socialLoading}
+              />
+              <SocialButton
+                icon={facebookIcon}
+                alt="Facebook"
+                onClick={handleFacebookSignIn}
+                disabled={socialLoading}
+              />
+            </div>
+
+            {/* Link para página de cadastro para novos usuários */}
+            <p style={{ color: "#000" }}>
+              Ainda não tem uma conta? <Link to="/Cadastro" className="login-crie-conta">Crie uma!</Link>
+            </p>
+          </section>
+        </section>
+
+        {/* Modal de redefinição de senha - aparece quando solicitado */}
+        {showResetModal && (
+          <footer className="login-modal-overlay">
+            <div className="login-modal">
+              <div className="login-modal-content">
+                <div className="login-modal-icon">
+                  {resetMessage ? '✓' : <div className="login-modal-spinner"></div>}
+                </div>
+
+                <h3 className="login-modal-title">
+                  {resetMessage ? 'E-mail Enviado!' : 'Enviando...'}
+                </h3>
+
+                {resetMessage && <p className="login-modal-message">{resetMessage}</p>}
               </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+
+              {/* Barra de progresso que aparece após o envio bem-sucedido */}
+              {resetMessage && (
+                <div className="login-modal-progress">
+                  <div className="login-modal-progress-bar"></div>
+                </div>
+              )}
+            </div>
+          </footer>
+        )}
+      </main>
+    </>
   );
 };
 

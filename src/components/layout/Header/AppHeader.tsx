@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import './AppHeader.css';
-import logoLight from '../../../../src/assets/logo.png';
-import { useAuth } from '../../../Hook/AuthContext';
-import { TfiMenu } from "react-icons/tfi";
 import { Link, useNavigate } from 'react-router-dom';
+import './AppHeader.css';
+
+// Hooks
+import { useAuth } from '../../../Hook/AuthContext';
+
+// Ícones
+import { TfiMenu } from "react-icons/tfi";
 import {
   FaHome,
   FaTicketAlt,
@@ -18,42 +21,31 @@ import {
   FaShoppingCart,
 } from 'react-icons/fa';
 
+// Assets
+import logoLight from '../../../../src/assets/logo.png';
+
 export default function AppHeader() {
+  // STATE HOOKS
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // REFS E CONTEXT
   const { user, isAuthenticated, logout } = useAuth();
   const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
 
-  // FUNÇÃO CORRIGIDA PARA TRATAR IMAGENS DO GOOGLE
-  const getProfileImageUrl = () => {
-    if (!user?.imagemPerfil) {
-      return `${apiUrl}/uploads/blank_profile.png`;
-    }
-    
-    // Se já é uma URL completa (Google, Facebook, etc), retorna diretamente
-    if (/^https?:\/\//.test(user.imagemPerfil)) {
-      return user.imagemPerfil;
-    }
-    
-    // Se começa com /uploads, adiciona o apiUrl
-    if (user.imagemPerfil.startsWith('/uploads')) {
-      return `${apiUrl}${user.imagemPerfil}`;
-    }
-    
-    // Caso contrário, assume que é um arquivo local em uploads
-    return `${apiUrl}/uploads/${user.imagemPerfil}`;
-  };
-
+  // EFFECT HOOKS
+  // Detecta scroll da página
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Fecha dropdown quando clicar fora
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -69,12 +61,52 @@ export default function AppHeader() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // FUNÇÕES AUXILIARES
+  // Função para obter URL da imagem de perfil
+  const getProfileImageUrl = () => {
+    if (!user?.imagemPerfil) {
+      return `${apiUrl}/uploads/blank_profile.png`;
+    }
+    
+    if (/^https?:\/\//.test(user.imagemPerfil)) {
+      return user.imagemPerfil;
+    }
+    
+    if (user.imagemPerfil.startsWith('/uploads')) {
+      return `${apiUrl}${user.imagemPerfil}`;
+    }
+    
+    return `${apiUrl}/uploads/${user.imagemPerfil}`;
+  };
+
+  // HANDLER FUNCTIONS
+  // Função para navegar no menu DESKTOP
+  const handleDesktopNavigation = (path: string) => {
+    navigate(path);
+    setDropdownOpen(false);
+  };
+
+  // Função para navegar no menu MOBILE
+  const handleMobileNavigation = (path: string) => {
+    navigate(path);
+    setMobileOpen(false);
+  };
+
+  // Função para logout
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setDropdownOpen(false);
+    setMobileOpen(false);
+  };
+
   return (
     <header className={`app-header ${scrolled ? 'app-header--scrolled' : ''}`}>
       <Link to="/Home" aria-label="Página inicial">
         <img src={logoLight} alt="Logo" className="app-header__logo" />
       </Link>
 
+      {/* MENU DESKTOP   */}
       <div className="app-header__actions">
         <div className="app-header__auth">
           {!isAuthenticated ? (
@@ -124,23 +156,20 @@ export default function AppHeader() {
                     </div>
                   </div>
                   <hr />
-                  <button onClick={() => navigate('/')}><FaHome /><span>Home</span></button>
-                  <button onClick={() => navigate('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
-                  <button onClick={() => navigate('/perfil')}><FaUserCircle /><span>Minha conta</span></button>
+                  <button onClick={() => handleDesktopNavigation('/')}><FaHome /><span>Início</span></button>
+                  <button onClick={() => handleDesktopNavigation('/meus-ingressos')}><FaTicketAlt /><span>Meus ingressos</span></button>
+                  <button onClick={() => handleDesktopNavigation('/perfil')}><FaUserCircle /><span>Minha conta</span></button>
                   {user && (user.role === 'SUPER_ADMIN' || user.role === 'MANAGER_SITE') && (
-                    <button onClick={() => navigate('/Painel')}>
+                    <button onClick={() => handleDesktopNavigation('/Painel')}>
                       <FaUserShield />
                       <span>Painel Admin</span>
                     </button>
                   )}
-                  <button onClick={() => navigate('/Meus-eventos')}><FaClipboardList /><span>Meus eventos</span></button>
-                  <button onClick={() => navigate('/duvidas')}><FaHeadphones /><span>Central de Duvidas</span></button>
+                  <button onClick={() => handleDesktopNavigation('/Meus-eventos')}><FaClipboardList /><span>Meus eventos</span></button>
+                  <button onClick={() => handleDesktopNavigation('/duvidas')}><FaHeadphones /><span>Central de Duvidas</span></button>
                   <button 
                     className="user-menu__logout-button" 
-                    onClick={() => {
-                      logout();
-                      navigate('/');
-                    }}
+                    onClick={handleLogout}
                   >
                     <FaSignOutAlt /><span>Sair</span>
                   </button>
@@ -151,14 +180,21 @@ export default function AppHeader() {
         </div>
       </div>
 
+      {/* ========================================= */}
+      {/* MENU MOBILE                                */}
+      {/* ========================================= */}
+      
+      {/* Ícone do Menu Mobile */}
       <div className="mobile-menu-icon" onClick={() => setMobileOpen(!mobileOpen)}>
         {mobileOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
       </div>
 
+      {/* Overlay do Menu Mobile */}
       {mobileOpen && (
         <div className="mobile-menu-overlay open" onClick={() => setMobileOpen(false)} />
       )}
 
+      {/* Menu Mobile */}
       <div className={`mobile-menu ${mobileOpen ? "open" : ""}`}>
         <div className="mobile-menu-header">
           <h3>Menu</h3>
@@ -167,6 +203,7 @@ export default function AppHeader() {
           </div>
         </div>
 
+        {/* Informações do usuário (mobile) */}
         {isAuthenticated && (
           <div className="user-info-mobile">
             <img
@@ -185,56 +222,54 @@ export default function AppHeader() {
           </div>
         )}
 
-        <button onClick={() => { navigate('/'); setMobileOpen(false); }}>
+        {/* Itens do menu mobile */}
+        <button onClick={() => handleMobileNavigation('/')}>
           <FaHome /> Início
         </button>
 
         {isAuthenticated && (
           <>
-            <button onClick={() => { navigate('/meus-ingressos'); setMobileOpen(false); }}>
+            <button onClick={() => handleMobileNavigation('/meus-ingressos')}>
               <FaTicketAlt /> Meus ingressos
             </button>
-            <button onClick={() => { navigate('/perfil'); setMobileOpen(false); }}>
+            <button onClick={() => handleMobileNavigation('/perfil')}>
               <FaUserCircle /> Minha conta
             </button>
             {user && (user.role === 'SUPER_ADMIN' || user.role === 'MANAGER_SITE') && (
-              <button onClick={() => { navigate('/Painel'); setMobileOpen(false); }}>
+              <button onClick={() => handleMobileNavigation('/Painel')}>
                 <FaUserShield /> Painel Admin
               </button>
             )}
-            <button onClick={() => { navigate('/Meus-eventos'); setMobileOpen(false); }}>
+            <button onClick={() => handleMobileNavigation('/Meus-eventos')}>
               <FaClipboardList /> Meus eventos
             </button>
           </>
         )}
 
-        <button onClick={() => { navigate('/duvidas'); setMobileOpen(false); }}>
+        <button onClick={() => handleMobileNavigation('/duvidas')}>
           <FaHeadphones /> Central de Dúvidas
         </button>
         
         {isAuthenticated && (
           <>
-            <button onClick={() => { navigate('/CriarEventos'); setMobileOpen(false); }}>
+            <button onClick={() => handleMobileNavigation('/CriarEventos')}>
               <FaPlusCircle /> Criar Evento
             </button>
-            <button onClick={() => { navigate('/Carrinho'); setMobileOpen(false); }}>
+            <button onClick={() => handleMobileNavigation('/Carrinho')}>
               <FaShoppingCart /> Carrinho
             </button>
           </>
         )}
 
+        {/* Botão de Login/Logout */}
         {!isAuthenticated ? (
-          <button onClick={() => { navigate('/Login'); setMobileOpen(false); }}>
+          <button onClick={() => handleMobileNavigation('/Login')}>
             Login / Cadastro
           </button>
         ) : (
           <button
             className="logout-btn"
-            onClick={() => {
-              logout();
-              navigate('/');
-              setMobileOpen(false);
-            }}
+            onClick={handleLogout}
           >
             <FaSignOutAlt /> Sair
           </button>

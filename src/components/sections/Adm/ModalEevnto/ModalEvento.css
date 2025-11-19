@@ -1,3 +1,6 @@
+/* ========================================= */
+/* OVERLAY E CONTAINER PRINCIPAL             */
+/* ========================================= */
 .modal-evento-overlay {
     position: fixed;
     top: 0;
@@ -16,15 +19,16 @@
     border-radius: 10px;
     width: 90%;
     max-width: 700px;
-    /* Tamanho confortável para visualização */
     max-height: 90vh;
-    /* Limite de altura */
     overflow-y: auto;
     position: relative;
     padding: 25px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* ========================================= */
+/* BOTÃO FECHAR                              */
+/* ========================================= */
 .modal-evento-fechar {
     position: absolute;
     top: 15px;
@@ -41,7 +45,9 @@
     color: #F44336;
 }
 
-/* --- Cabeçalho --- */
+/* ========================================= */
+/* CABEÇALHO DO EVENTO                       */
+/* ========================================= */
 .modal-evento-header {
     display: flex;
     align-items: center;
@@ -57,7 +63,6 @@
     object-fit: cover;
     border-radius: 8px;
     flex-shrink: 0;
-    /* Impede que a imagem encolha */
 }
 
 .modal-evento-info-basica {
@@ -78,7 +83,40 @@
     margin: 3px 0;
 }
 
-/* --- Detalhes (Lista/Itens) --- */
+/* ========================================= */
+/* STATUS DO CRIADOR                         */
+/* ========================================= */
+.modal-criador-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 15px;
+    margin-top: 8px;
+    border: 1px solid transparent;
+}
+
+.modal-criador-status.verificado {
+    background-color: #e6fffa;
+    color: #2f855a;
+    border-color: #b2f5ea;
+}
+
+.modal-criador-status.pendente {
+    background-color: #fffbeb;
+    color: #b45309;
+    border-color: #fef3c7;
+}
+
+.modal-criador-status svg {
+    font-size: 0.9em;
+}
+
+/* ========================================= */
+/* DETALHES E SEÇÕES                         */
+/* ========================================= */
 .modal-evento-detalhes {
     padding: 0 5px;
 }
@@ -91,7 +129,6 @@
 
 .modal-evento-item {
     margin-bottom: 15px;
-    /* Para a seção de colunas */
     flex: 1;
 }
 
@@ -112,7 +149,6 @@
     font-size: 15px;
     color: #555;
     white-space: pre-wrap;
-    /* Mantém quebras de linha e formatação */
 }
 
 .modal-evento-link {
@@ -125,7 +161,55 @@
     text-decoration: underline;
 }
 
-/* --- Botões de Ação --- */
+/* ========================================= */
+/* LABELS DE SEÇÃO                           */
+/* ========================================= */
+.modal-evento-label-secao {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    margin: 15px 0 10px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+/* ========================================= */
+/* LAYOUT DE INGRESSOS                       */
+/* ========================================= */
+.ingressos-inteira .modal-evento-item:last-child {
+    flex: 1.5;
+}
+
+.ingressos-meia .modal-evento-item {
+    flex: 1;
+}
+
+/* ========================================= */
+/* MAPA E LOCALIZAÇÃO                        */
+/* ========================================= */
+.modal-evento-mapa-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 10px;
+    border: 1px solid #eee;
+}
+
+.modal-evento-mapa-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* ========================================= */
+/* BOTÕES DE AÇÃO                            */
+/* ========================================= */
 .modal-evento-botoes {
     display: flex;
     justify-content: flex-end;
@@ -143,6 +227,12 @@
     font-weight: bold;
     transition: background-color 0.2s ease;
     min-width: 100px;
+}
+
+.modal-evento-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 .modal-evento-btn-aceitar {
@@ -163,93 +253,12 @@
     background-color: #d32f2f;
 }
 
-/* NOVO ESTILO: Reanálise */
 .modal-evento-btn-reanalise {
     background-color: #FFC107;
-    /* Amarelo/Âmbar */
     color: #333;
 }
 
 .modal-evento-btn-reanalise:hover {
     background-color: #e0a800;
     color: #333;
-}
-
-/* Adicione estas novas classes ao seu ModalEvento.css */
-
-.modal-evento-label-secao {
-    display: block;
-    font-size: 16px;
-    font-weight: bold;
-    color: #007bff;
-    /* Cor para destacar o título da seção */
-    margin: 15px 0 10px 0;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #eee;
-}
-
-.mt-15 {
-    margin-top: 15px;
-}
-
-/* Garante que o item de data de venda ocupe 2 colunas para alinhar com a meia-entrada (se for o caso) */
-.ingressos-inteira .modal-evento-item:last-child {
-    flex: 1.5;
-    /* Faz com que o item de data/fim de vendas ocupe um pouco mais de espaço */
-}
-
-.ingressos-meia .modal-evento-item {
-    flex: 1;
-}
-
-/* Adicione este bloco ao seu ModalEvento.css */
-.modal-evento-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.modal-criador-status {
-    display: inline-flex;
-    /* Alinha ícone e texto */
-    align-items: center;
-    gap: 6px;
-    /* Espaço entre ícone e texto */
-    font-size: 0.8rem;
-    /* Tamanho pequeno */
-    font-weight: 600;
-    padding: 4px 10px;
-    /* Padding interno */
-    border-radius: 15px;
-    /* Bem arredondado */
-    margin-top: 8px;
-    /* Espaço acima */
-    border: 1px solid transparent;
-    /* Borda padrão */
-}
-
-/* Estilo para Dados Verificados (Verde) */
-.modal-criador-status.verificado {
-    background-color: #e6fffa;
-    /* Verde bem claro */
-    color: #2f855a;
-    /* Verde escuro */
-    border-color: #b2f5ea;
-    /* Borda verde clara */
-}
-
-/* Estilo para Dados Pendentes (Amarelo/Laranja) */
-.modal-criador-status.pendente {
-    background-color: #fffbeb;
-    /* Amarelo bem claro */
-    color: #b45309;
-    /* Amarelo/Laranja escuro */
-    border-color: #fef3c7;
-    /* Borda amarela clara */
-}
-
-/* Ajusta o tamanho do ícone dentro do status */
-.modal-criador-status svg {
-    font-size: 0.9em;
-    /* Ligeiramente menor que o texto */
 }

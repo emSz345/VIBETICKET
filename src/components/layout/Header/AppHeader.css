@@ -1,3 +1,6 @@
+/* ========================================= */
+/* VARIÁVEIS CSS                             */
+/* ========================================= */
 :root {
   --primary: #0969fb;
   --primary-dark: #0756cc;
@@ -9,6 +12,9 @@
   --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ========================================= */
+/* RESET E ESTILOS GLOBAIS                   */
+/* ========================================= */
 * {
   box-sizing: border-box;
 }
@@ -20,6 +26,9 @@ body {
   font-family: var(--font-family);
 }
 
+/* ========================================= */
+/* HEADER PRINCIPAL                          */
+/* ========================================= */
 .app-header {
   position: fixed;
   top: 0;
@@ -61,9 +70,9 @@ body {
   margin-left: auto;
 }
 
-/* ============================ */
-/* BOTÃO LOGIN / CADASTRO       */
-/* ============================ */
+/* ========================================= */
+/* BOTÃO LOGIN / CADASTRO                    */
+/* ========================================= */
 .app-header__login-button {
   background: transparent;
   color: #fff;
@@ -96,9 +105,9 @@ body {
   color: var(--primary);
 }
 
-/* ============================ */
-/* MENU DO USUÁRIO (DROPDOWN)   */
-/* ============================ */
+/* ========================================= */
+/* MENU DO USUÁRIO (DROPDOWN)                */
+/* ========================================= */
 .user-menu {
   position: relative;
 }
@@ -223,9 +232,9 @@ body {
   color: #b22222 !important;
 }
 
-/* ============================ */
-/* MENU MOBILE                  */
-/* ============================ */
+/* ========================================= */
+/* MENU MOBILE                               */
+/* ========================================= */
 .mobile-menu-icon {
   display: none;
   cursor: pointer;
@@ -299,7 +308,7 @@ body {
   padding-top: 16px;
 }
 
-/* CABEÇALHO DO MENU MOBILE COM "MENU" NA ESQUERDA E "X" NA DIREITA */
+/* CABEÇALHO DO MENU MOBILE */
 .mobile-menu-header {
   display: flex;
   align-items: center;
@@ -351,7 +360,7 @@ body {
   color: #666;
 }
 
-/* Avatar para mobile */
+/* AVATAR PARA MOBILE */
 .avatar {
   width: 42px;
   height: 42px;
@@ -360,9 +369,9 @@ body {
   border: 2px solid var(--primary);
 }
 
-/* ============================ */
-/* RESPONSIVIDADE               */
-/* ============================ */
+/* ========================================= */
+/* RESPONSIVIDADE                            */
+/* ========================================= */
 @media (max-width: 768px) {
   .app-header {
     gap: 16px;

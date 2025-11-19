@@ -1,102 +1,194 @@
+/* Meus-Ingressos.css (com filtro centralizado) */
+/* ============ RESET E CONFIGURAÇÕES GERAIS ============ */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ============ LAYOUT PRINCIPAL ============ */
 .pagina-meus-ingressos {
-    max-width: 90%;
-    margin: 0 auto;
-    padding: 48px 20px;
-    background-color: #f1f5f9;
+    max-width: 80%;
+    margin: 120px auto 0 auto;
+    padding: 30px 20px;
+    background-color: #fff;
     min-height: 100vh;
-    box-sizing: border-box;
     font-family: 'Segoe UI', Roboto, sans-serif;
 }
 
+/* ============ HEADER DA PÁGINA ============ */
 .meus-ingressos-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-    padding: 16px;
-    border-bottom: 1px solid #e2e8f0;
-    gap: 12px;
+    margin-bottom: 32px;
+    padding: 0;
+    text-align: center;
 }
 
 .meus-ingressos-titulo {
     font-size: 2.5rem;
-    color: #2d3748;
-    font-weight: bold;
+    color: #1f2937;
+    font-weight: 700;
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
+/* ============ FILTRO CENTRALIZADO ============ */
+.meus-ingressos-filtro-centralizado {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.meus-ingressos-filtro-container {
+    position: relative;
+    min-width: 280px;
+}
+
+.meus-ingressos-botao-filtro {
+    background-color: #fff;
+    color: #374151;
+    border: 2px solid #d1d5db;
+    padding: 14px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-width: 280px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meus-ingressos-botao-filtro:hover {
+    border-color: #0969fb;
+    background-color: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.meus-ingressos-filtro-seta {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    color: #6b7280;
+}
+
+.meus-ingressos-filtro-seta.aberto {
+    transform: rotate(180deg);
+}
+
+.meus-ingressos-filtro-opcoes {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.meus-ingressos-filtro-opcao {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    background: white;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #374151;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.meus-ingressos-filtro-opcao:last-child {
+    border-bottom: none;
+}
+
+.meus-ingressos-filtro-opcao:hover {
+    background-color: #f3f4f6;
+    color: #0969fb;
+}
+
+.meus-ingressos-filtro-opcao.ativo {
+    background-color: #0969fb;
+    color: white;
+}
+
+/* ============ BOTÃO VOLTAR ============ */
 .meus-ingressos-botao-voltar {
     background-color: #0969fb;
     color: white;
     border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
+    padding: 12px 24px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
-    transition: background-color 0.3s ease;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .meus-ingressos-botao-voltar:hover {
-    background-color: #3f4347;
+    background-color: #0756cc;
+    transform: translateY(-1px);
 }
 
-/* Estilo do header */
-.meus-ingressos-duvidas-header {
-    width: 100%;
-    background: #333;
-    padding: 15px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    z-index: 100;
-}
-
-.meus-ingressos-duvidas-header-conteudo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-}
-
-.meus-ingressos-duvidas-header-logo {
-    height: 120px;
-    width: auto;
-    object-fit: contain;
-}
-
-.meus-ingressos-duvidas-hr {
-    width: 1px;
-    border: none;
-    height: 70px;
-    background-color: #fff;
-}
-
-.meus-ingressos-duvidas-title {
-    color: #fff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0;
-    /* remove margem padrão */
-}
-
-.meus-ingressos-titulo-pagina {
-    font-size: 2.25rem;
-    font-weight: 700;
-    margin-bottom: 32px;
-    color: #1f2937;
+/* ============ ESTADOS DE CARREGAMENTO E ERRO ============ */
+.meus-ingressos-carregando {
     text-align: center;
-    letter-spacing: -0.5px;
+    padding: 60px 20px;
+    font-size: 18px;
+    color: #64748b;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+.meus-ingressos-erro {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    color: #dc2626;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.meus-ingressos-erro button {
+    background-color: #0969fb;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.meus-ingressos-erro button:hover {
+    background-color: #0756cc;
+}
+
+/* ============ LISTA DE INGRESSOS ============ */
 .meus-ingressos-lista-ingressos {
     display: flex;
     flex-direction: column;
@@ -108,21 +200,110 @@
     font-size: 1.125rem;
     color: #6b7280;
     margin-top: 60px;
+    padding: 40px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
-/* ============================ */
-/* AJUSTES APENAS PARA MOBILE   */
-/* ============================ */
+/* ============ HEADER ESPECÍFICO PARA DÚVIDAS ============ */
+.meus-ingressos-duvidas-header {
+    width: 100%;
+    background: #1f2937;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.meus-ingressos-duvidas-header-conteudo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.meus-ingressos-duvidas-header-logo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+}
+
+.meus-ingressos-duvidas-hr {
+    width: 1px;
+    border: none;
+    height: 50px;
+    background-color: #4b5563;
+}
+
+.meus-ingressos-duvidas-title {
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ============ RESPONSIVIDADE ============ */
+
+/* Tablets e dispositivos médios */
 @media (max-width: 768px) {
     .pagina-meus-ingressos {
         max-width: 100%;
         padding: 100px 16px 30px;
+        margin-top: 90px;
     }
 
-    .meus-ingressos-titulo-pagina {
-        font-size: 1.75rem;
+    .meus-ingressos-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
         margin-bottom: 24px;
-        padding: 0 10px;
+    }
+
+    .meus-ingressos-titulo {
+        font-size: 2rem;
+        order: 1;
+        width: 100%;
+    }
+
+    .meus-ingressos-filtro-centralizado {
+        margin-bottom: 24px;
+    }
+
+    .meus-ingressos-filtro-container {
+        min-width: 250px;
+    }
+
+    .meus-ingressos-botao-filtro {
+        min-width: 250px;
+        font-size: 15px;
+        padding: 12px 18px;
+    }
+
+    .meus-ingressos-filtro-opcoes {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 280px;
+    }
+
+    .meus-ingressos-filtro-opcao {
+        padding: 12px 18px;
+        font-size: 14px;
+    }
+
+    .meus-ingressos-botao-voltar {
+        order: 3;
+        align-self: center;
     }
 
     .meus-ingressos-lista-ingressos {
@@ -132,51 +313,74 @@
     .meus-ingressos-mensagem-vazia {
         font-size: 1rem;
         margin-top: 40px;
-        padding: 0 15px;
+        padding: 30px 20px;
     }
 
-    /* Header específico para mobile */
+    /* Header mobile */
     .meus-ingressos-duvidas-header {
         padding: 12px 0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
+    }
+
+    .meus-ingressos-duvidas-header-conteudo {
+        gap: 12px;
+        padding: 0 16px;
     }
 
     .meus-ingressos-duvidas-header-logo {
-        height: 80px;
+        height: 40px;
     }
 
     .meus-ingressos-duvidas-hr {
-        height: 50px;
-    }
-
-    .meus-ingressos-duvidas-title {
-        font-size: 18px;
-    }
-}
-
-@media (max-width: 480px) {
-    .pagina-meus-ingressos {
-        padding: 90px 12px 20px;
-    }
-
-    .meus-ingressos-titulo-pagina {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-    }
-
-    .meus-ingressos-duvidas-header-logo {
-        height: 70px;
+        height: 30px;
     }
 
     .meus-ingressos-duvidas-title {
         font-size: 16px;
     }
+}
+
+/* Dispositivos móveis pequenos */
+@media (max-width: 480px) {
+    .pagina-meus-ingressos {
+        padding: 90px 12px 20px;
+        margin-top: 90px;
+    }
+
+    .meus-ingressos-titulo {
+        font-size: 1.75rem;
+    }
+
+    .meus-ingressos-filtro-container {
+        min-width: 220px;
+    }
+
+    .meus-ingressos-botao-filtro {
+        min-width: 220px;
+        font-size: 14px;
+        padding: 10px 16px;
+    }
+
+    .meus-ingressos-filtro-opcao {
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    .meus-ingressos-botao-voltar {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
 
     .meus-ingressos-mensagem-vazia {
         font-size: 0.95rem;
         margin-top: 30px;
+        padding: 20px 16px;
+    }
+
+    .meus-ingressos-duvidas-header-logo {
+        height: 35px;
+    }
+
+    .meus-ingressos-duvidas-title {
+        font-size: 14px;
     }
 }

@@ -1,3 +1,6 @@
+/* ========================================= */
+/* OVERLAY E CONTAINER PRINCIPAL             */
+/* ========================================= */
 .modal-detalhes-overlay {
     position: fixed;
     top: 0;
@@ -24,8 +27,12 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     border: 1px solid #e2e8f0;
     z-index: 20001;
+    animation: fadeIn 0.3s ease-out;
 }
 
+/* ========================================= */
+/* BOTÃO FECHAR                              */
+/* ========================================= */
 .modal-detalhes-close {
     position: absolute;
     top: 15px;
@@ -51,10 +58,16 @@
     transform: scale(1.1) rotate(90deg);
 }
 
+/* ========================================= */
+/* CONTAINER INTERNO                         */
+/* ========================================= */
 .modal-detalhes-container {
     padding: 30px;
 }
 
+/* ========================================= */
+/* CABEÇALHO DO EVENTO                       */
+/* ========================================= */
 .modal-detalhes-header {
     text-align: center;
     margin-bottom: 30px;
@@ -68,6 +81,7 @@
     border-radius: 12px;
     margin-bottom: 20px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease;
 }
 
 .modal-detalhes-titulo {
@@ -104,6 +118,9 @@
     color: #3b82f6;
 }
 
+/* ========================================= */
+/* SEÇÕES DE CONTEÚDO                        */
+/* ========================================= */
 .modal-detalhes-secao {
     margin-bottom: 25px;
     padding: 20px;
@@ -138,15 +155,9 @@
     color: #475569;
 }
 
-.modal-detalhes-mapa {
-    width: 100%;
-    height: 200px;
-    border: none;
-    border-radius: 8px;
-    margin-top: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
+/* ========================================= */
+/* INGRESSOS                                 */
+/* ========================================= */
 .modal-detalhes-ingressos {
     display: flex;
     gap: 15px;
@@ -170,6 +181,21 @@
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
 }
 
+/* ========================================= */
+/* MAPA E LOCALIZAÇÃO                        */
+/* ========================================= */
+.modal-detalhes-mapa {
+    width: 100%;
+    height: 200px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================= */
+/* LISTAS E POLÍTICAS                        */
+/* ========================================= */
 .modal-detalhes-secao ul {
     list-style: none;
     padding: 0;
@@ -193,6 +219,9 @@
     border-bottom: none;
 }
 
+/* ========================================= */
+/* ESTADOS DE CARREGAMENTO E ERRO            */
+/* ========================================= */
 .modal-detalhes-loading {
     text-align: center;
     padding: 60px 20px;
@@ -207,17 +236,17 @@
     color: #ef4444;
 }
 
-/* Animações */
+/* ========================================= */
+/* ANIMAÇÕES                                 */
+/* ========================================= */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.modal-detalhes-content {
-    animation: fadeIn 0.3s ease-out;
-}
-
-/* Responsividade */
+/* ========================================= */
+/* RESPONSIVIDADE                            */
+/* ========================================= */
 @media (max-width: 768px) {
     .modal-detalhes-overlay {
         padding: 10px;

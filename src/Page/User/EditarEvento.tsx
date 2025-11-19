@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import '../../styles/CriarEventos.css'; // Reutiliza os mesmos estilos
+import '../../styles/CriarEventos.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaQuestionCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+
 import { MdAddPhotoAlternate } from 'react-icons/md';
 import { GoAlertFill } from "react-icons/go";
-import { FaTrashAlt } from "react-icons/fa";
-import logo from '../../assets/logo.png';
-import { Link } from 'react-router-dom';
+import { FaTrashAlt, FaQuestionCircle } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
 import { IoSend } from "react-icons/io5";
-import { useAuth } from '../../Hook/AuthContext'; // 🔥 1. IMPORTAR useAuth
 
+import { useAuth } from '../../Hook/AuthContext';
+import logo from '../../assets/logo.png';
+
+
+// TIPAGENS
 type Evento = {
-  // ... (Sua tipagem de Evento está ok)
   _id: string;
   nome: string;
   categoria: string;
@@ -41,12 +43,16 @@ type Evento = {
   status: string;
 };
 
+
 const EditarEvento = () => {
+  // HOOKS E PARÂMETROS
   const { id } = useParams();
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
-  const { user, isLoading: isAuthLoading } = useAuth(); // 🔥 2. OBTER O USUÁRIO LOGADO
+  const { user, isLoading: isAuthLoading } = useAuth();
 
+
+  // ESTADOS PRINCIPAIS
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [evento, setEvento] = useState<Evento | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,10 +60,11 @@ const EditarEvento = () => {
   const [erros, setErros] = useState<{ [key: string]: string }>({});
   const [errorMessage, setErrorMessage] = useState('');
   const [modalAberto, setModalAberto] = useState(false);
+  const [modalSucessoAberto, setModalSucessoAberto] = useState(false);
 
-  // Estados do formulário
+
+  // ESTADOS DO FORMULÁRIO
   const [nomeEvento, setNomeEvento] = useState('');
-  // ... (outros states do formulário: categoriaEvento, image, etc.)
   const [categoriaEvento, setCategoriaEvento] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -81,21 +88,19 @@ const EditarEvento = () => {
   const [temMeia, setTemMeia] = useState('false');
   const [dataFimVendas, setDataFimVendas] = useState('');
   const [dataInicioVendas, setDataInicioVendas] = useState('');
-  // 🔥 REMOVIDO: Estados de Doação (querDoar, valorDoacao)
-  const [termosAceitos, setTermosAceitos] = useState(false); // Mantido
+  const [termosAceitos, setTermosAceitos] = useState(false);
 
-  // --- Estados do Modal ---
-  const [modalSucessoAberto, setModalSucessoAberto] = useState(false);
 
-  // 🔥 3. ADICIONAR ESTADOS PARA VERIFICAÇÃO DE PERFIL
+  // ESTADOS DE VERIFICAÇÃO DE PERFIL
   const [perfilCompleto, setPerfilCompleto] = useState(false);
   const [perfilCarregado, setPerfilCarregado] = useState(false);
 
-
-  // 🔥 4. CORREÇÃO DE AUTH (Token) no fetchEvento
+  
+  // EFFECTS E INICIALIZAÇÕES
+  // --- Busca os dados do evento para edição --- //
   useEffect(() => {
     const fetchEvento = async () => {
-      const token = localStorage.getItem('token'); // Pega o token
+      const token = localStorage.getItem('token');
       if (!id || !token) {
         setErrorMessage('Evento não encontrado ou sessão inválida.');
         setLoading(false);
@@ -105,14 +110,12 @@ const EditarEvento = () => {
 
       try {
         const response = await fetch(`${apiUrl}/api/eventos/${id}`, {
-          // REMOVIDO: credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // ADICIONADO: Auth Header
+            'Authorization': `Bearer ${token}`
           }
         });
 
-        // ... (seu tratamento de status 401, 404, 403 está ok) ...
         if (response.status === 401 || response.status === 403) {
           localStorage.removeItem('user');
           localStorage.removeItem('token');
@@ -127,7 +130,7 @@ const EditarEvento = () => {
         const data = await response.json();
         setEvento(data);
 
-        // Preencher os campos do formulário (seu código está ok)
+        // Preencher os campos do formulário
         setNomeEvento(data.nome);
         setCategoriaEvento(data.categoria);
         setDescricao(data.descricao);
@@ -144,14 +147,12 @@ const EditarEvento = () => {
         setHoraTermino(data.horaTermino);
         setDataFimVendas(data.dataFimVendas);
         setDataInicioVendas(data.dataInicioVendas);
-        // Corrige para usar '.' como separador decimal interno
         setValorIngressoInteira(data.valorIngressoInteira?.toString().replace(',', '.') || '');
         setValorIngressoMeia(data.valorIngressoMeia?.toString().replace(',', '.') || '');
         setQuantidadeInteira(data.quantidadeInteira?.toString() || '');
         setQuantidadeMeia(data.quantidadeMeia?.toString() || '');
         setTemMeia(data.temMeia ? 'true' : 'false');
-        // REMOVIDO: setQuerDoar, setValorDoacao
-        setTermosAceitos(true); // Se está editando, já aceitou os termos antes
+        setTermosAceitos(true);
 
         if (data.imagem) {
           setImagePreviewUrl(`${apiUrl}/uploads/${data.imagem}`);
@@ -168,9 +169,8 @@ const EditarEvento = () => {
   }, [id, apiUrl, navigate]);
 
 
-  // 🔥 5. ADICIONAR VERIFICAÇÃO DE PERFIL (igual ao CriarEventos.tsx)
+  // --- Verifica se o perfil do usuário está completo --- //
   useEffect(() => {
-    // Roda apenas quando o 'user' do useAuth estiver disponível
     if (user && user._id) {
       const verificarPerfil = async () => {
         try {
@@ -188,9 +188,6 @@ const EditarEvento = () => {
 
           if (response.ok) {
             const perfilData = await response.json();
-            // A verificação real:
-            // 1. Tem dados pessoais (cpf) E conta do MP conectada
-            // 2. OU Tem dados de organização (cnpj) E conta do MP conectada
             const dadosPessoaisOK = perfilData.tipoPessoa === 'cpf' && perfilData.dadosPessoais?.cpf;
             const dadosOrgOK = perfilData.tipoPessoa === 'cnpj' && perfilData.dadosPessoais?.cnpj && perfilData.dadosOrganizacao?.cpfSocio;
             const mpConectado = !!perfilData.mercadoPagoAccountId;
@@ -201,41 +198,66 @@ const EditarEvento = () => {
               setPerfilCompleto(false);
             }
           } else {
-            // Se o perfil não existir, não está completo
             setPerfilCompleto(false);
           }
         } catch (error) {
           console.error('Erro ao verificar perfil:', error);
-          setPerfilCompleto(false); // Assume incompleto em caso de erro
+          setPerfilCompleto(false);
         } finally {
-          setPerfilCarregado(true); // Marca que a verificação terminou
+          setPerfilCarregado(true);
         }
       };
       verificarPerfil();
     } else if (!isAuthLoading) {
-      // Se terminou de carregar auth e não tem usuário
       setPerfilCarregado(true);
       setPerfilCompleto(false);
     }
-  }, [user, isAuthLoading, apiUrl]); // Roda quando 'user' ou 'isAuthLoading' mudam
+  }, [user, isAuthLoading, apiUrl]);
 
 
-  // ... (handleAbrirModal, handleFecharModal, handleConfirmarSaida, etc. estão ok)
+  // --- Scroll para o topo ao mudar de etapa --- //
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [etapaAtual]);
+
+
+  // FUNÇÕES DE NAVEGAÇÃO E MODAIS
+  //--- Abre modal de confirmação de saída --- // 
   const handleAbrirModal = () => setModalAberto(true);
+
+  // --- Fecha modal de confirmação de saída --- //
   const handleFecharModal = () => setModalAberto(false);
+
+  // --- Confirma saída e navega para meus eventos --- //
   const handleConfirmarSaida = () => navigate('/meus-eventos');
+
+
+  // --- Avança para a próxima etapa do formulário --- //
   const handleProximaEtapa = () => {
     if (validarEtapa(etapaAtual)) {
       setEtapaAtual(prevEtapa => prevEtapa + 1);
       window.scrollTo(0, 0);
     }
   };
+
+
+  // --- Volta para a etapa anterior do formulário --- //
   const etapaAnterior = () => {
     setEtapaAtual(prevEtapa => prevEtapa - 1);
     window.scrollTo(0, 0);
   };
+
+  // --- Fecha modal de sucesso e navega para meus eventos --- //
+  const handleFecharModalSucesso = () => {
+    setModalSucessoAberto(false);
+    navigate('/meus-eventos');
+  };
+
+
+ 
+  // FUNÇÕES DE MANIPULAÇÃO DE IMAGEM
+  // --- Manipula a seleção de imagem do evento --- //
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // ... (seu código está ok)
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImage(file);
@@ -247,9 +269,12 @@ const EditarEvento = () => {
       setImagePreviewUrl(null);
     }
   };
-  useEffect(() => { window.scrollTo(0, 0); }, [etapaAtual]);
+
+
+
+  // FUNÇÕES DE BUSCA DE ENDEREÇO
+  // --- Busca endereço via API do ViaCEP --- //
   const buscarEnderecoPorCep = async (cep: string) => {
-    // ... (seu código está ok)
     const cleanedCep = cep.replace(/\D/g, '');
     if (cleanedCep.length !== 8) {
       setErros(prevErros => ({ ...prevErros, cep: 'CEP inválido. Deve conter 8 dígitos.' }));
@@ -279,8 +304,10 @@ const EditarEvento = () => {
     }
   };
 
+  
 
-  // 🔥 6. AJUSTAR VALIDAÇÃO (Remover Etapa 6)
+  // FUNÇÕES DE VALIDAÇÃO
+  // --- Valida os campos da etapa atual do formulário --- //
   const validarEtapa = (etapa: number) => {
     const novosErros: { [key: string]: string } = {};
     const hoje = new Date();
@@ -325,7 +352,7 @@ const EditarEvento = () => {
         if (!quantidadeInteira || parseInt(quantidadeInteira) <= 0) {
           novosErros.quantidadeInteira = 'A quantidade de ingressos inteiros é obrigatória e deve ser maior que zero.';
         }
-        if (temMeia === 'true') { // Comparação correta com string
+        if (temMeia === 'true') {
           if (!valorIngressoMeia || parseFloat(valorIngressoMeia.replace(',', '.')) <= 0) {
             novosErros.valorMeia = 'O valor do ingresso meia é obrigatório se houver meia-entrada.';
           }
@@ -362,7 +389,6 @@ const EditarEvento = () => {
           }
         }
         break;
-      // REMOVIDO: case 6 (Doação)
       default:
         break;
     }
@@ -371,20 +397,23 @@ const EditarEvento = () => {
     return Object.keys(novosErros).length === 0;
   };
 
-  // 🔥 7. AJUSTAR ENVIO (Remover Etapa 6 e Adicionar Token)
+  // ===========================================================================
+  // FUNÇÕES DE ENVIO E PROCESSAMENTO
+  // ===========================================================================
+
+  
+  // --- Processa o envio do formulário de edição --- //
   const handleEnviarEdicao = async () => {
-    // Validar apenas até a etapa 5
     if (!validarEtapa(1) || !validarEtapa(2) || !validarEtapa(3) || !validarEtapa(4) || !validarEtapa(5)) {
       alert('Por favor, corrija os erros em todos os campos antes de enviar para reanálise.');
       if (!validarEtapa(1)) { setEtapaAtual(1); return; }
       if (!validarEtapa(2)) { setEtapaAtual(2); return; }
       if (!validarEtapa(3)) { setEtapaAtual(3); return; }
       if (!validarEtapa(4)) { setEtapaAtual(4); return; }
-      if (!validarEtapa(5)) { setEtapaAtual(5); return; } // Parar na 5
+      if (!validarEtapa(5)) { setEtapaAtual(5); return; }
       return;
     }
 
-    // Termos ainda são necessários (mas já vêm setados como true no useEffect)
     if (!termosAceitos) {
       alert('Você deve aceitar os Termos e Condições para editar o evento.');
       return;
@@ -393,8 +422,6 @@ const EditarEvento = () => {
     setSaving(true);
 
     const formData = new FormData();
-
-    // Adicionar todos os campos (exceto doação)
     formData.append("nome", nomeEvento);
     if (image) formData.append('imagem', image);
     formData.append("categoria", categoriaEvento);
@@ -412,17 +439,15 @@ const EditarEvento = () => {
     formData.append("horaTermino", horaTermino);
     formData.append("dataFimVendas", dataFimVendas);
     formData.append("dataInicioVendas", dataInicioVendas);
-    // Envia valores com '.' (ponto)
     formData.append("valorIngressoInteira", valorIngressoInteira.replace(',', '.'));
     formData.append("valorIngressoMeia", temMeia === 'true' ? valorIngressoMeia.replace(',', '.') : '0');
     formData.append("quantidadeInteira", quantidadeInteira);
     formData.append("quantidadeMeia", temMeia === 'true' ? quantidadeMeia : '0');
     formData.append("temMeia", temMeia);
-    // REMOVIDO: querDoar e valorDoacao
     formData.append("status", "em_reanalise");
 
     try {
-      const token = localStorage.getItem('token'); // Pega o token
+      const token = localStorage.getItem('token');
       if (!token) {
         alert('Sessão expirada. Faça login novamente.');
         navigate('/login');
@@ -432,10 +457,8 @@ const EditarEvento = () => {
 
       const response = await fetch(`${apiUrl}/api/eventos/${id}/editar`, {
         method: 'PUT',
-        // REMOVIDO: credentials: 'include',
         body: formData,
         headers: {
-          // ADICIONADO: Auth Header
           'Authorization': `Bearer ${token}`
         }
       });
@@ -448,8 +471,7 @@ const EditarEvento = () => {
         throw new Error(errorData.message || `Erro do servidor: ${response.status}`);
       }
 
-      setModalSucessoAberto(true); // Abre modal de sucesso
-
+      setModalSucessoAberto(true);
     } catch (error: any) {
       console.error('Erro ao editar evento:', error);
       alert(error.message || 'Erro ao editar evento');
@@ -458,19 +480,19 @@ const EditarEvento = () => {
     }
   };
 
-  const handleFecharModalSucesso = () => {
-    setModalSucessoAberto(false);
-    navigate('/meus-eventos');
-  };
+  // ===========================================================================
+  // FUNÇÕES AUXILIARES
+  // ===========================================================================
 
+  
+  // --- Obtém mensagem de erro para um campo específico --- //
   const getError = (fieldName: string) => erros[fieldName];
 
-  // Helper de cálculo (copiado do CriarEventos)
+  // --- Calcula o valor final com taxa de 10% para exibição --- //
   const calcularValorFinalComTaxa = (valorBaseString: string) => {
     if (!valorBaseString) {
       return 0;
     }
-    // A lógica de input deste componente salva com '.' (ponto)
     const valorNumerico = parseFloat(valorBaseString);
     if (isNaN(valorNumerico)) {
       return 0;
@@ -479,7 +501,8 @@ const EditarEvento = () => {
     return parseFloat(valorFinal.toFixed(2));
   };
 
-
+  
+  // RENDERIZAÇÃO CONDICIONAL
   if (loading || isAuthLoading || (user && !perfilCarregado)) {
     return <div className="loading">Carregando...</div>;
   }
@@ -488,7 +511,7 @@ const EditarEvento = () => {
 
   return (
     <div>
-      {/* ... (Seu Header e Modal de Saída - estão ok) ... */}
+      {/* HEADER DA PÁGINA */}
       <header className="criar-evento-header">
         <div className="criar-juntos">
           <Link to="/meus-eventos" title="Voltar">
@@ -506,6 +529,8 @@ const EditarEvento = () => {
           </button>
         </div>
       </header>
+
+      {/* MODAL DE CONFIRMAÇÃO DE SAÍDA */}
       {modalAberto && (
         <div className="criar-modal-overlay">
           <div className="criar-modal-content">
@@ -523,9 +548,10 @@ const EditarEvento = () => {
         </div>
       )}
 
-      <div className="criar-form">
+      {/* CONTEÚDO PRINCIPAL DO FORMULÁRIO */}
+      <main className="criar-form">
 
-        {/* 🔥 8. AVISO DE PERFIL AGORA FUNCIONA CORRETAMENTE */}
+        {/* ALERTA DE PERFIL INCOMPLETO */}
         {perfilCarregado && !perfilCompleto && (
           <div className="alerta-amarelo">
             <GoAlertFill /> <strong>Atenção:</strong> Para que você possa receber o pagamento do seu evento, é <strong>obrigatório</strong><br />
@@ -533,12 +559,14 @@ const EditarEvento = () => {
           </div>
         )}
 
+        {/* ETAPA 1 - INFORMAÇÕES BÁSICAS */}
         {etapaAtual === 1 && (
-          <div className="informacoes-basicas-container">
+          <section className="informacoes-basicas-container">
             <div className="criar-Informaçao">
               <h2>1. Informações básicas</h2>
             </div>
             <p style={{ margin: 10, color: "red" }}>(*) Todos os campos que contém asterisco são obrigatórios!!!</p>
+
             <div className="campo">
               <label htmlFor="nome-evento">
                 Nome do evento <span className={getError('nomeEvento') ? 'erro-asterisco' : ''}>*</span>
@@ -555,9 +583,7 @@ const EditarEvento = () => {
             </div>
 
             <div className="campo">
-              <label htmlFor="imagem-evento">
-                Imagem do evento
-              </label>
+              <label htmlFor="imagem-evento">Imagem do evento</label>
               <div className="upload-imagem">
                 <input
                   type="file"
@@ -610,11 +636,12 @@ const EditarEvento = () => {
               </select>
               {getError('categoriaEvento') && <span className="mensagem-erro">{getError('categoriaEvento')}</span>}
             </div>
-          </div>
+          </section>
         )}
 
+        {/* ETAPA 2 - DESCRIÇÃO */}
         {etapaAtual === 2 && (
-          <div className="informacoes-basicas-container">
+          <section className="informacoes-basicas-container">
             <div className="criar-Informaçao">
               <h2>2. Descrição</h2>
             </div>
@@ -631,11 +658,12 @@ const EditarEvento = () => {
               />
               {getError('descricao') && <span className="mensagem-erro">{getError('descricao')}</span>}
             </div>
-          </div>
+          </section>
         )}
 
+        {/* ETAPA 3 - LOCAL DO EVENTO */}
         {etapaAtual === 3 && (
-          <div className="informacoes-basicas-container">
+          <section className="informacoes-basicas-container">
             <div className="criar-Informaçao">
               <h2>3. Local do seu evento</h2>
             </div>
@@ -722,9 +750,7 @@ const EditarEvento = () => {
               </div>
 
               <div className="campo">
-                <label htmlFor="complemento-casa">
-                  Complemento
-                </label>
+                <label htmlFor="complemento-casa">Complemento</label>
                 <input
                   type="text"
                   id="complemento-casa"
@@ -785,11 +811,12 @@ const EditarEvento = () => {
               />
               {getError('linkMaps') && <span className="mensagem-erro">{getError('linkMaps')}</span>}
             </div>
-          </div>
+          </section>
         )}
 
+        {/* ETAPA 4 - DATA E HORA */}
         {etapaAtual === 4 && (
-          <div className="informacoes-basicas-container">
+          <section className="informacoes-basicas-container">
             <div className="criar-Informaçao">
               <h2>4. Data e Hora</h2>
             </div>
@@ -809,7 +836,6 @@ const EditarEvento = () => {
             </div>
 
             <div className="campos-horizontais">
-
               <div className="campo">
                 <label htmlFor="hora-inicio">
                   Hora de Início <span className={getError('horaInicio') ? 'erro-asterisco' : ''}>*</span>
@@ -837,13 +863,13 @@ const EditarEvento = () => {
                 />
                 {getError('horaTermino') && <span className="mensagem-erro">{getError('horaTermino')}</span>}
               </div>
-
             </div>
-          </div>
+          </section>
         )}
 
+        {/* ETAPA 5 - INGRESSOS */}
         {etapaAtual === 5 && (
-          <div className="informacoes-basicas-container">
+          <section className="informacoes-basicas-container">
             <div className="criar-Informaçao">
               <h2>5. Ingressos</h2>
             </div>
@@ -860,7 +886,7 @@ const EditarEvento = () => {
                     value={valorIngressoInteira}
                     onChange={(e) => {
                       let value = e.target.value.replace(/[^0-9,]/g, '');
-                      value = value.replace(/,/g, '.'); // Armazena com ponto
+                      value = value.replace(/,/g, '.');
                       if (value.includes('.')) {
                         const parts = value.split('.');
                         if (parts[1].length > 2) {
@@ -873,8 +899,6 @@ const EditarEvento = () => {
                   />
                   {getError('valorInteira') && <span className="mensagem-erro">{getError('valorInteira')}</span>}
 
-                  {/* 🔥 9. ADICIONADO HELPER DA TAXA */}
-                  {/* (Usa replace('.', ',') para exibir corretamente) */}
                   <small className="taxa-info">
                     Valor final para o comprador com 10% de taxa:
                     <strong> R$ {(calcularValorFinalComTaxa(valorIngressoInteira) || 0).toFixed(2).replace('.', ',')}</strong>
@@ -906,9 +930,9 @@ const EditarEvento = () => {
                   <label>
                     Haverá meia-entrada?
                     <select
-                      value={temMeia} // Valor agora é 'true' ou 'false' (string)
+                      value={temMeia}
                       onChange={(e) => {
-                        setTemMeia(e.target.value); // Salva 'true' ou 'false'
+                        setTemMeia(e.target.value);
                         if (e.target.value === 'false') {
                           setValorIngressoMeia('');
                           setQuantidadeMeia('');
@@ -934,7 +958,7 @@ const EditarEvento = () => {
                         value={valorIngressoMeia}
                         onChange={(e) => {
                           let value = e.target.value.replace(/[^0-9,]/g, '');
-                          value = value.replace(/,/g, '.'); // Armazena com ponto
+                          value = value.replace(/,/g, '.');
                           if (value.includes('.')) {
                             const parts = value.split('.');
                             if (parts[1].length > 2) {
@@ -947,7 +971,6 @@ const EditarEvento = () => {
                       />
                       {getError('valorMeia') && <span className="mensagem-erro">{getError('valorMeia')}</span>}
 
-                      {/* 🔥 9. ADICIONADO HELPER DA TAXA */}
                       <small className="taxa-info">
                         Valor final para o comprador com 10% de taxa:
                         <strong> R$ {(calcularValorFinalComTaxa(valorIngressoMeia) || 0).toFixed(2).replace('.', ',')}</strong>
@@ -1008,20 +1031,18 @@ const EditarEvento = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         )}
 
-        {/* 🔥 10. REMOVIDO: {etapaAtual === 6 && (...)} */}
-
-        <div className="navegacao-etapas">
+        {/* NAVEGAÇÃO ENTRE ETAPAS */}
+        <footer className="navegacao-etapas">
           {etapaAtual > 1 && (
             <button className="btn-anterior" onClick={etapaAnterior}>
               Voltar
             </button>
           )}
 
-          {/* 🔥 11. AJUSTADO: Navegação para a etapa 5 */}
-          {etapaAtual < 5 ? ( // MUDADO DE 6 PARA 5
+          {etapaAtual < 5 ? (
             <button className="btn-proximo" onClick={handleProximaEtapa}>
               Próximo
             </button>
@@ -1029,22 +1050,20 @@ const EditarEvento = () => {
             <button
               className="criar-btn-enviar"
               onClick={handleEnviarEdicao}
-              disabled={!termosAceitos || saving} // Termos ainda necessários
+              disabled={!termosAceitos || saving}
             >
               {saving ? 'Salvando...' : 'Enviar para reanálise'}
               <IoSend />
             </button>
           )}
-        </div>
+        </footer>
 
-        {/* ... (Modal de Sucesso - está ok) ... */}
+        {/* MODAL DE SUCESSO */}
         {modalSucessoAberto && (
           <div className="editarEvento-modal-overlay">
             <div className="editarEvento-modal">
               <div className="editarEvento-modal-content">
-                <div className="editarEvento-modal-icon">
-                  ✓
-                </div>
+                <div className="editarEvento-modal-icon">✓</div>
                 <h3 className="editarEvento-modal-title">Seu evento foi editado com sucesso!</h3>
                 <p className="editarEvento-modal-message">
                   Com isso seu evento foi para reanálise, tem chance de ser aprovado ou ser reprovado.
@@ -1061,10 +1080,9 @@ const EditarEvento = () => {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };
 
 export default EditarEvento;
-

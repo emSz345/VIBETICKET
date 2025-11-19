@@ -270,19 +270,199 @@
   transform: scale(1.02);
   box-shadow:
     0 12px 30px rgba(0, 0, 0, 0.25),
-    inset 0 0 6px rgba(255, 255, 255, 0.2);
+    inset 0 0 6px rgba(255, 255, 255, 0.4);
 }
 
 /* === Responsivo === */
+/* === Responsividade - Mobile First === */
 @media (max-width: 480px) {
   .ticket-classic {
-    max-width: 280px;
-    margin: 0 10px;
+    max-width: 340px;
+    margin: 20px auto;
+    border-radius: 12px;
+    transform: scale(0.95);
   }
-  .ticket-qr-floating {
-    right: 8px;
-    top: 60%;
+
+  .ticket-top-section {
+    padding: 20px 15px;
+    gap: 8px;
+  }
+
+  .ticket-scan-label {
+    font-size: 0.6rem;
+    padding: 4px 8px;
+    margin-bottom: 10px;
+  }
+
+  .ticket-main-title {
+    margin-bottom: 12px;
+  }
+
+  .ticket-event-type {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .ticket-event-name {
+    font-size: 1.2rem;
+  }
+
+  .ticket-details-section {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .ticket-details-label {
+    font-size: 0.65rem;
+  }
+
+  .ticket-details-text {
+    font-size: 0.7rem;
+  }
+
+  .ticket-personal-info {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .info-label {
+    font-size: 0.6rem;
+  }
+
+  .info-code {
+    font-size: 0.75rem;
+  }
+
+  .ticket-perforation-line {
+    height: 18px;
+  }
+
+  /* Ajuste dos cantos perfurados para mobile */
+  .ticket-classic::before,
+  .ticket-classic::after {
+    left: -8px;
+    width: 16px;
+    height: 16px;
+    box-shadow: 308px 0 #f8f9fa; /* Ajustado para a largura menor */
+  }
+
+  .ticket-bottom-section {
+    padding: 18px 15px;
+  }
+
+  .ticket-bottom-header {
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+  }
+
+  .ticket-event-name-small {
+    font-size: 0.9rem;
+  }
+
+  .ticket-barcode-section {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .ticket-number {
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+  }
+
+  .barcode-placeholder {
+    padding: 8px;
+  }
+
+  .barcode-lines {
+    height: 30px;
+  }
+
+  .ticket-info-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .info-cell {
     padding: 6px;
+    text-align: center;
+  }
+
+  .cell-label {
+    font-size: 0.6rem;
+  }
+
+  .cell-value {
+    font-size: 0.75rem;
+  }
+
+  .ticket-footer-note {
+    font-size: 0.65rem;
+    padding: 6px;
+  }
+
+  /* QR Code menor no mobile */
+  .ticket-qr-floating svg {
+    width: 80px !important;
+    height: 80px !important;
+    padding: 6px;
+  }
+
+  /* Ajuste do hover para mobile */
+  .ticket-classic:hover {
+    transform: scale(0.97);
+  }
+}
+
+/* === Para telas muito pequenas (iPhone SE etc) === */
+@media (max-width: 320px) {
+  .ticket-classic {
+    max-width: 280px;
+    margin: 10px auto;
+    transform: scale(0.9);
+  }
+
+  .ticket-top-section {
+    padding: 15px 10px;
+  }
+
+  .ticket-event-name {
+    font-size: 1rem;
+  }
+
+  .ticket-bottom-section {
+    padding: 15px 10px;
+  }
+
+  .ticket-qr-floating svg {
+    width: 70px !important;
+    height: 70px !important;
+  }
+}
+
+/* === Para tablets === */
+@media (min-width: 481px) and (max-width: 768px) {
+  .ticket-classic {
+    max-width: 400px;
+  }
+  
+  .ticket-personal-info {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* === Melhorias de toque para mobile === */
+@media (max-width: 768px) {
+  .ticket-classic {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  .info-cell,
+  .ticket-details-section {
+    cursor: default;
   }
 }
 

@@ -1,3 +1,4 @@
+/* ===== VARIÁVEIS CSS (ROOT) ===== */
 :root {
   --cor-primaria: #0969fb;
   --cor-secundaria: #0756cc;
@@ -8,7 +9,8 @@
   --cor-fundo-cinza: #f1f3f5;
   --cor-borda: #dee2e6;
   --cor-sucesso: #2b9348;
-  --cor-alerta: #f8961e;
+  --cor-alerta: #f8961e; /* Usado para Avisos e Restrições */
+  --cor-perigo: #d9534f; /* Usado para Encerramento */
   --sombra-suave: 0 4px 6px rgba(0, 0, 0, 0.1);
   --sombra-media: 0 10px 15px rgba(0, 0, 0, 0.1);
   --borda-arredondada: 12px;
@@ -20,7 +22,7 @@ body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: white;
+  background-color: #fff;
   color: var(--cor-texto-escuro);
   line-height: 1.6;
 }
@@ -119,6 +121,68 @@ body {
   background: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
+
+/* Aviso de Ingressos Limitados */
+.aviso-ingressos-limitados {
+  background: linear-gradient(135deg, #ff0202, #ff8800);
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+  position: absolute;
+  top: -15px;
+  right: 20px;
+  z-index: 10;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Efeito de brilho animado no aviso */
+.aviso-ingressos-limitados::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  transform: skewX(-25deg);
+  animation: brilhoPassando 2.5s ease-in-out infinite;
+}
+
+@keyframes brilhoPassando {
+  0% {
+    left: -50%;
+  }
+  50% {
+    left: 120%;
+  }
+  100% {
+    left: 120%;
+  }
+}
+
+/* Aviso de evento encerrado */
+.evento-encerrado-aviso {
+  background-color: var(--cor-perigo);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  border-radius: 0 0 var(--borda-arredondada) var(--borda-arredondada);
+}
+
 
 /* ===== CONTEÚDO PRINCIPAL ===== */
 .detalhes-main-content {
@@ -279,7 +343,35 @@ body {
   font-size: 1.3rem;
 }
 
-/* ===== SEÇÃO DE INFORMAÇÕES ===== */
+/* Aviso de vendas encerradas (melhorado para ser mais visual) */
+.vendas-encerradas-aviso {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--cor-fundo-cinza);
+  border-radius: 8px;
+  border: 2px solid var(--cor-alerta); /* Linha de alerta */
+  color: var(--cor-texto-escuro);
+  font-weight: 500;
+  box-shadow: var(--sombra-suave);
+  margin: 20px; /* Adiciona margem para não colar nas bordas */
+}
+
+.vendas-encerradas-aviso h3 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: var(--cor-alerta); /* Cor de destaque */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.vendas-encerradas-aviso p {
+  font-size: 1rem;
+  color: var(--cor-texto-medio);
+}
+
+/* ===== SEÇÃO DE INFORMAÇÕES (TABS) ===== */
 .detalhes-info-container {
   flex: 2;
   min-width: 300px;
@@ -365,73 +457,6 @@ body {
 }
 
 /* ===== ORGANIZADOR ===== */
-.detalhes-container-organizador {
-  background-color: var(--cor-fundo-cinza);
-  padding: 40px;
-  border-radius: var(--borda-arredondada);
-  margin: 60px 0;
-}
-
-.detalhes-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 30px;
-  color: var(--cor-texto-escuro);
-  text-align: center;
-}
-
-.detalhes-organizador {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.detalhes-organizador-info {
-  flex: 1;
-  min-width: 300px;
-}
-
-.detalhes-organizador-info h4 {
-  font-size: 1.3rem;
-  margin: 0 0 20px 0;
-  color: var(--cor-texto-escuro);
-}
-
-.detalhes-contato {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-  color: var(--cor-texto-medio);
-}
-
-.organizador-bio {
-  font-style: italic;
-  color: var(--cor-texto-medio);
-  margin-top: 20px;
-}
-
-.detalhes-organizador-avatar {
-  width: 120px;
-  height: 120px;
-}
-
-.avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: var(--cor-primaria);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  font-weight: 700;
-}
-
-/* Container organizador atualizado */
 .organizador-container {
   background: linear-gradient(135deg, var(--cor-fundo-cinza) 0%, #f8f9fa 100%);
   padding: 2.5rem;
@@ -512,46 +537,8 @@ body {
   color: var(--cor-primaria);
 }
 
-.organizador-erro {
-  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
-  border-color: #fc8181;
-}
+/* Modais de Confirmação */
 
-.organizador-mensagem {
-  color: #718096;
-  text-align: center;
-  line-height: 1.6;
-  margin: 0;
-  font-size: 1rem;
-}
-
-/* ===== MODAIS ===== */
-
-/* Modal de Sucesso */
-.success-modal {
-  position: fixed;
-  top: 150px;
-  right: 20px;
-  z-index: 1000;
-  background-color: var(--cor-sucesso);
-  color: var(--cor-texto-claro);
-  padding: 15px 25px;
-  border-radius: var(--borda-arredondada);
-  box-shadow: var(--sombra-media);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  animation: fadeIn 0.5s, fadeOut 0.5s 2.5s forwards;
-}
-
-.success-modal-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* Modal de Confirmação */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -597,7 +584,7 @@ body {
 }
 
 .modal-icon {
-  color: #28a745;
+  color: var(--cor-sucesso);
   margin-right: 10px;
   font-size: 1.8rem;
 }
@@ -652,114 +639,23 @@ body {
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color: var(--cor-primaria);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: var(--cor-secundaria);
 }
-
-/* ===== ESTADOS E AVISOS ===== */
-
-/* Evento não encontrado */
-.evento-nao-encontrado {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.evento-nao-encontrado h2 {
-  color: var(--cor-texto-escuro);
-  margin-bottom: 20px;
-}
-
-.evento-nao-encontrado p {
-  color: var(--cor-texto-medio);
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-/* Aviso de evento encerrado */
-.evento-encerrado-aviso {
-  background-color: #d9534f;
-  color: white;
-  text-align: center;
-  padding: 10px;
-  font-weight: bold;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
-}
-
-/* Aviso de vendas encerradas */
-.vendas-encerradas-aviso {
-  text-align: center;
-  padding: 40px 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px dashed #ccc;
-}
-
-.vendas-encerradas-aviso h3 {
-  margin-bottom: 10px;
-  font-size: 1.5rem;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.vendas-encerradas-aviso p {
-  font-size: 1rem;
-  color: #666;
-}
-
-/* 🔥 NOVO: AVISO PARA ADMINISTRADORES */
-.admin-purchase-warning {
-  background-color: #fff8e1; /* Amarelo claro */
-  border: 1px solid #ffecb3;
-  border-left: 5px solid #ffc107; /* Borda amarela mais forte */
-  padding: 20px;
-  margin: 20px;
-  border-radius: 8px;
-  text-align: center;
-  color: #664d03;
-}
-
-.admin-purchase-warning p {
-  margin: 0 0 8px 0;
-  font-size: 1.1em;
-  font-weight: bold;
-}
-
-.admin-purchase-warning span {
-  font-size: 0.9em;
-}
-
 
 /* ===== ANIMAÇÕES ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    /* transform: translateY(-20px); */
   }
   to {
     opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px);
+    /* transform: translateY(0); */
   }
 }
 
@@ -780,6 +676,7 @@ body {
   .detalhes-header-content {
     flex-direction: column-reverse;
     gap: 25px;
+    margin-top: 50px;
   }
 
   .detalhes-titulo-evento {
@@ -800,6 +697,17 @@ body {
 
   .detalhes-imagem-evento {
     max-width: 100%;
+  }
+
+  /* Aviso de Ingressos Limitados (Ajuste de posição) */
+  .aviso-ingressos-limitados {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin: 10px 0;
+    align-self: flex-end;
+    font-size: 0.85rem;
+    padding: 8px 14px;
   }
 
   /* Conteúdo Principal */
@@ -852,14 +760,12 @@ body {
   }
 
   /* Organizador */
-  .detalhes-organizador,
   .organizador-conteudo {
     flex-direction: column;
     text-align: center;
     gap: 20px;
   }
 
-  .detalhes-contato,
   .organizador-contato {
     justify-content: center;
   }
@@ -879,17 +785,7 @@ body {
   }
 
   /* Modais */
-  .success-modal {
-    top: auto;
-    bottom: 20px;
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    width: 90%;
-    text-align: center;
-    flex-direction: column;
-    padding: 15px;
-  }
+  /* Remove o modal success-modal antigo, mantendo o modal-backdrop */
 
   .modal-actions {
     flex-direction: column;
@@ -919,5 +815,18 @@ body {
   
   .organizador-nome {
     font-size: 1.125rem;
+  }
+
+  .aviso-ingressos-limitados {
+    align-self: center;
+    margin: 10px auto;
+  }
+}
+
+/* Correção para telas médias (adicionada para garantir o ajuste de tamanho do aviso) */
+@media (max-width: 600px) {
+  .aviso-ingressos-limitados {
+    font-size: 0.85rem;
+    padding: 8px 14px;
   }
 }

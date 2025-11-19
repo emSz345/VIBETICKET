@@ -1,32 +1,29 @@
-/* Estilo Base do Card */
+/* ========================================= */
+/* ESTILO BASE DO CARD                       */
+/* ========================================= */
 .evento-card {
     background-color: #ffffff;
     border-radius: 12px;
-    /* Cantos mais arredondados */
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    /* Sombra mais profunda e suave */
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    /* Indica que é clicável */
     transition: all 0.3s ease;
     border: 1px solid #e0e0e0;
-    /* Borda sutil */
 }
 
 .evento-card:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    /* Sombra mais intensa no hover */
     transform: translateY(-3px);
-    /* Leve levantamento para feedback */
 }
 
-/* Cabeçalho (Imagem e Tag de Status) */
+/* ========================================= */
+/* CABEÇALHO (IMAGEM E TAG DE STATUS)        */
+/* ========================================= */
 .evento-cabecalho {
     position: relative;
     height: 180px;
-    /* Altura da imagem um pouco maior */
     overflow: hidden;
 }
 
@@ -39,10 +36,11 @@
 
 .evento-card:hover .evento-imagem {
     transform: scale(1.05);
-    /* Zoom sutil na imagem no hover */
 }
 
-/* Tag de Status */
+/* ========================================= */
+/* TAG DE STATUS                             */
+/* ========================================= */
 .evento-status-tag {
     position: absolute;
     top: 15px;
@@ -56,36 +54,29 @@
     letter-spacing: 0.5px;
 }
 
-/* Cores do Status - Adapte conforme suas necessidades */
+/* Cores do Status */
 .evento-status-tag.status-em-analise {
-    /* Cor para 'em_analise' */
     background-color: #ff9800;
-    /* Laranja */
 }
 
 .evento-status-tag.status-aprovado {
-    /* Cor para 'aprovado' */
     background-color: #4CAF50;
-    /* Verde */
 }
 
 .evento-status-tag.status-rejeitado {
-    /* Cor para 'rejeitado' */
     background-color: #F44336;
-    /* Vermelho */
 }
 
 .evento-status-tag.status-em-reanalise {
-    /* Cor para 'em_reanalise' */
     background-color: #2196F3;
-    /* Azul */
 }
 
-/* Corpo (Nome e Detalhes) */
+/* ========================================= */
+/* CORPO (NOME E DETALHES)                   */
+/* ========================================= */
 .evento-corpo {
     padding: 15px;
     flex-grow: 1;
-    /* Permite que o corpo ocupe o espaço extra */
 }
 
 .evento-nome {
@@ -93,7 +84,6 @@
     font-weight: 700;
     color: #333;
     margin-bottom: 5px;
-    /* Para evitar que o nome seja muito longo em uma linha */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -105,11 +95,18 @@
     margin-bottom: 4px;
 }
 
-/* Rodapé (Criador) */
+/* ========================================= */
+/* RODAPÉ (CRIADOR E AVISOS)                 */
+/* ========================================= */
 .evento-rodape {
     padding: 10px 15px;
     border-top: 1px solid #f0f0f0;
     background-color: #f7f7f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .evento-criador {
@@ -117,15 +114,37 @@
     color: #777;
 }
 
-/* Estilos de Botões (Mantidos, mas não visíveis no card principal - estão no Modal) */
+.evento-criador-aviso {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #fffbeb;
+    color: #b45309;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid #fef3c7;
+}
+
+.evento-criador-aviso .aviso-icon {
+    font-size: 0.8rem;
+}
+
+.evento-criador-aviso:hover {
+    cursor: help;
+}
+
+/* ========================================= */
+/* BOTÕES (PARA USO EM MODAL)                */
+/* ========================================= */
 .evento-botoes {
-    /* Mantenha se for usar em outro contexto, mas não necessário para este card */
     display: none;
 }
 
-/* Estilos para os botões Aceitar/Rejeitar podem ser mantidos para uso no Modal */
-
-/* Estilos de Mídia (Opcional: para melhor responsividade) */
+/* ========================================= */
+/* RESPONSIVIDADE                            */
+/* ========================================= */
 /*
 @media (max-width: 600px) {
     .evento-cabecalho {
@@ -136,48 +155,3 @@
     }
 }
 */
-
-.evento-rodape {
-    /* Mantenha seus estilos existentes e adicione: */
-    display: flex;
-    /* Para alinhar o nome e o aviso */
-    justify-content: space-between;
-    /* Coloca um em cada ponta */
-    align-items: center;
-    /* Alinha verticalmente */
-    flex-wrap: wrap;
-    /* Permite quebrar linha se não couber */
-    gap: 8px;
-    /* Espaço entre nome e aviso se quebrar linha */
-}
-
-.evento-criador-aviso {
-    display: inline-flex;
-    /* Alinha ícone e texto */
-    align-items: center;
-    gap: 5px;
-    /* Espaço entre ícone e texto */
-    background-color: #fffbeb;
-    /* Amarelo bem claro */
-    color: #b45309;
-    /* Amarelo/Laranja escuro */
-    font-size: 0.75rem;
-    /* Pequeno */
-    font-weight: 600;
-    padding: 3px 8px;
-    /* Padding interno */
-    border-radius: 6px;
-    /* Bordas arredondadas */
-    border: 1px solid #fef3c7;
-    /* Borda amarela clara */
-}
-
-.evento-criador-aviso .aviso-icon {
-    /* O ícone já tem cor, só ajusta o tamanho se necessário */
-    font-size: 0.8rem;
-}
-
-/* Opcional: Efeito hover para mostrar o 'title' */
-.evento-criador-aviso:hover {
-    cursor: help;
-}
