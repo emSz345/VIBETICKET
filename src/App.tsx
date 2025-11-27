@@ -10,6 +10,7 @@ import './App.css';
 import Cadastro from "./Page/Auth/Cadastro";
 import Login from './Page/Auth/Login';
 import ResetPassword from './Page/Auth/ResetPassword';
+import AuthCallback from './Page/Auth/AuthCallback'; // 🚀 IMPORTADO AQUI
 
 // COMPONENTES E HOOKS DE AUTENTICAÇÃO
 import { AuthProvider } from './Hook/AuthContext';
@@ -37,6 +38,7 @@ import Painel from './Page/Admin/Painel';
 import CarrosselAdm from './Page/Admin/CarrosselAdm';
 import AdicionarAdm from "./Page/Admin/AdicionarAdm";
 
+import ScrollToTop from './components/ui/ScrollToTop/ScrollToTop';
 // ==================================================================
 // COMPONENTES DE LAYOUT (Estes permanecem iguais)
 // ==================================================================
@@ -44,7 +46,7 @@ function LayoutWithNavBar3() {
     return (
         <div>
             <NavBar3 />
-            <main className="main-content">
+            <main>
                 <Outlet />
             </main>
         </div>
@@ -92,20 +94,23 @@ function AppRoutes() {
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/duvidas" element={<Duvidas />} />
 
+            {/* 🚀 ROTA DE CALLBACK ADICIONADA AQUI */}
+            <Route path="/auth/callback" element={<AuthCallback />} />
+
 
             {/* ================================================= */}
             {/* GRUPO 2: ROTAS PROTEGIDAS PARA USUÁRIOS (Admins são bloqueados) */}
             {/* ================================================= */}
             <Route element={<RotaDoUsuario />}>
                 {/* Rotas de usuário com a NavBar3 */}
-                <Route element={<LayoutWithNavBar3 />}>
+                <Route element={<LayoutWithAppHeader />}>
                     <Route path="/perfil" element={<Perfil />} />
                     <Route path="/meus-eventos" element={<MeusEventos />} />
                     <Route path="/meus-ingressos" element={<MeusIngressos />} />
+                    <Route path="/carrinho" element={<Carrinho />} />
                 </Route>
 
                 {/* Rotas de usuário sem layout específico */}
-                <Route path="/carrinho" element={<Carrinho />} />
                 <Route path="/CriarEventos" element={<CriarEventos />} />
                 <Route path="/editar-evento/:id" element={<EditarEvento />} />
             </Route>
@@ -114,7 +119,7 @@ function AppRoutes() {
             {/* ================================================== */}
             {/* GRUPO 3: ROTAS PROTEGIDAS PARA ADMINS (Com permissões específicas) */}
             {/* ================================================== */}
-            
+
             {/* Rotas que AMBOS os admins podem acessar */}
             <Route element={<AdminRoute allowedRoles={['SUPER_ADMIN', 'MANAGER_SITE']} />}>
                 <Route path="/painel" element={<Painel />} />
@@ -139,6 +144,7 @@ function AppRoutes() {
 function App() {
     return (
         <Router>
+            <ScrollToTop />
             <AuthProvider>
                 <CartProvider>
                     <CookieNotice />

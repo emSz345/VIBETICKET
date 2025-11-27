@@ -73,71 +73,7 @@ interface ComandoRapido {
   tipo: 'evento' | 'ajuda' | 'sistema' | 'social';
 }
 
-const ComandosRapidos: React.FC<{ onComandoClick: (comando: string) => void }> = ({ onComandoClick }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
 
-  const comandos: ComandoRapido[] = [
-    { texto: "Dizer olá", acao: "Oi, tudo bem?", icone: "👋", tipo: 'social' },
-    { texto: "Agradecer", acao: "Obrigado!", icone: "🙏", tipo: 'social' },
-    { texto: "Como usar?", acao: "Como funciona?", icone: "❓", tipo: 'ajuda' },
-    { texto: "Sobre", acao: "Quem é você?", icone: "🎪", tipo: 'sistema' },
-    { texto: "Comprar ingresso", acao: "Como comprar ingressos?", icone: "🎫", tipo: 'evento' },
-    { texto: "Meu carrinho", acao: "Ver meu carrinho", icone: "🛒", tipo: 'evento' },
-    { texto: "Finalizar compra", acao: "Quero finalizar a compra", icone: "✅", tipo: 'evento' },
-    { texto: "Limpar carrinho", acao: "Limpar carrinho", icone: "🧹", tipo: 'evento' },
-    { texto: "Criar evento", acao: "Como criar um evento?", icone: "🎪", tipo: 'evento' },
-    { texto: "Meu perfil", acao: "Como editar meu perfil?", icone: "👤", tipo: 'sistema' },
-    { texto: "Rock", acao: "Eventos de rock", icone: "🎸", tipo: 'evento' },
-    { texto: "São Paulo", acao: "Eventos em SP", icone: "🏙️", tipo: 'evento' },
-    { texto: "Próximos", acao: "Próximos eventos", icone: "📅", tipo: 'evento' },
-    { texto: "Categorias", acao: "Quais categorias?", icone: "🎵", tipo: 'evento' }
-  ];
-
-  const comandosPrincipais = comandos.slice(0, 4);
-  const comandosSecundarios = comandos.slice(4);
-
-  return (
-    <div className="comandos-rapidos">
-      <div className="comandos-titulo">💡 Comandos rápidos</div>
-      <div className="comandos-grid">
-        {comandosPrincipais.map((comando, index) => (
-          <button
-            key={index}
-            className="comando-btn"
-            onClick={() => onComandoClick(comando.acao)}
-            data-tipo={comando.tipo}
-          >
-            <span className="comando-icone">{comando.icone}</span>
-            {comando.texto}
-          </button>
-        ))}
-      </div>
-
-      {isExpanded && (
-        <div className="comandos-grid">
-          {comandosSecundarios.map((comando, index) => (
-            <button
-              key={index}
-              className="comando-btn"
-              onClick={() => onComandoClick(comando.acao)}
-              data-tipo={comando.tipo}
-            >
-              <span className="comando-icone">{comando.icone}</span>
-              {comando.texto}
-            </button>
-          ))}
-        </div>
-      )}
-
-      <button
-        className="comandos-toggle"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        {isExpanded ? '▲ Menos opções' : '▼ Mais opções'}
-      </button>
-    </div>
-  );
-};
 
 const CategoriasLista: React.FC<CategoriasListaProps> = ({ categorias, onCategoriaClick }) => {
   if (!categorias || categorias.length === 0) return null;
@@ -162,7 +98,7 @@ const CategoriasLista: React.FC<CategoriasListaProps> = ({ categorias, onCategor
 
 
 
-const CarrinhoLista: React.FC<{ 
+const CarrinhoLista: React.FC<{
   carrinho: CarrinhoItem[];
   onRemoverItem: (id: string) => void;
   onLimparCarrinho: () => void;
@@ -216,7 +152,6 @@ const ChatBot: React.FC = () => {
   const [showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const apiUrl = process.env.REACT_APP_API_URL;
-  const [_categorias] = useState<string[]>([]);
   const [showBalloon, setShowBalloon] = useState(true);
   const [messages, setMessages] = useState<Mensagem[]>([
     {
@@ -281,7 +216,7 @@ const ChatBot: React.FC = () => {
   };
 
   // Funções para gerenciar o carrinho
-  
+
 
   const removerDoCarrinho = (id: string) => {
     setCarrinho(prev => prev.filter(item => item.id !== id));
@@ -294,72 +229,6 @@ const ChatBot: React.FC = () => {
   const finalizarCompra = () => {
     navigate('/carrinho');
     setIsOpen(false);
-  };
-
-  const gerenciarCarrinho = (action: string, itemId?: string) => {
-    switch (action) {
-      case 'verCarrinho':
-        // Mostrar carrinho atual
-        if (carrinho.length === 0) {
-          setMessages(prev => [...prev, {
-            from: "bot",
-            text: "🛒 Seu carrinho está vazio! Que tal explorar alguns eventos? 🎪",
-            showCommands: true
-          }]);
-        } else {
-          const total = carrinho.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
-          
-          let mensagemItens = "🛒 **Seu Carrinho:**\n\n";
-          carrinho.forEach((item, index) => {
-            mensagemItens += `${index + 1}. **${item.nomeEvento}**\n`;
-            mensagemItens += `   📅 ${item.dataEvento}\n`;
-            mensagemItens += `   🎫 ${item.quantidade}x R$ ${item.preco.toFixed(2)}\n`;
-            mensagemItens += `   💰 Subtotal: R$ ${(item.preco * item.quantidade).toFixed(2)}\n\n`;
-          });
-          mensagemItens += `**💰 TOTAL: R$ ${total.toFixed(2)}**`;
-          
-          setMessages(prev => [...prev, {
-            from: "bot",
-            text: mensagemItens,
-            quickReplies: [
-              { text: "🗑️ Remover item", action: "removerItem" },
-              { text: "🧹 Limpar carrinho", action: "limparCarrinho" },
-              { text: "✅ Finalizar compra", action: "finalizarCompra" }
-            ]
-          }]);
-        }
-        break;
-        
-      case 'limparCarrinho':
-        limparCarrinho();
-        setMessages(prev => [...prev, {
-          from: "bot",
-          text: "🧹 Carrinho limpo com sucesso! Todos os itens foram removidos.",
-          showCommands: true
-        }]);
-        break;
-        
-      case 'finalizarCompra':
-        finalizarCompra();
-        break;
-        
-      case 'removerItem':
-        if (itemId) {
-          removerDoCarrinho(itemId);
-          setMessages(prev => [...prev, {
-            from: "bot",
-            text: "🗑️ Item removido do carrinho!",
-            quickReplies: [
-              { text: "🛒 Ver carrinho", action: "verCarrinho" },
-              { text: "🎪 Continuar comprando", action: "verEventos" }
-            ]
-          }]);
-        }
-        break;
-        
-      default:
-        break;
-    }
   };
 
   const getMessageContent = (msg: Mensagem) => {
@@ -412,159 +281,159 @@ const ChatBot: React.FC = () => {
     };
   };
 
- // Atualize a interface para incluir textoResposta
-interface ChatResponse {
-  success: boolean;
-  reply: {
-    // 🔥 ADICIONE ESTE CAMPO
-    textoResposta?: string;
-    text?: string; // Mantenha para compatibilidade
-    intent?: string;
-    confidence?: number;
-    eventos?: Evento[];
-    categorias?: string[];
-    showCommands?: boolean;
-    state?: FiltroEstado & {
-      navegarPara?: string;
+  // Atualize a interface para incluir textoResposta
+  interface ChatResponse {
+    success: boolean;
+    reply: {
+      // 🔥 ADICIONE ESTE CAMPO
+      textoResposta?: string;
+      text?: string; // Mantenha para compatibilidade
+      intent?: string;
+      confidence?: number;
+      eventos?: Evento[];
+      categorias?: string[];
+      showCommands?: boolean;
+      state?: FiltroEstado & {
+        navegarPara?: string;
+      };
+      quickReplies?: QuickReply[];
+      carrinho?: CarrinhoItem[];
+      necessitaAI?: boolean;
+      eventosEncontrados?: number;
     };
-    quickReplies?: QuickReply[];
-    carrinho?: CarrinhoItem[];
-    necessitaAI?: boolean;
-    eventosEncontrados?: number;
-  };
-  categorias?: string[];
-}
+    categorias?: string[];
+  }
 
- const sendMessage = async (messageText?: string) => {
-  if (!isEnabled) return;
+  const sendMessage = async (messageText?: string) => {
+    if (!isEnabled) return;
 
-  const textToSend = messageText || inputValue;
-  if (!textToSend.trim()) return;
+    const textToSend = messageText || inputValue;
+    if (!textToSend.trim()) return;
 
-  const newMessage: Mensagem = {
-    from: "user",
-    text: textToSend,
-    eventos: [],
-    state: filtroEstado
-  };
+    const newMessage: Mensagem = {
+      from: "user",
+      text: textToSend,
+      eventos: [],
+      state: filtroEstado
+    };
 
-  setMessages(prev => [...prev, newMessage]);
-  setInputValue("");
-  setIsTyping(true);
-  setShowCommands(false);
+    setMessages(prev => [...prev, newMessage]);
+    setInputValue("");
+    setIsTyping(true);
+    setShowCommands(false);
 
-  try {
-    console.log("📤 [FRONTEND] Enviando mensagem para:", `${apiUrl}/api/chat/chat`);
-    
-    const response = await fetch(`${apiUrl}/api/chat/chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'User-ID': userId.current
-      },
-      body: JSON.stringify({
-        message: textToSend,
-        state: filtroEstado,
-        carrinho: carrinho
-      })
-    });
+    try {
+      console.log("📤 [FRONTEND] Enviando mensagem para:", `${apiUrl}/api/chat/chat`);
 
-    console.log("📨 [FRONTEND] Resposta recebida, status:", response.status);
+      const response = await fetch(`${apiUrl}/api/chat/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-ID': userId.current
+        },
+        body: JSON.stringify({
+          message: textToSend,
+          state: filtroEstado,
+          carrinho: carrinho
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+      console.log("📨 [FRONTEND] Resposta recebida, status:", response.status);
 
-    const responseData: ChatResponse = await response.json();
-    console.log("📊 [FRONTEND] Dados da resposta:", responseData);
-
-    // 🔥 DEBUG: Mostrar todos os campos disponíveis
-    console.log("🔍 [FRONTEND] Campos disponíveis na resposta:", Object.keys(responseData.reply));
-    console.log("💬 [FRONTEND] textoResposta:", responseData.reply.textoResposta);
-    console.log("💬 [FRONTEND] text:", responseData.reply.text);
-
-    if (!responseData.reply) {
-      console.error("❌ [FRONTEND] Resposta sem estrutura 'reply'");
-      throw new Error("Resposta inválida do servidor");
-    }
-
-    if (responseData.reply.state?.navegarPara) {
-      const destino = responseData.reply.state.navegarPara;
-      const nomeDestino = destino.replace('/', '').replace('-', ' ');
-
-      const mensagemNavegacao: Mensagem = {
-        from: "bot",
-        text: `Te levando para ${nomeDestino}... 🚀`,
-        showCommands: false
-      };
-
-      setMessages(prev => [...prev, mensagemNavegacao]);
-
-      setTimeout(() => {
-        setIsOpen(false);
-        navigate(destino);
-      }, 1000);
-
-      setIsTyping(false);
-      return;
-    }
-
-    if (responseData.success) {
-      const botReply = responseData.reply;
-      
-      // 🔥 CORREÇÃO PRINCIPAL: Usar textoResposta OU text
-      const textoResposta = botReply.textoResposta || botReply.text || "E aí! 👋 Bora subir essa vibe hoje?";
-      
-      console.log("💬 [FRONTEND] Texto da resposta final:", textoResposta);
-
-      const botMessage: Mensagem = {
-        from: "bot",
-        text: textoResposta, // ← AGORA CORRETO
-        intent: botReply.intent,
-        confidence: botReply.confidence,
-        eventos: botReply.eventos || [],
-        categorias: botReply.categorias || [],
-        showCommands: botReply.showCommands !== undefined ? botReply.showCommands : true,
-        state: botReply.state,
-        quickReplies: botReply.quickReplies,
-        carrinho: botReply.carrinho
-      };
-
-      if (botReply.state) {
-        setFiltroEstado(botReply.state);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Processar ações de carrinho da resposta
-      if (botReply.carrinho) {
-        setCarrinho(botReply.carrinho);
+      const responseData: ChatResponse = await response.json();
+      console.log("📊 [FRONTEND] Dados da resposta:", responseData);
+
+      // 🔥 DEBUG: Mostrar todos os campos disponíveis
+      console.log("🔍 [FRONTEND] Campos disponíveis na resposta:", Object.keys(responseData.reply));
+      console.log("💬 [FRONTEND] textoResposta:", responseData.reply.textoResposta);
+      console.log("💬 [FRONTEND] text:", responseData.reply.text);
+
+      if (!responseData.reply) {
+        console.error("❌ [FRONTEND] Resposta sem estrutura 'reply'");
+        throw new Error("Resposta inválida do servidor");
       }
 
-      setMessages(prev => [...prev, botMessage]);
-      setShowCommands(botReply.showCommands !== undefined ? botReply.showCommands : true);
+      if (responseData.reply.state?.navegarPara) {
+        const destino = responseData.reply.state.navegarPara;
+        const nomeDestino = destino.replace('/', '').replace('-', ' ');
 
-    } else {
-      console.error("❌ [FRONTEND] Resposta com success: false");
+        const mensagemNavegacao: Mensagem = {
+          from: "bot",
+          text: `Te levando para ${nomeDestino}... 🚀`,
+          showCommands: false
+        };
+
+        setMessages(prev => [...prev, mensagemNavegacao]);
+
+        setTimeout(() => {
+          setIsOpen(false);
+          navigate(destino);
+        }, 1000);
+
+        setIsTyping(false);
+        return;
+      }
+
+      if (responseData.success) {
+        const botReply = responseData.reply;
+
+        // 🔥 CORREÇÃO PRINCIPAL: Usar textoResposta OU text
+        const textoResposta = botReply.textoResposta || botReply.text || "E aí! 👋 Bora subir essa vibe hoje?";
+
+        console.log("💬 [FRONTEND] Texto da resposta final:", textoResposta);
+
+        const botMessage: Mensagem = {
+          from: "bot",
+          text: textoResposta, // ← AGORA CORRETO
+          intent: botReply.intent,
+          confidence: botReply.confidence,
+          eventos: botReply.eventos || [],
+          categorias: botReply.categorias || [],
+          showCommands: botReply.showCommands !== undefined ? botReply.showCommands : true,
+          state: botReply.state,
+          quickReplies: botReply.quickReplies,
+          carrinho: botReply.carrinho
+        };
+
+        if (botReply.state) {
+          setFiltroEstado(botReply.state);
+        }
+
+        // Processar ações de carrinho da resposta
+        if (botReply.carrinho) {
+          setCarrinho(botReply.carrinho);
+        }
+
+        setMessages(prev => [...prev, botMessage]);
+        setShowCommands(botReply.showCommands !== undefined ? botReply.showCommands : true);
+
+      } else {
+        console.error("❌ [FRONTEND] Resposta com success: false");
+        const errorMessage: Mensagem = {
+          from: "bot",
+          text: "Desculpe, tive um problema ao processar sua mensagem. Podemos tentar novamente?",
+          showCommands: true
+        };
+        setMessages(prev => [...prev, errorMessage]);
+        setShowCommands(true);
+      }
+    } catch (error) {
+      console.error("❌ [FRONTEND] Erro ao enviar mensagem:", error);
       const errorMessage: Mensagem = {
         from: "bot",
-        text: "Desculpe, tive um problema ao processar sua mensagem. Podemos tentar novamente?",
+        text: "Estou com dificuldades técnicas. Tente novamente em instantes! 🛠️",
         showCommands: true
       };
       setMessages(prev => [...prev, errorMessage]);
       setShowCommands(true);
+    } finally {
+      setIsTyping(false);
     }
-  } catch (error) {
-    console.error("❌ [FRONTEND] Erro ao enviar mensagem:", error);
-    const errorMessage: Mensagem = {
-      from: "bot",
-      text: "Estou com dificuldades técnicas. Tente novamente em instantes! 🛠️",
-      showCommands: true
-    };
-    setMessages(prev => [...prev, errorMessage]);
-    setShowCommands(true);
-  } finally {
-    setIsTyping(false);
-  }
-};
+  };
 
   const formatarData = (data: string) => {
     return new Date(data).toLocaleDateString('pt-BR');
@@ -606,7 +475,7 @@ interface ChatResponse {
               className="chatbot-evento-adicionar-carrinho"
               onClick={(e) => {
                 e.stopPropagation();
-               
+
                 setMessages(prev => [...prev, {
                   from: "bot",
                   text: `🎫 "${evento.nome}" adicionado ao carrinho! 🛒\n\nQuantidade: 1\nPreço: R$ ${evento.valorIngressoInteira?.toFixed(2)}`,
@@ -717,7 +586,7 @@ interface ChatResponse {
                     )}
 
                     {content.showCarrinho && msg.carrinho && msg.carrinho.length > 0 && (
-                      <CarrinhoLista 
+                      <CarrinhoLista
                         carrinho={msg.carrinho}
                         onRemoverItem={removerDoCarrinho}
                         onLimparCarrinho={limparCarrinho}
@@ -781,9 +650,7 @@ interface ChatResponse {
               <div ref={messagesEndRef} />
             </div>
 
-            {showCommands && (
-              <ComandosRapidos onComandoClick={sendMessage} />
-            )}
+           
 
             <div className="chatbot-input">
               <input

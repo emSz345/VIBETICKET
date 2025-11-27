@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-/* Container principal */
+/* ========================================= */
+/* CONTAINER PRINCIPAL                       */
+/* ========================================= */
 .footer-container {
   width: 100%;
   background: #0969fb;
@@ -12,13 +14,17 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Wrapper para conteúdo centralizado */
+/* ========================================= */
+/* WRAPPER PARA CONTEÚDO CENTRALIZADO        */
+/* ========================================= */
 .footer-wrapper {
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Cabeçalho do footer */
+/* ========================================= */
+/* CABEÇALHO DO FOOTER                       */
+/* ========================================= */
 .footer-header {
   display: flex;
   justify-content: space-between;
@@ -65,7 +71,9 @@
   transform: translateY(-3px);
 }
 
-/* Grid de seções */
+/* ========================================= */
+/* GRID DE SEÇÕES                            */
+/* ========================================= */
 .footer-sections-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -73,7 +81,9 @@
   margin-bottom: 40px;
 }
 
-/* Seções individuais */
+/* ========================================= */
+/* SEÇÕES INDIVIDUAIS                        */
+/* ========================================= */
 .footer-section {
   margin-bottom: 20px;
 }
@@ -107,7 +117,9 @@
   margin-bottom: 12px;
 }
 
-/* Links */
+/* ========================================= */
+/* LINKS                                     */
+/* ========================================= */
 .footer-link {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
@@ -127,7 +139,9 @@
   color: #ffffff;
 }
 
-/* Métodos de pagamento */
+/* ========================================= */
+/* MÉTODOS DE PAGAMENTO                      */
+/* ========================================= */
 .footer-payment-methods {
   display: flex;
   flex-direction: column;
@@ -141,7 +155,26 @@
   vertical-align: middle;
 }
 
-/* Newsletter */
+.footer-payment-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.payment-icons-container {
+  display: flex;
+  gap: 10px;
+}
+
+.payment-icon {
+  width: 50px;
+  height: auto;
+}
+
+/* ========================================= */
+/* NEWSLETTER                                */
+/* ========================================= */
 .footer-newsletter {
   margin-top: 25px;
 }
@@ -178,7 +211,9 @@
   background-color: #e04a50;
 }
 
-/* Rodapé inferior */
+/* ========================================= */
+/* RODAPÉ INFERIOR                           */
+/* ========================================= */
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 20px;
@@ -214,7 +249,9 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
-/* Responsividade */
+/* ========================================= */
+/* RESPONSIVIDADE                            */
+/* ========================================= */
 @media (max-width: 900px) {
   .footer-header {
     gap: 30px;
@@ -253,21 +290,4 @@
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-}
-
-.footer-payment-icons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.payment-icons-container {
-  display: flex;
-  gap: 10px; /* Adiciona espaço entre os ícones */
-}
-
-.payment-icon {
-  width: 50px; /* Ajuste o tamanho dos ícones */
-  height: auto;
 }

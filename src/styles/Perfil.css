@@ -1,3 +1,4 @@
+/* ============ VARIÁVEIS CSS ============ */
 :root {
   --primary: #0969fb;
   --primary-dark: #0756cc;
@@ -15,22 +16,26 @@
   --transicao-rapida: all 0.2s ease;
 }
 
+/* ============ CONFIGURAÇÕES GERAIS ============ */
 body {
-  background: var(--bg);
+  background: var(--card);
 }
 
-/* Container geral */
+/* ============ LAYOUT PRINCIPAL ============ */
 .perfil-container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 120px auto 0 auto;
   padding: 30px 20px;
   color: var(--text);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100%;
+  background-color: #fff;
 }
 
 .perfil-header {
   margin-bottom: 30px;
   text-align: center;
+  width: 100%;
 }
 
 .perfil-header h1 {
@@ -45,28 +50,38 @@ body {
   font-size: 16px;
 }
 
-/* Layout 2 colunas */
+/* ============ LAYOUT DE CONTEÚDO ============ */
+.perfil-connection-container {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
 .perfil-content {
   display: flex;
   gap: 30px;
+  width: 100%;
+  align-items: flex-start;
 }
 
 .perfil-left {
   flex: 1;
   min-width: 350px;
+  max-width: 400px;
 }
 
 .perfil-right {
   flex: 2;
+  min-width: 0;
 }
 
-/* Card */
+/* ============ CARDS ============ */
 .perfil-card {
   background: var(--card);
   border-radius: 12px;
   box-shadow: var(--shadow);
   padding: 25px;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .perfil-card.full-width {
@@ -75,7 +90,7 @@ body {
   flex-basis: 100%;
 }
 
-/* Avatar */
+/* ============ SEÇÃO DE AVATAR ============ */
 .perfil-avatar-section {
   display: flex;
   flex-direction: column;
@@ -124,7 +139,7 @@ body {
   margin-top: 5px;
 }
 
-/* Cabeçalho Secundário (Dados Pessoais, Conexão MP) */
+/* ============ HEADERS SECUNDÁRIOS ============ */
 .perfil-header-secondary {
   display: flex;
   align-items: center;
@@ -148,7 +163,7 @@ body {
   padding: 5px;
 }
 
-/* Forms e Inputs */
+/* ============ FORMULÁRIOS E INPUTS ============ */
 .perfil-form-group {
   margin-bottom: 20px;
 }
@@ -189,7 +204,7 @@ body {
   color: var(--muted);
 }
 
-/* Grid para Formulários */
+/* ============ GRID DE FORMULÁRIOS ============ */
 .perfil-form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -200,7 +215,7 @@ body {
   grid-column: span 2;
 }
 
-/* Radio CPF/CNPJ */
+/* ============ RADIO BUTTONS CPF/CNPJ ============ */
 .perfil-radio-group {
   display: flex;
   gap: 10px;
@@ -237,7 +252,7 @@ body {
   box-shadow: 0 0 0 2px rgba(9, 105, 251, .15);
 }
 
-/* Botões */
+/* ============ BOTÕES ============ */
 .perfil-btn-primary {
   width: 100%;
   padding: 12px;
@@ -267,7 +282,7 @@ body {
   background: var(--success-dark);
 }
 
-/* ===== Notificações e Status (Novos Estilos) ===== */
+/* ============ NOTIFICAÇÕES E STATUS ============ */
 .notification {
   padding: 15px;
   margin-bottom: 25px;
@@ -298,6 +313,7 @@ body {
   border-color: var(--alert);
 }
 
+/* ============ STATUS DE CONEXÃO ============ */
 .perfil-connection-status {
   padding: 15px;
   border-radius: 8px;
@@ -323,7 +339,6 @@ body {
 .perfil-connection-status.connected small {
   font-weight: normal;
 }
-
 
 .perfil-connection-status.disconnected {
   background-color: #f8fafc;
@@ -359,7 +374,7 @@ body {
   color: white;
 }
 
-/* Mensagens de erro de validação */
+/* ============ MENSAGENS DE ERRO ============ */
 .perfil-input-error {
   border-color: var(--error) !important;
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1) !important;
@@ -371,7 +386,7 @@ body {
   margin-top: 5px;
 }
 
-/* Estados de carregamento e erro */
+/* ============ ESTADOS DE CARREGAMENTO ============ */
 .perfil-loading,
 .perfil-error {
   text-align: center;
@@ -384,7 +399,7 @@ body {
   color: var(--error);
 }
 
-/* --- MODAL DE SUCESSO --- */
+/* ============ MODAIS ============ */
 .perfil-modal-overlay {
   position: fixed;
   top: 0;
@@ -414,6 +429,7 @@ body {
   position: relative;
 }
 
+/* Modal de Sucesso */
 .perfil-modal-icon {
   width: 70px;
   height: 70px;
@@ -458,6 +474,7 @@ body {
   animation: perfil-modal-progress 3s linear forwards;
 }
 
+/* Modal de Alerta/Desconexão */
 .perfil-modal-overlay {
   position: fixed;
   top: 0;
@@ -493,27 +510,11 @@ body {
   margin: 0 auto 1rem;
   border-radius: 50%;
   background-color: #fff1f2;
-  /* Fundo vermelho bem claro */
   color: #ef4444;
-  /* Vermelho */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-}
-
-.perfil-modal-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-.perfil-modal-message {
-  font-size: 1rem;
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
 }
 
 .perfil-modal-footer {
@@ -538,7 +539,6 @@ body {
 
 .perfil-btn-secondary {
   background-color: #f3f4f6;
-  /* Cinza claro */
   color: #374151;
   border: 1px solid #d1d5db;
 }
@@ -549,21 +549,59 @@ body {
 
 .perfil-btn-danger {
   background-color: #ef4444;
-  /* Vermelho */
   color: #fff;
 }
 
 .perfil-btn-danger:hover {
   background-color: #dc2626;
-  /* Vermelho mais escuro */
 }
 
+/* ============ SEÇÃO MEUS INGRESSOS ============ */
+.perfil-meus-ingressos {
+  margin-top: 20px;
+  display: none;
+}
+
+.perfil-ingressos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.perfil-ingressos-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.perfil-ingressos-content {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.perfil-ingressos-icon {
+  font-size: 48px;
+  color: var(--muted);
+  margin-bottom: 15px;
+}
+
+.perfil-ingressos-message {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ============ ANIMAÇÕES ============ */
 @keyframes perfil-modal-appear {
   from {
     opacity: 0;
     transform: scale(0.9) translateY(-20px);
   }
-
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -574,11 +612,9 @@ body {
   0% {
     transform: scale(0);
   }
-
   60% {
     transform: scale(1.1);
   }
-
   100% {
     transform: scale(1);
   }
@@ -588,27 +624,364 @@ body {
   from {
     width: 100%;
   }
-
   to {
     width: 0%;
   }
 }
 
-/* Responsivo */
-@media (max-width: 992px) {
-  .perfil-content {
-    flex-direction: column;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ============ RESPONSIVIDADE ============ */
+
+/* Tablets e dispositivos médios */
+@media (max-width: 768px) {
+  .perfil-container {
+    margin-top: 100px;
+    padding: 16px;
+    max-width: 100%;
   }
 
-  .perfil-left {
+  .perfil-header {
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .perfil-header h1 {
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 4px;
+    margin-top: 25px;
+    display: flex;
+    align-items: end;
+  }
+
+  .perfil-header p {
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .perfil-connection-container {
+    margin-bottom: 20px;
+  }
+
+  .perfil-content {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .perfil-left,
+  .perfil-right {
     min-width: auto;
+    max-width: 100%;
+    flex: none;
+    width: 100%;
+  }
+
+  .perfil-card {
+    padding: 20px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+  }
+
+  .perfil-avatar-section {
+    margin-bottom: 20px;
+  }
+
+  .perfil-avatar {
+    width: 100px;
+    height: 100px;
+    border-width: 3px;
+  }
+
+  .perfil-avatar-edit {
+    width: 32px;
+    height: 32px;
+    bottom: 8px;
+    right: 8px;
+  }
+
+  .perfil-email {
+    font-size: 13px;
+  }
+
+  .perfil-header-secondary {
+    margin-bottom: 16px;
+  }
+
+  .perfil-header-secondary h3 {
+    font-size: 18px;
+  }
+
+  .perfil-tab-icon {
+    font-size: 18px;
   }
 
   .perfil-form-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .full-width {
     grid-column: span 1;
+  }
+
+  .perfil-form-group {
+    margin-bottom: 16px;
+  }
+
+  .perfil-input-label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .perfil-input {
+    padding: 14px 12px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  .perfil-radio-group {
+    gap: 8px;
+  }
+
+  .perfil-radio-pill span {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .perfil-btn-primary {
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 10px;
+    min-height: 48px;
+  }
+
+  /* Notificações mobile */
+  .notification {
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .perfil-connection-status {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .perfil-connection-status.connected p {
+    font-size: 14px;
+  }
+
+  .perfil-connection-status.disconnected .perfil-btn-primary {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .btn-desvincular {
+    width: 100%;
+    padding: 10px;
+    margin-top: 12px;
+    font-size: 14px;
+  }
+
+  /* Modal mobile */
+  .perfil-modal {
+    width: 95%;
+    max-width: 95%;
+    border-radius: 20px;
+  }
+
+  .perfil-modal-content {
+    padding: 1.5rem;
+  }
+
+  .perfil-modal-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .perfil-modal-title {
+    font-size: 1.25rem;
+  }
+
+  .perfil-modal-message {
+    font-size: 0.9rem;
+  }
+
+  .perfil-modal-footer {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .perfil-btn-secondary,
+  .perfil-btn-danger {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  /* SEÇÃO MEUS INGRESSOS - MOBILE */
+  .perfil-meus-ingressos {
+    display: block;
+    margin-top: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .perfil-ingressos-header {
+    padding: 20px 20px 15px 20px;
+    margin-bottom: 0;
+  }
+  
+  .perfil-ingressos-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  
+  .perfil-ingressos-content {
+    padding: 50px 30px;
+  }
+  
+  .perfil-ingressos-icon {
+    font-size: 56px;
+    margin-bottom: 20px;
+    opacity: 0.7;
+  }
+  
+  .perfil-ingressos-message {
+    font-size: 17px;
+    color: #666;
+    font-weight: 500;
+  }
+}
+
+/* Dispositivos móveis pequenos */
+@media (max-width: 480px) {
+  .perfil-container {
+    margin-top: 110px;
+  }
+
+  .perfil-header h1 {
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+  }
+
+  .perfil-header p {
+    display: none;
+  }
+
+  .perfil-card {
+    margin-top: 50px;
+  }
+
+  .perfil-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .perfil-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .perfil-input {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .perfil-btn-primary {
+    padding: 12px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  .perfil-radio-pill span {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .notification {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  /* Ajustes Meus Ingressos para telas pequenas */
+  .perfil-ingressos-header h2 {
+    font-size: 20px;
+  }
+  
+  .perfil-ingressos-content {
+    padding: 40px 20px;
+  }
+  
+  .perfil-ingressos-icon {
+    font-size: 48px;
+  }
+  
+  .perfil-ingressos-message {
+    font-size: 16px;
+  }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 360px) {
+  .perfil-container {
+    margin-top: 80px;
+    padding: 10px;
+  }
+
+  .perfil-card {
+    padding: 14px;
+  }
+
+  .perfil-header h1 {
+    font-size: 20px;
+  }
+
+  .perfil-header-secondary h3 {
+    font-size: 16px;
+  }
+
+  .perfil-input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  /* Ajustes Meus Ingressos para telas muito pequenas */
+  .perfil-ingressos-header {
+    padding: 15px 15px 10px 15px;
+  }
+  
+  .perfil-ingressos-header h2 {
+    font-size: 18px;
+  }
+  
+  .perfil-ingressos-content {
+    padding: 30px 15px;
+  }
+  
+  .perfil-ingressos-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+  }
+  
+  .perfil-ingressos-message {
+    font-size: 15px;
   }
 }

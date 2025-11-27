@@ -14,7 +14,6 @@ interface CarrosselImage {
 const CarrosselAdm: React.FC = () => {
     const [eventosAprovados, setEventosAprovados] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [_doadoresPendentes, setDoadoresPendentes] = useState<any[]>([]);
     const [images, setImages] = useState<CarrosselImage[]>([]);
     const navigate = useNavigate();
 
@@ -36,7 +35,6 @@ const CarrosselAdm: React.FC = () => {
     useEffect(() => {
         fetchEventosAprovados();
         fetchCarrosselImages();
-        fetchDoadoresPendentes();
     }, []);
 
     useEffect(() => {
@@ -146,18 +144,6 @@ const CarrosselAdm: React.FC = () => {
         } catch (error) {
             console.error('Erro ao adicionar evento ao carrossel:', error);
             alert('Não foi possível adicionar o evento ao carrossel.');
-        }
-    };
-
-    const fetchDoadoresPendentes = async () => {
-        try {
-            const response = await fetch(`${apiUrl}/api/eventos/doadores/pendentes`);
-            if (response.ok) {
-                const data = await response.json();
-                setDoadoresPendentes(data);
-            }
-        } catch (error) {
-            console.error('Erro ao buscar doadores pendentes:', error);
         }
     };
 

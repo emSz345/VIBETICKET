@@ -20,8 +20,8 @@ export interface Ingresso {
   // --- Campos do MongoDB ---
   _id: string;       // O ID real do banco de dados
   id: string;        // Mapeado de _id, usado como 'key' no React
-  createdAt?: string; // Data da compra
-  updatedAt?: string;
+  createdAt: string; // Data da compra
+  updatedAt: string;
 
   // --- IDs de Relação ---
   userId: string;

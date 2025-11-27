@@ -1,49 +1,48 @@
+/* ============ RESET E CONFIGURAÇÕES GERAIS ============ */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background-color: #f9fbfd;
-    color: #333;
 }
 
-.loading, .error {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.2rem;
-  text-align: center;
+/* ============ ESTADOS DE CARREGAMENTO E ERRO ============ */
+.loading,
+.error {
+    display: flex;
+    font-size: 1.2rem;
+    
 }
 
 .loading {
-  color: #0969fb;
+    color: #0969fb;
 }
 
 .error {
-  color: #e74c3c;
-  flex-direction: column;
-  gap: 10px;
+    color: #e74c3c;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .error button {
-  background-color: #0969fb;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+    background-color: #0969fb;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .error button:hover {
-  background-color: #0756cc;
+    background-color: #0756cc;
 }
 
-/* Layout principal */
-.meus-ingressos-container {
+/* ============ LAYOUT PRINCIPAL ============ */
+.meus-eventos-container {
     display: flex;
-    height: 100vh;
+    margin-top: 120px;
 }
 
-/* Sidebar clara */
-.meus-ingressos-sidebar {
+/* ============ SIDEBAR ============ */
+.meus-eventos-sidebar {
     width: 220px;
     background-color: #fff;
     color: #333;
@@ -60,7 +59,7 @@ body {
 }
 
 /* Navegação da sidebar */
-.meus-ingressos-nav-btn {
+.meus-eventos-nav-btn {
     background: none;
     border: none;
     color: #333;
@@ -77,24 +76,31 @@ body {
     text-decoration: none;
 }
 
-.meus-ingressos-nav-btn:hover,
-.meus-ingressos-nav-btn.meus-ingressos-active {
+.meus-eventos-nav-btn:hover,
+.meus-eventos-nav-btn.meus-eventos-active {
     background-color: #eaf2ff;
     color: #0969fb;
 }
 
-/* Conteúdo */
-.meus-ingressos-content {
+/* ============ CONTEÚDO PRINCIPAL ============ */
+.meus-eventos-content {
     flex: 1;
     padding: 30px;
 }
 
-/* Header interno da página (não é o header global) */
-.meus-ingressos-header {
+/* ============ HEADER ============ */
+.meus-eventos-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 15px;
     margin-bottom: 25px;
+}
+
+.meus-eventos-titulo {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: 600;
 }
 
 .meus-ingressos-btn-criar {
@@ -115,47 +121,52 @@ body {
     background-color: #0756cc;
 }
 
-/* Cards de resumo */
-.meus-ingressos-resumo {
+/* ============ CARDS DE RESUMO ============ */
+.meus-eventos-resumo {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     margin-bottom: 25px;
 }
 
-.meus-ingressos-card {
+.meus-eventos-card {
     background-color: white;
     color: #333;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
-.meus-ingressos-card h3 {
+.meus-eventos-card h3 {
     margin: 0;
     font-size: 1rem;
 }
 
-.meus-ingressos-card p {
+.meus-eventos-card p {
     font-size: 1.4rem;
     font-weight: bold;
     margin-top: 5px;
 }
 
-.meus-ingressos-card--aprovado {
+/* Variantes dos cards por status */
+.meus-eventos-card--aprovado {
     border-left: 5px solid #2ecc71;
 }
 
-.meus-ingressos-card--em_analise {
+.meus-eventos-card--em_analise {
     border-left: 5px solid #f1c40f;
 }
 
-.meus-ingressos-card--rejeitado {
+.meus-eventos-card--rejeitado {
     border-left: 5px solid #e74c3c;
 }
 
-/* Tabela */
+.meus-eventos-card--em_reanalise {
+    border-left: 5px solid #00aaff;
+}
+
+/* ============ TABELA ============ */
 .meus-ingressos-event-table {
     width: 100%;
     border-collapse: collapse;
@@ -185,7 +196,7 @@ body {
     background-color: #eaf2ff;
 }
 
-/* Ações */
+/* ============ AÇÕES ============ */
 .meus-ingressos-acoes {
     display: flex;
     gap: 10px;
@@ -204,7 +215,7 @@ body {
     transform: scale(1.15);
 }
 
-/* Status */
+/* ============ STATUS ============ */
 .meus-ingressos-status {
     font-weight: bold;
     text-transform: capitalize;
@@ -222,30 +233,604 @@ body {
     color: #f1c40f;
 }
 
-.meus-ingressos-card--em_reanalise {
-    border-left: 5px solid #00aaff;
+/* ============ MENSAGEM SEM EVENTOS ============ */
+.no-events {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
-/* Responsivo */
+
+.no-events-logo {
+    max-width: 200px;
+    height: auto;
+    opacity: 0.7;
+}
+
+/* ============ BOTÃO VOLTAR PARA HOME ============ */
+.meus-eventos-back-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+    color: #007bff;
+    max-width: 150px;
+    width: auto;
+    white-space: nowrap;
+    text-decoration: none;
+    border: none;
+    background: none;
+    font-family: inherit;
+    position: relative;
+}
+
+.meus-eventos-back-text {
+    color: #007bff;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.meus-eventos-back-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 70%;
+    width: 0;
+    height: 2px;
+    background-color: #0056b3;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.meus-eventos-back-container:hover {
+    color: #0056b3;
+}
+
+.meus-eventos-back-container:hover::after {
+    width: calc(100% - 24px);
+}
+
+.meus-eventos-back-container:hover .meus-eventos-back-text {
+    color: #0056b3;
+}
+
+.meus-eventos-back-icon {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.meus-eventos-back-container:hover .meus-eventos-back-icon {
+    transform: translateX(-2px);
+}
+
+.meus-eventos-back-container:focus {
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* ============ RESPONSIVIDADE ============ */
+
+/* Tablets */
 @media (max-width: 900px) {
-    .meus-ingressos-resumo {
-        grid-template-columns: 1fr 1fr;
+    .meus-eventos-resumo {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
     }
 }
 
+/* Tablets pequenos */
+@media (max-width: 768px) {
+    .meus-ingressos-container {
+        margin-top: 20px;
+    }
+
+    .meus-eventos-back-container {
+        max-width: 140px;
+    }
+
+    .meus-eventos-back-text {
+        font-size: 13px;
+    }
+
+    .meus-eventos-back-icon {
+        font-size: 11px;
+    }
+
+    .meus-eventos-titulo {
+        font-size: 1.5rem;
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .meus-ingressos-content {
+        padding: 20px;
+    }
+
+    /* Ajuste para a sidebar em mobile */
+    .meus-ingressos-sidebar {
+        padding: 15px 20px;
+    }
+
+    .meus-eventos-nav-btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+        margin-bottom: 5px;
+    }
+
+    .no-events-logo {
+        max-width: 150px;
+    }
+}
+
+/* Mobile */
 @media (max-width: 600px) {
     .meus-ingressos-container {
         flex-direction: column;
+        margin-top: 10px;
+        height: auto;
+        min-height: calc(100vh - 60px);
     }
 
     .meus-ingressos-sidebar {
-        width: 100%;
-        flex-direction: row;
-        gap: 10px;
-        border-right: none;
-        border-bottom: 1px solid #e0e0e0;
+        display: none;
     }
 
-    .meus-ingressos-resumo {
+    .meus-eventos-nav-btn {
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 0;
+        font-size: 0.85rem;
+        padding: 10px 8px;
+    }
+
+    .meus-eventos-resumo {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .meus-eventos-card {
+        padding: 15px 10px;
+    }
+
+    .meus-eventos-card h3 {
+        font-size: 0.9rem;
+    }
+
+    .meus-eventos-card p {
+        font-size: 1.3rem;
+    }
+
+    .meus-ingressos-event-table {
+        font-size: 0.85rem;
+    }
+
+    .meus-ingressos-event-table th,
+    .meus-ingressos-event-table td {
+        padding: 8px 6px;
+    }
+
+    /* Ajuste para ações em mobile */
+    .meus-ingressos-acoes {
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .meus-ingressos-acao-btn {
+        padding: 4px;
+    }
+
+    .meus-ingressos-acao-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .no-events-logo {
+        max-width: 120px;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+    .meus-ingressos-container {
+        margin-top: 55px;
+    }
+
+    .meus-eventos-back-container {
+        max-width: 40px;
+        overflow: hidden;
+        padding: 6px;
+    }
+
+    .meus-eventos-back-text {
+        display: none;
+    }
+
+    .meus-eventos-back-icon {
+        font-size: 14px;
+        margin: 0 auto;
+    }
+
+    .meus-eventos-back-container:hover::after {
+        width: calc(100% - 12px);
+    }
+
+    .meus-eventos-titulo {
+        font-size: 1.3rem;
+        text-align: center;
+        margin-top: 80px;
+    }
+
+    .meus-ingressos-content {
+        padding: 15px;
+    }
+
+    .meus-ingressos-sidebar {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    .meus-eventos-nav-btn {
+        min-width: 120px;
+        font-size: 0.8rem;
+        padding: 8px 6px;
+    }
+
+    .meus-eventos-resumo {
         grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .meus-eventos-card {
+        padding: 12px 8px;
+    }
+
+    .meus-eventos-card h3 {
+        font-size: 0.85rem;
+    }
+
+    .meus-eventos-card p {
+        font-size: 1.2rem;
+    }
+
+    .meus-ingressos-acoes {
+        gap: 4px;
+    }
+
+    .meus-ingressos-acao-btn {
+        padding: 3px;
+    }
+
+    .meus-ingressos-acao-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* Ajuste para tabela em mobile muito pequeno */
+    .meus-ingressos-event-table {
+        font-size: 0.8rem;
+    }
+
+    .meus-ingressos-event-table th,
+    .meus-ingressos-event-table td {
+        padding: 6px 4px;
+    }
+
+    .no-events {
+        padding: 20px;
+    }
+
+    .no-events-logo {
+        max-width: 100px;
+    }
+}
+
+/* Mobile muito pequeno */
+@media (max-width: 360px) {
+    .meus-ingressos-container {
+        margin-top: 50px;
+    }
+
+    .meus-ingressos-content {
+        padding: 12px 8px;
+    }
+
+    .meus-ingressos-sidebar {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+
+    .meus-eventos-nav-btn {
+        min-width: 110px;
+        font-size: 0.75rem;
+        padding: 6px 4px;
+    }
+
+    .meus-eventos-nav-btn svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .meus-eventos-card {
+        padding: 10px 6px;
+    }
+
+    .meus-eventos-card h3 {
+        font-size: 0.8rem;
+    }
+
+    .meus-eventos-card p {
+        font-size: 1.1rem;
+    }
+
+    .meus-eventos-titulo {
+        font-size: 1.2rem;
+        margin-top: 70px;
+    }
+
+    /* Otimização extrema para telas muito pequenas */
+    .meus-ingressos-event-table {
+        font-size: 0.75rem;
+    }
+
+    .meus-ingressos-event-table th:nth-child(1),
+    .meus-ingressos-event-table td:nth-child(1) {
+        display: none;
+        
+    }
+
+    .no-events-logo {
+        max-width: 80px;
+    }
+}
+
+/* ============ SISTEMA DE PESQUISA E FILTROS ============ */
+.meus-eventos-pesquisa-container {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.meus-eventos-pesquisa-input-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.meus-eventos-pesquisa-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.meus-eventos-pesquisa-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.meus-eventos-pesquisa-input {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background-color: #f9fafb;
+}
+
+.meus-eventos-pesquisa-input:focus {
+    outline: none;
+    border-color: #0969fb;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(9, 105, 251, 0.1);
+}
+
+.meus-eventos-filtro-select {
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: #f9fafb;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 180px;
+}
+
+.meus-eventos-filtro-select:focus {
+    outline: none;
+    border-color: #0969fb;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(9, 105, 251, 0.1);
+}
+
+.meus-eventos-limpar-filtros {
+    padding: 12px 20px;
+    background-color: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.meus-eventos-limpar-filtros:hover {
+    background-color: #4b5563;
+    transform: translateY(-1px);
+}
+
+.meus-eventos-resultados-info {
+    text-align: center;
+    margin-top: 15px;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Botão limpar filtros na tela vazia */
+.meus-eventos-limpar-filtros-btn {
+    padding: 10px 20px;
+    background-color: #0969fb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.meus-eventos-limpar-filtros-btn:hover {
+    background-color: #0756cc;
+    transform: translateY(-1px);
+}
+
+/* ============ RESPONSIVIDADE PARA O SISTEMA DE PESQUISA ============ */
+
+/* Tablets */
+@media (max-width: 900px) {
+    .meus-eventos-pesquisa-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .meus-eventos-pesquisa-wrapper {
+        min-width: auto;
+        max-width: none;
+    }
+
+    .meus-eventos-filtro-select {
+        min-width: auto;
+    }
+}
+
+/* Tablets pequenos */
+@media (max-width: 768px) {
+    .meus-eventos-pesquisa-container {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .meus-eventos-pesquisa-input {
+        font-size: 14px;
+        padding: 10px 15px 10px 40px;
+    }
+
+    .meus-eventos-pesquisa-icon {
+        font-size: 14px;
+        left: 12px;
+    }
+
+    .meus-eventos-filtro-select {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .meus-eventos-limpar-filtros {
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+
+    /* Sidebar horizontal para mobile */
+    .meus-eventos-sidebar {
+        display: none;
+    }
+    
+    .meus-eventos-nav-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        white-space: nowrap;
+        font-size: 14px;
+        min-width: max-content; 
+    }
+
+    /* Ajusta ícones para mobile */
+    .meus-eventos-nav-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .meus-eventos-pesquisa-container {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+
+    .meus-eventos-pesquisa-input-group {
+        gap: 10px;
+    }
+
+    .meus-eventos-pesquisa-input {
+        font-size: 13px;
+        padding: 8px 12px 8px 35px;
+    }
+
+    .meus-eventos-pesquisa-icon {
+        font-size: 13px;
+        left: 10px;
+    }
+
+    .meus-eventos-filtro-select {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+
+    .meus-eventos-limpar-filtros {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .meus-eventos-resultados-info {
+        font-size: 12px;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+    .meus-eventos-pesquisa-container {
+        padding: 10px;
+    }
+
+    .meus-eventos-pesquisa-input {
+        font-size: 12px;
+    }
+
+    .meus-eventos-filtro-select {
+        font-size: 12px;
+    }
+
+    .meus-eventos-limpar-filtros {
+        font-size: 11px;
+        padding: 6px 10px;
     }
 }

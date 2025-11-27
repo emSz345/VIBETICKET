@@ -7,7 +7,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-label, h1, h2, h3, h4, h5, h6, p {
+label,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   border-bottom: none !important;
 }
 
@@ -18,7 +25,8 @@ code {
 
 ::-webkit-scrollbar {
   width: 8px;
-  height: 6px; /* aumenta um pouco pra melhor usabilidade horizontal */
+  height: 6px;
+  /* aumenta um pouco pra melhor usabilidade horizontal */
 }
 
 ::-webkit-scrollbar-track {
@@ -29,11 +37,13 @@ code {
 ::-webkit-scrollbar-thumb {
   background-color: #007bff;
   border-radius: 10px;
-  border: 2px solid #ffffff; /* cria um "espacinho" ao redor, deixa mais clean */
+  border: 2px solid #ffffff;
+  /* cria um "espacinho" ao redor, deixa mais clean */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #0056b3; /* tom mais escuro no hover */
+  background-color: #0056b3;
+  /* tom mais escuro no hover */
 }
 
 /* Firefox */

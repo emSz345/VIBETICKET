@@ -1025,28 +1025,268 @@
   background: #059669;
 }
 
-/* Responsividade */
+/* ============ CORREÇÕES ESPECÍFICAS PARA MOBILE - CRIAR EVENTOS ============ */
+
 @media (max-width: 768px) {
-  .editarEvento-modal {
-    width: 95%;
-    max-width: 350px;
+  /* Container principal das informações básicas */
+  .informacoes-basicas-container {
+    padding: 20px 15px;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .editarEvento-modal-content {
-    padding: 25px 20px 20px;
+  /* Título "1. Informações básicas" */
+  .criar-Informaçao h2 {
+    font-size: 1.4rem;
+    text-align: left;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+    line-height: 1.3;
   }
 
-  .editarEvento-modal-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
+  /* Texto de campos obrigatórios */
+  .informacoes-basicas-container p {
+    font-size: 0.9rem;
+    text-align: left;
+    margin: 0 0 25px 0;
+    color: #e74c3c;
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 0;
   }
 
-  .editarEvento-modal-title {
-    font-size: 18px;
+  .criar-titulo {
+    display: none;
   }
 
-  .editarEvento-modal-message {
+  /* Campos do formulário */
+  .campo {
+    margin-bottom: 25px;
+    width: 100%;
+  }
+
+  .campo label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    line-height: 1.4;
+  }
+
+  .campo input,
+  .campo select {
+    width: 100%;
+    padding: 14px 12px;
+    font-size: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+
+  .campo input:focus,
+  .campo select:focus {
+    outline: none;
+    border-color: #0969fb;
+    box-shadow: 0 0 0 3px rgba(9, 105, 251, 0.1);
+  }
+
+  /* Placeholder dos inputs */
+  .campo input::placeholder {
+    color: #999;
     font-size: 14px;
+  }
+
+  /* Upload de imagem */
+  .upload-imagem {
+    width: 100%;
+    height: 140px;
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+    transition: all 0.3s ease;
+  }
+
+  .upload-imagem:hover {
+    border-color: #0969fb;
+    background: #f0f7ff;
+  }
+
+  .upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    cursor: pointer;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .upload-placeholder svg {
+    color: #0969fb;
+    margin-bottom: 10px;
+  }
+
+  .upload-placeholder p {
+    font-size: 0.9rem;
+    margin: 0;
+    color: #666;
+    font-weight: 500;
+  }
+
+  /* Select de categoria */
+  .campo select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+  /* Input file escondido */
+  .input-file {
+    display: none;
+  }
+
+  /* Preview da imagem */
+  .image-preview-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .image-preview {
+    max-height: 80px;
+    max-width: 120px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+
+  .image-name {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 8px;
+    text-align: center;
+    word-break: break-all;
+  }
+
+  .remove-image-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.7rem;
+  }
+
+  /* Mensagens de erro */
+  .mensagem-erro {
+    display: block;
+    font-size: 0.8rem;
+    color: #e74c3c;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+
+  .erro-asterisco {
+    color: #e74c3c;
+  }
+
+  .erro-campo {
+    border-color: #e74c3c !important;
+    background-color: #fef7f7;
+  }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 480px) {
+  .informacoes-basicas-container {
+    padding: 15px 12px;
+  }
+
+  .criar-Informaçao h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+
+  .informacoes-basicas-container p {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+
+  .campo {
+    margin-bottom: 20px;
+  }
+
+  .campo label {
+    font-size: 0.95rem;
+  }
+
+  .campo input,
+  .campo select {
+    padding: 12px 10px;
+    font-size: 15px;
+  }
+
+  .upload-imagem {
+    height: 120px;
+  }
+
+  .upload-placeholder {
+    padding: 15px;
+  }
+
+  .upload-placeholder p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .informacoes-basicas-container {
+    padding: 12px 10px;
+  }
+
+  .criar-Informaçao h2 {
+    font-size: 1.2rem;
+  }
+
+  .campo input,
+  .campo select {
+    padding: 11px 9px;
+  }
+}
+
+/* Garante que o layout não quebre */
+@media (max-width: 768px) {
+  .criar-form {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .informacoes-basicas-container {
+    max-width: 100%;
   }
 }

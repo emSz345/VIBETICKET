@@ -3,11 +3,13 @@ import "./CookieNotice.css";
 import Cookie from "../../../assets/Cookie.png";
 
 const CookieNotice: React.FC = () => {
+    // STATE HOOKS
     const [visible, setVisible] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
 
+    // EFFECT HOOKS
     const checkCookieAcceptance = () => {
         const alreadySeen = localStorage.getItem("cookie_notice_seen");
         return !!alreadySeen; // Retorna true se já aceitou, false se não
@@ -37,6 +39,7 @@ const CookieNotice: React.FC = () => {
         };
     }, [visible]);
 
+    // HANDLER FUNCTIONS
     const handleClose = () => {
         setIsClosing(true);
         setTimeout(() => {
@@ -54,6 +57,7 @@ const CookieNotice: React.FC = () => {
         setShowModal(false);
     };
 
+    // RENDER CONDITIONS
     if (!visible) return null;
 
     return (

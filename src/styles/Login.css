@@ -19,7 +19,7 @@
   display: flex;
   width: 80%;
   max-width: 900px;
-  margin: 40px 0;
+  margin: 70px 0;
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -138,7 +138,7 @@ input {
 }
 
 .link,
-.crie-conta {
+.login-crie-conta {
   color: #0969fb;
   text-decoration: none;
 }
@@ -147,7 +147,7 @@ input {
   font-weight: bold;
 }
 
-.crie-conta:hover {
+.login-crie-conta:hover {
   color: rgb(206, 51, 24);
   opacity: 0.6;
 }
@@ -662,5 +662,160 @@ input {
   
   .login-modal-message {
     font-size: 14px;
+  }
+}
+
+/* ========================
+   VOLTAR PARA INÍCIO
+======================== */
+.login-voltarParaInicio {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  box-sizing: border-box;
+  gap: 10px;
+  cursor: pointer;
+  position: absolute;
+  top: 35px;
+  left: 45px;
+}
+
+/* ========================================= */
+/* ELEMENTOS DE TEXTO                        */
+/* ========================================= */
+.login-voltarParaInicio-text {
+  color: #0969fb;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+/* ========================================= */
+/* EFEITOS DE HOVER E ANIMAÇÕES              */
+/* ========================================= */
+.login-voltarParaInicio::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 55%;
+  width: 0;
+  height: 2px;
+  background-color: #0969fb;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.login-voltarParaInicio:hover {
+  color: #004ec2;
+}
+
+.login-voltarParaInicio:hover::after {
+  width: calc(100% - 24px);
+}
+
+.login-voltarParaInicio:hover .login-voltarParaInicio-text {
+  color: #0056b3;
+}
+
+.login-voltarParaInicio-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  color: #0969fb;
+}
+
+.login-voltarParaInicio:hover .login-voltarParaInicio-icon {
+  transform: translateX(-2px);
+}
+
+.login-voltarParaInicio:focus {
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ========================================= */
+/* RESPONSIVIDADE                            */
+/* ========================================= */
+/* --- O QUE VOCÊ JÁ TEM (mantido exatamente como está) --- */
+@media (max-width: 480px) {
+  .login-voltarParaInicio {
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    left: 15px;
+    top: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin: 0;
+  }
+
+  .login-voltarParaInicio-text {
+    display: none;
+  }
+
+  .login-voltarParaInicio-icon {
+    color: #fff;
+    font-size: 20px;
+  }
+
+  .login-voltarParaInicio:hover::after {
+    width: calc(100% - 16px);
+  }
+}
+
+
+/* --- TABLET PEQUENO (480px – 768px) --- */
+@media (min-width: 481px) and (max-width: 768px) {
+  .login-voltarParaInicio {
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    left: 15px;
+    top: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin: 0;
+  }
+
+  .login-voltarParaInicio-text {
+    display: none;
+  }
+
+  .login-voltarParaInicio-icon {
+    color: #fff;
+    font-size: 20px;
+  }
+
+  .login-voltarParaInicio:hover::after {
+    width: calc(100% - 16px);
+  }
+}
+
+
+/* --- TABLET GRANDE OU NOTEBOOK PEQUENO (769px – 1024px) --- */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .login-voltarParaInicio {
+    display: flex;
+    position: absolute;
+    margin-bottom: 20px;
+    border-width: 2px;
+    left: 25px;
+  }
+
+  .login-voltarParaInicio-icon {
+    font-size: 26px;
   }
 }

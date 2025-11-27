@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
+import { FaExclamationTriangle } from 'react-icons/fa';
 import { Evento as EventoType } from "../../../../types/evento";
 import "./EventoCard.css";
 import ModalEvento from "../ModalEevnto/ModalEvento";
 import ModalRejeicao from "../ModalRejeicao/ModalRejeicao";
-import { FaExclamationTriangle } from 'react-icons/fa';
 
+
+// TIPOS E INTERFACES
 type EventoStatus = "em_analise" | "aprovado" | "rejeitado" | "em_reanalise";
 
-// Função utilitária para formatar o status para exibição
+export interface CriadorPopulado {
+    _id: string;
+    nome?: string;
+    email?: string;
+    cpf?: string;
+    cnpj?: string;
+    tipoPessoa?: 'cpf' | 'cnpj';
+}
 
+interface EventoCardProps {
+    evento: Omit<EventoType, 'criadoPor'> & {
+        status: EventoStatus,
+        temMeia: boolean,
+        criadoPor: CriadorPopulado;
+    };
+    onAceitar?: (id: string) => void;
+    onRejeitar?: (id: string, motivo: { titulo: string, descricao: string }) => void;
+    onReanalise?: (id: string) => void;
+}
+
+
+// FUNÇÕES UTILITÁRIAS
 const formatStatus = (status: EventoStatus): string => {
     switch (status) {
         case 'em_analise':
@@ -24,33 +46,29 @@ const formatStatus = (status: EventoStatus): string => {
     }
 }
 
-export interface CriadorPopulado {
-    _id: string;
-    nome?: string;
-    email?: string;
-    cpf?: string;
-    cnpj?: string;
-    tipoPessoa?: 'cpf' | 'cnpj';
-}
 
-interface EventoCardProps {
-    // Usa o EventoType importado e sobrescreve 'criadoPor'
-    evento: Omit<EventoType, 'criadoPor'> & {
-        status: EventoStatus,
-        temMeia: boolean,
-        criadoPor: CriadorPopulado; // <-- Agora espera o objeto populado
-    };
+// COMPONENTE PRINCIPAL
+const EventoCard: React.FC<EventoCardProps> = ({ 
+    evento, 
+    onAceitar, 
+    onRejeitar, 
+    onReanalise 
+}) => {
 
-    onAceitar?: (id: string) => void;
-    onRejeitar?: (id: string, motivo: { titulo: string, descricao: string }) => void;
-    onReanalise?: (id: string) => void;
-}
+    // STATE HOOKS
+    const [mostrarModal, setMostrarModal] = useState(false);
+    const [mostrarModalRejeicao, setMostrarModalRejeicao] = useState(false);
 
-const EventoCard: React.FC<EventoCardProps> = ({ evento, onAceitar, onRejeitar, onReanalise }) => {
-    const [mostrarModal, setMostrarModal] = React.useState(false);
-    const [mostrarModalRejeicao, setMostrarModalRejeicao] = React.useState(false);
+    
+    // VARIÁVEIS DERIVADAS
+    const status = evento.status;
+    const formattedStatus = formatStatus(status);
+    
+    const dadosPessoaisPendentes = !evento.criadoPor || 
+        !evento.criadoPor.tipoPessoa ||
+        (evento.criadoPor.tipoPessoa === 'cpf' ? !evento.criadoPor.cpf : !evento.criadoPor.cnpj);
 
-    // FUNÇÃO DE SEGURANÇA para rejeição
+    // HANDLER FUNCTIONS
     const handleRejeitarComMotivo = (motivo: { titulo: string, descricao: string }) => {
         if (onRejeitar) {
             onRejeitar(evento._id, motivo);
@@ -58,64 +76,81 @@ const EventoCard: React.FC<EventoCardProps> = ({ evento, onAceitar, onRejeitar, 
         setMostrarModalRejeicao(false);
     };
 
-    // FUNÇÕES AUXILIARES: Geram o callback para o ModalEvento ou undefined
     const handleAceitarClick = onAceitar ? () => onAceitar(evento._id) : undefined;
     const handleRejeitarClick = onRejeitar ? () => setMostrarModalRejeicao(true) : undefined;
     const handleReanaliseClick = onReanalise ? () => onReanalise(evento._id) : undefined;
 
+    const handleCardClick = () => setMostrarModal(true);
+    const handleCloseModal = () => setMostrarModal(false);
+    const handleCloseRejeicaoModal = () => setMostrarModalRejeicao(false);
 
-    const status = evento.status;
-    const formattedStatus = formatStatus(status);
+    
+    // RENDER FUNCTIONS
+    const renderCriadorInfo = () => {
+        const criadorNome = evento.criadoPor?.nome || evento.criadoPor?._id || 'Usuário Desconhecido';
+        return (
+            <span className="evento-criador">
+                Criado por: {criadorNome}
+            </span>
+        );
+    };
 
-    const dadosPessoaisPendentes = !evento.criadoPor || // Se não houver criador, considera pendente
-        !evento.criadoPor.tipoPessoa ||
-        (evento.criadoPor.tipoPessoa === 'cpf' ? !evento.criadoPor.cpf : !evento.criadoPor.cnpj);
+    const renderAvisoDadosPendentes = () => {
+        if (!dadosPessoaisPendentes) return null;
+        
+        return (
+            <div className="evento-criador-aviso" title="Criador com dados pessoais pendentes (Ex: CPF)">
+                <FaExclamationTriangle className="aviso-icon" />
+                <span className="aviso-texto">Dados Pendentes</span>
+            </div>
+        );
+    };
 
     return (
         <>
-            <div className={`evento-card status-${status.replace('_', '-')}`} onClick={() => setMostrarModal(true)}>
+            <div 
+                className={`evento-card status-${status.replace('_', '-')}`} 
+                onClick={handleCardClick}
+            >
+                {/* Cabeçalho com imagem e status */}
                 <div className="evento-cabecalho">
-                    <img src={evento.imagem} alt={`Capa do evento ${evento.nome}`} className="evento-imagem" />
+                    <img 
+                        src={evento.imagem} 
+                        alt={`Capa do evento ${evento.nome}`} 
+                        className="evento-imagem" 
+                    />
                     <div className={`evento-status-tag status-${status.replace('_', '-')}`}>
                         {formattedStatus}
                     </div>
                 </div>
 
+                {/* Corpo com nome do evento */}
                 <div className="evento-corpo">
                     <h3 className="evento-nome">{evento.nome}</h3>
                 </div>
 
+                {/* Rodapé com informações do criador */}
                 <div className="evento-rodape">
-                    {/* Exibe o nome do criador (ou ID se não tiver nome) */}
-                    <span className="evento-criador">
-                        {/* Usa ?. também no _id e adiciona um fallback final */}
-                        Criado por: {evento.criadoPor?.nome || evento.criadoPor?._id || 'Usuário Desconhecido'}
-                    </span>
-
-                    {/* Mostra o aviso se dadosPessoaisPendentes for true */}
-                    {dadosPessoaisPendentes && (
-                        <div className="evento-criador-aviso" title="Criador com dados pessoais pendentes (Ex: CPF)">
-                            <FaExclamationTriangle className="aviso-icon" />
-                            <span className="aviso-texto">Dados Pendentes</span>
-                        </div>
-                    )}
+                    {renderCriadorInfo()}
+                    {renderAvisoDadosPendentes()}
                 </div>
             </div>
 
+            {/* Modal de Detalhes do Evento */}
             {mostrarModal && (
                 <ModalEvento
                     evento={evento}
-                    onClose={() => setMostrarModal(false)}
-                    // Passando as funções auxiliares (que podem ser undefined)
+                    onClose={handleCloseModal}
                     onAceitar={handleAceitarClick}
                     onRejeitar={handleRejeitarClick}
                     onReanalise={handleReanaliseClick}
                 />
             )}
-            {/* ModalRejeicao é renderizado se a flag estiver ativa E a ação de rejeitar for permitida */}
+
+            {/* Modal de Rejeição */}
             {mostrarModalRejeicao && onRejeitar && (
                 <ModalRejeicao
-                    onClose={() => setMostrarModalRejeicao(false)}
+                    onClose={handleCloseRejeicaoModal}
                     onConfirmar={handleRejeitarComMotivo}
                     nomeEvento={evento.nome}
                 />

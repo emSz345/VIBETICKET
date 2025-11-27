@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FiPlus, FiMinus, FiMail, FiHelpCircle } from "react-icons/fi";
+import { FiPlus, FiMinus, FiMail } from "react-icons/fi";
 import "../../styles/Duvidas.css";
 import logo from "../../assets/logo.png";
 import Rodape from '../../components/layout/Footer/Footer';
+import VoltarParaInicio from "../../components/layout/VoltarParaInicio/VoltarParaInicio";
 
 function Duvidas() {
   useEffect(() => {
@@ -49,94 +50,89 @@ function Duvidas() {
   ];
 
   return (
-    <div className="duvidas-page">
-      <header className="duvidas-header">
-        <div className="duvidas-header-content">
-          {/* Lado esquerdo do header */}
-          <div className="header-left">
-            <Link to="/Home" className="duvidas-header-logo-link" title="Voltar para a Home">
-              <img src={logo} alt="Logo VibeTicket" className="duvidas-header-logo" />
-            </Link>
-            <div className="header-divider"></div>
-            <div className="header-title-section">
-              <FiHelpCircle className="header-icon" />
-              <h1 className="duvidas-header-title">Central de Dúvidas</h1>
-            </div>
-          </div>
-
-          {/* Lado direito do header com o novo botão */}
-          <div className="header-right">
-            <Link to="/Home" className="home-button">
-              Voltar para a Home
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="duvidas-main">
-        <section className="duvidas-intro">
-          <h1>Como podemos ajudar?</h1>
-          <p>Encontre respostas para as dúvidas mais comuns ou entre em contato conosco.</p>
-        </section>
-
-        <section className="duvidas-faq">
-          <h2>Perguntas Frequentes</h2>
-
-          {faqItems.map((category, categoryIndex) => (
-            <div key={categoryIndex} className="faq-category">
-              <h3>{category.category}</h3>
-              <div className="duvidas-faq-list">
-                {category.questions.map((item, index) => {
-                  const globalIndex = categoryIndex * 10 + index;
-                  return (
-                    <div
-                      key={globalIndex}
-                      className={`duvidas-faq-item ${activeIndex === globalIndex ? "active" : ""}`}
-                    >
-                      <button
-                        className="duvidas-faq-question"
-                        onClick={() => toggleQuestion(globalIndex)}
-                        aria-expanded={activeIndex === globalIndex}
-                      >
-                        {item.question}
-                        <span className="duvidas-faq-icon">
-                          {activeIndex === globalIndex ? <FiMinus /> : <FiPlus />}
-                        </span>
-                      </button>
-                      <div className="duvidas-faq-answer">
-                        <p>{item.answer}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+    <>
+      <VoltarParaInicio />
+      <div className="duvidas-page">
+        <header className="duvidas-header">
+          <div className="duvidas-header-content">
+            {/* Lado esquerdo do header */}
+            <div className="header-left">
+              <Link to="/Home" className="duvidas-header-logo-link" title="Voltar para a Home">
+                <img src={logo} alt="Logo VibeTicket" className="duvidas-header-logo" />
+              </Link>
+              <div className="header-divider"></div>
+              <div className="header-title-section">
+                <h1 className="duvidas-header-title">Central de Dúvidas</h1>
               </div>
             </div>
-          ))}
-        </section>
-
-        <section className="duvidas-contact">
-          <div className="contact-content">
-            <div className="contact-icon">
-              <FiMail size={48} />
-            </div>
-            <h2>Não encontrou o que procurava?</h2>
-            <p>Nossa equipe de suporte está pronta para ajudar você</p>
-            <div className="contact-actions">
-              <a
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=bruno.nunes.5056.br@gmail.com&su=Ajuda%20com%20o%20VibeTicket&body=Olá,%20preciso%20de%20ajuda%20com%20o%20seguinte%20problema:%0A%0A"
-                className="duvidas-contact-button"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FiMail size={18} />
-                Enviar e-mail
-              </a>
-            </div>
           </div>
-        </section>
-      </main>
-      <Rodape />
-    </div>
+        </header>
+
+        <main className="duvidas-main">
+          <section className="duvidas-intro">
+            <h1>Como podemos ajudar?</h1>
+            <p>Encontre respostas para as dúvidas mais comuns ou entre em contato conosco.</p>
+          </section>
+
+          <section className="duvidas-faq">
+            <h2>Perguntas Frequentes</h2>
+
+            {faqItems.map((category, categoryIndex) => (
+              <div key={categoryIndex} className="faq-category">
+                <h3>{category.category}</h3>
+                <div className="duvidas-faq-list">
+                  {category.questions.map((item, index) => {
+                    const globalIndex = categoryIndex * 10 + index;
+                    return (
+                      <div
+                        key={globalIndex}
+                        className={`duvidas-faq-item ${activeIndex === globalIndex ? "active" : ""}`}
+                      >
+                        <button
+                          className="duvidas-faq-question"
+                          onClick={() => toggleQuestion(globalIndex)}
+                          aria-expanded={activeIndex === globalIndex}
+                        >
+                          {item.question}
+                          <span className="duvidas-faq-icon">
+                            {activeIndex === globalIndex ? <FiMinus /> : <FiPlus />}
+                          </span>
+                        </button>
+                        <div className="duvidas-faq-answer">
+                          <p>{item.answer}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </section>
+
+          <section className="duvidas-contact">
+            <div className="contact-content">
+              <div className="contact-icon">
+                <FiMail size={48} />
+              </div>
+              <h2>Não encontrou o que procurava?</h2>
+              <p>Nossa equipe de suporte está pronta para ajudar você</p>
+              <div className="contact-actions">
+                <a
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=bruno.nunes.5056.br@gmail.com&su=Ajuda%20com%20o%20VibeTicket&body=Olá,%20preciso%20de%20ajuda%20com%20o%20seguinte%20problema:%0A%0A"
+                  className="duvidas-contact-button"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FiMail size={18} />
+                  Enviar e-mail
+                </a>
+              </div>
+            </div>
+          </section>
+        </main>
+        <Rodape />
+      </div>
+    </>
   );
 }
 

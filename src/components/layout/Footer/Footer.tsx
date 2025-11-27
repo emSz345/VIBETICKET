@@ -4,6 +4,8 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { Link } from "react-router-dom";
 import "./Footer.css";
 import { HashLink } from 'react-router-hash-link';
+
+// Assets
 import logo from '../../../assets/logo.png';
 
 // Importe os SVGs de pagamento
@@ -16,7 +18,10 @@ const Footer: React.FC = () => {
   return (
     <footer className="footer-container">
       <div className="footer-wrapper">
-        {/* Cabeçalho com logo e redes sociais */}
+        
+        {/* ========================================= */}
+        {/* CABEÇALHO COM LOGO E REDES SOCIAIS        */}
+        {/* ========================================= */}
         <div className="footer-header">
           <div className="footer-logo-container">
             <img src={logo} alt="Logo NaVibe" className="footer-logo" />
@@ -29,8 +34,11 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Seções de conteúdo */}
+        {/* ========================================= */}
+        {/* SEÇÕES DE CONTEÚDO                        */}
+        {/* ========================================= */}
         <div className="footer-sections-grid">
+          
           {/* Seção 1 - Explore */}
           <div className="footer-section">
             <h4 className="footer-section-title">Explore</h4>
@@ -121,7 +129,9 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Rodapé inferior (somente com direitos autorais) */}
+        {/* ========================================= */}
+        {/* RODAPÉ INFERIOR                           */}
+        {/* ========================================= */}
         <div className="footer-bottom">
           <p className="footer-copyright">© {new Date().getFullYear()} VibeTicket. Todos os direitos reservados.</p>
         </div>

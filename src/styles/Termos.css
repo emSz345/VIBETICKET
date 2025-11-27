@@ -2,9 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 100px); /* Ajuste simplificado */
+  min-height: calc(100vh - 100px);
+  /* Ajuste simplificado */
   background-color: #f4f4f4;
   padding: 40px;
+  padding-top: 120px;
 }
 
 .Termos-container {
@@ -90,12 +92,12 @@
     max-width: 900px;
     padding: 35px;
   }
-  
+
   .Termos-titulo-principal {
     font-size: 2.2rem;
     margin-bottom: 35px;
   }
-  
+
   .Termos-titulo-secao {
     font-size: 1.3rem;
   }
@@ -155,7 +157,7 @@
   .Termos-titulo-secao {
     font-size: 1.1rem;
   }
-  
+
   .Termos-introducao,
   .Termos-texto {
     font-size: 0.95rem;

@@ -1,3 +1,6 @@
+/* ========================================= */
+/* OVERLAY E CONTAINER PRINCIPAL             */
+/* ========================================= */
 .modal-rejeicao-overlay {
     position: fixed;
     top: 0;
@@ -20,6 +23,9 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
+/* ========================================= */
+/* CABEÇALHO E TÍTULOS                       */
+/* ========================================= */
 .modal-rejeicao-content h2 {
     margin: 0 0 1rem 0;
     color: #dc3545;
@@ -34,6 +40,9 @@
     font-size: 0.9rem;
 }
 
+/* ========================================= */
+/* FORMULÁRIO E INPUTS                       */
+/* ========================================= */
 .modal-rejeicao-input-group {
     margin-bottom: 1.5rem;
 }
@@ -68,6 +77,9 @@
     font-family: inherit;
 }
 
+/* ========================================= */
+/* BOTÕES DE AÇÃO                            */
+/* ========================================= */
 .modal-rejeicao-actions {
     display: flex;
     gap: 1rem;
