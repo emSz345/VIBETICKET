@@ -1,112 +1,213 @@
+/* ===== CONTAINER PRINCIPAL ===== */
 .PoliticaReembolso-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  padding-top: 120px;
+  max-width: 800px; /* Largura máxima do conteúdo */
+  margin: 0 auto; /* Centraliza o container na página */
+  padding: 20px; /* Espaçamento interno */
+  font-family: Arial, sans-serif; /* Fonte padrão */
+  line-height: 1.6; /* Altura da linha para melhor legibilidade */
+  color: #333; /* Cor do texto principal */
+  padding-top: 120px; /* Espaço extra no topo para header fixo */
+  box-sizing: border-box; /* Inclui padding e border no cálculo de largura/altura */
 }
 
+/* ===== CONTEÚDO DA POLÍTICA ===== */
 .PoliticaReembolso-content {
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white; /* Fundo branco para destacar do background */
+  padding: 30px; /* Espaçamento interno generoso */
+  border-radius: 8px; /* Cantos arredondados */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave para profundidade */
+  box-sizing: border-box; /* Garante que padding não aumente largura total */
 }
 
+/* ===== DATA DE VALIDADE ===== */
 .PoliticaReembolso-data-validade {
-  font-size: 0.9em;
-  color: #555;
-  margin-bottom: 20px;
-  text-align: center;
-  font-style: italic;
+  font-size: 0.9em; /* Texto um pouco menor */
+  color: #555; /* Cor cinza para texto secundário */
+  margin-top: 50px; /* Espaço pra cima */
+  margin-bottom: 20px; /* Espaço abaixo do elemento */
+  text-align: center; /* Centraliza o texto */
+  font-style: italic; /* Texto em itálico para destaque sutil */
 }
 
+/* ===== TÍTULO PRINCIPAL ===== */
 .PoliticaReembolso-titulo-principal {
-  border-bottom: 2px solid #1976d2;
-  padding-bottom: 10px;
-  margin-bottom: 25px;
-  text-align: center;
-  color: #1976d2;
-  font-size: 1.8rem;
+  border-bottom: 2px solid #1976d2; /* Linha azul abaixo do título */
+  padding-bottom: 10px; /* Espaço entre texto e linha */
+  margin-bottom: 25px; /* Espaço abaixo do título */
+  text-align: center; /* Centraliza o título */
+  color: #1976d2; /* Cor azul para destaque */
+  font-size: 1.8rem; /* Tamanho grande para hierarquia */
+  word-wrap: break-word; /* Quebra palavras longas se necessário */
 }
 
+/* ===== SEÇÕES DE CONTEÚDO ===== */
 .PoliticaReembolso-secao {
-  margin-bottom: 30px;
+  margin-bottom: 30px; /* Espaço entre seções */
 }
 
+/* ===== SUBTÍTULOS DAS SEÇÕES ===== */
 .PoliticaReembolso-subtitulo {
-  color: #1976d2;
-  margin-bottom: 15px;
-  font-size: 1.3rem;
-  border-left: 4px solid #1976d2;
-  padding-left: 10px;
+  color: #1976d2; /* Cor azul consistente com o tema */
+  margin-bottom: 15px; /* Espaço abaixo do subtítulo */
+  font-size: 1.3rem; /* Tamanho menor que o título principal */
+  border-left: 4px solid #1976d2; /* Borda lateral azul para destaque */
+  padding-left: 10px; /* Espaço entre borda e texto */
+  word-wrap: break-word; /* Quebra palavras longas */
 }
 
+/* ===== PARÁGRAFOS DENTRO DAS SEÇÕES ===== */
 .PoliticaReembolso-secao p {
-  margin-bottom: 15px;
-  text-align: left;
-  line-height: 1.7;
+  margin-bottom: 15px; /* Espaço entre parágrafos */
+  text-align: left; /* Alinhamento padrão à esquerda */
+  line-height: 1.7; /* Altura de linha para melhor legibilidade */
+  word-wrap: break-word; /* Quebra palavras longas */
 }
 
+/* ===== LISTAS ===== */
 .PoliticaReembolso-lista {
-  padding-left: 20px;
-  margin-bottom: 15px;
+  padding-left: 20px; /* Recuo padrão para listas */
+  margin-bottom: 15px; /* Espaço abaixo da lista */
 }
 
+/* ===== ITENS DA LISTA ===== */
 .PoliticaReembolso-lista li {
-  margin-bottom: 8px;
-  line-height: 1.6;
+  margin-bottom: 8px; /* Espaço entre itens da lista */
+  line-height: 1.6; /* Altura de linha confortável */
+  word-wrap: break-word; /* Quebra palavras longas */
 }
 
+/* ===== LINKS ===== */
 .PoliticaReembolso-link {
-  color: #1976d2;
-  text-decoration: none;
+  color: #1976d2; /* Cor azul para links */
+  text-decoration: none; /* Remove sublinhado padrão */
+  word-break: break-all; /* Quebra emails longos se necessário */
 }
 
+/* ===== EFEITO HOVER NOS LINKS ===== */
 .PoliticaReembolso-link:hover {
-  text-decoration: underline;
+  text-decoration: underline; /* Adiciona sublinhado ao passar mouse */
 }
 
+/* ===== CAIXA DE OBSERVAÇÃO ===== */
 .PoliticaReembolso-observacao {
-  font-size: 0.9em;
-  color: #666;
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-left: 3px solid #ff9800;
+  font-size: 0.9em; /* Texto um pouco menor */
+  color: #666; /* Cor cinza para texto menos importante */
+  margin-top: 20px; /* Espaço acima da observação */
+  padding: 10px; /* Espaçamento interno */
+  background-color: #f9f9f9; /* Fundo cinza claro para destaque */
+  border-left: 3px solid #ff9800; /* Borda laranja à esquerda */
+  word-wrap: break-word; /* Quebra palavras longas */
 }
 
-/* Responsividade */
+/* ===== RESPONSIVIDADE - TABLETS E TELAS MÉDIAS ===== */
 @media (max-width: 768px) {
   .PoliticaReembolso-container {
-    padding: 15px;
+    padding: 15px; /* Reduz padding em tablets */
+    padding-top: 100px; /* Reduz espaço do header */
   }
 
   .PoliticaReembolso-content {
-    padding: 20px;
+    padding: 20px; /* Reduz padding interno */
   }
 
   .PoliticaReembolso-titulo-principal {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* Título um pouco menor */
+    padding-bottom: 8px; /* Reduz espaço abaixo do título */
+    margin-bottom: 20px; /* Reduz margem inferior */
   }
 
   .PoliticaReembolso-subtitulo {
-    font-size: 1.1rem;
+    font-size: 1.1rem; /* Subtítulos menores */
+    padding-left: 8px; /* Reduz recuo da borda */
+    border-left-width: 3px; /* Borda lateral mais fina */
+  }
+
+  .PoliticaReembolso-secao {
+    margin-bottom: 25px; /* Reduz espaço entre seções */
+  }
+
+  .PoliticaReembolso-data-validade {
+    font-size: 0.85em; /* Texto de data menor */
+    margin-bottom: 15px; /* Reduz margem inferior */
   }
 }
 
+/* ===== RESPONSIVIDADE - SMARTPHONES ===== */
 @media (max-width: 480px) {
   .PoliticaReembolso-container {
-    padding: 10px;
+    padding: 10px; /* Padding mínimo em smartphones */
+    padding-top: 80px; /* Menos espaço para header */
   }
 
   .PoliticaReembolso-content {
-    padding: 15px;
+    padding: 15px; /* Padding interno reduzido */
+    border-radius: 6px; /* Cantos menos arredondados */
   }
 
   .PoliticaReembolso-titulo-principal {
-    font-size: 1.3rem;
+    font-size: 1.3rem; /* Título ainda menor */
+    padding-bottom: 6px; /* Espaço mínimo abaixo do título */
+    margin-bottom: 15px; /* Margem inferior reduzida */
+  }
+
+  .PoliticaReembolso-subtitulo {
+    font-size: 1rem; /* Subtítulos do tamanho do texto normal */
+    padding-left: 6px; /* Recuo mínimo */
+    border-left-width: 2px; /* Borda lateral mais fina */
+    margin-bottom: 12px; /* Menos espaço abaixo */
+  }
+
+  .PoliticaReembolso-secao {
+    margin-bottom: 20px; /* Espaço reduzido entre seções */
+  }
+
+  .PoliticaReembolso-secao p {
+    font-size: 0.95rem; /* Texto ligeiramente menor */
+    line-height: 1.6; /* Altura de linha ajustada */
+    margin-bottom: 12px; /* Menos espaço entre parágrafos */
+  }
+
+  .PoliticaReembolso-lista {
+    padding-left: 15px; /* Recuo menor para listas */
+  }
+
+  .PoliticaReembolso-lista li {
+    font-size: 0.95rem; /* Texto da lista menor */
+    margin-bottom: 6px; /* Menos espaço entre itens */
+  }
+
+  .PoliticaReembolso-data-validade {
+    font-size: 0.8em; /* Texto de data bem pequeno */
+    margin-bottom: 12px; /* Margem inferior mínima */
+  }
+
+  .PoliticaReembolso-observacao {
+    font-size: 0.85em; /* Observação menor */
+    padding: 8px; /* Padding reduzido */
+    margin-top: 15px; /* Menos espaço acima */
+  }
+}
+
+/* ===== RESPONSIVIDADE - TELAS MUITO PEQUENAS ===== */
+@media (max-width: 360px) {
+  .PoliticaReembolso-container {
+    padding: 8px; /* Padding mínimo absoluto */
+    padding-top: 70px; /* Espaço mínimo para header */
+  }
+
+  .PoliticaReembolso-content {
+    padding: 12px; /* Padding interno mínimo */
+  }
+
+  .PoliticaReembolso-titulo-principal {
+    font-size: 1.2rem; /* Título mínimo legível */
+  }
+
+  .PoliticaReembolso-subtitulo {
+    font-size: 0.95rem; /* Subtítulos quase do tamanho do texto */
+  }
+
+  .PoliticaReembolso-secao p {
+    font-size: 0.9rem; /* Texto mínimo para legibilidade */
   }
 }
