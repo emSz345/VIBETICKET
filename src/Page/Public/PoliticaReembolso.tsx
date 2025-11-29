@@ -44,7 +44,7 @@ const PoliticaReembolso: React.FC<PoliticaReembolsoProps> = () => {
             <p>
               Se um evento for <strong>remarcado ou adiado</strong>, o ingresso permanecerá válido para a nova data. 
               Caso você não possa comparecer na nova data, terá um prazo de <strong>7 dias</strong> para solicitar 
-              o reembolso através do e-mail <a href={`mailto:${emailSuporte}`}>{emailSuporte}</a>.
+              o reembolso através do e-mail <a href={`mailto:${emailSuporte}`} className="PoliticaReembolso-link">{emailSuporte}</a>.
             </p>
           </div>
 
@@ -56,7 +56,7 @@ const PoliticaReembolso: React.FC<PoliticaReembolsoProps> = () => {
               desde que o evento ocorra em data posterior a este período.
             </p>
             <p>
-              Para solicitar, envie um e-mail para <a href={`mailto:${emailSuporte}`}>{emailSuporte}</a> 
+              Para solicitar, envie um e-mail para <a href={`mailto:${emailSuporte}`} className="PoliticaReembolso-link">{emailSuporte}</a> 
               informando <strong>nome completo</strong>, <strong>número do pedido</strong> e <strong>motivo da solicitação</strong>.
             </p>
           </div>
@@ -76,7 +76,7 @@ const PoliticaReembolso: React.FC<PoliticaReembolsoProps> = () => {
             <p>
               Caso ocorram <strong>problemas técnicos</strong> que impeçam a utilização do ingresso no evento 
               (ex: erro de validação, duplicidade), entre em contato imediatamente com o suporte no local do evento 
-              ou via <a href={`mailto:${emailSuporte}`}>{emailSuporte}</a> para resolução.
+              ou via <a href={`mailto:${emailSuporte}`} className="PoliticaReembolso-link">{emailSuporte}</a> para resolução.
             </p>
           </div>
 
