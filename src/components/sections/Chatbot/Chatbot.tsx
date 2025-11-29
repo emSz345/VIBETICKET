@@ -66,12 +66,7 @@ interface CategoriasListaProps {
   onCategoriaClick: (categoria: string) => void;
 }
 
-interface ComandoRapido {
-  texto: string;
-  acao: string;
-  icone: string;
-  tipo: 'evento' | 'ajuda' | 'sistema' | 'social';
-}
+
 
 
 
@@ -149,10 +144,10 @@ const CarrinhoLista: React.FC<{
 const ChatBot: React.FC = () => {
   const [isEnabled] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>({});
-  const [showCommands, setShowCommands] = useState(true);
+  const [_showCommands, setShowCommands] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const apiUrl = process.env.REACT_APP_API_URL;
-  const [showBalloon, setShowBalloon] = useState(true);
+  const [_showBalloon, setShowBalloon] = useState(true);
   const [messages, setMessages] = useState<Mensagem[]>([
     {
       from: "bot",
@@ -504,12 +499,7 @@ const ChatBot: React.FC = () => {
 
   return (
     <>
-      {!isOpen && showBalloon && isEnabled && (
-        <div className="chatbot-message-floating">
-          Tem alguma dúvida? <br /> Vem conhecer a Vibe Bot!!!
-          <span className="chatbot-arrow"></span>
-        </div>
-      )}
+      
 
       <motion.button
         className="chatbot-button"
