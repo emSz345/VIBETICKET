@@ -19,6 +19,7 @@
 .categorias-container {
   max-width: 1400px;
   margin: 40px auto;
+  margin-top: 120px;
   padding: 0 20px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
@@ -27,7 +28,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--cor-borda);
 }
@@ -155,7 +156,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 20000; /* AUMENTADO PARA 20000 - MAIOR QUE A NAVBAR */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -170,6 +171,155 @@
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+  z-index: 20001; /* AUMENTADO PARA 20001 */
+  position: relative;
+}
+
+/* ============================ */
+/* CORREÇÕES PARA FILTROS MOBILE */
+/* ============================ */
+
+/* Header dos filtros mobile */
+.categorias-filtros-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.categorias-filtros-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin: 0;
+  flex: 1;
+}
+
+.categorias-filtros-fechar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--cor-texto-secundario);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20002; /* AUMENTADO PARA 20002 */
+  position: relative;
+}
+
+.categorias-filtros-fechar:hover {
+  color: var(--cor-texto);
+}
+
+/* Título dos estados mobile - CORREÇÃO PRINCIPAL */
+.categorias-filtros-titulo-mobile {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin: 0 0 16px 0;
+  padding: 0;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Container dos estados mobile */
+.categorias-filtro-estados-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+/* Botões de estado mobile */
+.categorias-filtro-estado-mobile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: 2px solid var(--cor-borda);
+  background-color: white;
+  width: 100%;
+  text-align: left;
+}
+
+.categorias-filtro-estado-mobile:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+}
+
+.categorias-filtro-estado-selecionado-mobile {
+  background-color: var(--cor-destaque);
+  border-color: var(--cor-primaria);
+}
+
+.categorias-filtro-estado-imagem-mobile {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.categorias-filtro-estado-nome-mobile {
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+  flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.categorias-filtro-estado-selecionado-mobile .categorias-filtro-estado-nome-mobile {
+  color: var(--cor-primaria);
+  font-weight: 600;
+}
+
+/* Footer dos filtros mobile */
+.categorias-filtros-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.categorias-filtro-btn-limpar-mobile,
+.categorias-filtro-btn-aplicar-mobile {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.categorias-filtro-btn-limpar-mobile {
+  background-color: #f8f9fa;
+  color: var(--cor-texto);
+  border: 1px solid #dee2e6;
+}
+
+.categorias-filtro-btn-limpar-mobile:hover {
+  background-color: #e9ecef;
+}
+
+.categorias-filtro-btn-aplicar-mobile {
+  background-color: var(--cor-primaria);
+  color: white;
+}
+
+.categorias-filtro-btn-aplicar-mobile:hover {
+  background-color: #085cdb;
 }
 
 /* ============================ */
@@ -367,4 +517,65 @@
   .categorias-card-conteudo {
     padding: 12px;
   }
+}
+
+@media (max-width: 480px) {
+  .categorias-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .categorias-btn-filtros {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* Ajuste adicional para telas extremamente pequenas */
+@media (max-width: 360px) {
+  .categorias-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+  }
+  
+  .categorias-btn-filtros {
+    padding: 12px 16px;
+    font-size: 1rem;
+  }
+
+  /* Ajustes para filtros mobile em telas muito pequenas */
+  .categorias-filtros-conteudo {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .categorias-filtros-titulo-mobile {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  
+  .categorias-filtro-estado-mobile {
+    padding: 10px;
+  }
+  
+  .categorias-filtro-estado-imagem-mobile {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .categorias-filtro-estado-nome-mobile {
+    font-size: 0.9rem;
+  }
+  
+  .categorias-filtros-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Garantir que o conteúdo não ultrapasse os limites */
+.categorias-filtros-body {
+  overflow: hidden;
 }
