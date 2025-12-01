@@ -210,6 +210,8 @@
   transition: background-color 0.2s;
   width: 40px;
   height: 40px;
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 .categorias-filtros-fechar:hover {
@@ -336,6 +338,9 @@
   cursor: pointer;
   transition: background-color 0.2s;
   font-size: 0.95rem;
+  display: block;
+  visibility: visible;
+  opacity: 1;
 }
 
 .categorias-filtro-btn-limpar-mobile {
@@ -619,4 +624,45 @@
 /* Garantir que o conteúdo não ultrapasse os limites */
 .categorias-filtros-body {
   overflow: hidden;
+}
+
+/* ============================ */
+/* CORREÇÕES ESPECÍFICAS PARA OS BOTÕES */
+/* ============================ */
+
+/* Garantir que os botões do mobile sejam sempre visíveis */
+.categorias-filtro-btn-limpar-mobile,
+.categorias-filtro-btn-aplicar-mobile {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Melhorar a visibilidade do botão de fechar */
+.categorias-filtros-fechar {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: flex !important;
+}
+
+/* Garantir que o SVG do botão de fechar seja visível */
+.categorias-filtros-fechar svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+/* Estilos para estados de carregamento e erro */
+.categorias-carregando,
+.categorias-erro,
+.categorias-carregando-filtros {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--cor-texto-secundario);
+}
+
+.categorias-carregando-filtros {
+  padding: 20px;
 }
