@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import "./../../styles/Categorias.css";
 import NavBar3 from '../../components/sections/Home/NavBar3/NavBar3';
-import Rodape from '../../components/layout/Footer/Footer'; // Importe o Rodape
+import Rodape from '../../components/layout/Footer/Footer';
 
 // Importe as imagens dos estados
 import sp from "./../../assets/estados/estado-sp.jpg";
@@ -36,7 +36,6 @@ import se from "./../../assets/estados/estado-se.png";
 import to from "./../../assets/estados/estado-to.png";
 
 import ChatBot from "../../components/sections/Chatbot/Chatbot";
-
 
 const mapeamentoEstados = {
     SP: { nome: "São Paulo", img: sp, id: "SP" },
@@ -105,7 +104,6 @@ const Categorias: React.FC = () => {
     const [filtrosAbertos, setFiltrosAbertos] = useState(false);
 
     useEffect(() => {
-        // Scroll para o topo quando a página carregar
         window.scrollTo(0, 0);
 
         const fetchEstados = async () => {
@@ -167,16 +165,16 @@ const Categorias: React.FC = () => {
 
     const limparFiltros = () => {
         setSearchParams({});
+        setFiltrosAbertos(false);
     };
 
     const estadoSelecionado = estadosDisponiveis.find(e => e.id === estadoUrl);
 
     return (
-        <> {/* Use um fragmento para englobar todo o conteúdo */}
+        <>
             <div className="categorias-container">
                 <NavBar3 />
 
-                {/* Conteúdo principal que cresce */}
                 <div className="categorias-main-content">
                     <div className="categorias-header">
                         <h1 className="categorias-titulo">
@@ -184,20 +182,98 @@ const Categorias: React.FC = () => {
                         </h1>
                         <button className="categorias-btn-filtros" onClick={() => setFiltrosAbertos(!filtrosAbertos)}>
                             <span>Filtros</span>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
                         </button>
                     </div>
 
                     {filtrosAbertos && (
                         <div className="categorias-filtros-mobile">
                             <div className="categorias-filtros-conteudo">
-                                <FiltrosContent
-                                    filtros={{ estado: estadoUrl }}
-                                    estados={estadosDisponiveis}
-                                    onEstadoClick={handleEstadoClick}
-                                    onLimpar={limparFiltros}
-                                    carregando={carregandoEstados}
-                                />
+                                <div className="categorias-filtros-header">
+                                    <h3>Filtrar por Estado</h3>
+                                    <button
+                                        className="categorias-filtros-fechar"
+                                        onClick={() => setFiltrosAbertos(false)}
+                                    >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                {filtrosAbertos && (
+                                    <div className="categorias-filtros-mobile">
+                                        <div className="categorias-filtros-conteudo">
+                                            <div className="categorias-filtros-header">
+                                                <h3>Filtrar por Estado</h3>
+                                                <button
+                                                    className="categorias-filtros-fechar"
+                                                    onClick={() => setFiltrosAbertos(false)}
+                                                >
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+
+                                            <div className="categorias-filtros-body">
+                                                <h4 className="categorias-filtros-titulo-mobile">Estados Disponíveis</h4>
+                                                <div className="categorias-filtro-estados-mobile">
+                                                    {estadosDisponiveis.map(estado => (
+                                                        <button
+                                                            key={estado.id}
+                                                            className={`categorias-filtro-estado-mobile ${estadoUrl === estado.id ? "categorias-filtro-estado-selecionado-mobile" : ""
+                                                                }`}
+                                                            onClick={() => handleEstadoClick(estado.id)}
+                                                        >
+                                                            <img
+                                                                src={estado.img}
+                                                                alt={estado.nome}
+                                                                className="categorias-filtro-estado-imagem-mobile"
+                                                            />
+                                                            <span className="categorias-filtro-estado-nome-mobile">
+                                                                {estado.nome}
+                                                            </span>
+                                                            <div className="categorias-filtro-estado-check"></div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className="categorias-filtros-footer">
+                                                <button
+                                                    onClick={limparFiltros}
+                                                    className="categorias-filtro-btn-limpar-mobile"
+                                                >
+                                                    Limpar
+                                                </button>
+                                                <button
+                                                    onClick={() => setFiltrosAbertos(false)}
+                                                    className="categorias-filtro-btn-aplicar-mobile"
+                                                >
+                                                    Aplicar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="categorias-filtros-footer">
+                                    <button
+                                        onClick={limparFiltros}
+                                        className="categorias-filtro-btn-limpar-mobile"
+                                    >
+                                        Limpar
+                                    </button>
+                                    <button
+                                        onClick={() => setFiltrosAbertos(false)}
+                                        className="categorias-filtro-btn-aplicar-mobile"
+                                    >
+                                        Aplicar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -216,7 +292,9 @@ const Categorias: React.FC = () => {
                         <main className="categorias-conteudo">
                             <div className="categorias-resultados">
                                 {carregandoEventos ? (
-                                    <p>Carregando eventos...</p>
+                                    <div className="categorias-carregando">
+                                        <p>Carregando eventos...</p>
+                                    </div>
                                 ) : erro ? (
                                     <p className="categorias-erro">{erro}</p>
                                 ) : eventos.length > 0 ? (
@@ -278,6 +356,9 @@ const Categorias: React.FC = () => {
                 </div>
             </div>
             <Rodape />
+            <div className="categorias-chatbot">
+                <ChatBot />
+            </div>
         </>
     );
 };
@@ -292,7 +373,7 @@ interface FiltrosContentProps {
 
 const FiltrosContent: React.FC<FiltrosContentProps> = ({ filtros, estados, onEstadoClick, onLimpar, carregando }) => {
     if (carregando) {
-        return <p>Carregando filtros...</p>;
+        return <div className="categorias-carregando-filtros"><p>Carregando filtros...</p></div>;
     }
 
     return (
@@ -314,9 +395,6 @@ const FiltrosContent: React.FC<FiltrosContentProps> = ({ filtros, estados, onEst
                 <button onClick={onLimpar} className="categorias-filtro-btn categorias-filtro-btn-limpar">
                     Limpar Filtros
                 </button>
-            </div>
-            <div style={{ display: "flex", right: "20px", bottom: "30px", position: 'fixed', zIndex: '1000' }}>
-                <ChatBot />
             </div>
         </>
     );
